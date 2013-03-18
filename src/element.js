@@ -42,7 +42,7 @@ JAX.Element.prototype.removeClass = function(classname) {
 	return this;
 };
 
-JAX.Element.prototype.addElm = function(element) {
+JAX.Element.prototype.addElement = function(element) {
 	if (!("nodeType" in element) && !(element instanceof JAX.Element)) { 
 		throw new Error("JAX.Element.addElement accepts only HTML element, textnode or JAX.Element instance as its parameter. See doc for more information."); 
 	}
@@ -53,7 +53,7 @@ JAX.Element.prototype.addElm = function(element) {
 	return this;
 };
 
-JAX.Element.prototype.addElmBefore = function(element, elementBefore) {
+JAX.Element.prototype.addElementBefore = function(element, elementBefore) {
 	if (!("nodeType" in element) && !(element instanceof JAX.Element)) { 
 		throw new Error("JAX.Element.addElmBefore accepts only HTML element, textnode or JAX.Element instance as its parameter. See doc for more information."); 
 	}
@@ -64,6 +64,26 @@ JAX.Element.prototype.addElmBefore = function(element, elementBefore) {
 	this._elm.insertBefore(elm, elmBefore);
 
 	return this;
+};
+
+JAX.Element.prototype.addElements = function(elements) {
+	for (var i=0, len=elements.length; i<len; i++) {
+		this.appendElement(elements[i]);
+	}
+};
+
+JAX.Element.prototype.appendTo = function(element) {
+	var elm = element instanceof JAX.Element ? element.getElm() : element;
+	element.appendChild(this._elm);
+};
+
+JAX.Element.prototype.appendBefore = function(element) {
+	var elm = element instanceof JAX.Element ? element.getElm() : element;
+	element.parentNode.insertBefore(this._elm, elm);	
+};
+
+JAX.Element.prototype.remove = function() {
+	this._elm.parentNode.removeChild(this._elm);
 };
 
 JAX.Element.prototype.getElm = function() {
@@ -81,7 +101,7 @@ JAX.Element.prototype.clone = function(withContent) {
 };
 
 JAX.Element.prototype.listen = function(type, method, obj, bindParam) {
-	if (typeof(type) != "string") { throw new Error("JAX.Element.listen: first parameter must be string. See doc for more information."); }
+	if (!type || typeof(type) != "string") { throw new Error("JAX.Element.listen: first parameter must be string. See doc for more information."); }
 	if (method && typeof(method) != "string" && !(method instanceof Function)) { throw new Error("JAX.Element.listen: second paremeter must be function or name of function. See doc for more information."); }
 	if (arguments.length > 4) { console.warn("JAX.Element.listen accepts maximally 4 arguments. See doc for more information."); }
 	
