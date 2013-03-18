@@ -47,7 +47,7 @@ JAX.Animation.prototype.run = function(callback) {
 };
 
 JAX.Animation.prototype.isRunning = function() {
-	return this._isRunning;
+	return this._running;
 }
 
 JAX.Animation.prototype.stop = function() {
