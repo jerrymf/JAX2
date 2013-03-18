@@ -119,7 +119,7 @@ JAX.Element.prototype.listen = function(type, method, obj, bindParam) {
 	}
 
 	var eventListeners = JAX.Element._EVENTS[this._elm][type] || [];
-	eventListeners.concat(listenerId);
+	eventListeners = eventListeners.concat(listenerId);
 
 	JAX.Element._EVENTS[this._elm][type] = eventListeners;
 
