@@ -1,14 +1,14 @@
 JAX.Element = JAK.ClassMaker({
 	NAME: "JAX.Element",
-	VERSION: "0.1"
+	VERSION: "0.2"
 });
 
-JAX.Element.__EVENTS = {};
+JAX.Element._EVENTS = {};
 
 JAX.Element.prototype.$constructor = function(element) {
 	if (!("tagName" in element)) { throw new Error("JAX.Element constructor accepts only HTML element as its parameter. See doc for more information.") }
 	this._elm = element;
-	JAX.Element.__EVENTS[this._elm] = JAX.Element.__EVENTS[this._elm] || {};
+	JAX.Element._EVENTS[this._elm] = JAX.Element._EVENTS[this._elm] || {};
 };
 
 JAX.Element.prototype.addClass = function(classname) {
@@ -70,7 +70,7 @@ JAX.Element.prototype.getElm = function() {
 	return this._elm;
 };
 
-JAX.Element.prototype.getParentNode = function() {
+JAX.Element.prototype.getParent = function() {
 	return this._elm.parentNode;
 };
 
@@ -80,61 +80,66 @@ JAX.Element.prototype.clone = function(withContent) {
 	return new JAX.Element(clone);
 };
 
-JAX.Element.prototype.listen = function(type, method, obj) {
-	if (typeof(type) != "string") { throw new Error("JAX.Element.listen accepts only string as its first parameter. See doc for more information."); }
-
-	if (arguments.length < 4) {
+JAX.Element.prototype.listen = function(type, method, obj, bindParam) {
+	if (typeof(type) != "string") { throw new Error("JAX.Element.listen: first parameter must be string. See doc for more information."); }
+	if (method && typeof(method) != "string" && !(method instanceof Function)) { throw new Error("JAX.Element.listen: second paremeter must be function or name of function. See doc for more information."); }
+	if (arguments.length > 4) { console.warn("JAX.Element.listen accepts maximally 4 arguments. See doc for more information."); }
+	
+	if (arguments.length == 2) {
+		var listenerId = JAK.Events.addListener(this._elm, type, method);
+	} else if (arguments.length == 3) {
 		var listenerId = JAK.Events.addListener(this._elm, type, obj, method);
-	} else {
-		if (typeof(method == "string")) { var bindMethod = obj[method]; }
-		for (var i=3, len=arguments.length; i<len; i++) { bindMedhod = method.bind(obj, arguments[i]); }
-		var listenerId = JAK.Events.addListener(this._elm, type, obj, method);
+	} else if (arguments.length > 3) {
+		var obj = obj || window;
+		if (typeof(method) == "string") { 
+			var method = obj[method];
+			if (!method) { throw new Error("JAX.Element.listen: method '" + method + "' was not found in " + obj + "."); }
+		}
+		var listenerId = JAK.Events.addListener(this._elm, type, obj, method.bind(obj, bindParam));
 	}
 
-	var eventListeners = JAX.Element.__EVENTS[this._elm][type] || [];
-	eventListeners.concat({id:listenerId, method:method});
+	var eventListeners = JAX.Element._EVENTS[this._elm][type] || [];
+	eventListeners.concat(listenerId);
 
-	JAX.Element.__EVENTS[this._elm][type] = eventListeners;
+	JAX.Element._EVENTS[this._elm][type] = eventListeners;
 
 	return listenerId;
 };
 
-JAX.Element.prototype.stopListening = function(type) {
+JAX.Element.prototype.stopListening = function(type, listenerId) {
+	if (!type) {
+		var events = JAX.Element._EVENTS[this._elm];
+		for (var p in events) { this.stopListening(p); }
+		return this;
+	}
+
 	if (typeof(type) != "string" || (method && typeof(method) != "string")) {
 		throw new Error("JAX.Element.stopListening bad arguments. See doc for more information.")
 	}
 
-	if (!method) { 
-		var eventListeners = JAX.Element.__EVENTS[this._elm][event]; 
-		if (!eventListeners) { throw new Error("JAX.Element.stopListening: no event '" + event + "' found"); }
+	var eventListeners = JAX.Element._EVENTS[this._elm][type]; 
+	if (!eventListeners) { console.warn("JAX.Element.stopListening: no event '" + event + "' found"); return this; }
+
+	if (!listenerId) { 
 		this._destroyEvents(eventListeners);
-		delete JAX.Element.__EVENTS[this._elm][event];
-		return;
+		delete JAX.Element._EVENTS[this._elm][event];
+		return this;
 	}
-	
-	var method = obj[method];
-	var eventListeners = JAX.Element.__EVENTS[this._elm][event.type];
-	if (!eventListeners) { return; }
 
-	var index = eventListeners.indexOf(event.id);
-	if (index == -1) { return; }
+	var index = eventListeners.indexOf(listenerId);
+	if (index == -1) {
+		this._destroyEvents([eventListeners[index]]);
+		eventListeners.splice(index, 1);
+		return this;
+	}
 
-	this._destroyEvents(eventListeners[index]]);
-	eventListeners.splice(index, 1);
-
+	console.warn("JAX.Element.stopListening: no event listener id '" + listenerId + "' found. See doc for more information.");
 	return this;
 };
 
-JAX.Element.prototype.stopAllListening = function() {
-	var events = JAX.Element.__EVENTS[this._elm];
-
-	for (var p in events) { this.stopListening(p); }
-	return;
-}
-
 JAX.Element.prototype._destroyEvents = function(eventlisteners) {
 	for (var i=0, len=eventlisteners; i<len; i++) {
-		var id = eventListeners[i].id;
+		var id = eventListeners[i];
 		JAK.Events.removeListener(id);
 	}
-}
+};

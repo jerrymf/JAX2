@@ -1,9 +1,7 @@
 JAX.Elements = JAK.ClassMaker({
 	NAME: "JAX.Elements",
-	VERSION: "0.1"
+	VERSION: "0.2"
 });
-
-JAK.Elements.__EVENTS = {};
 
 JAX.Elements.prototype.$constructor = function(elements) {
 	this._jaxelms = [];
@@ -36,17 +34,9 @@ JAX.Elements.prototype.listen = function(type, method, obj) {
 	return this;
 };
 
-JAX.Elements.prototype.stopListening = function(eventName) {
+JAX.Elements.prototype.stopListening = function(type) {
 	for (var i=0, len=this._jaxelms.length; i<len; i++) {
-		listeners.push(this._jaxelms[i].stopListening(eventName));
-	}
-
-	return this;	
-};
-
-JAX.Elements.prototype.stopAllListening = function() {
-	for (var i=0, len=this._jaxelms.length; i<len; i++) {
-		listeners.push(this._jaxelms[i].stopAllListening());
+		this._jaxelms[i].stopListening(type);
 	}
 
 	return this;	
