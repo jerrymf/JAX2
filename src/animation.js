@@ -119,3 +119,4 @@ JAX.Animation.prototype._endInterpolator = function(index) {
 	this._running = false;
 	this._callback();
 };
+
