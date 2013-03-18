@@ -25,7 +25,7 @@ JAX.Animation.prototype.addProperty = function(property, duration, start, end, m
 
 	var cssEnd = this._parseCSSValue(property, end);
 	if (!start && isNaN(start)) { 
-		var cssStart = this._parseCSSValue(property, this._getPropertyValue(property), cssEnd.unit); 
+		var cssStart = this._parseCSSValue(property, this._getPropertyValue(property)); 
 	} else {
 		var cssStart = this._parseCSSValue(property, start);
 	}
@@ -67,7 +67,7 @@ JAX.Animation.prototype._initInterpolator = function() {
 			"interpolation": property.method,
 			"endCallback": this._endInterpolator.bind(this, index)
 		});
-		interpolator.addProperty(property.property, property.cssStart.value, property.cssEnd.value, property.cssEnd.unit);
+		interpolator.addProperty(property.property, property.cssStart.value, property.cssEnd.value, property.cssStart.unit);
 		this._interpolators.push(interpolator);
 
 		oldPrivileged = property.privileged;
@@ -99,12 +99,11 @@ JAX.Animation.prototype._run = function() {
 	this._running = true;
 };
 
-JAX.Animation.prototype._parseCSSValue = function(property, cssValue, fallbackUnit) {
+JAX.Animation.prototype._parseCSSValue = function(property, cssValue) {
 	var value = parseFloat(cssValue);
 	var unit = (cssValue+"").replace(value, "");
 
 	if (unit) { return { "value": value, "unit": unit }; }
-	if (fallbackUnit) { return { "value": value, "unit": fallbackUnit }; }
 
 	return { "value": value, "unit": JAX.Animation.SUPPORTED_PROPERTIES[property] };
 };
