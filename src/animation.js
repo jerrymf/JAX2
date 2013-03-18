@@ -1,6 +1,6 @@
 JAX.Animation = JAK.ClassMaker({
 	NAME: "JAX.Animation",
-	VERSION: "0.1"
+	VERSION: "0.3"
 });
 
 JAX.Animation.SUPPORTED_PROPERTIES = [
@@ -45,6 +45,10 @@ JAX.Animation.prototype.run = function(callback) {
 	this._initInterpolator();
 	this._run();
 };
+
+JAX.Animation.prototype.isRunning = function() {
+	return this._isRunning;
+}
 
 JAX.Animation.prototype.stop = function() {
 	for (var i=0, len=this._interpolators.length; i<len; i++) {	this._interpolators.stop(); }
