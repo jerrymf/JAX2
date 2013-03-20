@@ -1,6 +1,6 @@
 JAX.Element = JAK.ClassMaker({
 	NAME: "JAX.Element",
-	VERSION: "0.2"
+	VERSION: "0.3"
 });
 
 JAX.Element._EVENTS = {};
@@ -157,9 +157,15 @@ JAX.Element.prototype.stopListening = function(type, listenerId) {
 	return this;
 };
 
+JAX.Element.prototype.setAttrs = function(attributes) {
+	for (var p in attributes) { this._elm.setAttribute(p, attributes[p]); }
+	return this;
+};
+
+JAX.Element.prototype.setStyle = function(styles) {
+	for (var p in styles) { this._elm.style[p] = styles[p]; }
+};
+
 JAX.Element.prototype._destroyEvents = function(eventlisteners) {
-	for (var i=0, len=eventlisteners; i<len; i++) {
-		var id = eventListeners[i];
-		JAK.Events.removeListener(id);
-	}
+	for (var i=0, len=eventlisteners; i<len; i++) { JAK.Events.removeListener(eventListeners[i]); }
 };

@@ -30,3 +30,11 @@ JAX.$$ = function(query, element) {
 	return jaxelm;
 };
 
+JAX.makeElm = function(tagName, html, attributes, srcDocument) {
+	if (html) {
+		if ("innerHTML" in attributes) { console.warn("JAX.make: You've defined parameter 'html' and 'innerHTML' in attributes too. I will use html parameter preferentially."); }
+		attributes["innerHTML"] = html; 
+	}
+	return new JAX.Element(JAK.mel(tagName, attributes, {}, srcDocument || document));
+};
+
