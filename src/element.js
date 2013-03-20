@@ -1,6 +1,6 @@
 JAX.Element = JAK.ClassMaker({
 	NAME: "JAX.Element",
-	VERSION: "0.3"
+	VERSION: "0.31"
 });
 
 JAX.Element._EVENTS = {};
@@ -9,6 +9,17 @@ JAX.Element.prototype.$constructor = function(element) {
 	if (!("tagName" in element)) { throw new Error("JAX.Element constructor accepts only HTML element as its parameter. See doc for more information.") }
 	this._elm = element;
 	JAX.Element._EVENTS[this._elm] = JAX.Element._EVENTS[this._elm] || {};
+};
+
+JAX.Element.prototype.$destructor = function() {
+	this.destroy();
+};
+
+JAX.Element.prototype.destroy = function() {
+	this.stopListening();
+	this.remove();
+	delete JAX.Element._EVENTS[this._elm];
+	this._elm = null;
 };
 
 JAX.Element.prototype.addClass = function(classname) {
