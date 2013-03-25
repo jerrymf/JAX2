@@ -98,7 +98,9 @@ JAX.Element.prototype.addElementBefore = function(element, elementBefore) {
 };
 
 JAX.Element.prototype.addElements = function() {
-	for (var i=0, len=arguments.length; i<len; i++) { this.addElement(arguments[i]); }
+	var elms = arguments;
+	if (elms.length == 1 && elms instanceof Array) { elms = elms[0]; }
+	for (var i=0, len=elms.length; i<len; i++) { this.addElement(elms[i]); }
 	return this;
 };
 

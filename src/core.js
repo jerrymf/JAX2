@@ -41,7 +41,7 @@ JAX.make = function(tagString, html, srcDocument) {
 	if (typeof(html) != "string") { throw new Error("JAX.make: Second parameter 'html' must be a string"); }
 
 	for (var i=0, len=tagString.length; i<len; i++) {
-		if (tagString[i] == "." || tagString[i] == "#") {
+		if (".#".indexOf(tagString[i]) > -1 || i == len - 1) {
 			if (i == 0) { throw new Error("JAX.make: Classname or id can not be first. First must be tagname."); }
 			if (foundString && type == "") { tagName = foundString; }
 			if (foundString && type == "class") { classNames.push(foundString); }
@@ -52,10 +52,6 @@ JAX.make = function(tagString, html, srcDocument) {
 		}
 		foundString += ("" + tagString[i]);
 	}
-	
-	if (foundString && type == "") { tagName = foundString; foundString = ""; }
-	if (foundString && type == "class") { classNames.push(foundString); foundString = "";}
-	if (foundString && type == "id") { ids.push(foundString); foundString = ""; }
 
 	var elm = new JAX.Element(JAK.mel(tagName, {innerHTML:html}, {}, srcDocument || document));
 	if (ids.length) { elm.setId(ids.join(" ")); }
