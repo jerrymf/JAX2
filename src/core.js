@@ -52,9 +52,10 @@ JAX.make = function(tagString, html, srcDocument) {
 		}
 		foundString += ("" + tagString[i]);
 	}
-	if (!tagName) { tagName = foundString; foundString = ""; }
-	if (foundString && type == "class") { classNames.push(foundString); }
-	if (foundString && type == "id") { ids.push(foundString); }
+	
+	if (foundString && type == "") { tagName = foundString; foundString = ""; }
+	if (foundString && type == "class") { classNames.push(foundString); foundString = "";}
+	if (foundString && type == "id") { ids.push(foundString); foundString = ""; }
 
 	var elm = new JAX.Element(JAK.mel(tagName, {innerHTML:html}, {}, srcDocument || document));
 	if (ids.length) { elm.setId(ids.join(" ")); }
