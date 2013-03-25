@@ -1,4 +1,4 @@
-JAX.Animation = JAK.ClassMaker({
+JAX.Animation = JAK.ClassMaker.makeClass({
 	NAME: "JAX.Animation",
 	VERSION: "0.3"
 });

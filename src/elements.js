@@ -1,4 +1,4 @@
-JAX.Elements = JAK.ClassMaker({
+JAX.Elements = JAK.ClassMaker.makeClass({
 	NAME: "JAX.Elements",
 	VERSION: "0.2"
 });

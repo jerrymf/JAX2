@@ -30,11 +30,36 @@ JAX.$$ = function(query, element) {
 	return jaxelm;
 };
 
-JAX.makeElm = function(tagName, html, attributes, srcDocument) {
-	if (html) {
-		if ("innerHTML" in attributes) { console.warn("JAX.make: You've defined parameter 'html' and 'innerHTML' in attributes too. I will use html parameter preferentially."); }
-		attributes["innerHTML"] = html; 
+JAX.make = function(tagString, html, srcDocument) {
+	var html = html || "";
+	var tagName = "";
+	var type="";
+	var foundString = ""; 
+	var classNames = [];
+	var ids = [];
+
+	if (typeof(html) != "string") { throw new Error("JAX.make: Second parameter 'html' must be a string"); }
+
+	for (var i=0, len=tagString.length; i<len; i++) {
+		if (tagString[i] == "." || tagString[i] == "#") {
+			if (i == 0) { throw new Error("JAX.make: Classname or id can not be first. First must be tagname."); }
+			if (foundString && type == "") { tagName = foundString; }
+			if (foundString && type == "class") { classNames.push(foundString); }
+			if (foundString && type == "id") { ids.push(foundString); }
+			foundString = "";
+			type = tagString[i] == "#" ? "id" : "class"; 
+			continue; 
+		}
+		foundString += ("" + tagString[i]);
 	}
-	return new JAX.Element(JAK.mel(tagName, attributes, {}, srcDocument || document));
+	if (!tagName) { tagName = foundString; foundString = ""; }
+	if (foundString && type == "class") { classNames.push(foundString); }
+	if (foundString && type == "id") { ids.push(foundString); }
+
+	var elm = new JAX.Element(JAK.mel(tagName, {innerHTML:html}, {}, srcDocument || document));
+	if (ids.length) { elm.setId(ids.join(" ")); }
+	if (classNames.length) { elm.addClass(classNames.join(" ")); }
+
+	return elm;
 };
 
