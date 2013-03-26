@@ -65,12 +65,12 @@ JAX.Element.prototype.hasClass = function(className) {
 };
 
 JAX.Element.prototype.setId = function(id) {
-	this.setAttrs({id:id});
+	this.attr("id",id);
 	return this;
 };
 
 JAX.Element.prototype.getId = function() {
-	return this.getAttrs("id");
+	return this.attr("id");
 };
 
 JAX.Element.prototype.addElement = function(element) {
@@ -127,15 +127,6 @@ JAX.Element.prototype.getElm = function() {
 
 JAX.Element.prototype.getParent = function() {
 	return this._elm.parentNode;
-};
-
-JAX.Element.prototype.getValOf = function(property) {
-	return this._elm[property];
-};
-
-JAX.Element.prototype.setValOf = function(property, value) {
-	this._elm[property] = value;
-	return this;
 };
 
 JAX.Element.prototype.clone = function(withContent) {
@@ -199,26 +190,69 @@ JAX.Element.prototype.stopListening = function(type, listenerId) {
 	return this;
 };
 
-JAX.Element.prototype.setAttrs = function(attributes) {
-	for (var p in attributes) { this._elm.setAttribute(p, attributes[p]); }
+JAX.Element.prototype.valueOf = function(property, value) {
+	if (value === undefined) { return this._elm[property]; }
+	this._elm[property] = value;
 	return this;
 };
 
-JAX.Element.prototype.getAttrs = function(attributesStr) {
-	var attrsArray = attributesStr.split(",");
-	var attrs = {};
+JAX.Element.prototype.attr = function(attribute, value) {
+	if (value === undefined) { return this._elm.getAttribute(attribute); }
+	this._elm.setAttribute(attribute, value);
+	return this;
+};
 
-	for (var i=0, len=attrsArray.length; i<len; i++) { 
-		var attr = attrsArray[i];
-		attrs[attr] = this._elm.getAttribute(attr); 
+JAX.Element.prototype.attrs = function(attributes, values) {
+	if (values === undefined) {
+		var attrs = {};
+		for (var i=0, len=attrsArray.length; i<len; i++) { 
+			var attribute = attributes[i];
+			attrs[attribute] = this._elm.getAttribute(attribute); 
+		}
+		return attrs;	
 	}
 
-	return attrs;
+	for (var i=0, len=attributes.length; i<len; i++) {
+		var attribute = attributes[i];
+		var value = values[i];
+		this._elm.setAttribute(attribute, value);
+	}
+
+	return this;
 };
 
-JAX.Element.prototype.setStyle = function(styles) {
-	for (var p in styles) { this._elm.style[p] = styles[p]; }
+JAX.Element.prototype.style = function(property, value) {
+	if (value === undefined) { return this._elm.style[property]; }
+	this._elm.style[property] = value;
 	return this;
+};
+
+JAX.Element.prototype.styles = function(properties, values) {
+	if (value === undefined) { 
+		var vals = {};
+		for (var i=0, len=properties.length; i<len; i++) {
+			var property = properties[i];
+			vals[property] = this._elm.style[property];
+		}
+		return vals;
+		
+	}
+	
+	for (var i=0, len=properties.length; i<len; i++) {
+		var property = properties[i];
+		var value = values[i];
+		this._elm.style[property] = value;
+	}
+
+	return this;
+};
+
+JAX.Element.prototype.displayOn = function(displayValue) {
+	this.style("display", displayValue || "");
+};
+
+JAX.Element.prototype.displayOff = function() {
+	this.style("display", "none");
 };
 
 JAX.Element.prototype._destroyEvents = function(eventlisteners) {
