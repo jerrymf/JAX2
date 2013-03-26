@@ -43,6 +43,7 @@ JAX.make = function(tagString, html, srcDocument) {
 	for (var i=0, len=tagString.length; i<len; i++) {
 		if (".#".indexOf(tagString[i]) > -1 || i == len - 1) {
 			if (i == 0) { throw new Error("JAX.make: Classname or id can not be first. First must be tagname."); }
+			if (i == len -1) { foundString += ("" + tagString[i]); }
 			if (foundString && type == "") { tagName = foundString; }
 			if (foundString && type == "class") { classNames.push(foundString); }
 			if (foundString && type == "id") { ids.push(foundString); }

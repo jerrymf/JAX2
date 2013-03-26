@@ -149,18 +149,16 @@ JAX.Element.prototype.listen = function(type, method, obj, bindParam) {
 	if (method && typeof(method) != "string" && !(method instanceof Function)) { throw new Error("JAX.Element.listen: second paremeter must be function or name of function. See doc for more information."); }
 	if (arguments.length > 4) { console.warn("JAX.Element.listen accepts maximally 4 arguments. See doc for more information."); }
 	
-	if (arguments.length == 2) {
-		var listenerId = JAK.Events.addListener(this._elm, type, method);
-	} else if (arguments.length == 3) {
-		var listenerId = JAK.Events.addListener(this._elm, type, obj, method);
-	} else if (arguments.length > 3) {
-		var obj = obj || window;
-		if (typeof(method) == "string") { 
-			var method = obj[method];
-			if (!method) { throw new Error("JAX.Element.listen: method '" + method + "' was not found in " + obj + "."); }
-		}
-		var listenerId = JAK.Events.addListener(this._elm, type, obj, method.bind(obj, bindParam));
+	var obj = obj || window;
+	if (typeof(method) == "string") {
+		var method = obj[method];
+		if (!method) { throw new Error("JAX.Element.listen: method '" + method + "' was not found in " + obj + "."); }
 	}
+	method = method.bind(obj);
+
+	var thisElm = this;
+	var f = function(e, elm) { method(e, thisElm, bindParam); }
+	var listenerId = JAK.Events.addListener(this._elm, type, f);
 
 	var eventListeners = JAX.Element._EVENTS[this._elm][type] || [];
 	eventListeners = eventListeners.concat(listenerId);
