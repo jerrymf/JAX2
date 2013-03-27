@@ -33,31 +33,81 @@ JAX.$$ = function(query, element) {
 JAX.make = function(tagString, html, srcDocument) {
 	var html = html || "";
 	var tagName = "";
-	var type="";
-	var foundString = ""; 
-	var classNames = [];
-	var ids = [];
+	var type="tagname";
+	var attributes = {innerHTML:html};
+	var currentAttrName = "";
+	var inAttributes = false;
 
 	if (typeof(html) != "string") { throw new Error("JAX.make: Second parameter 'html' must be a string"); }
+	if (tagString.length && ".#[=] ".indexOf(tagString[0]) > -1) { throw new Error("JAX.make: Tagname must be first."); }
 
 	for (var i=0, len=tagString.length; i<len; i++) {
-		if (".#".indexOf(tagString[i]) > -1 || i == len - 1) {
-			if (i == 0) { throw new Error("JAX.make: Classname or id can not be first. First must be tagname."); }
-			if (i == len -1) { foundString += ("" + tagString[i]); }
-			if (foundString && type == "") { tagName = foundString; }
-			if (foundString && type == "class") { classNames.push(foundString); }
-			if (foundString && type == "id") { ids.push(foundString); }
-			foundString = "";
-			type = tagString[i] == "#" ? "id" : "class"; 
-			continue; 
+		var character = tagString[i];
+
+		switch(character) {
+			case ".":
+				if (inAttributes && type == "attribute-value") { break; }
+
+				if (!("className" in attributes)) { 
+					attributes["className"] = ""; 
+				} else {
+					attributes["className"] += " "; 
+				}
+
+				type="attribute-value"; 
+				currentAttrName = "className";
+				continue;
+			break;
+			case "#":
+				if (inAttributes && type == "attribute-value") { break; }
+
+				if (!("id" in attributes)) {
+					attributes["id"] = "";
+				} else {	
+					attributes["id"] += " ";
+				}
+
+				type="attribute-value"; 
+				currentAttrName = "id";
+				continue;
+			break;
+			case "[":
+				type="attribute-name"; 
+				currentAttrName = "";
+				inAttributes = true;
+				continue;
+			break;
+			case "=":
+				if (type != "attribute-name") { break; }
+				attributes[currentAttrName] = "";
+				type="attribute-value";
+				continue; 
+			break;
+			case "]":
+				type="";
+				inAttributes = false;
+				continue;
+			break;
+			case " ":
+				if (type != "attribute-value") { continue; }
+			break;
 		}
-		foundString += ("" + tagString[i]);
+
+		switch(type) {
+			case "tagname": 
+				tagName += (character + ""); 
+			break;
+			case "attribute-name":
+				currentAttrName += (character + "");
+			break;
+			case "attribute-value":
+				attributes[currentAttrName] += (character + "");
+			break;
+		}
+
 	}
 
-	var elm = new JAX.Element(JAK.mel(tagName, {innerHTML:html}, {}, srcDocument || document));
-	if (ids.length) { elm.setId(ids.join(" ")); }
-	if (classNames.length) { elm.addClass(classNames.join(" ")); }
-
+	var elm = new JAX.Element(JAK.mel(tagName, attributes, {}, srcDocument || document));
 	return elm;
 };
 
