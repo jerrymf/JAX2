@@ -116,7 +116,7 @@ JAX.Element.prototype.appendBefore = function(element) {
 	return this;
 };
 
-JAX.Element.prototype.remove = function() {
+JAX.Element.prototype.removeFromDOM = function() {
 	this._elm.parentNode.removeChild(this._elm);
 	return this;
 };
@@ -126,7 +126,7 @@ JAX.Element.prototype.getElm = function() {
 };
 
 JAX.Element.prototype.getParent = function() {
-	return this._elm.parentNode;
+	return new JAX.Element(this._elm.parentNode);
 };
 
 JAX.Element.prototype.clone = function(withContent) {
@@ -204,12 +204,14 @@ JAX.Element.prototype.attr = function(attribute, value) {
 
 JAX.Element.prototype.attrs = function(attributes, values) {
 	if (values === undefined) {
-		var attrs = {};
+		var attrs = [];
+		var vals = [];
 		for (var i=0, len=attrsArray.length; i<len; i++) { 
 			var attribute = attributes[i];
-			attrs[attribute] = this._elm.getAttribute(attribute); 
+			attrs.push(attribute);
+			vals.push(this._elm.getAttribute(attribute));
 		}
-		return attrs;	
+		return {attributes:attrs, values:vals};	
 	}
 
 	for (var i=0, len=attributes.length; i<len; i++) {
@@ -228,31 +230,155 @@ JAX.Element.prototype.style = function(property, value) {
 };
 
 JAX.Element.prototype.styles = function(properties, values) {
-	if (value === undefined) { 
-		var vals = {};
+	if (values === undefined) { 
+		var vals = [];
+		var props = [];
 		for (var i=0, len=properties.length; i<len; i++) {
 			var property = properties[i];
-			vals[property] = this._elm.style[property];
+			if (property == "opacity") { vals[property] = this._getOpacity(); continue; }
+			props.push(property);
+			vals.push(this._elm.style[property] || "");
 		}
-		return vals;
+		return {properties:props, values:vals};
 		
 	}
 	
 	for (var i=0, len=properties.length; i<len; i++) {
 		var property = properties[i];
 		var value = values[i];
+		if (property == "opacity") { this._setOpacity(this._elm, value); continue; }
 		this._elm.style[property] = value;
 	}
 
 	return this;
 };
 
-JAX.Element.prototype.displayOn = function(displayValue) {
-	this.style("display", displayValue || "");
+JAX.Element.prototype.displayOn = function(displayValue, withEffect, duration, callback) {
+	this._elm.style.display = displayValue || "";
+
+	switch(withEffect) {
+		case "fadeIn":
+			this._fadeIn(duration, callback);
+		break;
+		case "slideDown":
+			this._slideDown(duration, callback);
+		break;
+	}
+
+	return this;
 };
 
-JAX.Element.prototype.displayOff = function() {
-	this.style("display", "none");
+JAX.Element.prototype.displayOff = function(withEffect, duration, callback) {
+	switch(withEffect) {
+		case "fadeOut":
+			this._fadeOut(duration, function() { this._elm.style.display = "none"; if (callback) { callback(); } }.bind(this));
+		break;
+
+		case "slideUp":
+			this._slideUp(duration, function() { this._elm.style.display = "none"; if (callback) { callback(); } }.bind(this));
+		break;
+
+		default:
+			this._elm.style.display = "none";
+	}
+	return this;
+};
+
+JAX.Element.prototype.computedStyle = function(property) {
+	return JAK.DOM.getStyle(this._elm, property);
+};
+
+JAX.Element.prototype.width = function(value) {
+	if (value === undefined) { return this._elm.offsetWidth; }
+	this._elm.style.width = value + "px";
+	return this;
+};
+
+JAX.Element.prototype.height = function(value) {
+	if (value === undefined) { return this._elm.offsetHeight; }
+	this._elm.style.height = value + "px";
+	return this;
+};
+
+JAX.Element.prototype._setOpacity = function(value) {
+	var property = "";
+
+	if (JAK.Browser.client == "ie" || JAK.Browser.version < 9) { 
+		property = "filter";
+		value = Math.round(100*val);
+		value = "progid:DXImageTransform.Microsoft.Alpha(opacity=" + val + ");";
+	} else {
+		property = "opacity";
+	}
+
+	this._elm.style[property] = value;
+
+};
+
+JAX.Element.prototype._getOpacity = function() {
+	if (JAK.Browser.client == "ie" && JAK.Browser.version < 9) {
+		var value = "";
+		this._elm.style.filter.replace(JAX.Animation.REGEXP_OPACITY, function(match1, match2) {
+			value = match2;
+		});
+		return value ? (parseInt(value, 10)/100)+"" : value;
+	}
+	return this._elm.style["opacity"];
+};
+
+JAX.Element.prototype._fadeIn = function(duration, callback) {
+	var animation = new JAX.Animation(this, duration);
+	var opacity = this.computedStyle("opacity");
+
+	animation.addProperty("opacity", parseFloat(opacity) || 0,  1);
+	animation.addCallback(callback);
+	animation.run();
+
+	return animation;
+};
+
+JAX.Element.prototype._fadeOut = function(duration, callback) {
+	var animation = new JAX.Animation(this, duration);
+
+	var opacity = this.computedStyle("opacity");
+	animation.addProperty("opacity", parseFloat(opacity) ||  1, 0);
+
+	animation.addCallback(callback);
+	animation.run();
+
+	return animation;
+};
+
+JAX.Element.prototype._slideDown = function(duration, callback) {
+	var animation = new JAX.Animation(this, duration);
+	var backupStyles = this.styles(["height","width","overflow"]);
+	this.style("overflow", "hidden");
+	this.style("width", this.width() + "px");
+
+	animation.addProperty("height", 0, this.height());
+	animation.addCallback(function() {
+		this.styles(backupStyles.properties, backupStyles.values);
+		if (callback) { callback(); }
+	}.bind(this));
+	animation.run();
+
+	return animation;
+};
+
+JAX.Element.prototype._slideUp = function(duration, callback) {
+	var animation = new JAX.Animation(this, duration);
+	var backupStyles = this.styles(["height","width","overflow"]);
+	this.style("overflow", "hidden");
+	this.style("width", this.width() + "px");
+
+	animation.addProperty("height", this.height(), 0);
+	animation.addCallback(function() {
+		this.styles(backupStyles.properties, backupStyles.values);
+		if (callback) { callback(); }
+	}.bind(this));
+	animation.run();
+
+	return animation;
 };
 
 JAX.Element.prototype._destroyEvents = function(eventlisteners) {
