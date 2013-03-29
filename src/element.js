@@ -329,9 +329,13 @@ JAX.Element.prototype._getOpacity = function() {
 JAX.Element.prototype._fadeIn = function(duration, callback) {
 	var animation = new JAX.Animation(this, duration);
 	var opacity = this.computedStyle("opacity");
+	var backupStyle = this.style("opacity");
 
 	animation.addProperty("opacity", parseFloat(opacity) || 0,  1);
-	animation.addCallback(callback);
+	animation.addCallback(function() {
+		this.style("opacity", backupStyle);
+		if (callback) { callback(); }
+	}.bind(this));
 	animation.run();
 
 	return animation;
@@ -339,11 +343,14 @@ JAX.Element.prototype._fadeIn = function(duration, callback) {
 
 JAX.Element.prototype._fadeOut = function(duration, callback) {
 	var animation = new JAX.Animation(this, duration);
-
 	var opacity = this.computedStyle("opacity");
-	animation.addProperty("opacity", parseFloat(opacity) ||  1, 0);
+	var backupStyle = this.style("opacity");
 
-	animation.addCallback(callback);
+	animation.addProperty("opacity", parseFloat(opacity) ||  1, 0);
+	animation.addCallback(function() {
+		this.style("opacity", backupStyle);
+		if (callback) { callback(); }
+	}.bind(this));
 	animation.run();
 
 	return animation;
