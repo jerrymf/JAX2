@@ -27,7 +27,7 @@ JAX.Element.prototype.destroy = function() {
 };
 
 JAX.Element.prototype.addClass = function(classname) {
-	if (!(classname instanceof String)) { throw new Error("JAX.Element.addClass accepts only string as its parameter. See doc for more information."); }
+	if (typeof(classname) !== "string") { throw new Error("JAX.Element.addClass accepts only string as its parameter. See doc for more information."); }
 
 	var classnames = classname.split(" ");
 	var classes = this._elm.className.split(" ");
@@ -42,7 +42,7 @@ JAX.Element.prototype.addClass = function(classname) {
 };
 
 JAX.Element.prototype.removeClass = function(classname) {
-	if (!(classname instanceof String)) { throw new Error("JAX.Element.removeClass accepts only string as its parameter. See doc for more information."); }
+	if (typeof(classname) !== "string") { throw new Error("JAX.Element.removeClass accepts only string as its parameter. See doc for more information."); }
 
 	var classnames = classname.split(" ");
 	var classes = this._elm.className.split(" ");
@@ -69,7 +69,7 @@ JAX.Element.prototype.hasClass = function(className) {
 };
 
 JAX.Element.prototype.id = function(id) {
-	if (!id && !(id instanceof String)) { return this.attr("id"); }
+	if (typeof(id) !== "string") { return this.attr("id"); }
 	this.attr({id:id});
 	return this;
 };
@@ -135,11 +135,11 @@ JAX.Element.prototype.clone = function(withContent) {
 };
 
 JAX.Element.prototype.listen = function(type, method, obj, bindParam) {
-	if (!type || !(type instanceof String)) { throw new Error("JAX.Element.listen: first parameter must be string. See doc for more information."); }
-	if (method && !(method instanceof String) && !(method instanceof Function)) { throw new Error("JAX.Element.listen: second paremeter must be function or name of function. See doc for more information."); }
+	if (!type || typeof(type) !== "string") { throw new Error("JAX.Element.listen: first parameter must be string. See doc for more information."); }
+	if (method && typeof(method) !== "string" && !(method instanceof Function)) { throw new Error("JAX.Element.listen: second paremeter must be function or name of function. See doc for more information."); }
 	if (arguments.length > 4) { console.warn("JAX.Element.listen accepts maximally 4 arguments. See doc for more information."); }
 	
-	if (method instanceof String) {
+	if (typeof(method) === "string") {
 		var obj = obj || window;
 		var method = obj[method];
 		if (!method) { throw new Error("JAX.Element.listen: method '" + method + "' was not found in " + obj + "."); }
@@ -165,7 +165,7 @@ JAX.Element.prototype.stopListening = function(type, listenerId) {
 		return this;
 	}
 
-	if (!(type instanceof String) || (method && !(method instanceof String)) {
+	if (typeof(type) !== "string" || (method && typeof(method) !== "string")) {
 		throw new Error("JAX.Element.stopListening bad arguments. See doc for more information.")
 	}
 
@@ -190,7 +190,7 @@ JAX.Element.prototype.stopListening = function(type, listenerId) {
 };
 
 JAX.Element.prototype.attr = function(attributes) {
-	if (attributes instanceof String) { attributes = [].concat(attributes); }
+	if (typeof(attributes) === "string") { attributes = [].concat(attributes); }
 	if (attributes instanceof Array) {
 		var attrs = [];
 		for (var i=0, len=attrsArray.length; i<len; i++) { 
@@ -209,7 +209,7 @@ JAX.Element.prototype.attr = function(attributes) {
 };
 
 JAX.Element.prototype.style = function(cssStyles) {
-	if (cssStyles instanceof String) { cssStyles = [].concat(cssStyles); }
+	if (typeof(cssStyles) === "string") { cssStyles = [].concat(cssStyles); }
 	if (cssStyles instanceof Array) {
 		var css = {};
 		for (var i=0, len=cssStyles.length; i<len; i++) {
