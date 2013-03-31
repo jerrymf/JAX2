@@ -1,13 +1,16 @@
 JAX.Element = JAK.ClassMaker.makeClass({
 	NAME: "JAX.Element",
-	VERSION: "0.31"
+	VERSION: "0.5"
 });
 
 JAX.Element._EVENTS = {};
 
+JAX.Element.prototype.ELM = null;
+
 JAX.Element.prototype.$constructor = function(element) {
 	if (!("tagName" in element)) { throw new Error("JAX.Element constructor accepts only HTML element as its parameter. See doc for more information.") }
 	this._elm = element;
+	this.ELM = element;
 	JAX.Element._EVENTS[this._elm] = JAX.Element._EVENTS[this._elm] || {};
 };
 
@@ -17,13 +20,14 @@ JAX.Element.prototype.$destructor = function() {
 
 JAX.Element.prototype.destroy = function() {
 	this.stopListening();
-	this.remove();
+	this.removeFromDOM();
 	delete JAX.Element._EVENTS[this._elm];
 	this._elm = null;
+	this.ELM = null;
 };
 
 JAX.Element.prototype.addClass = function(classname) {
-	if (typeof(classname) != "string") { throw new Error("JAX.Element.addClass accepts only string as its parameter. See doc for more information."); }
+	if (!(classname instanceof String)) { throw new Error("JAX.Element.addClass accepts only string as its parameter. See doc for more information."); }
 
 	var classnames = classname.split(" ");
 	var classes = this._elm.className.split(" ");
@@ -38,7 +42,7 @@ JAX.Element.prototype.addClass = function(classname) {
 };
 
 JAX.Element.prototype.removeClass = function(classname) {
-	if (typeof(classname) != "string") { throw new Error("JAX.Element.removeClass accepts only string as its parameter. See doc for more information."); }
+	if (!(classname instanceof String)) { throw new Error("JAX.Element.removeClass accepts only string as its parameter. See doc for more information."); }
 
 	var classnames = classname.split(" ");
 	var classes = this._elm.className.split(" ");
@@ -64,13 +68,10 @@ JAX.Element.prototype.hasClass = function(className) {
 	return false;
 };
 
-JAX.Element.prototype.setId = function(id) {
-	this.attr("id",id);
+JAX.Element.prototype.id = function(id) {
+	if (!id && !(id instanceof String)) { return this.attr("id"); }
+	this.attr({id:id});
 	return this;
-};
-
-JAX.Element.prototype.getId = function() {
-	return this.attr("id");
 };
 
 JAX.Element.prototype.addElement = function(element) {
@@ -78,7 +79,7 @@ JAX.Element.prototype.addElement = function(element) {
 		throw new Error("JAX.Element.addElement accepts only HTML element, textnode or JAX.Element instance as its parameter. See doc for more information."); 
 	}
 
-	var elm = element instanceof JAX.Element ? element.getElm() : element;
+	var elm = element instanceof JAX.Element ? element.ELM : element;
 	this._elm.appendChild(elm);
 
 	return this;
@@ -89,8 +90,8 @@ JAX.Element.prototype.addElementBefore = function(element, elementBefore) {
 		throw new Error("JAX.Element.addElmBefore accepts only HTML element, textnode or JAX.Element instance as its parameter. See doc for more information."); 
 	}
 
-	var elm = element instanceof JAX.Element ? element.getElm() : element;
-	var elmBefore = elementBefore instanceof JAX.Element ? elementBefore.getElm() : elementBefore;
+	var elm = element instanceof JAX.Element ? element.ELM : element;
+	var elmBefore = elementBefore instanceof JAX.Element ? elementBefore.ELM : elementBefore;
 
 	this._elm.insertBefore(elm, elmBefore);
 
@@ -105,24 +106,22 @@ JAX.Element.prototype.addElements = function() {
 };
 
 JAX.Element.prototype.appendTo = function(element) {
-	var elm = element instanceof JAX.Element ? element.getElm() : element;
+	var elm = element instanceof JAX.Element ? element.ELM : element;
 	elm.appendChild(this._elm);
 	return this;
 };
 
 JAX.Element.prototype.appendBefore = function(element) {
-	var elm = element instanceof JAX.Element ? element.getElm() : element;
+	var elm = element instanceof JAX.Element ? element.ELM : element;
 	elm.parentNode.insertBefore(this._elm, elm);
 	return this;
 };
 
 JAX.Element.prototype.removeFromDOM = function() {
-	this._elm.parentNode.removeChild(this._elm);
+	try {
+		this._elm.parentNode.removeChild(this._elm);
+	} catch(e) {};
 	return this;
-};
-
-JAX.Element.prototype.getElm = function() {
-	return this._elm;
 };
 
 JAX.Element.prototype.getParent = function() {
@@ -136,16 +135,16 @@ JAX.Element.prototype.clone = function(withContent) {
 };
 
 JAX.Element.prototype.listen = function(type, method, obj, bindParam) {
-	if (!type || typeof(type) != "string") { throw new Error("JAX.Element.listen: first parameter must be string. See doc for more information."); }
-	if (method && typeof(method) != "string" && !(method instanceof Function)) { throw new Error("JAX.Element.listen: second paremeter must be function or name of function. See doc for more information."); }
+	if (!type || !(type instanceof String)) { throw new Error("JAX.Element.listen: first parameter must be string. See doc for more information."); }
+	if (method && !(method instanceof String) && !(method instanceof Function)) { throw new Error("JAX.Element.listen: second paremeter must be function or name of function. See doc for more information."); }
 	if (arguments.length > 4) { console.warn("JAX.Element.listen accepts maximally 4 arguments. See doc for more information."); }
 	
-	var obj = obj || window;
-	if (typeof(method) == "string") {
+	if (method instanceof String) {
+		var obj = obj || window;
 		var method = obj[method];
 		if (!method) { throw new Error("JAX.Element.listen: method '" + method + "' was not found in " + obj + "."); }
+		method = method.bind(obj);
 	}
-	method = method.bind(obj);
 
 	var thisElm = this;
 	var f = function(e, elm) { method(e, thisElm, bindParam); }
@@ -166,7 +165,7 @@ JAX.Element.prototype.stopListening = function(type, listenerId) {
 		return this;
 	}
 
-	if (typeof(type) != "string" || (method && typeof(method) != "string")) {
+	if (!(type instanceof String) || (method && !(method instanceof String)) {
 		throw new Error("JAX.Element.stopListening bad arguments. See doc for more information.")
 	}
 
@@ -190,64 +189,41 @@ JAX.Element.prototype.stopListening = function(type, listenerId) {
 	return this;
 };
 
-JAX.Element.prototype.valueOf = function(property, value) {
-	if (value === undefined) { return this._elm[property]; }
-	this._elm[property] = value;
-	return this;
-};
-
-JAX.Element.prototype.attr = function(attribute, value) {
-	if (value === undefined) { return this._elm.getAttribute(attribute); }
-	this._elm.setAttribute(attribute, value);
-	return this;
-};
-
-JAX.Element.prototype.attrs = function(attributes, values) {
-	if (values === undefined) {
+JAX.Element.prototype.attr = function(attributes) {
+	if (attributes instanceof String) { attributes = [].concat(attributes); }
+	if (attributes instanceof Array) {
 		var attrs = [];
-		var vals = [];
 		for (var i=0, len=attrsArray.length; i<len; i++) { 
 			var attribute = attributes[i];
-			attrs.push(attribute);
-			vals.push(this._elm.getAttribute(attribute));
+			attrs[attribute] = this._elm.getAttribute(attribute);
 		}
-		return {attributes:attrs, values:vals};	
+		return attrs;	
 	}
 
-	for (var i=0, len=attributes.length; i<len; i++) {
-		var attribute = attributes[i];
-		var value = values[i];
-		this._elm.setAttribute(attribute, value);
+	for (var p in attributes) {
+		var value = attributes[p];
+		this._elm.setAttribute(p, value);
 	}
 
 	return this;
 };
 
-JAX.Element.prototype.style = function(property, value) {
-	if (value === undefined) { return this._elm.style[property]; }
-	this._elm.style[property] = value;
-	return this;
-};
-
-JAX.Element.prototype.styles = function(properties, values) {
-	if (values === undefined) { 
-		var vals = [];
-		var props = [];
-		for (var i=0, len=properties.length; i<len; i++) {
-			var property = properties[i];
-			if (property == "opacity") { vals[property] = this._getOpacity(); continue; }
-			props.push(property);
-			vals.push(this._elm.style[property] || "");
+JAX.Element.prototype.style = function(cssStyles) {
+	if (cssStyles instanceof String) { cssStyles = [].concat(cssStyles); }
+	if (cssStyles instanceof Array) {
+		var css = {};
+		for (var i=0, len=cssStyles.length; i<len; i++) {
+			var cssStyle = cssStyles[i];
+			if (property == "opacity") { css[property] = this._getOpacity(); continue; }
+			css[cssStyle] = this._elm.style[cssStyle];
 		}
-		return {properties:props, values:vals};
-		
+		return css;
 	}
-	
-	for (var i=0, len=properties.length; i<len; i++) {
-		var property = properties[i];
-		var value = values[i];
+
+	for (p in cssStyles) {
+		var value = cssStyles[p];
 		if (property == "opacity") { this._setOpacity(this._elm, value); continue; }
-		this._elm.style[property] = value;
+		this._elm.style[p] = value;
 	}
 
 	return this;
@@ -271,11 +247,17 @@ JAX.Element.prototype.displayOn = function(displayValue, withEffect, duration, c
 JAX.Element.prototype.displayOff = function(withEffect, duration, callback) {
 	switch(withEffect) {
 		case "fadeOut":
-			this._fadeOut(duration, function() { this._elm.style.display = "none"; if (callback) { callback(); } }.bind(this));
+			this._fadeOut(duration, function() { 
+				this._elm.style.display = "none"; 
+				if (callback) { callback(); } 
+			}.bind(this));
 		break;
 
 		case "slideUp":
-			this._slideUp(duration, function() { this._elm.style.display = "none"; if (callback) { callback(); } }.bind(this));
+			this._slideUp(duration, function() { 
+				this._elm.style.display = "none"; 
+				if (callback) { callback(); } 
+			}.bind(this));
 		break;
 
 		default:
@@ -284,19 +266,47 @@ JAX.Element.prototype.displayOff = function(withEffect, duration, callback) {
 	return this;
 };
 
-JAX.Element.prototype.computedStyle = function(property) {
-	return JAK.DOM.getStyle(this._elm, property);
+JAX.Element.prototype.computedStyle = function(properties) {
+	var css = {};
+	var properties = [].concat(properties);
+	for (var i=0, len=properties.length; i<len; i++) {
+		var property = properties[i];
+		css[properties] = JAK.DOM.getStyle(this._elm, property);
+	}
+	return css;
 };
 
 JAX.Element.prototype.width = function(value) {
-	if (value === undefined) { return this._elm.offsetWidth; }
-	this._elm.style.width = value + "px";
+	if (!value && isNaN(value)) { return this._elm.offsetWidth; }
+
+	var paddingLeft = parseInt(this.computedStyle("padding-left"),10);
+	var paddingRight = parseInt(this.computedStyle("padding-right"), 10);
+	var borderLeft = parseInt(this.computedStyle("border-left"),10);
+	var borderRight = parseInt(this.computedStyle("border-right"), 10);
+
+	if (!isNaN(paddingLeft)) { value =- paddingLeft; }
+	if (!isNaN(paddingRight)) { value =- paddingRight; }
+	if (!isNaN(borderLeft)) { value =- borderLeft; }
+	if (!isNaN(borderRight)) { value =- borderRight; }
+
+	this._elm.style.width = Math.max(value,0) + "px";
 	return this;
 };
 
 JAX.Element.prototype.height = function(value) {
-	if (value === undefined) { return this._elm.offsetHeight; }
-	this._elm.style.height = value + "px";
+	if (!value && isNaN(value)) { return this._elm.offsetHeight; }
+
+	var paddingTop = parseInt(this.computedStyle("padding-top"),10);
+	var paddingBottom = parseInt(this.computedStyle("padding-bottom"), 10);
+	var borderTop = parseInt(this.computedStyle("border-top"),10);
+	var borderBottom = parseInt(this.computedStyle("border-bottom"), 10);
+
+	if (!isNaN(paddingTop)) { value =- paddingTop; }
+	if (!isNaN(paddingBottom)) { value =- paddingBottom; }
+	if (!isNaN(borderTop)) { value =- borderTop; }
+	if (!isNaN(borderBottom)) { value =- borderBottom; }
+
+	this._elm.style.height = Math.max(value,0) + "px";
 	return this;
 };
 
@@ -305,8 +315,8 @@ JAX.Element.prototype._setOpacity = function(value) {
 
 	if (JAK.Browser.client == "ie" || JAK.Browser.version < 9) { 
 		property = "filter";
-		value = Math.round(100*val);
-		value = "progid:DXImageTransform.Microsoft.Alpha(opacity=" + val + ");";
+		value = Math.round(100*value);
+		value = "progid:DXImageTransform.Microsoft.Alpha(opacity=" + value + ");";
 	} else {
 		property = "opacity";
 	}

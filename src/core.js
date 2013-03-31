@@ -3,7 +3,7 @@ JAX = {
 };
 
 JAX.$ = function(query, element, filter) {
-	if (typeof(query) != "string") { throw new Error("JAX.$ accepts only String as the first parameter. See doc for more information.")};
+	if (!(query instanceof String)) { throw new Error("JAX.$ accepts only String as the first parameter. See doc for more information.")};
 	if (element && !("querySelectorAll" in element) && !(element instanceof JAX.Element)) { 
 		throw new Error("JAX.$ accepts only HTML element with querySelectorAll support or JAX.Element instance as the second parameter. See doc for more information."); 
 	}
@@ -22,7 +22,7 @@ JAX.$ = function(query, element, filter) {
 };
 
 JAX.$$ = function(query, element) {
-	if (typeof(query) != "string") { throw new Error("JAX.$$ accepts only String as the first parameter.")};
+	if (!(query instanceof String)) { throw new Error("JAX.$$ accepts only String as the first parameter.")};
 	if (element && !("querySelector" in element) && !(element instanceof JAX.Element)) { 
 		throw new Error("JAX.$$ accepts only HTML element with querySelector support or JAX.Element instance as the second parameter. See doc for more information."); 
 	}
@@ -42,7 +42,7 @@ JAX.make = function(tagString, html, srcDocument) {
 	var currentAttrName = "";
 	var inAttributes = false;
 
-	if (typeof(html) != "string") { throw new Error("JAX.make: Second parameter 'html' must be a string"); }
+	if (!(html instanceof String) { throw new Error("JAX.make: Second parameter 'html' must be a string"); }
 	if (tagString.length && ".#[=] ".indexOf(tagString[0]) > -1) { throw new Error("JAX.make: Tagname must be first."); }
 
 	for (var i=0, len=tagString.length; i<len; i++) {
