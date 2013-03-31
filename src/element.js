@@ -277,7 +277,7 @@ JAX.Element.prototype.computedStyle = function(properties) {
 };
 
 JAX.Element.prototype.width = function(value) {
-	if (!value && isNaN(value)) { return this._elm.offsetWidth; }
+	if (isNaN(value)) { return this._elm.offsetWidth; }
 
 	var paddingLeft = parseInt(this.computedStyle("padding-left"),10);
 	var paddingRight = parseInt(this.computedStyle("padding-right"), 10);
@@ -294,7 +294,7 @@ JAX.Element.prototype.width = function(value) {
 };
 
 JAX.Element.prototype.height = function(value) {
-	if (!value && isNaN(value)) { return this._elm.offsetHeight; }
+	if (isNaN(value)) { return this._elm.offsetHeight; }
 
 	var paddingTop = parseInt(this.computedStyle("padding-top"),10);
 	var paddingBottom = parseInt(this.computedStyle("padding-bottom"), 10);
