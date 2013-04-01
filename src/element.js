@@ -190,10 +190,10 @@ JAX.Element.prototype.stopListening = function(type, listenerId) {
 };
 
 JAX.Element.prototype.attr = function(attributes) {
-	if (typeof(attributes) === "string") { attributes = [].concat(attributes); }
+	if (typeof(attributes) === "string") { return this._elm.getAttribute(attributes); }
 	if (attributes instanceof Array) {
-		var attrs = [];
-		for (var i=0, len=attrsArray.length; i<len; i++) { 
+		var attrs = {};
+		for (var i=0, len=attributes.length; i<len; i++) { 
 			var attribute = attributes[i];
 			attrs[attribute] = this._elm.getAttribute(attribute);
 		}
@@ -209,12 +209,12 @@ JAX.Element.prototype.attr = function(attributes) {
 };
 
 JAX.Element.prototype.style = function(cssStyles) {
-	if (typeof(cssStyles) === "string") { cssStyles = [].concat(cssStyles); }
+	if (typeof(cssStyles) === "string") { return this._elm.style[cssStyles]; }
 	if (cssStyles instanceof Array) {
 		var css = {};
 		for (var i=0, len=cssStyles.length; i<len; i++) {
 			var cssStyle = cssStyles[i];
-			if (property == "opacity") { css[property] = this._getOpacity(); continue; }
+			if (cssStyle == "opacity") { css[cssStyle] = this._getOpacity(); continue; }
 			css[cssStyle] = this._elm.style[cssStyle];
 		}
 		return css;
@@ -222,7 +222,7 @@ JAX.Element.prototype.style = function(cssStyles) {
 
 	for (p in cssStyles) {
 		var value = cssStyles[p];
-		if (property == "opacity") { this._setOpacity(this._elm, value); continue; }
+		if (p == "opacity") { this._setOpacity(this._elm, value); continue; }
 		this._elm.style[p] = value;
 	}
 
@@ -266,12 +266,12 @@ JAX.Element.prototype.displayOff = function(withEffect, duration, callback) {
 	return this;
 };
 
-JAX.Element.prototype.computedStyle = function(properties) {
+JAX.Element.prototype.computedStyle = function(cssStyles) {
 	var css = {};
-	var properties = [].concat(properties);
-	for (var i=0, len=properties.length; i<len; i++) {
-		var property = properties[i];
-		css[properties] = JAK.DOM.getStyle(this._elm, property);
+	var properties = [].concat(cssStyles);
+	for (var i=0, len=cssStyles.length; i<len; i++) {
+		var cssStyle = cssStyles[i];
+		css[cssStyle] = JAK.DOM.getStyle(this._elm, cssStyle);
 	}
 	return css;
 };
@@ -307,6 +307,11 @@ JAX.Element.prototype.height = function(value) {
 	if (!isNaN(borderBottom)) { value =- borderBottom; }
 
 	this._elm.style.height = Math.max(value,0) + "px";
+	return this;
+};
+
+JAX.Element.prototype.html = function(innerHTML) {
+	this._elm.innerHTML = innerHTML;
 	return this;
 };
 

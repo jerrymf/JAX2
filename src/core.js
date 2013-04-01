@@ -9,7 +9,7 @@ JAX.$ = function(query, element, filter) {
 	}
 
 	var sourceElm = element || document;
-	var foundElms = (sourceElm instanceof JAX.Element ? sourceElm.getElm() : sourceElm).querySelectorAll(query);
+	var foundElms = (sourceElm instanceof JAX.Element ? sourceElm.ELM : sourceElm).querySelectorAll(query);
 	var jaxelms = [];
 
 	for (var i=0, len=foundElms.length; i<len; i++) {
@@ -28,7 +28,7 @@ JAX.$$ = function(query, element) {
 	}
 
 	var sourceElm = element || document;
-	var foundElm = (sourceElm instanceof JAX.Element ? sourceElm.getElm() : sourceElm).querySelector(query);
+	var foundElm = (sourceElm instanceof JAX.Element ? sourceElm.ELM : sourceElm).querySelector(query);
 	var jaxelm = foundElm ? new JAX.Element(foundElm) : null;
 
 	return jaxelm;
