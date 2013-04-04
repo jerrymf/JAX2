@@ -1,19 +1,19 @@
 JAX = {
-	VERSION: "1.91b"
+	VERSION: "1.92b"
 };
 
 JAX.$ = function(query, element, filter) {
-	if (typeof(query) !== "string") { throw new Error("JAX.$ accepts only String as the first parameter. See doc for more information.")};
-	if (element && !("querySelectorAll" in element) && !(element instanceof JAX.Element)) { 
-		throw new Error("JAX.$ accepts only HTML element with querySelectorAll support or JAX.Element instance as the second parameter. See doc for more information."); 
+	if (typeof(query) != "string") { throw new Error("JAX.$ accepts only String as the first parameter. See doc for more information.")};
+	if (element && !("querySelectorAll" in element) && !(element instanceof JAX.HTMLElm)) { 
+		throw new Error("JAX.$ accepts only HTML element with querySelectorAll support or JAX.HTMLElm instance as the second parameter. See doc for more information."); 
 	}
 
 	var sourceElm = element || document;
-	var foundElms = (sourceElm instanceof JAX.Element ? sourceElm.ELM : sourceElm).querySelectorAll(query);
+	var foundElms = (sourceElm instanceof JAX.HTMLElm ? sourceElm.NODE : sourceElm).querySelectorAll(query);
 	var jaxelms = [];
 
 	for (var i=0, len=foundElms.length; i<len; i++) {
-		jaxelms.push(new JAX.Element(foundElms[i]));
+		jaxelms.push(new JAX.HTMLElm(foundElms[i]));
 	}
 
 	if (filter) { jaxelms = jaxelms.filter(filter, this); }
@@ -22,14 +22,14 @@ JAX.$ = function(query, element, filter) {
 };
 
 JAX.$$ = function(query, element) {
-	if (typeof(query) !== "string") { throw new Error("JAX.$$ accepts only String as the first parameter.")};
-	if (element && !("querySelector" in element) && !(element instanceof JAX.Element)) { 
-		throw new Error("JAX.$$ accepts only HTML element with querySelector support or JAX.Element instance as the second parameter. See doc for more information."); 
+	if (typeof(query) != "string") { throw new Error("JAX.$$ accepts only String as the first parameter.")};
+	if (element && !("querySelector" in element) && !(element instanceof JAX.HTMLElm)) { 
+		throw new Error("JAX.$$ accepts only HTML element with querySelector support or JAX.HTMLElm instance as the second parameter. See doc for more information."); 
 	}
 
 	var sourceElm = element || document;
-	var foundElm = (sourceElm instanceof JAX.Element ? sourceElm.ELM : sourceElm).querySelector(query);
-	var jaxelm = foundElm ? new JAX.Element(foundElm) : null;
+	var foundElm = (sourceElm instanceof JAX.HTMLElm ? sourceElm.NODE : sourceElm).querySelector(query);
+	var jaxelm = foundElm ? new JAX.HTMLElm(foundElm) : null;
 
 	return jaxelm;
 };
@@ -42,7 +42,7 @@ JAX.make = function(tagString, html, srcDocument) {
 	var currentAttrName = "";
 	var inAttributes = false;
 
-	if (typeof(html) !== "string") { throw new Error("JAX.make: Second parameter 'html' must be a string"); }
+	if (typeof(html) != "string") { throw new Error("JAX.make: Second parameter 'html' must be a string"); }
 	if (tagString.length && ".#[=] ".indexOf(tagString[0]) > -1) { throw new Error("JAX.make: Tagname must be first."); }
 
 	for (var i=0, len=tagString.length; i<len; i++) {
@@ -111,7 +111,33 @@ JAX.make = function(tagString, html, srcDocument) {
 
 	}
 
-	var elm = new JAX.Element(JAK.mel(tagName, attributes, {}, srcDocument || document));
+	var elm = new JAX.HTMLElm(JAK.mel(tagName, attributes, {}, srcDocument || document));
 	return elm;
+};
+
+JAX.makeText = function(text) {
+	return new JAX.TextNode(JAK.ctext(text));
+};
+
+JAX.isNumber = function(value, strict) {
+	var isNum = true;
+	if (strict) { isNum = typeof(value) != "string"; }
+	return isNum && !isNaN(parseFloat(value)) && parseFloat(value) === (value * 1);
+};
+
+JAX.isString = function(value) {
+	return typeof(value) == "string";
+};
+
+JAX.isArray = function(value) {
+	return value instanceof Array;
+};
+
+JAX.isFunction = function(value) {
+	return value instanceof Function;
+};
+
+JAX.isBoolean = function(value) {
+	return value === true || value === false;
 };
 
