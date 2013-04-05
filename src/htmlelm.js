@@ -276,7 +276,7 @@ JAX.HTMLElm.prototype.computedStyle = function(cssStyles) {
 };
 
 JAX.HTMLElm.prototype.width = function(value) {
-	if (isNaN(value)) { return this.NODE.offsetWidth; }
+	if (!arguments.length) { return this.NODE.offsetWidth; }
 
 	var paddingLeft = parseInt(this.computedStyle("padding-left"),10);
 	var paddingRight = parseInt(this.computedStyle("padding-right"), 10);
@@ -293,7 +293,7 @@ JAX.HTMLElm.prototype.width = function(value) {
 };
 
 JAX.HTMLElm.prototype.height = function(value) {
-	if (isNaN(value)) { return this.NODE.offsetHeight; }
+	if (!arguments.length) { return this.NODE.offsetHeight; }
 
 	var paddingTop = parseInt(this.computedStyle("padding-top"),10);
 	var paddingBottom = parseInt(this.computedStyle("padding-bottom"), 10);
@@ -310,6 +310,7 @@ JAX.HTMLElm.prototype.height = function(value) {
 };
 
 JAX.HTMLElm.prototype.html = function(innerHTML) {
+	if (innerHTML === undefined) { return innerHTML; }
 	this.NODE.innerHTML = innerHTML;
 	return this;
 };
