@@ -119,10 +119,13 @@ JAX.makeText = function(text) {
 	return new JAX.TextNode(JAK.ctext(text));
 };
 
-JAX.isNumber = function(value, strict) {
-	var isNum = true;
-	if (strict) { isNum = typeof(value) != "string"; }
-	return isNum && !isNaN(parseFloat(value)) && parseFloat(value) === (value * 1);
+JAX.isNumber = function(value) {
+	return typeof(value) == "number";
+};
+
+JAX.isNumeric = function(value) {
+	var val = parseFloat(value);
+	return val === (value * 1) && !isNaN(val) && value != Infinity;
 };
 
 JAX.isString = function(value) {
@@ -139,5 +142,9 @@ JAX.isFunction = function(value) {
 
 JAX.isBoolean = function(value) {
 	return value === true || value === false;
+};
+
+JAX.isDate = function(value) {
+	return value instanceof Date;
 };
 
