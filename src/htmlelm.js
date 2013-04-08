@@ -106,7 +106,7 @@ JAX.HTMLElm.prototype.addNodeBefore = function(node, nodeBefore) {
 
 JAX.HTMLElm.prototype.addNodes = function() {
 	var nodes = arguments;
-	if (nodes.length == 1 && nodes instanceof Array) { nodes = nodes[0]; }
+	if (nodes.length == 1 && nodes[0] instanceof Array) { nodes = nodes[0]; }
 	for (var i=0, len=nodes.length; i<len; i++) { this.addNode(nodes[i]); }
 	return this;
 };
