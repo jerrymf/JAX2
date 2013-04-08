@@ -274,14 +274,14 @@ JAX.HTMLElm.prototype.style = function(cssStyles) {
 
 JAX.HTMLElm.prototype.displayOn = function(displayValue) {
 	if (this._checkLocked(this.displayOn, arguments)) { return this; }
-	this.NODE.style.display = displayValue || "";
+	this.style({"display":displayValue || ""});
 
 	return this;
 };
 
 JAX.HTMLElm.prototype.displayOff = function() {
 	if (this._checkLocked(this.displayOff, arguments)) { return this; }
-	this.NODE.style.display = "none";
+	this.style({"display":"none"});
 
 	return this;
 };
