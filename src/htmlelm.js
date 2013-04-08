@@ -130,11 +130,6 @@ JAX.HTMLElm.prototype.removeFromDOM = function() {
 	return this;
 };
 
-JAX.HTMLElm.prototype.getParent = function() {
-	if (this.NODE.parentNode) { return new JAX.HTMLElm(this.NODE.parentNode); }
-	return null;
-};
-
 JAX.HTMLElm.prototype.clone = function(withContent) {
 	var withContent = !!withContent;
 	var clone = this.NODE.cloneNode(withContent);
@@ -322,6 +317,11 @@ JAX.HTMLElm.prototype.html = function(innerHTML) {
 	if (!arguments.length) { return innerHTML; }
 	this.NODE.innerHTML = innerHTML;
 	return this;
+};
+
+JAX.HTMLElm.prototype.parent = function() {
+	if (this.NODE.parentNode) { return new JAX.HTMLElm(this.NODE.parentNode); }
+	return null;
 };
 
 JAX.HTMLElm.prototype.nextSibling = function() {
