@@ -2,26 +2,21 @@ JAX = {
 	VERSION: "1.92b"
 };
 
-JAX.$ = function(query, element, filter) {
-	if (typeof(query) != "string") { throw new Error("JAX.$ accepts only String as the first parameter. See doc for more information.")};
-	if (element && !("querySelectorAll" in element) && !(element instanceof JAX.HTMLElm)) { 
-		throw new Error("JAX.$ accepts only HTML element with querySelectorAll support or JAX.HTMLElm instance as the second parameter. See doc for more information."); 
-	}
+JAX.$ = function(query, srcDocument) {
+	if (typeof(query) != "string" && !(query instanceof JAX.HTMLElm) ||) { throw new Error("JAX.$ accepts only String as the first parameter. See doc for more information.")};
 
-	var sourceElm = element || document;
-	var foundElms = (sourceElm instanceof JAX.HTMLElm ? sourceElm.NODE : sourceElm).querySelectorAll(query);
+	var srcDocument = srcDocument || document;
+	var foundElms = (sourceElm instanceof JAX.HTMLElm ? sourceElm.NODE : sourceElm).querySelectorAll(query); // fixme
 	var jaxelms = [];
 
 	for (var i=0, len=foundElms.length; i<len; i++) {
 		jaxelms.push(new JAX.HTMLElm(foundElms[i]));
 	}
 
-	if (filter) { jaxelms = jaxelms.filter(filter, this); }
-
 	return jaxelms;
 };
 
-JAX.$$ = function(query, element) {
+JAX.$$ = function(query) {
 	if (typeof(query) != "string") { throw new Error("JAX.$$ accepts only String as the first parameter.")};
 	if (element && !("querySelector" in element) && !(element instanceof JAX.HTMLElm)) { 
 		throw new Error("JAX.$$ accepts only HTML element with querySelector support or JAX.HTMLElm instance as the second parameter. See doc for more information."); 

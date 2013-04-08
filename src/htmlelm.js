@@ -270,6 +270,8 @@ JAX.HTMLElm.prototype.displayOff = function(withEffect, duration, callback) {
 };
 
 JAX.HTMLElm.prototype.computedStyle = function(cssStyles) {
+	if (JAX.isString(cssStyles)) { return JAK.DOM.getStyle(this.NODE, cssStyles); }
+
 	var css = {};
 	var properties = [].concat(cssStyles);
 	for (var i=0, len=cssStyles.length; i<len; i++) {
@@ -280,7 +282,15 @@ JAX.HTMLElm.prototype.computedStyle = function(cssStyles) {
 };
 
 JAX.HTMLElm.prototype.width = function(value) {
-	if (!arguments.length) { return this.NODE.offsetWidth; }
+	if (!arguments.length) { 
+		var backupStyle = this.style(["display","visibility","position"]);
+		if (this.computedStyle("position").indexOf("fixed") == -1) { this.style({"position":"absolute !important"}); }
+		if (this.style("display").indexOf("none") == 0) { this.style({"display":""}); }
+		this.style({"visibility":"hidden !important"});
+		var width = this.NODE.offsetWidth;
+		this.style(backupStyle);
+		return width; 
+	}
 
 	var paddingLeft = parseInt(this.computedStyle("padding-left"),10);
 	var paddingRight = parseInt(this.computedStyle("padding-right"), 10);
@@ -297,7 +307,15 @@ JAX.HTMLElm.prototype.width = function(value) {
 };
 
 JAX.HTMLElm.prototype.height = function(value) {
-	if (!arguments.length) { return this.NODE.offsetHeight; }
+	if (!arguments.length) { 
+		var backupStyle = this.style(["display","visibility","position"]);
+		if (this.computedStyle("position").indexOf("fixed") == -1) { this.style({"position":"absolute !important"}); }
+		if (this.style("display").indexOf("none") == 0) { this.style({"display":""}); }
+		this.style({"visibility":"hidden !important"});
+		var height = this.NODE.offsetHeight;
+		this.style(backupStyle);
+		return height; 
+	}
 
 	var paddingTop = parseInt(this.computedStyle("padding-top"),10);
 	var paddingBottom = parseInt(this.computedStyle("padding-bottom"), 10);
@@ -384,10 +402,9 @@ JAX.HTMLElm.prototype._getOpacity = function() {
 
 JAX.HTMLElm.prototype._fadeIn = function(duration, callback) {
 	var animation = new JAX.Animation(this, duration);
-	var opacity = this.computedStyle("opacity");
 	var backupStyle = this.style("opacity");
 
-	animation.addProperty("opacity", parseFloat(opacity) || 0,  1);
+	animation.addProperty("opacity", 0,  1);
 	animation.addCallback(function() {
 		this.style({"opacity":backupStyle});
 		if (callback) { callback(); }
@@ -399,10 +416,9 @@ JAX.HTMLElm.prototype._fadeIn = function(duration, callback) {
 
 JAX.HTMLElm.prototype._fadeOut = function(duration, callback) {
 	var animation = new JAX.Animation(this, duration);
-	var opacity = this.computedStyle("opacity");
 	var backupStyle = this.style("opacity");
 
-	animation.addProperty("opacity", parseFloat(opacity) ||  1, 0);
+	animation.addProperty("opacity", 1, 0);
 	animation.addCallback(function() {
 		this.style({"opacity":backupStyle});
 		if (callback) { callback(); }
@@ -414,13 +430,13 @@ JAX.HTMLElm.prototype._fadeOut = function(duration, callback) {
 
 JAX.HTMLElm.prototype._slideDown = function(duration, callback) {
 	var animation = new JAX.Animation(this, duration);
-	var backupStyles = this.style(["height","width","overflow"]);
-	var width = parseInt(this.computedStyle("width")) || this.width();
-	this.style({"overflow": "hidden", "width": width + "px"});
+	var backupStyles = this.style(["height","overflow"]);
+
+	this.style({"overflow": "hidden"});
 
 	animation.addProperty("height", 0, this.height());
 	animation.addCallback(function() {
-		this.styles(backupStyles);
+		this.style(backupStyles);
 		if (callback) { callback(); }
 	}.bind(this));
 	animation.run();
@@ -430,13 +446,13 @@ JAX.HTMLElm.prototype._slideDown = function(duration, callback) {
 
 JAX.HTMLElm.prototype._slideUp = function(duration, callback) {
 	var animation = new JAX.Animation(this, duration);
-	var backupStyles = this.style(["height","width","overflow"]);
-	var width = parseInt(this.computedStyle("width")) || this.width();
-	this.style({"overflow": "hidden", "width": width + "px"});
+	var backupStyles = this.style(["height","overflow"]);
+
+	this.style({"overflow": "hidden"});
 
 	animation.addProperty("height", this.height(), 0);
 	animation.addCallback(function() {
-		this.styles(backupStyles);
+		this.style(backupStyles);
 		if (callback) { callback(); }
 	}.bind(this));
 	animation.run();

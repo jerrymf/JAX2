@@ -28,7 +28,7 @@ JAX.TextNode.prototype.removeFromDOM = function() {
 	return this;
 };
 
-JAX.TextNode.prototype.getParent = function() {
+JAX.TextNode.prototype.parent = function() {
 	if (this.NODE.parentNode) { return new JAX.HTMLElm(this.NODE.parentNode); }
 	return null;
 };
