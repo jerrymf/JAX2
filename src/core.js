@@ -1,32 +1,39 @@
 JAX = {
-	VERSION: "1.92b"
+	VERSION: "1.93b"
 };
 
-JAX.$ = function(query, srcDocument) {
-	if (typeof(query) != "string" && !(query instanceof JAX.HTMLElm) ||) { throw new Error("JAX.$ accepts only String as the first parameter. See doc for more information.")};
+JAX.$ = function(selector, srcElement) {
+	if (JAX.isString(selector)) {
+		var srcElement = srcElement || document;
+		var foundElms = srcElement.querySelectorAll(query);
+		var jaxelms = [];
 
-	var srcDocument = srcDocument || document;
-	var foundElms = (sourceElm instanceof JAX.HTMLElm ? sourceElm.NODE : sourceElm).querySelectorAll(query); // fixme
-	var jaxelms = [];
+		for (var i=0, len=foundElms.length; i<len; i++) { jaxelms.push(new JAX.HTMLElm(foundElms[i])); }
 
-	for (var i=0, len=foundElms.length; i<len; i++) {
-		jaxelms.push(new JAX.HTMLElm(foundElms[i]));
+		return jaxelms;
+	} else if ("nodeType" in selector && selector.nodeType == 1) {
+		return [selector];
+	} else if (selector instanceof JAX.HTMLElm) {
+		return [new JAX.HTMLElm(selector)];
 	}
-
-	return jaxelms;
+	
+	throw new Error("JAX.$ accepts only String, html element or instance of JAX.HTMLElm class as the first argument. See doc for more information."); 
 };
 
-JAX.$$ = function(query) {
-	if (typeof(query) != "string") { throw new Error("JAX.$$ accepts only String as the first parameter.")};
-	if (element && !("querySelector" in element) && !(element instanceof JAX.HTMLElm)) { 
-		throw new Error("JAX.$$ accepts only HTML element with querySelector support or JAX.HTMLElm instance as the second parameter. See doc for more information."); 
+JAX.$$ = function(selector, srcElement) {
+	if (JAX.isString(selector)) {
+		var srcElement = srcElement || document;
+		var foundElm = srcElement.querySelector(selector);
+		var jaxelm = foundElm ? new JAX.HTMLElm(foundElm) : null;
+
+		return jaxelm;
+	} else if ("nodeType" in selector && selector.nodeType == 1) {
+		return new JAX.HTMLElm(selector);
+	} else if (selector instanceof JAX.HTMLElm) {
+		return selector;
 	}
 
-	var sourceElm = element || document;
-	var foundElm = (sourceElm instanceof JAX.HTMLElm ? sourceElm.NODE : sourceElm).querySelector(query);
-	var jaxelm = foundElm ? new JAX.HTMLElm(foundElm) : null;
-
-	return jaxelm;
+	throw new Error("JAX.$$ accepts only String, html element or instance of JAX.HTMLElm class as the first argument. See doc for more information.");
 };
 
 JAX.make = function(tagString, html, srcDocument) {

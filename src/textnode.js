@@ -5,7 +5,7 @@ JAX.TextNode = JAK.ClassMaker.makeClass({
 });
 
 JAX.TextNode.prototype.$constructor = function(node) {
-	if (!("nodeType" in node) || node.nodeType != 3) { throw new Error("JAX.TextNode constructor accepts only HTML node as its parameter. See doc for more information.") }
+	if (!("nodeType" in node) || node.nodeType != 3) { throw new Error("JAX.TextNode constructor accepts only text node as its parameter. See doc for more information.") }
 	this.NODE = node;
 };
 
