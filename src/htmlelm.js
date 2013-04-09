@@ -136,7 +136,7 @@ JAX.HTMLElm.prototype.addNodeBefore = function(node, nodeBefore) {
 
 JAX.HTMLElm.prototype.appendTo = function(node) {
 	if (this._checkLocked(this.appendTo, arguments)) { return this; }
-	if ((!("nodeType" in node) node.nodeType != 1) && !(node instanceof JAX.HTMLElm) && !(node instanceof JAX.TextNode)) { 
+	if ((!("nodeType" in node) || node.nodeType != 1) && !(node instanceof JAX.HTMLElm) && !(node instanceof JAX.TextNode)) { 
 		throw new Error("JAX.HTMLElm.appendTo accepts only HTML element, JAX.HTMLElm or JAX.TextNode instance as its argument. See doc for more information."); 
 	}
 
@@ -147,7 +147,7 @@ JAX.HTMLElm.prototype.appendTo = function(node) {
 
 JAX.HTMLElm.prototype.appendBefore = function(node) {
 	if (this._checkLocked(this.appendBefore, arguments)) { return this; }
-	if ((!("nodeType" in node) node.nodeType != 1) && !(node instanceof JAX.HTMLElm) && !(node instanceof JAX.TextNode)) { 
+	if ((!("nodeType" in node) || node.nodeType != 1) && !(node instanceof JAX.HTMLElm) && !(node instanceof JAX.TextNode)) { 
 		throw new Error("JAX.HTMLElm.appendTo accepts only HTML element, JAX.HTMLElm or JAX.TextNode instance as its argument. See doc for more information."); 
 	}
 
