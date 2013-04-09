@@ -401,10 +401,10 @@ JAX.HTMLElm.prototype.contains = function(node) {
 JAX.HTMLElm.prototype.fadeIn = function(duration, callback) {
 	if (this._checkLocked(this.fadeIn, arguments)) { return this; }
 
-	var animation = new JAX.Animation(this, duration || 1);
+	var animation = new JAX.Animation(this);
 	var targetOpacity = parseFloat(this.computedStyle("opacity")) || 1;
 
-	animation.addProperty("opacity", 0,  targetOpacity);
+	animation.addProperty("opacity", duration, 0, targetOpacity);
 	animation.addCallback(function() {
 		if (callback) { callback(); }
 		this._unlock();
@@ -417,10 +417,10 @@ JAX.HTMLElm.prototype.fadeIn = function(duration, callback) {
 
 JAX.HTMLElm.prototype.fadeOut = function(duration, callback) {
 	if (this._checkLocked(this.fadeOut, arguments)) { return this; }
-	var animation = new JAX.Animation(this, duration || 1);
+	var animation = new JAX.Animation(this);
 	var sourceOpacity = parseFloat(this.computedStyle("opacity")) || 1;
 
-	animation.addProperty("opacity", sourceOpacity, 0);
+	animation.addProperty("opacity", duration, sourceOpacity, 0);
 	animation.addCallback(function() {
 		if (callback) { callback(); }
 		this._unlock();
@@ -431,14 +431,14 @@ JAX.HTMLElm.prototype.fadeOut = function(duration, callback) {
 	return this;
 };
 
-JAX.HTMLElm.prototype.slideDown = function(duration) {
+JAX.HTMLElm.prototype.slideDown = function(duration, callback) {
 	if (this._checkLocked(this.slideDown, arguments)) { return this; }
-	var animation = new JAX.Animation(this, duration);
+	var animation = new JAX.Animation(this);
 	var backupStyles = this.style(["height","overflow"]);
 
 	this.style({"overflow": "hidden"});
 
-	animation.addProperty("height", 0, this.height());
+	animation.addProperty("height", duration, 0, this.height());
 	animation.addCallback(function() {
 		this.style(backupStyles);
 		if (callback) { callback(); }
@@ -451,12 +451,12 @@ JAX.HTMLElm.prototype.slideDown = function(duration) {
 
 JAX.HTMLElm.prototype.slideUp = function(duration, callback) {
 	if (this._checkLocked(this.slideUp, arguments)) { return this; }
-	var animation = new JAX.Animation(this, duration);
+	var animation = new JAX.Animation(this);
 	var backupStyles = this.style(["height","overflow"]);
 
 	this.style({"overflow": "hidden"});
 
-	animation.addProperty("height", this.height(), 0);
+	animation.addProperty("height", duration, this.height(), 0);
 	animation.addCallback(function() {
 		this.style(backupStyles);
 		if (callback) { callback(); }

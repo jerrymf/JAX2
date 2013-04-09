@@ -32,29 +32,28 @@ JAX.Animation._SUPPORTED_PROPERTIES = {
 };
 JAX.Animation._REGEXP_OPACITY = new RegExp("alpha\(opacity=['\"]?([0-9]+)['\"]?\)");
 
-JAX.Animation.prototype.$constructor = function(element, duration, method) {
+JAX.Animation.prototype.$constructor = function(element) {
 	this._elm = element instanceof JAX.HTMLElm ? element : new JAX.HTMLElm(element);
 	this._properties = [];
-	this._interpolator = null;
+	this._interpolators = [];
 	this._callback = null;
-	this._duration = (duration || 1) * 1000;
-	this._method = method || "linear";
 	this._running = false;
 	this._transitionSupport = !!JAX.Animation._TRANSITION_PROPERTY;
-
-	if (!this._transitionSupport) { this._method = "LINEAR"; }
 };
 
-JAX.Animation.prototype.addProperty = function(property, start, end) {
+JAX.Animation.prototype.addProperty = function(property, duration, start, end, method) {
 	if (!(property in JAX.Animation._SUPPORTED_PROPERTIES)) { throw new Error("JAX.Animation.addProperty: property '" + property + "' not supported. See doc for more information."); }
 
 	var cssEnd = this._parseCSSValue(property, end);
 	var cssStart = this._parseCSSValue(property, start); 
+	var method = !this._transitionSupport ? (method || "linear") : "LINEAR";
 
 	this._properties.push({
 		property: property,
 		cssStart: cssStart,
-		cssEnd: cssEnd
+		cssEnd: cssEnd,
+		duration: (duration || 1) * 1000,
+		method: method
 	});
 };
 
@@ -64,7 +63,7 @@ JAX.Animation.prototype.addCallback = function(callback) {
 
 JAX.Animation.prototype.run = function() {
 	this._running = true;
-	if (!this._transitionSupport) { this._initInterpolator(); return; }
+	if (!this._transitionSupport) { this._initInterpolators(); return; }
 	this._initTransition();
 };
 
@@ -73,22 +72,19 @@ JAX.Animation.prototype.isRunning = function() {
 }
 
 JAX.Animation.prototype.stop = function() {
-	this._interpolator.stop();
+	if (this._transitionSupport) { return; }
+	for (var i=0, len=this._interpolators.length; i<len; i++) { this._interpolator[i].stop(); }
 	this._running = false;
 }
 
-JAX.Animation.prototype._initInterpolator = function() {
-	this._interpolator = new JAK.CSSInterpolator(this._elm.NODE, this._duration, {
-		"interpolation": this._method,
-		"endCallback": this._endInterpolator.bind(this)
-	});
-
+JAX.Animation.prototype._initInterpolators = function() {
 	for(var i=0, len=this._properties.length; i<len; i++) {
 		var property = this._properties[i];
-		this._interpolator.addProperty(property.property, property.cssStart.value, property.cssEnd.value, property.cssStart.unit);
+		var interpolator = new JAK.CSSInterpolator(this._elm.NODE, property.duration, { "interpolation": property.method, "endCallback": this._endInterpolator.bind(this, i) });
+		this._interpolators.push(interpolator);
+		interpolator.addProperty(property.property, property.cssStart.value, property.cssEnd.value, property.cssStart.unit);
+		interpolator.start();
 	}
-
-	this._interpolator.start();
 };
 
 JAX.Animation.prototype._initTransition = function() {
@@ -101,7 +97,7 @@ JAX.Animation.prototype._initTransition = function() {
 		var style = {};
 		style[property.property] = property.cssStart.value + property.cssStart.unit;
 		this._elm.style(style);
-		tps.push(property.property + " " + property.duration + "s" + " " + this._method);
+		tps.push(property.property + " " + property.duration + "s" + " " + property.method);
 	}
 
 	this._elm.NODE.style[tp] = tps.join(",");
@@ -122,7 +118,9 @@ JAX.Animation.prototype._parseCSSValue = function(property, cssValue) {
 	return { "value": value, "unit": JAX.Animation._SUPPORTED_PROPERTIES[property] };
 };
 
-JAX.Animation.prototype._endInterpolator = function() {
+JAX.Animation.prototype._endInterpolator = function(index) {
+	this._interpolators.splice(index, 1);
+	if (this._interpolators.length) { return; }
 	this._running = false;
 	if (this._callback) { this._callback(); }
 };
