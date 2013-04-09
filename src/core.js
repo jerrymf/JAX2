@@ -44,7 +44,7 @@ JAX.make = function(tagString, html, srcDocument) {
 	var currentAttrName = "";
 	var inAttributes = false;
 
-	if (typeof(html) != "string") { throw new Error("JAX.make: Second parameter 'html' must be a string"); }
+	if (!JAX.isString(html) && !JAX.isNumber(html)) { throw new Error("JAX.make: Second parameter 'html' must be a string or number"); }
 	if (tagString.length && ".#[=] ".indexOf(tagString[0]) > -1) { throw new Error("JAX.make: Tagname must be first."); }
 
 	for (var i=0, len=tagString.length; i<len; i++) {

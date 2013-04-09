@@ -9,8 +9,8 @@ JAX.HTMLElm._LOCKS = {};
 
 JAX.HTMLElm.prototype.$constructor = function(node) {
 	if (!("nodeType" in node) || node.nodeType != 1) { throw new Error("JAX.HTMLElm constructor accepts only HTML element as its parameter. See doc for more information.") }
-	this.NODE = node;
-	JAX.HTMLElm._EVENTS[this.NODE] = JAX.HTMLElm._EVENTS[this.NODE] || {};
+	this._node = node;
+	JAX.HTMLElm._EVENTS[this._node] = JAX.HTMLElm._EVENTS[this._node] || {};
 };
 
 JAX.HTMLElm.prototype.$destructor = function() {
@@ -22,16 +22,20 @@ JAX.HTMLElm.prototype.destroy = function() {
 	this.stopListening();
 	this.removeFromDOM();
 	this.clear();
-	delete JAX.HTMLElm._EVENTS[this.NODE];
-	this.NODE = null;
+	delete JAX.HTMLElm._EVENTS[this._node];
+	this._node = null;
+};
+
+JAX.HTMLElm.prototype.node = function() {
+	return this._node;
 };
 
 JAX.HTMLElm.prototype.$ = function(selector) {
-	return JAX.$(selector, this.NODE);
+	return JAX.$(selector, this._node);
 };
 
 JAX.HTMLElm.prototype.$$ = function(selector) {
-	return JAX.$$(selector, this.NODE);
+	return JAX.$$(selector, this._node);
 };
 
 JAX.HTMLElm.prototype.addClass = function(classname) {
@@ -39,13 +43,13 @@ JAX.HTMLElm.prototype.addClass = function(classname) {
 	if (!JAX.isString(classname)) { throw new Error("JAX.HTMLElm.addClass accepts only string as its parameter. See doc for more information."); }
 
 	var classnames = classname.split(" ");
-	var classes = this.NODE.className.split(" ");
+	var classes = this._node.className.split(" ");
 
 	while(classnames.length) {
 		if (classes.indexOf(classnames.shift()) == -1) { classes.push(classname); }
 	}
 
-	this.NODE.className = classes.join(" ");
+	this._node.className = classes.join(" ");
 
 	return this;
 };
@@ -55,14 +59,14 @@ JAX.HTMLElm.prototype.removeClass = function(classname) {
 	if (!JAX.isString(classname)) { throw new Error("JAX.HTMLElm.removeClass accepts only string as its parameter. See doc for more information."); }
 
 	var classnames = classname.split(" ");
-	var classes = this.NODE.className.split(" ");
+	var classes = this._node.className.split(" ");
 
 	while(classnames.length) {
 		var index = classes.indexOf(classnames.shift());
 		if (index != -1) { classes.splice(index, 1); }
 	}
 
-	this.NODE.className = classes.join(" ");
+	this._node.className = classes.join(" ");
 	
 	return this;
 };
@@ -74,7 +78,7 @@ JAX.HTMLElm.prototype.hasClass = function(className) {
 
 	while(names.length) {
 		var name = names.shift();
-		if (this.NODE.className.indexOf(name) != -1) { return true; }
+		if (this._node.className.indexOf(name) != -1) { return true; }
 	}
 
 	return false;
@@ -91,7 +95,7 @@ JAX.HTMLElm.prototype.id = function(id) {
 JAX.HTMLElm.prototype.html = function(innerHTML) {
 	if (!arguments.length) { return innerHTML; }
 	if (this._checkLocked(this.html, arguments)) { return this; }
-	this.NODE.innerHTML = innerHTML;
+	this._node.innerHTML = innerHTML;
 	return this;
 };
 
@@ -101,8 +105,8 @@ JAX.HTMLElm.prototype.addNode = function(node) {
 		throw new Error("JAX.HTMLElm.addNode accepts only HTML node, textnode, JAX.HTMLElm or JAX.TextNode instance as its parameter. See doc for more information."); 
 	}
 
-	var node = node instanceof JAX.HTMLElm ? node.NODE : node;
-	this.NODE.appendChild(node);
+	var node = node instanceof JAX.HTMLElm ? node.node() : node;
+	this._node.appendChild(node);
 
 	return this;
 };
@@ -126,10 +130,10 @@ JAX.HTMLElm.prototype.addNodeBefore = function(node, nodeBefore) {
 		throw new Error("JAX.HTMLElm.addNodeBefore accepts only HTML element, textnode, JAX.HTMLElm or JAX.TextNode instance as its second argument. See doc for more information."); 
 	}
 
-	var node = node instanceof JAX.HTMLElm ? node.NODE : node;
-	var nodeBefore = nodeBefore instanceof JAX.HTMLElm ? nodeBefore.NODE : nodeBefore;
+	var node = node instanceof JAX.HTMLElm ? node.node() : node;
+	var nodeBefore = nodeBefore instanceof JAX.HTMLElm ? nodeBefore.node() : nodeBefore;
 
-	this.NODE.insertBefore(node, nodeBefore);
+	this._node.insertBefore(node, nodeBefore);
 
 	return this;
 };
@@ -140,8 +144,8 @@ JAX.HTMLElm.prototype.appendTo = function(node) {
 		throw new Error("JAX.HTMLElm.appendTo accepts only HTML element, JAX.HTMLElm or JAX.TextNode instance as its argument. See doc for more information."); 
 	}
 
-	var node = node instanceof JAX.HTMLElm ? node.NODE : node;
-	node.appendChild(this.NODE);
+	var node = node instanceof JAX.HTMLElm ? node.node() : node;
+	node.appendChild(this._node);
 	return this;
 };
 
@@ -151,22 +155,22 @@ JAX.HTMLElm.prototype.appendBefore = function(node) {
 		throw new Error("JAX.HTMLElm.appendTo accepts only HTML element, JAX.HTMLElm or JAX.TextNode instance as its argument. See doc for more information."); 
 	}
 
-	var node = node.NODE ? node.NODE : node;
-	node.parentNode.insertBefore(this.NODE, node);
+	var node = node.node() ? node.node() : node;
+	node.parentNode.insertBefore(this._node, node);
 	return this;
 };
 
 JAX.HTMLElm.prototype.removeFromDOM = function() {
 	if (this._checkLocked(this.removeFromDOM, arguments)) { return this; }
 	try {
-		this.NODE.parentNode.removeChild(this.NODE);
+		this._node.parentNode.removeChild(this._node);
 	} catch(e) {};
 	return this;
 };
 
 JAX.HTMLElm.prototype.clone = function(withContent) {
 	var withContent = !!withContent;
-	var clone = this.NODE.cloneNode(withContent);
+	var clone = this._node.cloneNode(withContent);
 	return new JAX.HTMLElm(clone);
 };
 
@@ -184,11 +188,11 @@ JAX.HTMLElm.prototype.listen = function(type, method, obj, bindData) {
 
 	var thisNode = this;
 	var f = function(e, node) { method(e, thisNode, bindData); }
-	var listenerId = JAK.Events.addListener(this.NODE, type, f);
-	var evtListeners = JAX.HTMLElm._EVENTS[this.NODE][type] || [];
+	var listenerId = JAK.Events.addListener(this._node, type, f);
+	var evtListeners = JAX.HTMLElm._EVENTS[this._node][type] || [];
 
 	evtListeners.push(listenerId);
-	JAX.HTMLElm._EVENTS[this.NODE][type] = evtListeners;
+	JAX.HTMLElm._EVENTS[this._node][type] = evtListeners;
 
 	return listenerId;
 };
@@ -197,7 +201,7 @@ JAX.HTMLElm.prototype.stopListening = function(type, listenerId) {
 	if (this._checkLocked(this.stopListening, arguments)) { return this; }
 
 	if (!arguments.length) {
-		var events = JAX.HTMLElm._EVENTS[this.NODE];
+		var events = JAX.HTMLElm._EVENTS[this._node];
 		for (var p in events) { this.stopListening(p); }
 		return this;
 	}
@@ -206,12 +210,12 @@ JAX.HTMLElm.prototype.stopListening = function(type, listenerId) {
 		throw new Error("JAX.HTMLElm.stopListening bad arguments. See doc for more information.")
 	}
 
-	var eventListeners = JAX.HTMLElm._EVENTS[this.NODE][type]; 
+	var eventListeners = JAX.HTMLElm._EVENTS[this._node][type]; 
 	if (!eventListeners) { console.warn("JAX.HTMLElm.stopListening: no event '" + type + "' found"); return this; }
 
 	if (!listenerId) { 
 		this._destroyEvents(eventListeners);
-		delete JAX.HTMLElm._EVENTS[this.NODE][type];
+		delete JAX.HTMLElm._EVENTS[this._node][type];
 		return this;
 	}
 
@@ -227,13 +231,13 @@ JAX.HTMLElm.prototype.stopListening = function(type, listenerId) {
 };
 
 JAX.HTMLElm.prototype.attr = function(attributes) {
-	if (JAX.isString(attributes)) { return this.NODE.getAttribute(attributes); }
+	if (JAX.isString(attributes)) { return this._node.getAttribute(attributes); }
 
 	if (JAX.isArray(attributes)) {
 		var attrs = {};
 		for (var i=0, len=attributes.length; i<len; i++) { 
 			var attribute = attributes[i];
-			attrs[attribute] = this.NODE.getAttribute(attribute);
+			attrs[attribute] = this._node.getAttribute(attribute);
 		}
 		return attrs;	
 	}
@@ -242,21 +246,21 @@ JAX.HTMLElm.prototype.attr = function(attributes) {
 
 	for (var p in attributes) {
 		var value = attributes[p];
-		this.NODE.setAttribute(p, value);
+		this._node.setAttribute(p, value);
 	}
 
 	return this;
 };
 
 JAX.HTMLElm.prototype.style = function(cssStyles) {
-	if (JAX.isString(cssStyles)) { return cssStyles == "opacity" ? this._getOpacity() : this.NODE.style[cssStyles]; }
+	if (JAX.isString(cssStyles)) { return cssStyles == "opacity" ? this._getOpacity() : this._node.style[cssStyles]; }
 
 	if (JAX.isArray(cssStyles)) {
 		var css = {};
 		for (var i=0, len=cssStyles.length; i<len; i++) {
 			var cssStyle = cssStyles[i];
 			if (cssStyle == "opacity") { css[cssStyle] = this._getOpacity(); continue; }
-			css[cssStyle] = this.NODE.style[cssStyle];
+			css[cssStyle] = this._node.style[cssStyle];
 		}
 		return css;
 	}
@@ -266,7 +270,7 @@ JAX.HTMLElm.prototype.style = function(cssStyles) {
 	for (var p in cssStyles) {
 		var value = cssStyles[p];
 		if (p == "opacity") { this._setOpacity(value); continue; }
-		this.NODE.style[p] = value;
+		this._node.style[p] = value;
 	}
 
 	return this;
@@ -287,13 +291,13 @@ JAX.HTMLElm.prototype.displayOff = function() {
 };
 
 JAX.HTMLElm.prototype.computedStyle = function(cssStyles) {
-	if (JAX.isString(cssStyles)) { return JAK.DOM.getStyle(this.NODE, cssStyles); }
+	if (JAX.isString(cssStyles)) { return JAK.DOM.getStyle(this._node, cssStyles); }
 
 	var css = {};
 	var properties = [].concat(cssStyles);
 	for (var i=0, len=cssStyles.length; i<len; i++) {
 		var cssStyle = cssStyles[i];
-		css[cssStyle] = JAK.DOM.getStyle(this.NODE, cssStyle);
+		css[cssStyle] = JAK.DOM.getStyle(this._node, cssStyle);
 	}
 	return css;
 };
@@ -308,7 +312,7 @@ JAX.HTMLElm.prototype.width = function(value) {
 		if (isDisplayNone) { this.style({"display":""}); }		
 		this.style({"visibility":"hidden !important"});
 
-		var width = this.NODE.offsetWidth;
+		var width = this._node.offsetWidth;
 		this.style(backupStyle);
 		return width; 
 	}
@@ -325,7 +329,7 @@ JAX.HTMLElm.prototype.width = function(value) {
 	if (!isNaN(borderLeft)) { value =- borderLeft; }
 	if (!isNaN(borderRight)) { value =- borderRight; }
 
-	this.NODE.style.width = Math.max(value,0) + "px";
+	this._node.style.width = Math.max(value,0) + "px";
 	return this;
 };
 
@@ -339,7 +343,7 @@ JAX.HTMLElm.prototype.height = function(value) {
 		if (isDisplayNone) { this.style({"display":""}); }		
 		this.style({"visibility":"hidden !important"});
 
-		var height = this.NODE.offsetHeight;
+		var height = this._node.offsetHeight;
 		this.style(backupStyle);
 		return height; 
 	}
@@ -356,27 +360,27 @@ JAX.HTMLElm.prototype.height = function(value) {
 	if (!isNaN(borderTop)) { value =- borderTop; }
 	if (!isNaN(borderBottom)) { value =- borderBottom; }
 
-	this.NODE.style.height = Math.max(value,0) + "px";
+	this._node.style.height = Math.max(value,0) + "px";
 	return this;
 };
 
 JAX.HTMLElm.prototype.parent = function() {
-	if (this.NODE.parentNode) { return new JAX.HTMLElm(this.NODE.parentNode); }
+	if (this._node.parentNode) { return new JAX.HTMLElm(this._node.parentNode); }
 	return null;
 };
 
 JAX.HTMLElm.prototype.nextSibling = function() {
-	return this.NODE.nextSibling ? new JAX.HTMLElm(this.NODE.nextSibling) : null;
+	return this._node.nextSibling ? new JAX.HTMLElm(this._node.nextSibling) : null;
 };
 
 JAX.HTMLElm.prototype.prevSibling = function() {
-	return this.NODE.previousSibling ? new JAX.HTMLElm(this.NODE.previousSibling) : null;
+	return this._node.previousSibling ? new JAX.HTMLElm(this._node.previousSibling) : null;
 };
 
 JAX.HTMLElm.prototype.childs = function() {
 	var nodes = [];
-	for (var i=0, len=this.NODE.childNodes.length; i<len; i++) {
-		var childNode = this.NODE.childNodes[i];
+	for (var i=0, len=this._node.childNodes.length; i<len; i++) {
+		var childNode = this._node.childNodes[i];
 		if (childNode.nodeType == 3) { nodes.push(new JAX.TextNode(childNode)); continue; }
 		nodes.push(new JAX.HTMLElm(childNode));
 	}
@@ -385,14 +389,14 @@ JAX.HTMLElm.prototype.childs = function() {
 
 JAX.HTMLElm.prototype.clear = function() {
 	if (this._checkLocked(this.clear, arguments)) { return this; }
-	JAK.DOM.clear(this.NODE);
+	JAK.DOM.clear(this._node);
 	return this;
 };
 
 JAX.HTMLElm.prototype.contains = function(node) {
-	var elm = node.NODE ? node.NODE.parentNode : node.parentNode;
+	var elm = node.node() ? node.node().parentNode : node.parentNode;
 	while(elm) {
-		if (elm == this.NODE) { return true; }
+		if (elm == this._node) { return true; }
 		elm = elm.parentNode;
 	}
 	return false;
@@ -408,7 +412,7 @@ JAX.HTMLElm.prototype.fadeIn = function(duration, callback) {
 	animation.addCallback(function() {
 		if (callback) { callback(); }
 		this._unlock();
-	});
+	}.bind(this));
 	animation.run();
 	this._lock();
 
@@ -478,34 +482,34 @@ JAX.HTMLElm.prototype._setOpacity = function(value) {
 		property = "opacity";
 	}
 
-	this.NODE.style[property] = value + "";
+	this._node.style[property] = value + "";
 
 };
 
 JAX.HTMLElm.prototype._getOpacity = function() {
 	if (JAK.Browser.client == "ie" && JAK.Browser.version < 9) {
 		var value = "";
-		this.NODE.style.filter.replace(JAX.Animation.REGEXP_OPACITY, function(match1, match2) {
+		this._node.style.filter.replace(JAX.Animation.REGEXP_OPACITY, function(match1, match2) {
 			value = match2;
 		});
 		return value ? (parseInt(value, 10)/100)+"" : value;
 	}
-	return this.NODE.style["opacity"];
+	return this._node.style["opacity"];
 };
 
 JAX.HTMLElm.prototype._lock = function() {
-	JAX.HTMLElm._LOCKS[this.NODE] = [];
+	JAX.HTMLElm._LOCKS[this._node] = [];
 };
 
 JAX.HTMLElm.prototype._checkLocked = function(method, args) {
-	if (!JAX.HTMLElm._LOCKS[this.NODE]) { return false; }
-	JAX.HTMLElm._LOCKS[this.NODE].push({method:method, args:args});
+	if (!JAX.HTMLElm._LOCKS[this._node]) { return false; }
+	JAX.HTMLElm._LOCKS[this._node].push({method:method, args:args});
 	return true;
 };
 
 JAX.HTMLElm.prototype._unlock = function() {
-	var queue = JAX.HTMLElm._LOCKS[this.NODE].slice();
-	delete JAX.HTMLElm._LOCKS[this.NODE];
+	var queue = JAX.HTMLElm._LOCKS[this._node].slice();
+	delete JAX.HTMLElm._LOCKS[this._node];
 	while(queue.length) {
 		var mq = queue.shift();
 		q.method.apply(this, q.args);

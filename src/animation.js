@@ -42,7 +42,9 @@ JAX.Animation.prototype.$constructor = function(element) {
 };
 
 JAX.Animation.prototype.addProperty = function(property, duration, start, end, method) {
-	if (!(property in JAX.Animation._SUPPORTED_PROPERTIES)) { throw new Error("JAX.Animation.addProperty: property '" + property + "' not supported. See doc for more information."); }
+	if (!(property in JAX.Animation._SUPPORTED_PROPERTIES)) { 
+		throw new Error("JAX.Animation.addProperty: property '" + property + "' not supported. See doc for more information."); 
+	}
 
 	var cssEnd = this._parseCSSValue(property, end);
 	var cssStart = this._parseCSSValue(property, start); 
@@ -59,7 +61,7 @@ JAX.Animation.prototype.addProperty = function(property, duration, start, end, m
 
 JAX.Animation.prototype.addCallback = function(callback) {
 	this._callback = callback;
-}
+};
 
 JAX.Animation.prototype.run = function() {
 	this._running = true;
@@ -69,18 +71,12 @@ JAX.Animation.prototype.run = function() {
 
 JAX.Animation.prototype.isRunning = function() {
 	return this._running;
-}
-
-JAX.Animation.prototype.stop = function() {
-	if (this._transitionSupport) { return; }
-	for (var i=0, len=this._interpolators.length; i<len; i++) { this._interpolator[i].stop(); }
-	this._running = false;
-}
+};
 
 JAX.Animation.prototype._initInterpolators = function() {
 	for(var i=0, len=this._properties.length; i<len; i++) {
 		var property = this._properties[i];
-		var interpolator = new JAK.CSSInterpolator(this._elm.NODE, property.duration, { "interpolation": property.method, "endCallback": this._endInterpolator.bind(this, i) });
+		var interpolator = new JAK.CSSInterpolator(this._elm.node(), property.duration, { "interpolation": property.method, "endCallback": this._endInterpolator.bind(this, i) });
 		this._interpolators.push(interpolator);
 		interpolator.addProperty(property.property, property.cssStart.value, property.cssEnd.value, property.cssStart.unit);
 		interpolator.start();
@@ -100,12 +96,12 @@ JAX.Animation.prototype._initTransition = function() {
 		tps.push(property.property + " " + property.duration + "s" + " " + property.method);
 	}
 
-	this._elm.NODE.style[tp] = tps.join(",");
-	this._elm.NODE.offsetWidth; /* trick */
+	this._elm.node().style[tp] = tps.join(",");
+	this._elm.node().offsetWidth; /* trick */
 	this._ecTransition = this._elm.listen(te, "_endTransition", this);
 
 	for (var i=0, len=this._properties.length; i<len; i++) {
-		this._elm.NODE.style[property.property] = property.cssEnd.value + property.cssStart.unit;
+		this._elm.node().style[property.property] = property.cssEnd.value + property.cssStart.unit;
 	}
 };
 

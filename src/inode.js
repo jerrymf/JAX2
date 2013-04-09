@@ -3,9 +3,9 @@ JAX.INode = JAK.ClassMaker.makeInterface({
 	VERSION: "0.1"
 });
 
-JAX.INode.prototype.NODE = null;
 JAX.INode.prototype.appendTo = function(node) {};
 JAX.INode.prototype.appendBefore = function(node) {};
 JAX.INode.prototype.removeFromDOM = function() {};
 JAX.INode.prototype.parent = function() {};
+JAX.INode.prototype.node = function() {};
 
