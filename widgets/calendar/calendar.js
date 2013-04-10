@@ -1,25 +1,19 @@
 JAX.Calendar = JAK.ClassMaker.makeClass({
 	NAME:"JAX.Calendar",
-	VERSION:"0.3"
+	VERSION:"0.4",
+	IMPLEMENTS:JAK.ISignals
 });
 
 JAX.Calendar.prototype.$constructor = function(elm) {
 	this._jax = {};
-	this._jax.targetElm = elm instanceof JAX.HTMLElm ? elm : new JAX.HTMLElm(elm);
-	this._jax.container = JAX.make("div.jax-cal");
-
-	var date = new Date();
-
+	this._buttons = {};
 	this._current = {};
-	this._current.year = new JAX.Calendar.Year(date.getFullYear());
-	this._current.month = this._current.year.getMonths()[date.getMonth()];
-	this._current.day = this._current.month.getDays()[date.getDate()-1];
-
-	this._activeYearView = new JAX.Calendar.Year.View(this._current.year);
 	this._yearViews = {};
-	this._yearViews[this._current.year] = this._activeYearView;
+	this._ec = [];
 
 	this._shown = false;
+
+	this._jax.targetElm = elm instanceof JAX.HTMLElm ? elm : new JAX.HTMLElm(elm);
 };
 
 JAX.Calendar.prototype.show = function() {
@@ -32,21 +26,123 @@ JAX.Calendar.prototype.show = function() {
 	pos.left += width;
 	pos.top += height;
 
+	this._init();
 	this._activeYearView.setActiveMonth(this._current.month);
-	this._jax.container.addNode(this._activeYearView.getContainer());
-	this._jax.container.appendTo(document.body).style({top:pos.top+"px", left:pos.left+"px"}).fadeIn();
+
+	this._jax.container
+		.addNode(this._activeYearView.getContainer())
+		.appendTo(document.body)
+		.style({top:pos.top+"px", left:pos.left+"px"})
+		.fadeIn();
+
+	this._ec.push(JAX.$$(document).listen("mousedown", "_tryHide", this));
 	this._shown = true;
-}
+};
 
 JAX.Calendar.prototype.hide = function() {
 	if (!this._shown) { return this; }
-	this._jax.container.clear().removeFromDOM();
+
+	JAX.$$(document).stopListening("mousedown");
+
+	this._jax.container
+		.clear()
+		.fadeOut()
+		.removeFromDOM();
+
+	for (var i in this._yearViews) { delete this._yearViews[i]; }
+	for (var i in this._buttons) { delete this._buttons[i]; }
+	for (var i in this._current) { delete this._jax[i]; }
+	for (var i in this._jax) { delete this._jax[i]; }
+
+	this._activeYearView = null;
+
 	this._shown = false;
-}
+};
+
+JAX.Calendar.prototype._init = function() {
+	this._jax.container = JAX.make("div.jax-cal");
+
+	/* calendar body init */
+	var date = new Date();
+	this._initYear(date.getFullYear(), date.getMonth());
+	this._activeYearView = this._yearViews[this._current.year.getYearNumber()].view;
+
+	/* buttons init */
+	this._buttons["prev-year"] = new JAX.Calendar.Button("&laquo;&laquo;");
+	this._buttons["next-year"] = new JAX.Calendar.Button("&raquo;&raquo;");
+	this._buttons["prev-month"] = new JAX.Calendar.Button("&laquo;");
+	this._buttons["next-month"] = new JAX.Calendar.Button("&raquo;");
+
+	for (var p in this._buttons) {
+		var button = this._buttons[p];
+		button.listenOnClick(this._onButtonClick.bind(this, p));
+		button.getContainer()
+			.addClass(p)
+			.appendTo(this._jax.container);
+	}
+};
+
+JAX.Calendar.prototype._onButtonClick = function(type, e, elm) {
+	var currentYearNumber = this._current.year.getYearNumber();
+	var currentMonthNumber = this._current.month.getMonthNumber();
+
+	switch(type) {
+		case "prev-month":
+			if (currentMonthNumber > 0) { 
+				this._activeYearView.setPreviousMonth();
+				this._current.month = this._current.year.getMonths()[currentMonthNumber - 1];
+				return;
+			}
+			this._initYear(currentYearNumber - 1, 11);
+		break;
+		case "next-month":
+			if (currentMonthNumber < 11) { 
+				this._activeYearView.setNextMonth();
+				this._current.month = this._current.year.getMonths()[currentMonthNumber + 1];
+				return;
+			}
+			this._initYear(currentYearNumber + 1, 0);
+		break;
+		case "prev-year":
+			this._initYear(currentYearNumber - 1, currentMonthNumber);
+		break;
+		case "next-year":
+			this._initYear(currentYearNumber + 1, currentMonthNumber);
+		break;
+	}
+
+	this._activeYearView.getContainer().removeFromDOM();
+	this._activeYearView = this._yearViews[this._current.year.getYearNumber()].view;
+	this._activeYearView.setActiveMonth(this._current.month);
+	this._jax.container.addNode(this._activeYearView.getContainer());
+};
+
+JAX.Calendar.prototype._initYear = function(yearNumber, monthNumber) {
+	var newYear = null;
+	for (var p in this._yearViews) { if (p == yearNumber) { newYear = this._yearViews[p].year; } }
+
+	if (!newYear) { 
+		newYear = new JAX.Calendar.Year(yearNumber); 
+		newYearView = new JAX.Calendar.Year.View(newYear);
+
+		this._yearViews[yearNumber] = {
+			year:newYear,
+			view:newYearView
+		};
+	}
+
+	this._current.year = newYear;
+	this._current.month = newYear.getMonths()[monthNumber];
+};
+
+JAX.Calendar.prototype._tryHide = function(e, elm) {
+	var node = JAX.$$(JAK.Events.getTarget());
+	if (!node.isChildOf(this._jax.container)) { this.hide(); }
+};
 
 JAX.Calendar.Day = JAK.ClassMaker.makeClass({
 	NAME:"JAX.Calendar.Day",
-	VERSION:"0.3"
+	VERSION:"0.4"
 });
 
 JAX.Calendar.Day.DAY_NAMES = ["Pondělí", "Úterý", "Středa", "Čtvrtek", "Pátek", "Sobota", "Neděle"];
@@ -91,7 +187,7 @@ JAX.Calendar.Day.prototype._generateDayName = function() {
 	var year = this._year.getYearNumber();
 	var day = this._dayNumber;
 
-	var date = new Date(year, month, day);
+	var date = new Date(year, month, day + 1);
 	this._dayInWeek = date.getDay() - 1;
 	if (this._dayInWeek < 0) { this._dayInWeek = 6; } 
 
@@ -101,7 +197,7 @@ JAX.Calendar.Day.prototype._generateDayName = function() {
 
 JAX.Calendar.Day.View = JAK.ClassMaker.makeClass({
 	NAME:"JAX.Calendar.Day.View",
-	VERSION:"0.3"
+	VERSION:"0.4"
 });
 
 JAX.Calendar.Day.View.prototype.$constructor = function(day) {
@@ -116,12 +212,12 @@ JAX.Calendar.Day.View.prototype.getContainer = function() {
 
 JAX.Calendar.Day.View.prototype._build = function() {
 	this._jax.container = JAX.make("td");
-	this._jax.number = JAX.make("span", this._day.getDayNumber()).appendTo(this._jax.container);
+	this._jax.number = JAX.make("span", this._day.getDayNumber()+1).appendTo(this._jax.container);
 };
 
 JAX.Calendar.Month = JAK.ClassMaker.makeClass({
 	NAME:"JAX.Calendar.Month",
-	VERSION:"0.3"
+	VERSION:"0.4"
 });
 
 JAX.Calendar.Month.MONTH_NAMES = ["Leden", "Únor", "Březen", "Duben", "Květen", "Červen", "Červenec", "Srpen", "Září", "Říjen", "Listopad", "Prosinec"];
@@ -156,16 +252,16 @@ JAX.Calendar.Month.prototype.getDays = function() {
 
 JAX.Calendar.Month.prototype._generateDays = function() {
 	this._countOfDays = JAX.Calendar.Month.MONTH_DAYS[this._monthNumber];
-	if (this._year.getYearNumber() % 4 == 0 && this._month.getMonthNumber() == 2) { this._countOfDays += 1; }
+	if (this._year.getYearNumber() % 4 == 0 && this._monthNumber == 1) { this._countOfDays += 1; }
 
-	for (var i=1; i<=this._countOfDays; i++) {
+	for (var i=0; i<this._countOfDays; i++) {
 		this._days.push(new JAX.Calendar.Day(i, this, this._year));
 	}
 };
 
 JAX.Calendar.Month.View = JAK.ClassMaker.makeClass({
 	NAME:"JAX.Calendar.Month.View",
-	VERSION:"0.3"
+	VERSION:"0.4"
 });
 
 JAX.Calendar.Month.View.prototype.$constructor = function(month) {
@@ -207,7 +303,7 @@ JAX.Calendar.Month.View.prototype._build = function() {
 
 	var startCell = this._days[0].getDayInWeek();
 	var endCell = startCell + this._days.length - 1;
-	var totalCells = Math.ceil(endCell/7)*7;
+	var totalCells = Math.ceil((endCell + 1)/7)*7;
 	var row = 0;
 	var j = 0;
 
@@ -231,7 +327,7 @@ JAX.Calendar.Month.View.prototype._build = function() {
 
 JAX.Calendar.Year = JAK.ClassMaker.makeClass({
 	NAME:"JAX.Calendar.Year",
-	VERSION:"0.3"
+	VERSION:"0.4"
 });
 
 JAX.Calendar.Year.prototype.$constructor = function(yearNumber) {
@@ -256,7 +352,7 @@ JAX.Calendar.Year.prototype._generateMonths = function() {
 
 JAX.Calendar.Year.View = JAK.ClassMaker.makeClass({
 	NAME:"JAX.Calendar.Year.View",
-	VERSION:"0.3"
+	VERSION:"0.4"
 });
 
 JAX.Calendar.Year.View.prototype.$constructor = function(year) {
@@ -265,6 +361,7 @@ JAX.Calendar.Year.View.prototype.$constructor = function(year) {
 	this._viewMonths = [];
 	this._jax = {};
 	this._activeMonth = null;
+	this._activeMonthNumber = -1;
 
 	this._build();
 	this.setActiveMonth(this._months[0]);
@@ -278,12 +375,23 @@ JAX.Calendar.Year.View.prototype.setActiveMonth = function(month) {
 	var index = this._months.indexOf(month);
 	if (index == -1) { return; }
 	this._activeMonth = month;
+	this._activeMonthNumber = month.getMonthNumber();
 
 	for (var i=0, len=this._viewMonths.length; i<len; i++) {
 		var viewMonth = this._viewMonths[i];
 		viewMonth.hide();
 	}
 	this._viewMonths[index].show();
+};
+
+JAX.Calendar.Year.View.prototype.setNextMonth = function() {
+	if (this._activeMonthNumber + 1 > 11) { return; }
+	this.setActiveMonth(this._months[this._activeMonthNumber+1]);
+};
+
+JAX.Calendar.Year.View.prototype.setPreviousMonth = function() {
+	if (this._activeMonthNumber - 1 < 0) { return; }
+	this.setActiveMonth(this._months[this._activeMonthNumber-1]);	
 };
 
 JAX.Calendar.Year.View.prototype._build = function() {
@@ -295,5 +403,31 @@ JAX.Calendar.Year.View.prototype._build = function() {
 		this._viewMonths.push(viewMonth);
 		this._jax.container.addNode(viewMonth.getContainer());
 	}
+};
+
+JAX.Calendar.Button = JAK.ClassMaker.makeClass({
+	NAME:"JAX.Calendar.Button",
+	VERSION:"0.4"
+});
+
+JAX.Calendar.Button.prototype.$constructor = function(text) {
+	this._text = text;
+	this._callback = null;
+	this._jax = {};
+	this._ec = [];
+	this._build();
+};
+
+JAX.Calendar.Button.prototype.listenOnClick = function(callback) {
+	this._callback = callback;
+	this._ec.push(this._jax.container.listen("click", callback));
+}
+
+JAX.Calendar.Button.prototype.getContainer = function() {
+	return this._jax.container;
+};
+
+JAX.Calendar.Button.prototype._build = function() {
+	this._jax.container = JAX.make("span.jax-cal-button", this._text);
 };
 

@@ -1,5 +1,5 @@
 JAX = {
-	VERSION: "1.93b"
+	VERSION: "1.94b"
 };
 
 JAX.$ = function(selector, srcElement) {
@@ -12,12 +12,14 @@ JAX.$ = function(selector, srcElement) {
 
 		return jaxelms;
 	} else if ("nodeType" in selector && selector.nodeType == 1) {
-		return [selector];
+		return [new JAX.HTMLElm(selector)];
+	} else if ("nodeType" in selector && selector.nodeType == 9) {
+		return [new JAX.HTMLDoc(selector)];
 	} else if (selector instanceof JAX.HTMLElm) {
 		return [new JAX.HTMLElm(selector)];
 	}
 	
-	throw new Error("JAX.$ accepts only String, html element or instance of JAX.HTMLElm class as the first argument. See doc for more information."); 
+	throw new Error("JAX.$ accepts only String, html element, document or instance of JAX.HTMLElm class as the first argument. See doc for more information."); 
 };
 
 JAX.$$ = function(selector, srcElement) {
@@ -29,11 +31,13 @@ JAX.$$ = function(selector, srcElement) {
 		return jaxelm;
 	} else if ("nodeType" in selector && selector.nodeType == 1) {
 		return new JAX.HTMLElm(selector);
+	} else if ("nodeType" in selector && selector.nodeType == 9) {
+		return new JAX.HTMLDoc(selector);
 	} else if (selector instanceof JAX.HTMLElm) {
 		return selector;
 	}
 
-	throw new Error("JAX.$$ accepts only String, html element or instance of JAX.HTMLElm class as the first argument. See doc for more information.");
+	throw new Error("JAX.$$ accepts only String, html element, document or instance of JAX.HTMLElm class as the first argument. See doc for more information.");
 };
 
 JAX.make = function(tagString, html, srcDocument) {

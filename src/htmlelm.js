@@ -4,13 +4,13 @@ JAX.HTMLElm = JAK.ClassMaker.makeClass({
 	IMPLEMENTS:JAX.INode
 });
 
-JAX.HTMLElm._EVENTS = {};
-JAX.HTMLElm._LOCKS = {};
+JAX.HTMLElm.events = {};
+JAX.HTMLElm._locks = {};
 
 JAX.HTMLElm.prototype.$constructor = function(node) {
 	if (!("nodeType" in node) || node.nodeType != 1) { throw new Error("JAX.HTMLElm constructor accepts only HTML element as its parameter. See doc for more information.") }
 	this._node = node;
-	JAX.HTMLElm._EVENTS[this._node] = JAX.HTMLElm._EVENTS[this._node] || {};
+	JAX.HTMLElm.events[this._node] = JAX.HTMLElm.events[this._node] || {};
 };
 
 JAX.HTMLElm.prototype.$destructor = function() {
@@ -22,7 +22,7 @@ JAX.HTMLElm.prototype.destroy = function() {
 	this.stopListening();
 	this.removeFromDOM();
 	this.clear();
-	delete JAX.HTMLElm._EVENTS[this._node];
+	delete JAX.HTMLElm.events[this._node];
 	this._node = null;
 };
 
@@ -189,10 +189,10 @@ JAX.HTMLElm.prototype.listen = function(type, method, obj, bindData) {
 	var thisNode = this;
 	var f = function(e, node) { method(e, thisNode, bindData); }
 	var listenerId = JAK.Events.addListener(this._node, type, f);
-	var evtListeners = JAX.HTMLElm._EVENTS[this._node][type] || [];
+	var evtListeners = JAX.HTMLElm.events[this._node][type] || [];
 
 	evtListeners.push(listenerId);
-	JAX.HTMLElm._EVENTS[this._node][type] = evtListeners;
+	JAX.HTMLElm.events[this._node][type] = evtListeners;
 
 	return listenerId;
 };
@@ -201,7 +201,7 @@ JAX.HTMLElm.prototype.stopListening = function(type, listenerId) {
 	if (this._checkLocked(this.stopListening, arguments)) { return this; }
 
 	if (!arguments.length) {
-		var events = JAX.HTMLElm._EVENTS[this._node];
+		var events = JAX.HTMLElm.events[this._node];
 		for (var p in events) { this.stopListening(p); }
 		return this;
 	}
@@ -210,12 +210,12 @@ JAX.HTMLElm.prototype.stopListening = function(type, listenerId) {
 		throw new Error("JAX.HTMLElm.stopListening bad arguments. See doc for more information.")
 	}
 
-	var eventListeners = JAX.HTMLElm._EVENTS[this._node][type]; 
+	var eventListeners = JAX.HTMLElm.events[this._node][type]; 
 	if (!eventListeners) { console.warn("JAX.HTMLElm.stopListening: no event '" + type + "' found"); return this; }
 
 	if (!listenerId) { 
 		this._destroyEvents(eventListeners);
-		delete JAX.HTMLElm._EVENTS[this._node][type];
+		delete JAX.HTMLElm.events[this._node][type];
 		return this;
 	}
 
@@ -230,7 +230,17 @@ JAX.HTMLElm.prototype.stopListening = function(type, listenerId) {
 	return this;
 };
 
-JAX.HTMLElm.prototype.attr = function(attributes) {
+JAX.HTMLElm.prototype.attr = function() {
+	var attributes = arguments;
+
+	if (attributes.length > 1) { 
+		return this.attr(attributes);
+	} else if (attributes.length == 1) {
+		attributes = arguments[0];
+	} else {
+		return [];
+	}
+
 	if (JAX.isString(attributes)) { return this._node.getAttribute(attributes); }
 
 	if (JAX.isArray(attributes)) {
@@ -252,7 +262,17 @@ JAX.HTMLElm.prototype.attr = function(attributes) {
 	return this;
 };
 
-JAX.HTMLElm.prototype.style = function(cssStyles) {
+JAX.HTMLElm.prototype.style = function() {
+	var cssStyles = arguments;
+
+	if (cssStyles.length > 1) { 
+		return this.style(cssStyles);
+	} else if (cssStyles.length == 1) {
+		cssStyles = arguments[0];
+	} else {
+		return [];
+	}
+
 	if (JAX.isString(cssStyles)) { return cssStyles == "opacity" ? this._getOpacity() : this._node.style[cssStyles]; }
 
 	if (JAX.isArray(cssStyles)) {
@@ -290,7 +310,17 @@ JAX.HTMLElm.prototype.displayOff = function() {
 	return this;
 };
 
-JAX.HTMLElm.prototype.computedStyle = function(cssStyles) {
+JAX.HTMLElm.prototype.computedStyle = function() {
+	var cssStyles = arguments;
+
+	if (cssStyles.length > 1) { 
+		return this.computedStyle(cssStyles);
+	} else if (cssStyles.length == 1) {
+		cssStyles = arguments[0];
+	} else {
+		return [];
+	}
+
 	if (JAX.isString(cssStyles)) { return JAK.DOM.getStyle(this._node, cssStyles); }
 
 	var css = {};
@@ -402,6 +432,11 @@ JAX.HTMLElm.prototype.contains = function(node) {
 	return false;
 };
 
+JAX.HTMLElm.prototype.isChildOf = function(node) {
+	var elm = node instanceof JAX.HTMLElm ? node : new JAX.HTMLElm(node);
+	return elm.contains(this);
+};
+
 JAX.HTMLElm.prototype.fadeIn = function(duration, callback) {
 	if (this._checkLocked(this.fadeIn, arguments)) { return this; }
 
@@ -498,20 +533,20 @@ JAX.HTMLElm.prototype._getOpacity = function() {
 };
 
 JAX.HTMLElm.prototype._lock = function() {
-	JAX.HTMLElm._LOCKS[this._node] = [];
+	JAX.HTMLElm._locks[this._node] = [];
 };
 
 JAX.HTMLElm.prototype._checkLocked = function(method, args) {
-	if (!JAX.HTMLElm._LOCKS[this._node]) { return false; }
-	JAX.HTMLElm._LOCKS[this._node].push({method:method, args:args});
+	if (!JAX.HTMLElm._locks[this._node]) { return false; }
+	JAX.HTMLElm._locks[this._node].push({method:method, args:args});
 	return true;
 };
 
 JAX.HTMLElm.prototype._unlock = function() {
-	var queue = JAX.HTMLElm._LOCKS[this._node].slice();
-	delete JAX.HTMLElm._LOCKS[this._node];
+	var queue = JAX.HTMLElm._locks[this._node].slice();
+	delete JAX.HTMLElm._locks[this._node];
 	while(queue.length) {
-		var mq = queue.shift();
+		var q = queue.shift();
 		q.method.apply(this, q.args);
 	}
 };
