@@ -9,7 +9,7 @@ JAX.Calendar.prototype.$constructor = function(elm) {
 	this._buttons = {};
 	this._current = {};
 	this._yearViews = {};
-	this._ec = [];
+	this._ecDoc = null;
 
 	this._shown = false;
 
@@ -42,8 +42,9 @@ JAX.Calendar.prototype.show = function() {
 JAX.Calendar.prototype.hide = function() {
 	if (!this._shown) { return this; }
 
-	JAX.$$(document).stopListening("mousedown",this._ec[0]);
-
+	JAX.$$(document).stopListening("mousedown",this._ecDoc);
+	this._ecDoc = null;
+	
 	this._jax.container
 		.clear()
 		.fadeOut()
