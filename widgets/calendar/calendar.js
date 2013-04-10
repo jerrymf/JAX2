@@ -35,7 +35,7 @@ JAX.Calendar.prototype.show = function() {
 		.style({top:pos.top+"px", left:pos.left+"px"})
 		.fadeIn();
 
-	this._ec.push(JAX.$$(document).listen("mousedown", "_tryHide", this));
+	this._ecDoc = JAX.$$(document).listen("mousedown", "_tryHide", this);
 	this._shown = true;
 };
 
@@ -44,7 +44,7 @@ JAX.Calendar.prototype.hide = function() {
 
 	JAX.$$(document).stopListening("mousedown",this._ecDoc);
 	this._ecDoc = null;
-	
+
 	this._jax.container
 		.clear()
 		.fadeOut()
