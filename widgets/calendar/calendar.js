@@ -42,7 +42,7 @@ JAX.Calendar.prototype.show = function() {
 JAX.Calendar.prototype.hide = function() {
 	if (!this._shown) { return this; }
 
-	JAX.$$(document).stopListening("mousedown");
+	JAX.$$(document).stopListening("mousedown",this._ec[0]);
 
 	this._jax.container
 		.clear()
@@ -136,7 +136,7 @@ JAX.Calendar.prototype._initYear = function(yearNumber, monthNumber) {
 };
 
 JAX.Calendar.prototype._tryHide = function(e, elm) {
-	var node = JAX.$$(JAK.Events.getTarget());
+	var node = JAX.$$(JAK.Events.getTarget(e));
 	if (!node.isChildOf(this._jax.container)) { this.hide(); }
 };
 
