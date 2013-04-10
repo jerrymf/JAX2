@@ -12,13 +12,13 @@ JAX.Calendar.prototype.$constructor = function(elm) {
 	this._ecDoc = null;
 
 	this._shown = false;
-	this._calendarReady = false;
+	this._pendingAnimation = false;
 
 	this._jax.targetElm = elm instanceof JAX.HTMLElm ? elm : new JAX.HTMLElm(elm);
 };
 
 JAX.Calendar.prototype.show = function() {
-	if (this._shown) { return this; }
+	if (this._shown || this._pendingAnimation) { return this; }
 
 	var pos = JAK.DOM.getPortBoxPosition(this._jax.targetElm.node());
 	
@@ -31,35 +31,43 @@ JAX.Calendar.prototype.show = function() {
 	this._init();
 	this._activeYearView.setActiveMonth(this._current.month);
 
+	this._pendingAnimation = true;
+
 	this._jax.container
 		.addNode(this._activeYearView.getContainer())
 		.appendTo(document.body)
 		.style({top:pos.top+"px", left:pos.left+"px"})
-		.fadeIn();
-
-	this._ecDoc = JAX.$$(document).listen("mousedown", "_tryHide", this);
-	this._shown = true;
+		.fadeIn(0.5, this._showingComplete.bind(this));
 };
 
 JAX.Calendar.prototype.hide = function() {
-	if (!this._shown) { return this; }
+	if (!this._shown || this._pendingAnimation) { return this; }
 
 	JAX.$$(document).stopListening("mousedown",this._ecDoc);
 	this._ecDoc = null;
 
-	this._jax.container
-		.clear()
-		.fadeOut()
-		.removeFromDOM();
+	this._pendingAnimation = true;
+	this._jax.container.fadeOut(0.5, this._hidingComplete.bind(this));
+};
+
+JAX.Calendar.prototype._showingComplete = function() {
+	this._ecDoc = JAX.$$(document).listen("mousedown", "_tryHide", this);
+	this._shown = true;
+	this._pendingAnimation = false;
+};
+
+JAX.Calendar.prototype._hidingComplete = function() {
+	this._jax.container.destroy();
 
 	for (var i in this._yearViews) { delete this._yearViews[i]; }
 	for (var i in this._buttons) { delete this._buttons[i]; }
-	for (var i in this._current) { delete this._jax[i]; }
+	for (var i in this._current) { delete this._current[i]; }
 	delete this._jax.container;
 
 	this._activeYearView = null;
 
 	this._shown = false;
+	this._pendingAnimation = false;
 };
 
 JAX.Calendar.prototype._init = function() {
