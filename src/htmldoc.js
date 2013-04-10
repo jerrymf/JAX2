@@ -62,7 +62,7 @@ JAX.HTMLDoc.prototype.stopListening = function(type, listenerId) {
 	}
 
 	var index = eventListeners.indexOf(listenerId);
-	if (index == -1) {
+	if (index > -1) {
 		this._destroyEvents([eventListeners[index]]);
 		eventListeners.splice(index, 1);
 		return this;
@@ -72,7 +72,7 @@ JAX.HTMLDoc.prototype.stopListening = function(type, listenerId) {
 	return this;
 };
 
-JAX.HTMLDoc.prototype._destroyEvents = function(eventlisteners) {
-	for (var i=0, len=eventlisteners; i<len; i++) { JAK.Events.removeListener(eventListeners[i]); }
+JAX.HTMLDoc.prototype._destroyEvents = function(eventListeners) {
+	JAK.Events.removeListeners(eventListeners);
 };
 

@@ -220,7 +220,7 @@ JAX.HTMLElm.prototype.stopListening = function(type, listenerId) {
 	}
 
 	var index = eventListeners.indexOf(listenerId);
-	if (index == -1) {
+	if (index > -1) {
 		this._destroyEvents([eventListeners[index]]);
 		eventListeners.splice(index, 1);
 		return this;
@@ -338,9 +338,9 @@ JAX.HTMLElm.prototype.width = function(value) {
 		var isFixedPosition = this.computedStyle("position").indexOf("fixed") == 0;
 		var isDisplayNone = this.style("display").indexOf("none") == 0;
 
-		if (!isFixedPosition) { this.style({"position":"absolute !important"}); }
+		if (!isFixedPosition) { this.style({"position":"absolute"}); }
 		if (isDisplayNone) { this.style({"display":""}); }		
-		this.style({"visibility":"hidden !important"});
+		this.style({"visibility":"hidden"});
 
 		var width = this._node.offsetWidth;
 		this.style(backupStyle);
@@ -369,9 +369,9 @@ JAX.HTMLElm.prototype.height = function(value) {
 		var isFixedPosition = this.computedStyle("position").indexOf("fixed") == 0;
 		var isDisplayNone = this.style("display").indexOf("none") == 0;
 
-		if (!isFixedPosition) { this.style({"position":"absolute !important"}); }
+		if (!isFixedPosition) { this.style({"position":"absolute"}); }
 		if (isDisplayNone) { this.style({"display":""}); }		
-		this.style({"visibility":"hidden !important"});
+		this.style({"visibility":"hidden"});
 
 		var height = this._node.offsetHeight;
 		this.style(backupStyle);
@@ -551,6 +551,6 @@ JAX.HTMLElm.prototype._unlock = function() {
 	}
 };
 
-JAX.HTMLElm.prototype._destroyEvents = function(eventlisteners) {
-	for (var i=0, len=eventlisteners; i<len; i++) { JAK.Events.removeListener(eventListeners[i]); }
+JAX.HTMLElm.prototype._destroyEvents = function(eventListeners) {
+	JAK.Events.removeListeners(eventListeners);
 };

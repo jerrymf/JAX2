@@ -11,6 +11,8 @@ type ".\src\textnode.js" >> jax.js
 ECHO. >> jax.js
 type ".\src\htmlelm.js" >> jax.js
 ECHO. >> jax.js
+type ".\src\htmldoc.js" >> jax.js
+ECHO. >> jax.js
 type ".\src\animation.js" >> jax.js
 ECHO. >> jax.js
 ECHO if (!window.JAX) { window.JAX = JAX; } >> jax.js

@@ -12,6 +12,7 @@ JAX.Calendar.prototype.$constructor = function(elm) {
 	this._ecDoc = null;
 
 	this._shown = false;
+	this._calendarReady = false;
 
 	this._jax.targetElm = elm instanceof JAX.HTMLElm ? elm : new JAX.HTMLElm(elm);
 };
@@ -20,6 +21,7 @@ JAX.Calendar.prototype.show = function() {
 	if (this._shown) { return this; }
 
 	var pos = JAK.DOM.getPortBoxPosition(this._jax.targetElm.node());
+	
 	var width = this._jax.targetElm.width();
 	var height = this._jax.targetElm.height();
 
@@ -53,7 +55,7 @@ JAX.Calendar.prototype.hide = function() {
 	for (var i in this._yearViews) { delete this._yearViews[i]; }
 	for (var i in this._buttons) { delete this._buttons[i]; }
 	for (var i in this._current) { delete this._jax[i]; }
-	for (var i in this._jax) { delete this._jax[i]; }
+	delete this._jax.container;
 
 	this._activeYearView = null;
 
@@ -69,6 +71,7 @@ JAX.Calendar.prototype._init = function() {
 	this._activeYearView = this._yearViews[this._current.year.getYearNumber()].view;
 
 	/* buttons init */
+
 	this._buttons["prev-year"] = new JAX.Calendar.Button("&laquo;&laquo;");
 	this._buttons["next-year"] = new JAX.Calendar.Button("&raquo;&raquo;");
 	this._buttons["prev-month"] = new JAX.Calendar.Button("&laquo;");

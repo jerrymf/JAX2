@@ -41,14 +41,13 @@ JAX.$$ = function(selector, srcElement) {
 };
 
 JAX.make = function(tagString, html, srcDocument) {
-	var html = html || "";
+	var attributes = html ? {innerHTML:html} : {};
 	var tagName = "";
 	var type="tagname";
-	var attributes = {innerHTML:html};
 	var currentAttrName = "";
 	var inAttributes = false;
 
-	if (!JAX.isString(html) && !JAX.isNumber(html)) { throw new Error("JAX.make: Second parameter 'html' must be a string or number"); }
+	if (html && !JAX.isString(html) && !JAX.isNumber(html)) { throw new Error("JAX.make: Second parameter 'html' must be a string or number"); }
 	if (tagString.length && ".#[=] ".indexOf(tagString[0]) > -1) { throw new Error("JAX.make: Tagname must be first."); }
 
 	for (var i=0, len=tagString.length; i<len; i++) {
