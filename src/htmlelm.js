@@ -4,13 +4,21 @@ JAX.HTMLElm = JAK.ClassMaker.makeClass({
 	IMPLEMENTS:JAX.INode
 });
 
-JAX.HTMLElm.events = {};
-JAX.HTMLElm._locks = {};
+JAX.HTMLElm.events = {}; //fixme - resit pres jax id
+JAX.HTMLElm._locks = {}; //fixme - resit pres jax id
+JAX.HTMLElm._instances = []; //fixme - resit pres jax id
+
+JAX.HTMLElm.create = function(node) {
+	var index = JAX.HTMLElm._instances.indexOf(node);
+	if (index > -1) { return JAX.HTMLElm._instances[index]; }
+	return new JAX.HTMLElm(node);
+};
 
 JAX.HTMLElm.prototype.$constructor = function(node) {
-	if (!("nodeType" in node) || node.nodeType != 1) { throw new Error("JAX.HTMLElm constructor accepts only HTML element as its parameter. See doc for more information.") }
+	if (!("nodeType" in node) || node.nodeType != 1) { throw new Error("JAX.HTMLElm constructor accepts only HTML element as its parameter. See doc for more information."); }	
 	this._node = node;
-	JAX.HTMLElm.events[this._node] = JAX.HTMLElm.events[this._node] || {};
+	JAX.HTMLElm.events[node] = JAX.HTMLElm.events[node] || {};
+	JAX.HTMLElm._instances.push(this);
 };
 
 JAX.HTMLElm.prototype.$destructor = function() {
@@ -23,6 +31,7 @@ JAX.HTMLElm.prototype.destroy = function() {
 	this.removeFromDOM();
 	this.clear();
 	delete JAX.HTMLElm.events[this._node];
+	delete JAX.HTMLElm._instances[this._node];
 	this._node = null;
 };
 
@@ -171,7 +180,7 @@ JAX.HTMLElm.prototype.removeFromDOM = function() {
 JAX.HTMLElm.prototype.clone = function(withContent) {
 	var withContent = !!withContent;
 	var clone = this._node.cloneNode(withContent);
-	return new JAX.HTMLElm(clone);
+	return JAX.HTMLElm.create(clone);
 };
 
 JAX.HTMLElm.prototype.listen = function(type, method, obj, bindData) {
@@ -395,16 +404,16 @@ JAX.HTMLElm.prototype.height = function(value) {
 };
 
 JAX.HTMLElm.prototype.parent = function() {
-	if (this._node.parentNode) { return new JAX.HTMLElm(this._node.parentNode); }
+	if (this._node.parentNode) { return JAX.HTMLElm.create(this._node.parentNode); }
 	return null;
 };
 
 JAX.HTMLElm.prototype.nextSibling = function() {
-	return this._node.nextSibling ? new JAX.HTMLElm(this._node.nextSibling) : null;
+	return this._node.nextSibling ? JAX.HTMLElm.create(this._node.nextSibling) : null;
 };
 
 JAX.HTMLElm.prototype.prevSibling = function() {
-	return this._node.previousSibling ? new JAX.HTMLElm(this._node.previousSibling) : null;
+	return this._node.previousSibling ? JAX.HTMLElm.create(this._node.previousSibling) : null;
 };
 
 JAX.HTMLElm.prototype.childs = function() {
@@ -412,7 +421,7 @@ JAX.HTMLElm.prototype.childs = function() {
 	for (var i=0, len=this._node.childNodes.length; i<len; i++) {
 		var childNode = this._node.childNodes[i];
 		if (childNode.nodeType == 3) { nodes.push(new JAX.TextNode(childNode)); continue; }
-		nodes.push(new JAX.HTMLElm(childNode));
+		nodes.push(JAX.HTMLElm.create(childNode));
 	}
 	return nodes;
 };
@@ -433,7 +442,7 @@ JAX.HTMLElm.prototype.contains = function(node) {
 };
 
 JAX.HTMLElm.prototype.isChildOf = function(node) {
-	var elm = node instanceof JAX.HTMLElm ? node : new JAX.HTMLElm(node);
+	var elm = node instanceof JAX.HTMLElm ? node : JAX.HTMLElm.create(node);
 	return elm.contains(this);
 };
 

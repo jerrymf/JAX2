@@ -33,7 +33,7 @@ JAX.TextNode.prototype.removeFromDOM = function() {
 };
 
 JAX.TextNode.prototype.parent = function() {
-	if (this._node.parentNode) { return new JAX.HTMLElm(this._node.parentNode); }
+	if (this._node.parentNode) { return JAX.HTMLElm.create(this._node.parentNode); }
 	return null;
 };
 

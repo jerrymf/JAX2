@@ -14,7 +14,7 @@ JAX.Calendar.prototype.$constructor = function(elm) {
 	this._shown = false;
 	this._pendingAnimation = false;
 
-	this._jax.targetElm = elm instanceof JAX.HTMLElm ? elm : new JAX.HTMLElm(elm);
+	this._jax.targetElm = elm instanceof JAX.HTMLElm ? elm : JAX.HTMLElm.create(elm);
 };
 
 JAX.Calendar.prototype.show = function() {

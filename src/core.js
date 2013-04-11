@@ -8,15 +8,15 @@ JAX.$ = function(selector, srcElement) {
 		var foundElms = srcElement.querySelectorAll(query);
 		var jaxelms = [];
 
-		for (var i=0, len=foundElms.length; i<len; i++) { jaxelms.push(new JAX.HTMLElm(foundElms[i])); }
+		for (var i=0, len=foundElms.length; i<len; i++) { jaxelms.push(JAX.HTMLElm.create(foundElms[i])); }
 
 		return jaxelms;
 	} else if ("nodeType" in selector && selector.nodeType == 1) {
-		return [new JAX.HTMLElm(selector)];
+		return [JAX.HTMLElm.create(selector)];
 	} else if ("nodeType" in selector && selector.nodeType == 9) {
 		return [new JAX.HTMLDoc(selector)];
 	} else if (selector instanceof JAX.HTMLElm) {
-		return [new JAX.HTMLElm(selector)];
+		return [JAX.HTMLElm.create(selector)];
 	}
 	
 	throw new Error("JAX.$ accepts only String, html element, document or instance of JAX.HTMLElm class as the first argument. See doc for more information."); 
@@ -26,11 +26,11 @@ JAX.$$ = function(selector, srcElement) {
 	if (JAX.isString(selector)) {
 		var srcElement = srcElement || document;
 		var foundElm = srcElement.querySelector(selector);
-		var jaxelm = foundElm ? new JAX.HTMLElm(foundElm) : null;
+		var jaxelm = foundElm ? JAX.HTMLElm.create(foundElm) : null;
 
 		return jaxelm;
 	} else if ("nodeType" in selector && selector.nodeType == 1) {
-		return new JAX.HTMLElm(selector);
+		return JAX.HTMLElm.create(selector);
 	} else if ("nodeType" in selector && selector.nodeType == 9) {
 		return new JAX.HTMLDoc(selector);
 	} else if (selector instanceof JAX.HTMLElm) {
@@ -116,7 +116,7 @@ JAX.make = function(tagString, html, srcDocument) {
 
 	}
 
-	var elm = new JAX.HTMLElm(JAK.mel(tagName, attributes, {}, srcDocument || document));
+	var elm = JAX.HTMLElm.create(JAK.mel(tagName, attributes, {}, srcDocument || document));
 	return elm;
 };
 
