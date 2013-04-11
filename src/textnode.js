@@ -1,12 +1,18 @@
 JAX.TextNode = JAK.ClassMaker.makeClass({
 	NAME: "JAX.TextNode",
-	VERSION: "0.1",
-	IMPLEMENTS:JAX.INode
+	VERSION: "0.2",
+	IMPLEMENT:JAX.INode
 });
 
+JAX.TextNode.prototype.jaxNodeType = 3;
+
 JAX.TextNode.prototype.$constructor = function(node) {
-	if (!("nodeType" in node) || node.nodeType != 3) { throw new Error("JAX.TextNode constructor accepts only text node as its parameter. See doc for more information.") }
-	this._node = node;
+	if (node && "nodeType" in node && node.nodeType == 3) { 
+		this._node = node;
+		return;
+	}
+
+	throw new Error("JAX.TextNode constructor accepts only text node as its parameter. See doc for more information.")
 };
 
 JAX.TextNode.prototype.node = function() {
@@ -14,21 +20,31 @@ JAX.TextNode.prototype.node = function() {
 };
 
 JAX.TextNode.prototype.appendTo = function(node) {
-	var node = node instanceof JAX.HTMLElm ? node.NODE : node;
-	node.appendChild(this._node);
-	return this;
+	if (node && (node.nodeType || node.jaxNodeType)) { 
+		var node = node.jaxNodeType ? node.node() : node;
+		node.appendChild(this._node);
+		return this;
+	}
+
+	throw new Error("JAX.TextNode.appendTo accepts only HTML element, JAX.HTMLElm or JAX.TextNode instance as its argument. See doc for more information.");
 };
 
-JAX.TextNode.prototype.appendBefore = function(node) {
-	var node = node instanceof JAX.HTMLElm ? node.NODE : node;
-	node.parentNode.insertBefore(this._node, node);
-	return this;
+JAX.TextNode.prototype.appendBefore = function(node, nodeBefore) {
+	if (node && (node.nodeType || node.jaxNodeType)) {
+		var node = node.jaxNodeType ? node.node() : node;
+		node.parentNode.insertBefore(this._node, node);	
+	}
+
+	throw new Error("JAX.TextNode.appendBefore accepts only HTML element, JAX.HTMLElm or JAX.TextNode instance as its argument. See doc for more information.");
 };
 
 JAX.TextNode.prototype.removeFromDOM = function() {
 	try {
 		this._node.parentNode.removeChild(this._node);
-	} catch(e) {};
+	} catch(e) {
+
+	};
+
 	return this;
 };
 

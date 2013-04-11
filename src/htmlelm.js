@@ -1,28 +1,50 @@
 JAX.HTMLElm = JAK.ClassMaker.makeClass({
 	NAME: "JAX.HTMLElm",
-	VERSION: "0.6",
-	IMPLEMENTS:JAX.INode
+	VERSION: "0.7",
+	IMPLEMENT:JAX.INode
 });
 
-JAX.HTMLElm.events = {}; //fixme - resit pres jax id
-JAX.HTMLElm._locks = {}; //fixme - resit pres jax id
-JAX.HTMLElm._instances = []; //fixme - resit pres jax id
-
 JAX.HTMLElm.create = function(node) {
-	var index = JAX.HTMLElm._instances.indexOf(node);
-	if (index > -1) { return JAX.HTMLElm._instances[index]; }
-	return new JAX.HTMLElm(node);
+	var jaxId = node.getAttribute("data-jax-id");
+	if (!jaxId || !(jaxId in JAX.allnodes)) { return new JAX.HTMLElm(node); }
+	return JAX.allnodes[jaxId].instance;
 };
 
+JAX.HTMLElm.prototype.jaxNodeType = 1;
+
 JAX.HTMLElm.prototype.$constructor = function(node) {
-	if (!("nodeType" in node) || node.nodeType != 1) { throw new Error("JAX.HTMLElm constructor accepts only HTML element as its parameter. See doc for more information."); }	
-	this._node = node;
-	JAX.HTMLElm.events[node] = JAX.HTMLElm.events[node] || {};
-	JAX.HTMLElm._instances.push(this);
+	if (node && node.nodeType && node.nodeType == 1) {  	
+		this._node = node;
+
+		/* set jax id for new (old) node */
+		var oldJaxId = node.getAttribute("data-jax-id");
+		if (oldJaxId) {
+			this._jaxId = oldJaxId;	
+		} else {
+			this._jaxId = JAK.idGenerator();
+			node.setAttribute("data-jax-id", this._jaxId);
+		}
+
+		/* create shortcut to modify static attribute, where are stored all information about node */
+		JAX.allnodes[this._jaxId] = JAX.allnodes[this._jaxId] || {};
+		this._storage = JAX.allnodes[this._jaxId];
+		this._storage.instance = this;
+		this._storage.events = this._storage.events || {};
+		this._storage.lockQueue = [];
+		this._storage.locked = false;
+
+		return;
+	}
+
+	throw new Error("JAX.HTMLElm constructor accepts only HTML element as its parameter. See doc for more information.");
 };
 
 JAX.HTMLElm.prototype.$destructor = function() {
 	this.destroy();
+	this._node = null;
+	delete this._storage.events;
+	delete this._storage.instance;
+	delete this._storage.lockQueue;
 };
 
 JAX.HTMLElm.prototype.destroy = function() {
@@ -30,9 +52,6 @@ JAX.HTMLElm.prototype.destroy = function() {
 	this.stopListening();
 	this.removeFromDOM();
 	this.clear();
-	delete JAX.HTMLElm.events[this._node];
-	delete JAX.HTMLElm._instances[this._node];
-	this._node = null;
 };
 
 JAX.HTMLElm.prototype.node = function() {
@@ -48,145 +67,178 @@ JAX.HTMLElm.prototype.$$ = function(selector) {
 };
 
 JAX.HTMLElm.prototype.addClass = function(classname) {
-	if (this._checkLocked(this.addClass, arguments)) { return this; }
-	if (!JAX.isString(classname)) { throw new Error("JAX.HTMLElm.addClass accepts only string as its parameter. See doc for more information."); }
+	if (this._checkLocked(this.addClass, arguments)) {
+		return this; 
+	} else if (JAX.isString(classname)) {
+		var classnames = classname.split(" ");
+		var classes = this._node.className.split(" ");
 
-	var classnames = classname.split(" ");
-	var classes = this._node.className.split(" ");
+		while(classnames.length) {
+			if (classes.indexOf(classnames.shift()) == -1) { classes.push(classname); }
+		}
 
-	while(classnames.length) {
-		if (classes.indexOf(classnames.shift()) == -1) { classes.push(classname); }
+		this._node.className = classes.join(" ");
+
+		return this;
 	}
 
-	this._node.className = classes.join(" ");
-
-	return this;
+	throw new Error("JAX.HTMLElm.addClass accepts only string as its parameter. See doc for more information.");
+	
 };
 
 JAX.HTMLElm.prototype.removeClass = function(classname) {
-	if (this._checkLocked(this.removeClass, arguments)) { return this; }
-	if (!JAX.isString(classname)) { throw new Error("JAX.HTMLElm.removeClass accepts only string as its parameter. See doc for more information."); }
+	if (this._checkLocked(this.removeClass, arguments)) { 
+		return this; 
+	} else if (JAX.isString(classname)) {
+		var classnames = classname.split(" ");
+		var classes = this._node.className.split(" ");
 
-	var classnames = classname.split(" ");
-	var classes = this._node.className.split(" ");
+		while(classnames.length) {
+			var index = classes.indexOf(classnames.shift());
+			if (index != -1) { classes.splice(index, 1); }
+		}
 
-	while(classnames.length) {
-		var index = classes.indexOf(classnames.shift());
-		if (index != -1) { classes.splice(index, 1); }
+		this._node.className = classes.join(" ");
+		return this;
 	}
 
-	this._node.className = classes.join(" ");
-	
-	return this;
+	throw new Error("JAX.HTMLElm.removeClass accepts only string as its parameter. See doc for more information.");
 };
 
 JAX.HTMLElm.prototype.hasClass = function(className) {
-	if (!JAX.isString(classname)) { throw new Error("JAX.HTMLElm.hasClass accepts only string as its parameter. See doc for more information."); }
+	if (JAX.isString(classname)) {  
+		var names = className.split(" ");
 
-	var names = className.split(" ");
+		while(names.length) {
+			var name = names.shift();
+			if (this._node.className.indexOf(name) != -1) { return true; }
+		}
 
-	while(names.length) {
-		var name = names.shift();
-		if (this._node.className.indexOf(name) != -1) { return true; }
+		return false;
 	}
 
-	return false;
+	throw new Error("JAX.HTMLElm.hasClass accepts only string as its parameter. See doc for more information.");
 };
 
 JAX.HTMLElm.prototype.id = function(id) {
-	if (!arguments.length) { return this.attr("id"); }
-	if (this._checkLocked(this.id, arguments)) { return this; }
-	if (!JAX.isString(id)) { throw new Error("JAX.HTMLElm.id accepts only string as its argument. See doc for more information. "); }
-	this.attr({id:id});
-	return this;
+	if (!arguments.length) { 
+		return this.attr("id"); 
+	} else if (this._checkLocked(this.id, arguments)) { 
+		return this; 
+	} else if (JAX.isString(id)) { 
+		this.attr({id:id}); 
+		return this;
+	}
+
+	throw new Error("JAX.HTMLElm.id accepts only string as its argument. See doc for more information. ");
 };
 
 JAX.HTMLElm.prototype.html = function(innerHTML) {
-	if (!arguments.length) { return innerHTML; }
-	if (this._checkLocked(this.html, arguments)) { return this; }
-	this._node.innerHTML = innerHTML;
-	return this;
+	if (!arguments.length) { 
+		return innerHTML; 
+	} else if (this._checkLocked(this.html, arguments)) { 
+		return this; 
+	} else if (JAX.isString(innerHTML)) {
+		this._node.innerHTML = innerHTML;
+		return this;
+	}
+	
+	throw new Error("JAX.HTMLElm.html accepts only string as its argument. See doc for more information. ");	
 };
 
 JAX.HTMLElm.prototype.addNode = function(node) {
-	if (this._checkLocked(this.addNode, arguments)) { return this; }
-	if (!("nodeType" in node) && !(node instanceof JAX.HTMLElm) && !(node instanceof JAX.TextNode)) { 
-		throw new Error("JAX.HTMLElm.addNode accepts only HTML node, textnode, JAX.HTMLElm or JAX.TextNode instance as its parameter. See doc for more information."); 
+	if (this._checkLocked(this.addNode, arguments)) { 
+		return this; 
+	} else if (node && (node.nodeType || node.jaxNodeType)) { 
+		var node = node.jaxNodeType ? node.node() : node;
+		this._node.appendChild(node);
+		return this;
 	}
 
-	var node = node instanceof JAX.HTMLElm ? node.node() : node;
-	this._node.appendChild(node);
-
-	return this;
+	throw new Error("JAX.HTMLElm.addNode accepts only HTML node, textnode, JAX.HTMLElm or JAX.TextNode instance as its parameter. See doc for more information."); 
 };
 
 JAX.HTMLElm.prototype.addNodes = function() {
-	if (this._checkLocked(this.addNodes, arguments)) { return this; }
-	if (!arguments.length) { console.warn("JAX.HTMLElm.addNodes is called with no argument."); }
 	var nodes = arguments;
-	if (nodes.length == 1 && nodes[0] instanceof Array) { nodes = nodes[0]; }
+
+	if (this._checkLocked(this.addNodes, nodes)) { 
+		return this; 
+	} else if (nodes.length == 1 && nodes[0] instanceof Array) { 
+		nodes = nodes[0]; 
+	} else if (!nodes.length) { 
+		console.warn("JAX.HTMLElm.addNodes is called with no argument."); 
+		return this;
+	}
+	
 	for (var i=0, len=nodes.length; i<len; i++) { this.addNode(nodes[i]); }
+
 	return this;
 };
 
 JAX.HTMLElm.prototype.addNodeBefore = function(node, nodeBefore) {
-	if (this._checkLocked(this.addNodeBefore, arguments)) { return this; }
-	if (!("nodeType" in node) && !(node instanceof JAX.HTMLElm) && !(node instanceof JAX.TextNode)) { 
-		throw new Error("JAX.HTMLElm.addNodeBefore accepts only HTML element, textnode, JAX.HTMLElm or JAX.TextNode instance as its first argument. See doc for more information."); 
+	if (this._checkLocked(this.addNodeBefore, arguments)) { 
+		return this; 
+	} else if (node && (node.nodeType || node.jaxNodeType) && (nodeBefore.nodeType || nodeBefore.jaxNodeType)) {
+		var node = node.jaxNodeType ? node.node() : node;
+		var nodeBefore = nodeBefore.jaxNodeType ? nodeBefore.node() : nodeBefore;
+		this._node.insertBefore(node, nodeBefore);
 	}
 
-	if (!("nodeType" in nodeBefore) && !(nodeBefore instanceof JAX.HTMLElm) && !(nodeBefore instanceof JAX.TextNode)) { 
-		throw new Error("JAX.HTMLElm.addNodeBefore accepts only HTML element, textnode, JAX.HTMLElm or JAX.TextNode instance as its second argument. See doc for more information."); 
-	}
-
-	var node = node instanceof JAX.HTMLElm ? node.node() : node;
-	var nodeBefore = nodeBefore instanceof JAX.HTMLElm ? nodeBefore.node() : nodeBefore;
-
-	this._node.insertBefore(node, nodeBefore);
+	throw new Error("JAX.HTMLElm.addNodeBefore accepts only HTML element, textnode, JAX.HTMLElm or JAX.TextNode instance as its first argument. See doc for more information.");
 
 	return this;
 };
 
 JAX.HTMLElm.prototype.appendTo = function(node) {
-	if (this._checkLocked(this.appendTo, arguments)) { return this; }
-	if ((!("nodeType" in node) || node.nodeType != 1) && !(node instanceof JAX.HTMLElm) && !(node instanceof JAX.TextNode)) { 
-		throw new Error("JAX.HTMLElm.appendTo accepts only HTML element, JAX.HTMLElm or JAX.TextNode instance as its argument. See doc for more information."); 
+	if (this._checkLocked(this.appendTo, arguments)) {
+		return this; 
+	} else if (node && (node.nodeType || node.jaxNodeType)) { 
+		var node = node.jaxNodeType ? node.node() : node;
+		node.appendChild(this._node);
+		return this;
 	}
 
-	var node = node instanceof JAX.HTMLElm ? node.node() : node;
-	node.appendChild(this._node);
-	return this;
+	throw new Error("JAX.HTMLElm.appendTo accepts only HTML element, JAX.HTMLElm or JAX.TextNode instance as its argument. See doc for more information.");
 };
 
 JAX.HTMLElm.prototype.appendBefore = function(node) {
-	if (this._checkLocked(this.appendBefore, arguments)) { return this; }
-	if ((!("nodeType" in node) || node.nodeType != 1) && !(node instanceof JAX.HTMLElm) && !(node instanceof JAX.TextNode)) { 
-		throw new Error("JAX.HTMLElm.appendTo accepts only HTML element, JAX.HTMLElm or JAX.TextNode instance as its argument. See doc for more information."); 
+	if (this._checkLocked(this.appendBefore, arguments)) { 
+		return this; 
+	} else if (node && (node.nodeType || node.jaxNodeType)) {
+		var node = node.jaxNodeType ? node.node() : node;
+		node.parentNode.insertBefore(this._node, node);	
 	}
 
-	var node = node.node() ? node.node() : node;
-	node.parentNode.insertBefore(this._node, node);
-	return this;
+	throw new Error("JAX.HTMLElm.appendBefore accepts only HTML element, JAX.HTMLElm or JAX.TextNode instance as its argument. See doc for more information."); 
 };
 
 JAX.HTMLElm.prototype.removeFromDOM = function() {
 	if (this._checkLocked(this.removeFromDOM, arguments)) { return this; }
+
 	try {
 		this._node.parentNode.removeChild(this._node);
-	} catch(e) {};
+	} catch(e) {
+
+	};
+
 	return this;
 };
 
 JAX.HTMLElm.prototype.clone = function(withContent) {
 	var withContent = !!withContent;
 	var clone = this._node.cloneNode(withContent);
+	clone.setAttribute("data-jax-id","");
 	return JAX.HTMLElm.create(clone);
 };
 
 JAX.HTMLElm.prototype.listen = function(type, method, obj, bindData) {
-	if (!type || !JAX.isString(type)) { throw new Error("JAX.HTMLElm.listen: first parameter must be string. See doc for more information."); }
-	if (!method || (!JAX.isString(method) && !JAX.isFunction(method))) { throw new Error("JAX.HTMLElm.listen: second paremeter must be function or name of function. See doc for more information."); }
-	if (arguments.length > 4) { console.warn("JAX.HTMLElm.listen accepts maximally 4 arguments. See doc for more information."); }
+	if (!type || !JAX.isString(type)) { 
+		throw new Error("JAX.HTMLElm.listen: first parameter must be string. See doc for more information."); 
+	} else if (!method || (!JAX.isString(method) && !JAX.isFunction(method))) { 
+		throw new Error("JAX.HTMLElm.listen: second paremeter must be function or name of function. See doc for more information."); 
+	} else if (arguments.length > 4) { 
+		console.warn("JAX.HTMLElm.listen accepts maximally 4 arguments. See doc for more information."); 
+	}
 	
 	if (JAX.isString(method)) {
 		var obj = obj || window;
@@ -198,19 +250,18 @@ JAX.HTMLElm.prototype.listen = function(type, method, obj, bindData) {
 	var thisNode = this;
 	var f = function(e, node) { method(e, thisNode, bindData); }
 	var listenerId = JAK.Events.addListener(this._node, type, f);
-	var evtListeners = JAX.HTMLElm.events[this._node][type] || [];
-
-	evtListeners.push(listenerId);
-	JAX.HTMLElm.events[this._node][type] = evtListeners;
+	this._storage.events[type] = [].concat(this._storage.events[type]).push(listenerId);
 
 	return listenerId;
 };
 
 JAX.HTMLElm.prototype.stopListening = function(type, listenerId) {
-	if (this._checkLocked(this.stopListening, arguments)) { return this; }
+	if (this._checkLocked(this.stopListening, arguments)) { 
+		return this; 
+	}
 
 	if (!arguments.length) {
-		var events = JAX.HTMLElm.events[this._node];
+		var events = this._storage.events;
 		for (var p in events) { this.stopListening(p); }
 		return this;
 	}
@@ -219,12 +270,15 @@ JAX.HTMLElm.prototype.stopListening = function(type, listenerId) {
 		throw new Error("JAX.HTMLElm.stopListening bad arguments. See doc for more information.")
 	}
 
-	var eventListeners = JAX.HTMLElm.events[this._node][type]; 
-	if (!eventListeners) { console.warn("JAX.HTMLElm.stopListening: no event '" + type + "' found"); return this; }
+	var eventListeners = this._storage.events[type]; 
+	if (!eventListeners) { 
+		console.warn("JAX.HTMLElm.stopListening: no event '" + type + "' found"); 
+		return this; 
+	}
 
 	if (!listenerId) { 
 		this._destroyEvents(eventListeners);
-		delete JAX.HTMLElm.events[this._node][type];
+		delete this._storage.events[type];
 		return this;
 	}
 
@@ -240,28 +294,28 @@ JAX.HTMLElm.prototype.stopListening = function(type, listenerId) {
 };
 
 JAX.HTMLElm.prototype.attr = function() {
-	var attributes = arguments;
+	var attributes = Array.prototype.slice.call(arguments);
 
 	if (attributes.length > 1) { 
 		return this.attr(attributes);
 	} else if (attributes.length == 1) {
-		attributes = arguments[0];
+		attributes = attributes[0];
 	} else {
 		return [];
 	}
 
-	if (JAX.isString(attributes)) { return this._node.getAttribute(attributes); }
-
-	if (JAX.isArray(attributes)) {
+	if (JAX.isString(attributes)) { 
+		return this._node.getAttribute(attributes); 
+	} else if (JAX.isArray(attributes)) {
 		var attrs = {};
 		for (var i=0, len=attributes.length; i<len; i++) { 
 			var attribute = attributes[i];
 			attrs[attribute] = this._node.getAttribute(attribute);
 		}
 		return attrs;	
+	} else if (this._checkLocked(this.attr, attributes)) { 
+		return this; 
 	}
-
-	if (this._checkLocked(this.attr, arguments)) { return this; }
 
 	for (var p in attributes) {
 		var value = attributes[p];
@@ -272,19 +326,19 @@ JAX.HTMLElm.prototype.attr = function() {
 };
 
 JAX.HTMLElm.prototype.style = function() {
-	var cssStyles = arguments;
+	var cssStyles = Array.prototype.slice.call(arguments);
 
 	if (cssStyles.length > 1) { 
 		return this.style(cssStyles);
 	} else if (cssStyles.length == 1) {
-		cssStyles = arguments[0];
+		cssStyles = cssStyles[0];
 	} else {
 		return [];
 	}
 
-	if (JAX.isString(cssStyles)) { return cssStyles == "opacity" ? this._getOpacity() : this._node.style[cssStyles]; }
-
-	if (JAX.isArray(cssStyles)) {
+	if (JAX.isString(cssStyles)) { 
+		return cssStyles == "opacity" ? this._getOpacity() : this._node.style[cssStyles]; 
+	} else if (JAX.isArray(cssStyles)) {
 		var css = {};
 		for (var i=0, len=cssStyles.length; i<len; i++) {
 			var cssStyle = cssStyles[i];
@@ -292,9 +346,9 @@ JAX.HTMLElm.prototype.style = function() {
 			css[cssStyle] = this._node.style[cssStyle];
 		}
 		return css;
+	} else if (this._checkLocked(this.style, cssStyles)) { 
+		return this; 
 	}
-
-	if (this._checkLocked(this.style, arguments)) { return this; }
 
 	for (var p in cssStyles) {
 		var value = cssStyles[p];
@@ -330,7 +384,9 @@ JAX.HTMLElm.prototype.computedStyle = function() {
 		return [];
 	}
 
-	if (JAX.isString(cssStyles)) { return JAK.DOM.getStyle(this._node, cssStyles); }
+	if (JAX.isString(cssStyles)) { 
+		return JAK.DOM.getStyle(this._node, cssStyles); 
+	}
 
 	var css = {};
 	var properties = [].concat(cssStyles);
@@ -343,7 +399,9 @@ JAX.HTMLElm.prototype.computedStyle = function() {
 
 JAX.HTMLElm.prototype.width = function(value) {
 	if (!arguments.length) { 
-		var backupStyle = this.style(["display","visibility","position"]);
+		var backupStyle = this.style("display","visibility","position");
+		console.DEBUG = 1;
+		console.log(backupStyle);
 		var isFixedPosition = this.computedStyle("position").indexOf("fixed") == 0;
 		var isDisplayNone = this.style("display").indexOf("none") == 0;
 
@@ -374,7 +432,7 @@ JAX.HTMLElm.prototype.width = function(value) {
 
 JAX.HTMLElm.prototype.height = function(value) {
 	if (!arguments.length) { 
-		var backupStyle = this.style(["display","visibility","position"]);
+		var backupStyle = this.style("display","visibility","position");
 		var isFixedPosition = this.computedStyle("position").indexOf("fixed") == 0;
 		var isDisplayNone = this.style("display").indexOf("none") == 0;
 
@@ -433,85 +491,116 @@ JAX.HTMLElm.prototype.clear = function() {
 };
 
 JAX.HTMLElm.prototype.contains = function(node) {
-	var elm = node.node() ? node.node().parentNode : node.parentNode;
-	while(elm) {
-		if (elm == this._node) { return true; }
-		elm = elm.parentNode;
+	if (node && (node.nodeType || node.jaxNodeType)) {
+		var elm = node.jaxNodeType ? node.node().parentNode : node.parentNode;
+		while(elm) {
+			if (elm == this._node) { return true; }
+			elm = elm.parentNode;
+		}
+		return false;
 	}
-	return false;
+	
+	throw new Error("JAX.HTMLElm.contains accepts only HTML element, JAX.HTMLElm or JAX.TextNode instance as its argument. See doc for more information.");
 };
 
 JAX.HTMLElm.prototype.isChildOf = function(node) {
-	var elm = node instanceof JAX.HTMLElm ? node : JAX.HTMLElm.create(node);
-	return elm.contains(this);
+	if (node && (node.nodeType || node.jaxNodeType)) {
+		var elm = node.jaxNodeType ? node : JAX.HTMLElm.create(node);
+		return elm.contains(this);
+	}
+
+	throw new Error("JAX.HTMLElm.contains accepts only HTML element, JAX.HTMLElm or JAX.TextNode instance as its argument. See doc for more information.");
 };
 
-JAX.HTMLElm.prototype.fadeIn = function(duration, completeCbk) {
+JAX.HTMLElm.prototype.fade = function(type, duration, completeCbk) {
 	if (this._checkLocked(this.fadeIn, arguments)) { return this; }
 
-	var animation = new JAX.Animation(this);
-	var targetOpacity = parseFloat(this.computedStyle("opacity")) || 1;
+	if (!JAX.isString(type)) {
+		throw new Error("JAX.HTMLElm.fade accepts only String for first argument. See doc for more information.");
+	} else if ((duration && !JAX.isNumber(duration)) || (completeCbk && !JAX.isFunction(completeCbk))) {
+		throw new Error("JAX.HTMLElm.fade accepts only Number for duration argument and Function for completeCbk. See doc for more information.");
+	}
 
-	animation.addProperty("opacity", duration, 0, targetOpacity);
-	animation.addCallback(function() {
+	switch(type) {
+		case "in":
+			var sourceOpacity = 0;
+			var targetOpacity = parseFloat(this.computedStyle("opacity")) || 1;	
+		break;
+		case "out":
+			var sourceOpacity = parseFloat(this.computedStyle("opacity")) || 1;
+			var targetOpacity = 0;
+		break;
+		default:
+			console.warn("JAX.HTMLElm.fade got unsupported type '" + type + "'.");
+			return this;
+	}
+
+	this._lock();
+
+	var animation = new JAX.Animation(this);
+	var func = function() {
 		if (completeCbk) { completeCbk(); }
 		this._unlock();
-	}.bind(this));
-	this._lock();
+	}.bind(this);
+
+	animation.addProperty("opacity", duration, sourceOpacity, targetOpacity);
+	animation.addCallback(func);
 	animation.run();
 
 	return this;
 };
 
-JAX.HTMLElm.prototype.fadeOut = function(duration, completeCbk) {
-	if (this._checkLocked(this.fadeOut, arguments)) { return this; }
-	var animation = new JAX.Animation(this);
-	var sourceOpacity = parseFloat(this.computedStyle("opacity")) || 1;
-
-	animation.addProperty("opacity", duration, sourceOpacity, 0);
-	animation.addCallback(function() {
-		if (completeCbk) { completeCbk(); }
-		this._unlock();
-	}.bind(this));
-	this._lock();
-	animation.run();
-
-	return this;
-};
-
-JAX.HTMLElm.prototype.slideDown = function(duration, completeCbk) {
+JAX.HTMLElm.prototype.slide = function(type, duration, completeCbk) {
 	if (this._checkLocked(this.slideDown, arguments)) { return this; }
-	var animation = new JAX.Animation(this);
-	var backupStyles = this.style(["height","overflow"]);
+
+	if (!JAX.isString(type)) {
+		throw new Error("JAX.HTMLElm.slide accepts only String for first argument. See doc for more information.");
+	} else if ((duration && !JAX.isNumber(duration)) || (completeCbk && !JAX.isFunction(completeCbk))) {
+		throw new Error("JAX.HTMLElm.slide accepts only Number for duration argument and Function for completeCbk. See doc for more information.");
+	}
+
+	switch(type) {
+		case "down":
+			var backupStyles = this.style("height","overflow");
+			var property = "height";
+			var source = 0;
+			var target = this.height();	
+		break;
+		case "up":
+			var backupStyles = this.style("height","overflow");
+			var property = "height";
+			var source = this.height();
+			var target = 0;
+		break;
+		case "left":
+			var backupStyles = this.style("width","overflow");
+			var property = "width";
+			var source = this.width();
+			var target = 0;	
+		break;
+		case "right":
+			var backupStyles = this.style("width","overflow");
+			var property = "width";
+			var source = 0;
+			var target = this.width();
+		break;
+		default:
+			console.warn("JAX.HTMLElm.slide got unsupported type '" + type + "'.");
+			return this;
+	}
 
 	this.style({"overflow": "hidden"});
-
-	animation.addProperty("height", duration, 0, this.height());
-	animation.addCallback(function() {
-		this.style(backupStyles);
-		if (completeCbk) { completeCbk(); }
-		this._unlock();
-	}.bind(this));
 	this._lock();
-	animation.run();
 
-	return this;
-};
-
-JAX.HTMLElm.prototype.slideUp = function(duration, completeCbk) {
-	if (this._checkLocked(this.slideUp, arguments)) { return this; }
 	var animation = new JAX.Animation(this);
-	var backupStyles = this.style(["height","overflow"]);
-
-	this.style({"overflow": "hidden"});
-
-	animation.addProperty("height", duration, this.height(), 0);
-	animation.addCallback(function() {
-		this.style(backupStyles);
+	var func = function() {
+		for (var p in backupStyles) { this._node.style[p] = backupStyles[p]; }
 		if (completeCbk) { completeCbk(); }
 		this._unlock();
-	}.bind(this));
-	this._lock();
+	}.bind(this);
+
+	animation.addProperty(property, duration, source, target);
+	animation.addCallback(func);
 	animation.run();
 
 	return this;
@@ -544,18 +633,18 @@ JAX.HTMLElm.prototype._getOpacity = function() {
 };
 
 JAX.HTMLElm.prototype._lock = function() {
-	JAX.HTMLElm._locks[this._node] = [];
+	this._storage.locked = true;
 };
 
 JAX.HTMLElm.prototype._checkLocked = function(method, args) {
-	if (!JAX.HTMLElm._locks[this._node]) { return false; }
-	JAX.HTMLElm._locks[this._node].push({method:method, args:args});
+	if (!this._storage.locked) { return false; }
+	this._storage.lockQueue.push({method:method, args:args});
 	return true;
 };
 
 JAX.HTMLElm.prototype._unlock = function() {
-	var queue = JAX.HTMLElm._locks[this._node].slice();
-	delete JAX.HTMLElm._locks[this._node];
+	var queue = this._storage.lockQueue;
+	this._storage.locked = false;
 	while(queue.length) {
 		var q = queue.shift();
 		q.method.apply(this, q.args);
@@ -565,3 +654,4 @@ JAX.HTMLElm.prototype._unlock = function() {
 JAX.HTMLElm.prototype._destroyEvents = function(eventListeners) {
 	JAK.Events.removeListeners(eventListeners);
 };
+

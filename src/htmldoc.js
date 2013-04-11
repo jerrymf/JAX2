@@ -1,13 +1,20 @@
 JAX.HTMLDoc = JAK.ClassMaker.makeClass({
 	NAME: "JAX.HTMLDoc",
-	VERSION: "0.1"
+	VERSION: "0.2",
+	IMPLEMENT: JAX.INode
 });
 
 JAX.HTMLDoc.events = {};
 
+JAX.HTMLDoc.prototype.jaxNodeType = 9;
+
 JAX.HTMLDoc.prototype.$constructor = function(doc) {
-	if (!("nodeType" in doc) || doc.nodeType != 9) { throw new Error("JAX.HTMLDoc constructor accepts only document. See doc for more information.") }
-	this._doc = doc;
+	if (doc && "nodeType" in doc && doc.nodeType == 9) {
+		this._doc = doc;
+		return;
+	}
+
+	throw new Error("JAX.HTMLDoc constructor accepts only document. See doc for more information.");
 };
 
 JAX.HTMLDoc.prototype.$ = function(selector) {
@@ -19,9 +26,13 @@ JAX.HTMLDoc.prototype.$$ = function(selector) {
 };
 
 JAX.HTMLDoc.prototype.listen = function(type, method, obj, bindData) {
-	if (!type || !JAX.isString(type)) { throw new Error("JAX.HTMLDoclisten: first parameter must be string. See doc for more information."); }
-	if (!method || (!JAX.isString(method) && !JAX.isFunction(method))) { throw new Error("JAX.HTMLDoc.listen: second paremeter must be function or name of function. See doc for more information."); }
-	if (arguments.length > 4) { console.warn("JAX.HTMLDoc.listen accepts maximally 4 arguments. See doc for more information."); }
+	if (!type || !JAX.isString(type)) { 
+		throw new Error("JAX.HTMLDoclisten: first parameter must be string. See doc for more information."); 
+	} else if (!method || (!JAX.isString(method) && !JAX.isFunction(method))) { 
+		throw new Error("JAX.HTMLDoc.listen: second paremeter must be function or name of function. See doc for more information."); 
+	} else if (arguments.length > 4) { 
+		console.warn("JAX.HTMLDoc.listen accepts maximally 4 arguments. See doc for more information."); 
+	}
 	
 	if (JAX.isString(method)) {
 		var obj = obj || window;

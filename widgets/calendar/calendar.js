@@ -1,7 +1,6 @@
 JAX.Calendar = JAK.ClassMaker.makeClass({
 	NAME:"JAX.Calendar",
-	VERSION:"0.4",
-	IMPLEMENTS:JAK.ISignals
+	VERSION:"0.4"
 });
 
 JAX.Calendar.prototype.$constructor = function(elm) {
@@ -37,7 +36,7 @@ JAX.Calendar.prototype.show = function() {
 		.addNode(this._activeYearView.getContainer())
 		.appendTo(document.body)
 		.style({top:pos.top+"px", left:pos.left+"px"})
-		.fadeIn(0.5, this._showingComplete.bind(this));
+		.fade("in", 0.5, this._showingComplete.bind(this));
 };
 
 JAX.Calendar.prototype.hide = function() {
@@ -47,7 +46,7 @@ JAX.Calendar.prototype.hide = function() {
 	this._ecDoc = null;
 
 	this._pendingAnimation = true;
-	this._jax.container.fadeOut(0.5, this._hidingComplete.bind(this));
+	this._jax.container.fade("out", 0.5, this._hidingComplete.bind(this));
 };
 
 JAX.Calendar.prototype._showingComplete = function() {
@@ -79,7 +78,6 @@ JAX.Calendar.prototype._init = function() {
 	this._activeYearView = this._yearViews[this._current.year.getYearNumber()].view;
 
 	/* buttons init */
-
 	this._buttons["prev-year"] = new JAX.Calendar.Button("&laquo;&laquo;");
 	this._buttons["next-year"] = new JAX.Calendar.Button("&raquo;&raquo;");
 	this._buttons["prev-month"] = new JAX.Calendar.Button("&laquo;");
@@ -95,6 +93,7 @@ JAX.Calendar.prototype._init = function() {
 };
 
 JAX.Calendar.prototype._onButtonClick = function(type, e, elm) {
+	JAK.Events.cancelDef(e);
 	var currentYearNumber = this._current.year.getYearNumber();
 	var currentMonthNumber = this._current.month.getMonthNumber();
 
@@ -440,6 +439,6 @@ JAX.Calendar.Button.prototype.getContainer = function() {
 };
 
 JAX.Calendar.Button.prototype._build = function() {
-	this._jax.container = JAX.make("span.jax-cal-button", this._text);
+	this._jax.container = JAX.make("a.jax-cal-button", this._text);
 };
 

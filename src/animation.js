@@ -82,7 +82,12 @@ JAX.Animation.prototype.stop = function() {
 JAX.Animation.prototype._initInterpolators = function() {
 	for(var i=0, len=this._properties.length; i<len; i++) {
 		var property = this._properties[i];
-		var interpolator = new JAK.CSSInterpolator(this._elm.node(), property.duration, { "interpolation": property.method, "endCallback": this._endInterpolator.bind(this, i) });
+
+		var interpolator = new JAK.CSSInterpolator(this._elm.node(), property.duration, { 
+			"interpolation": property.method, 
+			"endCallback": this._endInterpolator.bind(this, i) 
+		});
+		
 		this._interpolators.push(interpolator);
 		interpolator.addProperty(property.property, property.cssStart.value, property.cssEnd.value, property.cssStart.unit);
 		interpolator.start();
