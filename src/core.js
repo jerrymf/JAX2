@@ -13,14 +13,14 @@ JAX.$ = function(selector, srcElement) {
 		for (var i=0, len=foundElms.length; i<len; i++) { jaxelms.push(JAX.HTMLElm.create(foundElms[i])); }
 
 		return jaxelms;
-	} else if ("nodeType" in selector && selector.nodeType == 1) {
-		return [JAX.HTMLElm.create(selector)];
-	} else if ("nodeType" in selector && selector.nodeType == 3) {
-		return [JAX.TextNode.create(selector)];
-	} else if ("nodeType" in selector && selector.nodeType == 9) {
-		return [new JAX.HTMLDoc(selector)];
-	} else if (selector instanceof JAX.HTMLElm) {
-		return [JAX.HTMLElm.create(selector)];
+	} else if ("nodeType" in selector) {
+		switch(selector.nodeType) {
+			case 1: return [JAX.HTMLElm.create(selector)];
+			case 3: return [new JAX.TextNode(selector)];
+			case 9: return [new JAX.HTMLDoc(selector)];
+		}
+	} else if ("jaxNodeType" in selector) {
+		return [selector];
 	}
 	
 	return false;
@@ -33,13 +33,13 @@ JAX.$$ = function(selector, srcElement) {
 		var jaxelm = foundElm ? JAX.HTMLElm.create(foundElm) : null;
 
 		return jaxelm;
-	} else if ("nodeType" in selector && selector.nodeType == 1) {
-		return JAX.HTMLElm.create(selector);
-	} else if ("nodeType" in selector && selector.nodeType == 3) {
-		return JAX.TextNode.create(selector);
-	} else if ("nodeType" in selector && selector.nodeType == 9) {
-		return new JAX.HTMLDoc(selector);
-	} else if (selector instanceof JAX.HTMLElm) {
+	} else if ("nodeType" in selector) {
+		switch(selector.nodeType) {
+			case 1: return JAX.HTMLElm.create(selector);
+			case 3: return new JAX.TextNode(selector);
+			case 9: return new JAX.HTMLDoc(selector);
+		}
+	} else if ("jaxNodeType" in selector) {
 		return selector;
 	}
 
@@ -136,7 +136,7 @@ JAX.isNumber = function(value) {
 
 JAX.isNumeric = function(value) {
 	var val = parseFloat(value);
-	return val === (value * 1) && !isNaN(val) && value != Infinity;
+	return val === (value * 1) && !isNaN(val) && value !== Infinity;
 };
 
 JAX.isString = function(value) {
@@ -148,7 +148,7 @@ JAX.isArray = function(value) {
 };
 
 JAX.isFunction = function(value) {
-	return value instanceof Function;
+	return typeof(value) == "function";
 };
 
 JAX.isBoolean = function(value) {
