@@ -20,10 +20,12 @@ JAX.TextNode.prototype.node = function() {
 };
 
 JAX.TextNode.prototype.appendTo = function(node) {
-	if (node && (node.nodeType || node.jaxNodeType)) { 
-		var node = node.jaxNodeType ? node.node() : node;
-		node.appendChild(this._node);
-		return this;
+	if (node && (node.nodeType || node.jaxNodeType)) {
+		try {
+			var node = node.jaxNodeType ? node.node() : node;
+			node.appendChild(this._node);
+			return this;
+		} catch(e) {}
 	}
 
 	throw new Error("JAX.TextNode.appendTo accepts only HTML element, JAX.HTMLElm or JAX.TextNode instance as its argument. See doc for more information.");
@@ -31,8 +33,10 @@ JAX.TextNode.prototype.appendTo = function(node) {
 
 JAX.TextNode.prototype.appendBefore = function(node, nodeBefore) {
 	if (node && (node.nodeType || node.jaxNodeType)) {
-		var node = node.jaxNodeType ? node.node() : node;
-		node.parentNode.insertBefore(this._node, node);	
+		try {
+			var node = node.jaxNodeType ? node.node() : node;
+			node.parentNode.insertBefore(this._node, node);
+		} catch(e) {}
 	}
 
 	throw new Error("JAX.TextNode.appendBefore accepts only HTML element, JAX.HTMLElm or JAX.TextNode instance as its argument. See doc for more information.");
@@ -41,9 +45,7 @@ JAX.TextNode.prototype.appendBefore = function(node, nodeBefore) {
 JAX.TextNode.prototype.removeFromDOM = function() {
 	try {
 		this._node.parentNode.removeChild(this._node);
-	} catch(e) {
-
-	};
+	} catch(e) {}
 
 	return this;
 };

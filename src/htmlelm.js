@@ -43,6 +43,8 @@ JAX.HTMLElm.prototype.$destructor = function() {
 	this.destroy();
 	this._node = null;
 	this._storage = null;
+	delete JAX.allnodes[this._jaxId];
+	this._jaxId = "";
 };
 
 JAX.HTMLElm.prototype.destroy = function() {
