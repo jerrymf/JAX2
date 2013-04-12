@@ -33,7 +33,7 @@ JAX.Calendar.prototype.show = function() {
 	this._pendingAnimation = true;
 
 	this._jax.container
-		.addNode(this._activeYearView.getContainer())
+		.add(this._activeYearView.getContainer())
 		.appendTo(document.body)
 		.style({top:pos.top+"px", left:pos.left+"px"})
 		.fade("in", 0.5, this._showingComplete.bind(this));
@@ -125,7 +125,7 @@ JAX.Calendar.prototype._onButtonClick = function(type, e, elm) {
 	this._activeYearView.getContainer().removeFromDOM();
 	this._activeYearView = this._yearViews[this._current.year.getYearNumber()].view;
 	this._activeYearView.setActiveMonth(this._current.month);
-	this._jax.container.addNode(this._activeYearView.getContainer());
+	this._jax.container.add(this._activeYearView.getContainer());
 };
 
 JAX.Calendar.prototype._initYear = function(yearNumber, monthNumber) {
@@ -309,7 +309,7 @@ JAX.Calendar.Month.View.prototype._build = function() {
 
 	var dayNames = JAX.Calendar.Day.DAY_NAMES_SHORT;
 	for (var i=0, len=dayNames.length; i<len; i++) {
-		this._jax.header.addNode(JAX.make("th", dayNames[i]));
+		this._jax.header.add(JAX.make("th", dayNames[i]));
 	}
 
 	var startCell = this._days[0].getDayInWeek();
@@ -325,13 +325,13 @@ JAX.Calendar.Month.View.prototype._build = function() {
 		}
 
 		if (i<startCell || i>endCell) { 
-			this._jax.rows[row].addNode(JAX.make("td.disabled")); 
+			this._jax.rows[row].add(JAX.make("td.disabled")); 
 			continue;
 		}
 
 		var day = this._days[j++];
 		var dayView = new JAX.Calendar.Day.View(day);
-		this._jax.rows[row].addNode(dayView.getContainer());
+		this._jax.rows[row].add(dayView.getContainer());
 		this._dayViews.push(dayView);
 	}
 };
@@ -412,7 +412,7 @@ JAX.Calendar.Year.View.prototype._build = function() {
 		var month = this._months[i];
 		var viewMonth = new JAX.Calendar.Month.View(month);
 		this._viewMonths.push(viewMonth);
-		this._jax.container.addNode(viewMonth.getContainer());
+		this._jax.container.add(viewMonth.getContainer());
 	}
 };
 

@@ -42,9 +42,7 @@ JAX.HTMLElm.prototype.$constructor = function(node) {
 JAX.HTMLElm.prototype.$destructor = function() {
 	this.destroy();
 	this._node = null;
-	delete this._storage.events;
-	delete this._storage.instance;
-	delete this._storage.lockQueue;
+	this._storage = null;
 };
 
 JAX.HTMLElm.prototype.destroy = function() {
@@ -146,56 +144,53 @@ JAX.HTMLElm.prototype.html = function(innerHTML) {
 	throw new Error("JAX.HTMLElm.html accepts only string as its argument. See doc for more information. ");	
 };
 
-JAX.HTMLElm.prototype.addNode = function(node) {
-	if (this._checkLocked(this.addNode, arguments)) { 
+JAX.HTMLElm.prototype.add = function() {
+	var nodes = Array.prototype.slice.call(arguments);
+
+	if (nodes.length == 1) { nodes = nodes[0]; }
+
+	if (this._checkLocked(this.add, nodes)) { 
 		return this; 
-	} else if (node && (node.nodeType || node.jaxNodeType)) { 
-		var node = node.jaxNodeType ? node.node() : node;
-		this._node.appendChild(node);
-		return this;
-	}
-
-	throw new Error("JAX.HTMLElm.addNode accepts only HTML node, textnode, JAX.HTMLElm or JAX.TextNode instance as its parameter. See doc for more information."); 
-};
-
-JAX.HTMLElm.prototype.addNodes = function() {
-	var nodes = arguments;
-
-	if (this._checkLocked(this.addNodes, nodes)) { 
-		return this; 
-	} else if (nodes.length == 1 && nodes[0] instanceof Array) { 
-		nodes = nodes[0]; 
-	} else if (!nodes.length) { 
-		console.warn("JAX.HTMLElm.addNodes is called with no argument."); 
+	} else if (nodes && nodes instanceof Array) { 
+		for (var i=0, len=nodes.length; i<len; i++) { this.add(nodes[i]); }
+	} else if (nodes && (nodes.nodeType || nodes.jaxNodeType)) {
+		try {
+			var node = nodes.jaxNodeType ? nodes.node() : nodes;
+			this._node.appendChild(node);
+			return this;
+		} catch(e) {}
+	} else if (!nodes) { 
+		console.warn("JAX.HTMLElm.add is called with no argument, null or undefined."); 
 		return this;
 	}
 	
-	for (var i=0, len=nodes.length; i<len; i++) { this.addNode(nodes[i]); }
-
-	return this;
+	throw new Error("JAX.HTMLElm.add accepts only HTML node, textnode, JAX.HTMLElm or JAX.TextNode instance as its parameter. See doc for more information."); 
 };
 
-JAX.HTMLElm.prototype.addNodeBefore = function(node, nodeBefore) {
-	if (this._checkLocked(this.addNodeBefore, arguments)) { 
+JAX.HTMLElm.prototype.addBefore = function(node, nodeBefore) {
+	if (this._checkLocked(this.addBefore, arguments)) { 
 		return this; 
 	} else if (node && (node.nodeType || node.jaxNodeType) && (nodeBefore.nodeType || nodeBefore.jaxNodeType)) {
-		var node = node.jaxNodeType ? node.node() : node;
-		var nodeBefore = nodeBefore.jaxNodeType ? nodeBefore.node() : nodeBefore;
-		this._node.insertBefore(node, nodeBefore);
+		try {
+			var node = node.jaxNodeType ? node.node() : node;
+			var nodeBefore = nodeBefore.jaxNodeType ? nodeBefore.node() : nodeBefore;
+			this._node.insertBefore(node, nodeBefore);
+			return this;
+		} catch(e) {}
 	}
 
-	throw new Error("JAX.HTMLElm.addNodeBefore accepts only HTML element, textnode, JAX.HTMLElm or JAX.TextNode instance as its first argument. See doc for more information.");
-
-	return this;
+	throw new Error("JAX.HTMLElm.addBefore accepts only HTML element, textnode, JAX.HTMLElm or JAX.TextNode instance as its first argument. See doc for more information.");
 };
 
 JAX.HTMLElm.prototype.appendTo = function(node) {
 	if (this._checkLocked(this.appendTo, arguments)) {
 		return this; 
 	} else if (node && (node.nodeType || node.jaxNodeType)) { 
-		var node = node.jaxNodeType ? node.node() : node;
-		node.appendChild(this._node);
-		return this;
+		try {
+			var node = node.jaxNodeType ? node.node() : node;
+			node.appendChild(this._node);
+			return this;
+		} catch(e) {}
 	}
 
 	throw new Error("JAX.HTMLElm.appendTo accepts only HTML element, JAX.HTMLElm or JAX.TextNode instance as its argument. See doc for more information.");
@@ -205,8 +200,10 @@ JAX.HTMLElm.prototype.appendBefore = function(node) {
 	if (this._checkLocked(this.appendBefore, arguments)) { 
 		return this; 
 	} else if (node && (node.nodeType || node.jaxNodeType)) {
-		var node = node.jaxNodeType ? node.node() : node;
-		node.parentNode.insertBefore(this._node, node);	
+		try {
+			var node = node.jaxNodeType ? node.node() : node;
+			node.parentNode.insertBefore(this._node, node);
+		} catch(e) {}
 	}
 
 	throw new Error("JAX.HTMLElm.appendBefore accepts only HTML element, JAX.HTMLElm or JAX.TextNode instance as its argument. See doc for more information."); 
@@ -217,9 +214,7 @@ JAX.HTMLElm.prototype.removeFromDOM = function() {
 
 	try {
 		this._node.parentNode.removeChild(this._node);
-	} catch(e) {
-
-	};
+	} catch(e) {}
 
 	return this;
 };
@@ -400,8 +395,6 @@ JAX.HTMLElm.prototype.computedStyle = function() {
 JAX.HTMLElm.prototype.width = function(value) {
 	if (!arguments.length) { 
 		var backupStyle = this.style("display","visibility","position");
-		console.DEBUG = 1;
-		console.log(backupStyle);
 		var isFixedPosition = this.computedStyle("position").indexOf("fixed") == 0;
 		var isDisplayNone = this.style("display").indexOf("none") == 0;
 
