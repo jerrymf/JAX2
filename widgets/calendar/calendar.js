@@ -1,6 +1,6 @@
 JAX.Calendar = JAK.ClassMaker.makeClass({
 	NAME:"JAX.Calendar",
-	VERSION:"0.4"
+	VERSION:"0.45"
 });
 
 JAX.Calendar.prototype.$constructor = function(elm) {
@@ -153,7 +153,7 @@ JAX.Calendar.prototype._tryHide = function(e, elm) {
 
 JAX.Calendar.Day = JAK.ClassMaker.makeClass({
 	NAME:"JAX.Calendar.Day",
-	VERSION:"0.4"
+	VERSION:"0.45"
 });
 
 JAX.Calendar.Day.DAY_NAMES = ["Pondělí", "Úterý", "Středa", "Čtvrtek", "Pátek", "Sobota", "Neděle"];
@@ -208,7 +208,7 @@ JAX.Calendar.Day.prototype._generateDayName = function() {
 
 JAX.Calendar.Day.View = JAK.ClassMaker.makeClass({
 	NAME:"JAX.Calendar.Day.View",
-	VERSION:"0.4"
+	VERSION:"0.45"
 });
 
 JAX.Calendar.Day.View.prototype.$constructor = function(day) {
@@ -228,7 +228,7 @@ JAX.Calendar.Day.View.prototype._build = function() {
 
 JAX.Calendar.Month = JAK.ClassMaker.makeClass({
 	NAME:"JAX.Calendar.Month",
-	VERSION:"0.4"
+	VERSION:"0.45"
 });
 
 JAX.Calendar.Month.MONTH_NAMES = ["Leden", "Únor", "Březen", "Duben", "Květen", "Červen", "Červenec", "Srpen", "Září", "Říjen", "Listopad", "Prosinec"];
@@ -272,7 +272,7 @@ JAX.Calendar.Month.prototype._generateDays = function() {
 
 JAX.Calendar.Month.View = JAK.ClassMaker.makeClass({
 	NAME:"JAX.Calendar.Month.View",
-	VERSION:"0.4"
+	VERSION:"0.45"
 });
 
 JAX.Calendar.Month.View.prototype.$constructor = function(month) {
@@ -338,7 +338,7 @@ JAX.Calendar.Month.View.prototype._build = function() {
 
 JAX.Calendar.Year = JAK.ClassMaker.makeClass({
 	NAME:"JAX.Calendar.Year",
-	VERSION:"0.4"
+	VERSION:"0.45"
 });
 
 JAX.Calendar.Year.prototype.$constructor = function(yearNumber) {
@@ -363,13 +363,13 @@ JAX.Calendar.Year.prototype._generateMonths = function() {
 
 JAX.Calendar.Year.View = JAK.ClassMaker.makeClass({
 	NAME:"JAX.Calendar.Year.View",
-	VERSION:"0.4"
+	VERSION:"0.45"
 });
 
 JAX.Calendar.Year.View.prototype.$constructor = function(year) {
 	this._year = year;
 	this._months = year.getMonths();
-	this._viewMonths = [];
+	this._viewMonths = {};
 	this._jax = {};
 	this._activeMonth = null;
 	this._activeMonthNumber = -1;
@@ -385,12 +385,20 @@ JAX.Calendar.Year.View.prototype.getContainer = function() {
 JAX.Calendar.Year.View.prototype.setActiveMonth = function(month) {
 	var index = this._months.indexOf(month);
 	if (index == -1) { return; }
+
 	this._activeMonth = month;
 	this._activeMonthNumber = month.getMonthNumber();
 
-	for (var i=0, len=this._viewMonths.length; i<len; i++) {
+	for (var i in this._viewMonths) {
 		var viewMonth = this._viewMonths[i];
 		viewMonth.hide();
+	}
+
+	var viewMonth = this._viewMonths[index];
+	if (!viewMonth) {
+		viewMonth = new JAX.Calendar.Month.View(month); 
+		this._jax.container.add(viewMonth.getContainer());
+		this._viewMonths[index] = viewMonth;
 	}
 	this._viewMonths[index].show();
 };
@@ -407,18 +415,11 @@ JAX.Calendar.Year.View.prototype.setPreviousMonth = function() {
 
 JAX.Calendar.Year.View.prototype._build = function() {
 	this._jax.container = JAX.make("div.jax-cal-year");
-
-	for(var i=0, len=this._months.length; i<len; i++) {
-		var month = this._months[i];
-		var viewMonth = new JAX.Calendar.Month.View(month);
-		this._viewMonths.push(viewMonth);
-		this._jax.container.add(viewMonth.getContainer());
-	}
 };
 
 JAX.Calendar.Button = JAK.ClassMaker.makeClass({
 	NAME:"JAX.Calendar.Button",
-	VERSION:"0.4"
+	VERSION:"0.45"
 });
 
 JAX.Calendar.Button.prototype.$constructor = function(text) {
