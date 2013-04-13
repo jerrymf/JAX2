@@ -370,6 +370,7 @@ JAX.HTMLElm.prototype.displayOff = function() {
 	return this;
 };
 
+/* FIXME - polyfill computed style for IE8 */
 JAX.HTMLElm.prototype.computedStyle = function() {
 	var cssStyles = arguments;
 
@@ -394,6 +395,7 @@ JAX.HTMLElm.prototype.computedStyle = function() {
 	return css;
 };
 
+/* FIXME - for working in percentage values */
 JAX.HTMLElm.prototype.width = function(value) {
 	if (!arguments.length) { 
 		var backupStyle = this.style("display","visibility","position");
@@ -425,6 +427,7 @@ JAX.HTMLElm.prototype.width = function(value) {
 	return this;
 };
 
+/* FIXME - for working in percentage values */
 JAX.HTMLElm.prototype.height = function(value) {
 	if (!arguments.length) { 
 		var backupStyle = this.style("display","visibility","position");

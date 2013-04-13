@@ -43,21 +43,21 @@ JAX.Animation.prototype.$constructor = function(element) {
 };
 
 JAX.Animation.prototype.addProperty = function(property, duration, start, end, method) {
-	if (!(property in JAX.Animation._SUPPORTED_PROPERTIES)) { 
-		throw new Error("JAX.Animation.addProperty: property '" + property + "' not supported. See doc for more information."); 
+	if (property in JAX.Animation._SUPPORTED_PROPERTIES) { 
+		var cssEnd = this._parseCSSValue(property, end);
+		var cssStart = this._parseCSSValue(property, start); 
+		var method = !this._transitionSupport ? (method || "linear") : "LINEAR";
+
+		this._properties.push({
+			property: property,
+			cssStart: cssStart,
+			cssEnd: cssEnd,
+			duration: (duration || 1) * 1000,
+			method: method
+		});	
 	}
 
-	var cssEnd = this._parseCSSValue(property, end);
-	var cssStart = this._parseCSSValue(property, start); 
-	var method = !this._transitionSupport ? (method || "linear") : "LINEAR";
-
-	this._properties.push({
-		property: property,
-		cssStart: cssStart,
-		cssEnd: cssEnd,
-		duration: (duration || 1) * 1000,
-		method: method
-	});
+	throw new Error("JAX.Animation.addProperty: property '" + property + "' not supported. See doc for more information."); 
 };
 
 JAX.Animation.prototype.addCallback = function(callback) {
@@ -95,9 +95,7 @@ JAX.Animation.prototype._initInterpolators = function() {
 };
 
 JAX.Animation.prototype._stopInterpolators = function() {
-	for (var i=0, len=this._interpolators.length; i<len; i++) {
-		this._endInterpolator(i);
-	}
+	for (var i=0, len=this._interpolators.length; i<len; i++) { this._endInterpolator(i); }
 }
 
 JAX.Animation.prototype._initTransition = function() {

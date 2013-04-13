@@ -135,8 +135,7 @@ JAX.isNumber = function(value) {
 };
 
 JAX.isNumeric = function(value) {
-	var val = parseFloat(value);
-	return val === (value * 1) && !isNaN(val) && value !== Infinity;
+	return isFinite(value);
 };
 
 JAX.isString = function(value) {
