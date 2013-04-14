@@ -1,6 +1,6 @@
 JAX.HTMLDoc = JAK.ClassMaker.makeClass({
 	NAME: "JAX.HTMLDoc",
-	VERSION: "0.2",
+	VERSION: "0.21",
 	IMPLEMENT: JAX.INode
 });
 

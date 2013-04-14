@@ -1,5 +1,5 @@
 JAX = {
-	VERSION: "1.95b"
+	VERSION: "1.96b"
 };
 
 JAX.allnodes = {};
@@ -19,7 +19,7 @@ JAX.$ = function(selector, srcElement) {
 			case 3: return [new JAX.TextNode(selector)];
 			case 9: return [new JAX.HTMLDoc(selector)];
 		}
-	} else if ("jaxNodeType" in selector) {
+	} else if (JAX.isJaxNode(selector)) {
 		return [selector];
 	}
 	
@@ -39,7 +39,7 @@ JAX.$$ = function(selector, srcElement) {
 			case 3: return new JAX.TextNode(selector);
 			case 9: return new JAX.HTMLDoc(selector);
 		}
-	} else if ("jaxNodeType" in selector) {
+	} else if (JAX.isJaxNode(selector)) {
 		return selector;
 	}
 
@@ -157,4 +157,8 @@ JAX.isBoolean = function(value) {
 JAX.isDate = function(value) {
 	return value instanceof Date;
 };
+
+JAX.isJaxNode = function(node) {
+	return node instanceof JAX.HTMLElm || node instanceof JAX.TextNode || node instanceof JAX.HTMLDoc;
+}
 

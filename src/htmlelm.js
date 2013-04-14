@@ -1,6 +1,6 @@
 JAX.HTMLElm = JAK.ClassMaker.makeClass({
 	NAME: "JAX.HTMLElm",
-	VERSION: "0.7",
+	VERSION: "0.71",
 	IMPLEMENT:JAX.INode
 });
 
@@ -172,9 +172,9 @@ JAX.HTMLElm.prototype.add = function() {
 JAX.HTMLElm.prototype.addBefore = function(node, nodeBefore) {
 	if (this._checkLocked(this.addBefore, arguments)) { 
 		return this; 
-	} else if (node && (node.nodeType || node.jaxNodeType) && (nodeBefore.nodeType || nodeBefore.jaxNodeType)) {
+	} else if (node && (node.nodeType || JAX.isJaxNode(node)) && (nodeBefore.nodeType || nodeBefore.jaxNodeType)) {
 		try {
-			var node = node.jaxNodeType ? node.node() : node;
+			var node = JAX.isJaxNode(node) ? node.node() : node;
 			var nodeBefore = nodeBefore.jaxNodeType ? nodeBefore.node() : nodeBefore;
 			this._node.insertBefore(node, nodeBefore);
 			return this;
@@ -187,9 +187,9 @@ JAX.HTMLElm.prototype.addBefore = function(node, nodeBefore) {
 JAX.HTMLElm.prototype.appendTo = function(node) {
 	if (this._checkLocked(this.appendTo, arguments)) {
 		return this; 
-	} else if (node && (node.nodeType || node.jaxNodeType)) { 
+	} else if (node && (node.nodeType || JAX.isJaxNode(node))) { 
 		try {
-			var node = node.jaxNodeType ? node.node() : node;
+			var node = JAX.isJaxNode(node) ? node.node() : node;
 			node.appendChild(this._node);
 			return this;
 		} catch(e) {}
@@ -201,9 +201,9 @@ JAX.HTMLElm.prototype.appendTo = function(node) {
 JAX.HTMLElm.prototype.appendBefore = function(node) {
 	if (this._checkLocked(this.appendBefore, arguments)) { 
 		return this; 
-	} else if (node && (node.nodeType || node.jaxNodeType)) {
+	} else if (node && (node.nodeType || JAX.isJaxNode(node))) {
 		try {
-			var node = node.jaxNodeType ? node.node() : node;
+			var node = JAX.isJaxNode(node) ? node.node() : node;
 			node.parentNode.insertBefore(this._node, node);
 		} catch(e) {}
 	}
@@ -489,8 +489,8 @@ JAX.HTMLElm.prototype.clear = function() {
 };
 
 JAX.HTMLElm.prototype.contains = function(node) {
-	if (node && (node.nodeType || node.jaxNodeType)) {
-		var elm = node.jaxNodeType ? node.node().parentNode : node.parentNode;
+	if (node && (node.nodeType || JAX.isJaxNode(node))) {
+		var elm = JAX.isJaxNode(node) ? node.node().parentNode : node.parentNode;
 		while(elm) {
 			if (elm == this._node) { return true; }
 			elm = elm.parentNode;
@@ -502,8 +502,8 @@ JAX.HTMLElm.prototype.contains = function(node) {
 };
 
 JAX.HTMLElm.prototype.isChildOf = function(node) {
-	if (node && (node.nodeType || node.jaxNodeType)) {
-		var elm = node.jaxNodeType ? node : JAX.HTMLElm.create(node);
+	if (node && (node.nodeType || JAX.isJaxNode(node))) {
+		var elm = JAX.isJaxNode(node) ? node : JAX.HTMLElm.create(node);
 		return elm.contains(this);
 	}
 

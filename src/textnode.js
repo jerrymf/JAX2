@@ -1,6 +1,6 @@
 JAX.TextNode = JAK.ClassMaker.makeClass({
 	NAME: "JAX.TextNode",
-	VERSION: "0.2",
+	VERSION: "0.21",
 	IMPLEMENT:JAX.INode
 });
 
@@ -20,9 +20,9 @@ JAX.TextNode.prototype.node = function() {
 };
 
 JAX.TextNode.prototype.appendTo = function(node) {
-	if (node && (node.nodeType || node.jaxNodeType)) {
+	if (node && (node.nodeType || JAX.isJaxNode(node)) {
 		try {
-			var node = node.jaxNodeType ? node.node() : node;
+			var node = JAX.isJaxNode(node) ? node.node() : node;
 			node.appendChild(this._node);
 			return this;
 		} catch(e) {}
@@ -32,9 +32,9 @@ JAX.TextNode.prototype.appendTo = function(node) {
 };
 
 JAX.TextNode.prototype.appendBefore = function(node, nodeBefore) {
-	if (node && (node.nodeType || node.jaxNodeType)) {
+	if (node && (node.nodeType || JAX.isJaxNode(node))) {
 		try {
-			var node = node.jaxNodeType ? node.node() : node;
+			var node = JAX.isJaxNode(node) ? node.node() : node;
 			node.parentNode.insertBefore(this._node, node);
 		} catch(e) {}
 	}
