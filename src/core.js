@@ -12,15 +12,15 @@ JAX.$ = function(selector, srcElement) {
 
 		for (var i=0, len=foundElms.length; i<len; i++) { jaxelms.push(JAX.NodeHTML.create(foundElms[i])); }
 
-		return jaxelms;
+		return new JAX.NodeArray(jaxelms);
 	} else if ("nodeType" in selector) {
 		switch(selector.nodeType) {
 			case 1: return new JAX.NodeArray(JAX.NodeHTML.create(selector));
-			case 3: return [new JAX.NodeText(selector)];
-			case 9: return [new JAX.NodeDoc(selector)];
+			case 3: return new JAX.NodeArray(new JAX.NodeText(selector));
+			case 9: return new JAX.NodeArray(new JAX.NodeDoc(selector)));
 		}
 	} else if (JAX.isJaxNode(selector)) {
-		return [selector];
+		return new JAX.NodeArray(selector);
 	}
 	
 	return false;
