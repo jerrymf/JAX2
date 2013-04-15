@@ -11,7 +11,7 @@ type ".\src\nodetext.js" >> jax.js
 ECHO. >> jax.js
 type ".\src\nodedoc.js" >> jax.js
 ECHO. >> jax.js
-type ".\src\nodearray.js" >> jax.js
+type ".\src\nodehtmlarray.js" >> jax.js
 ECHO. >> jax.js
 type ".\src\animation.js" >> jax.js
 ECHO. >> jax.js

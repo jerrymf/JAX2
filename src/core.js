@@ -15,7 +15,7 @@ JAX.$ = function(selector, srcElement) {
 		return jaxelms;
 	} else if ("nodeType" in selector) {
 		switch(selector.nodeType) {
-			case 1: return [JAX.NodeHTML.create(selector)];
+			case 1: return new JAX.NodeArray(JAX.NodeHTML.create(selector));
 			case 3: return [new JAX.NodeText(selector)];
 			case 9: return [new JAX.NodeDoc(selector)];
 		}
