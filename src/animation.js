@@ -34,7 +34,7 @@ JAX.Animation._SUPPORTED_PROPERTIES = {
 JAX.Animation._REGEXP_OPACITY = new RegExp("alpha\(opacity=['\"]?([0-9]+)['\"]?\)");
 
 JAX.Animation.prototype.$constructor = function(element) {
-	this._elm = JAX.isJaxNode(element) ? element : JAX.NodeHTML.create(element);
+	this._elm = JAX.isJAXNode(element) ? element : JAX.NodeHTML.create(element);
 	this._properties = [];
 	this._interpolators = [];
 	this._callback = null;

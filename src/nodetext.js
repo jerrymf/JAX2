@@ -19,9 +19,9 @@ JAX.NodeText.prototype.node = function() {
 };
 
 JAX.NodeText.prototype.appendTo = function(node) {
-	if (node && (node.nodeType || JAX.isJaxNode(node))) {
+	if (node && (node.nodeType || JAX.isJAXNode(node))) {
 		try {
-			var node = JAX.isJaxNode(node) ? node.node() : node;
+			var node = JAX.isJAXNode(node) ? node.node() : node;
 			node.appendChild(this._node);
 			return this;
 		} catch(e) {}
@@ -31,9 +31,9 @@ JAX.NodeText.prototype.appendTo = function(node) {
 };
 
 JAX.NodeText.prototype.appendBefore = function(node, nodeBefore) {
-	if (node && (node.nodeType || JAX.isJaxNode(node))) {
+	if (node && (node.nodeType || JAX.isJAXNode(node))) {
 		try {
-			var node = JAX.isJaxNode(node) ? node.node() : node;
+			var node = JAX.isJAXNode(node) ? node.node() : node;
 			node.parentNode.insertBefore(this._node, node);
 		} catch(e) {}
 	}

@@ -188,9 +188,9 @@ JAX.NodeHTML.prototype.add = function() {
 JAX.NodeHTML.prototype.addBefore = function(node, nodeBefore) {
 	if (this._checkLocked(this.addBefore, arguments)) { 
 		return this; 
-	} else if (node && (node.nodeType || JAX.isJaxNode(node)) && (nodeBefore.nodeType || nodeBefore.jaxNodeType)) {
+	} else if (node && (node.nodeType || JAX.isJAXNode(node)) && (nodeBefore.nodeType || nodeBefore.jaxNodeType)) {
 		try {
-			var node = JAX.isJaxNode(node) ? node.node() : node;
+			var node = JAX.isJAXNode(node) ? node.node() : node;
 			var nodeBefore = nodeBefore.jaxNodeType ? nodeBefore.node() : nodeBefore;
 			this._node.insertBefore(node, nodeBefore);
 			return this;
@@ -203,9 +203,9 @@ JAX.NodeHTML.prototype.addBefore = function(node, nodeBefore) {
 JAX.NodeHTML.prototype.appendTo = function(node) {
 	if (this._checkLocked(this.appendTo, arguments)) {
 		return this; 
-	} else if (node && (node.nodeType || JAX.isJaxNode(node))) { 
+	} else if (node && (node.nodeType || JAX.isJAXNode(node))) { 
 		try {
-			var node = JAX.isJaxNode(node) ? node.node() : node;
+			var node = JAX.isJAXNode(node) ? node.node() : node;
 			node.appendChild(this._node);
 			return this;
 		} catch(e) {}
@@ -217,9 +217,9 @@ JAX.NodeHTML.prototype.appendTo = function(node) {
 JAX.NodeHTML.prototype.appendBefore = function(node) {
 	if (this._checkLocked(this.appendBefore, arguments)) { 
 		return this; 
-	} else if (node && (node.nodeType || JAX.isJaxNode(node))) {
+	} else if (node && (node.nodeType || JAX.isJAXNode(node))) {
 		try {
-			var node = JAX.isJaxNode(node) ? node.node() : node;
+			var node = JAX.isJAXNode(node) ? node.node() : node;
 			node.parentNode.insertBefore(this._node, node);
 		} catch(e) {}
 	}
@@ -505,8 +505,8 @@ JAX.NodeHTML.prototype.clear = function() {
 };
 
 JAX.NodeHTML.prototype.contains = function(node) {
-	if (node && (node.nodeType || JAX.isJaxNode(node))) {
-		var elm = JAX.isJaxNode(node) ? node.node().parentNode : node.parentNode;
+	if (node && (node.nodeType || JAX.isJAXNode(node))) {
+		var elm = JAX.isJAXNode(node) ? node.node().parentNode : node.parentNode;
 		while(elm) {
 			if (elm == this._node) { return true; }
 			elm = elm.parentNode;
@@ -518,8 +518,8 @@ JAX.NodeHTML.prototype.contains = function(node) {
 };
 
 JAX.NodeHTML.prototype.isChildOf = function(node) {
-	if (node && (node.nodeType || JAX.isJaxNode(node))) {
-		var elm = JAX.isJaxNode(node) ? node : JAX.NodeHTML.create(node);
+	if (node && (node.nodeType || JAX.isJAXNode(node))) {
+		var elm = JAX.isJAXNode(node) ? node : JAX.NodeHTML.create(node);
 		return elm.contains(this);
 	}
 

@@ -19,7 +19,7 @@ JAX.$ = function(selector, srcElement) {
 			case 3: return new JAX.NodeArray(new JAX.NodeText(selector));
 			case 9: return new JAX.NodeArray(new JAX.NodeDoc(selector));
 		}
-	} else if (JAX.isJaxNode(selector)) {
+	} else if (JAX.isJAXNode(selector)) {
 		return new JAX.NodeArray(selector);
 	}
 	
@@ -39,7 +39,7 @@ JAX.$$ = function(selector, srcElement) {
 			case 3: return new JAX.NodeText(selector);
 			case 9: return new JAX.NodeDoc(selector);
 		}
-	} else if (JAX.isJaxNode(selector)) {
+	} else if (JAX.isJAXNode(selector)) {
 		return selector;
 	}
 
@@ -158,7 +158,7 @@ JAX.isDate = function(value) {
 	return value instanceof Date;
 };
 
-JAX.isJaxNode = function(node) {
+JAX.isJAXNode = function(node) {
 	return node instanceof JAX.NodeHTML || node instanceof JAX.NodeText || node instanceof JAX.NodeDoc;
 }
 
