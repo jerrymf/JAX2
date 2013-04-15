@@ -65,18 +65,27 @@ JAX.NodeHTML.prototype.$$ = function(selector) {
 	return JAX.$$(selector, this._node);
 };
 
-JAX.NodeHTML.prototype.addClass = function(classname) {
+JAX.NodeHTML.prototype.addClass = function() {
+	var classNames = Array.prototype.slice.call(arguments);
+
+	if (classNames.length == 1) { classNames = classNames[0]; }
+
 	if (this._checkLocked(this.addClass, arguments)) {
 		return this; 
-	} else if (JAX.isString(classname)) {
-		var classnames = classname.split(" ");
-		var classes = this._node.className.split(" ");
+	} else if (JAX.isString(classNames)) {
+		var classes = classNames.split(" ");
+		var currclasses = this._node.className.split(" ");
 
-		while(classnames.length) {
-			if (classes.indexOf(classnames.shift()) == -1) { classes.push(classname); }
+		while(classes.length) {
+			var newclass = classes.shift();
+			if (currclasses.indexOf(newclass) == -1) { currclasses.push(newclass); }
 		}
 
-		this._node.className = classes.join(" ");
+		this._node.className = currclasses.join(" ");
+
+		return this;
+	} else if (JAX.isArray(classNames)) {
+		for (var i=0, len=classNames.length; i<len; i++) { this.addClass(classNames[i]); }
 
 		return this;
 	}
@@ -85,19 +94,27 @@ JAX.NodeHTML.prototype.addClass = function(classname) {
 	
 };
 
-JAX.NodeHTML.prototype.removeClass = function(classname) {
+JAX.NodeHTML.prototype.removeClass = function() {
+	var classNames = Array.prototype.slice.call(arguments);
+
+	if (classNames.length == 1) { classNames = classNames[0]; }
+
 	if (this._checkLocked(this.removeClass, arguments)) { 
 		return this; 
-	} else if (JAX.isString(classname)) {
-		var classnames = classname.split(" ");
-		var classes = this._node.className.split(" ");
+	} else if (JAX.isString(classNames)) {
+		var classes = classNames.split(" ");
+		var currclasses = this._node.className.split(" ");
 
-		while(classnames.length) {
-			var index = classes.indexOf(classnames.shift());
-			if (index != -1) { classes.splice(index, 1); }
+		while(classes.length) {
+			var index = currclasses.indexOf(classes.shift());
+			if (index != -1) { currclasses.splice(index, 1); }
 		}
 
-		this._node.className = classes.join(" ");
+		this._node.className = currclasses.join(" ");
+		return this;
+	} else if (JAX.isArray(classNames)) {
+		for (var i=0, len=classNames.length; i<len; i++) { this.removeClass(classNames[i]); }
+
 		return this;
 	}
 
