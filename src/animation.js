@@ -34,7 +34,7 @@ JAX.Animation._SUPPORTED_PROPERTIES = {
 JAX.Animation._REGEXP_OPACITY = new RegExp("alpha\(opacity=['\"]?([0-9]+)['\"]?\)");
 
 JAX.Animation.prototype.$constructor = function(element) {
-	this._elm = JAX.isJaxNode(element) ? element : JAX.HTMLElm.create(element);
+	this._elm = JAX.isJaxNode(element) ? element : JAX.NodeHTML.create(element);
 	this._properties = [];
 	this._interpolators = [];
 	this._callback = null;
@@ -54,7 +54,8 @@ JAX.Animation.prototype.addProperty = function(property, duration, start, end, m
 			cssEnd: cssEnd,
 			duration: (duration || 1) * 1000,
 			method: method
-		});	
+		});
+		return this;
 	}
 
 	throw new Error("JAX.Animation.addProperty: property '" + property + "' not supported. See doc for more information."); 
@@ -62,12 +63,14 @@ JAX.Animation.prototype.addProperty = function(property, duration, start, end, m
 
 JAX.Animation.prototype.addCallback = function(callback) {
 	this._callback = callback;
+	return this;
 };
 
 JAX.Animation.prototype.run = function() {
 	this._running = true;
-	if (!this._transitionSupport) { this._initInterpolators(); return; }
+	if (!this._transitionSupport) { this._initInterpolators(); return this; }
 	this._initTransition();
+	return this;
 };
 
 JAX.Animation.prototype.isRunning = function() {
@@ -75,8 +78,9 @@ JAX.Animation.prototype.isRunning = function() {
 };
 
 JAX.Animation.prototype.stop = function() {
-	if (!this._transitionSupport) { this._stopInterpolators(); }
+	if (!this._transitionSupport) { this._stopInterpolators(); return this; }
 	this._stopTransition();
+	return this;
 };
 
 JAX.Animation.prototype._initInterpolators = function() {

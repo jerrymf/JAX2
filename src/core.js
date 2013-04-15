@@ -10,14 +10,14 @@ JAX.$ = function(selector, srcElement) {
 		var foundElms = srcElement.querySelectorAll(query);
 		var jaxelms = [];
 
-		for (var i=0, len=foundElms.length; i<len; i++) { jaxelms.push(JAX.HTMLElm.create(foundElms[i])); }
+		for (var i=0, len=foundElms.length; i<len; i++) { jaxelms.push(JAX.NodeHTML.create(foundElms[i])); }
 
 		return jaxelms;
 	} else if ("nodeType" in selector) {
 		switch(selector.nodeType) {
-			case 1: return [JAX.HTMLElm.create(selector)];
-			case 3: return [new JAX.TextNode(selector)];
-			case 9: return [new JAX.HTMLDoc(selector)];
+			case 1: return [JAX.NodeHTML.create(selector)];
+			case 3: return [new JAX.NodeText(selector)];
+			case 9: return [new JAX.NodeDoc(selector)];
 		}
 	} else if (JAX.isJaxNode(selector)) {
 		return [selector];
@@ -30,14 +30,14 @@ JAX.$$ = function(selector, srcElement) {
 	if (JAX.isString(selector)) {
 		var srcElement = srcElement || document;
 		var foundElm = srcElement.querySelector(selector);
-		var jaxelm = foundElm ? JAX.HTMLElm.create(foundElm) : null;
+		var jaxelm = foundElm ? JAX.NodeHTML.create(foundElm) : null;
 
 		return jaxelm;
 	} else if ("nodeType" in selector) {
 		switch(selector.nodeType) {
-			case 1: return JAX.HTMLElm.create(selector);
-			case 3: return new JAX.TextNode(selector);
-			case 9: return new JAX.HTMLDoc(selector);
+			case 1: return JAX.NodeHTML.create(selector);
+			case 3: return new JAX.NodeText(selector);
+			case 9: return new JAX.NodeDoc(selector);
 		}
 	} else if (JAX.isJaxNode(selector)) {
 		return selector;
@@ -122,12 +122,12 @@ JAX.make = function(tagString, html, srcDocument) {
 
 	}
 
-	var elm = JAX.HTMLElm.create(JAK.mel(tagName, attributes, {}, srcDocument || document));
+	var elm = JAX.NodeHTML.create(JAK.mel(tagName, attributes, {}, srcDocument || document));
 	return elm;
 };
 
 JAX.makeText = function(text) {
-	return new JAX.TextNode(JAK.ctext(text));
+	return new JAX.NodeText(JAK.ctext(text));
 };
 
 JAX.isNumber = function(value) {
@@ -159,6 +159,6 @@ JAX.isDate = function(value) {
 };
 
 JAX.isJaxNode = function(node) {
-	return node instanceof JAX.HTMLElm || node instanceof JAX.TextNode || node instanceof JAX.HTMLDoc;
+	return node instanceof JAX.NodeHTML || node instanceof JAX.NodeText || node instanceof JAX.NodeDoc;
 }
 

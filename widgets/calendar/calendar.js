@@ -13,7 +13,7 @@ JAX.Calendar.prototype.$constructor = function(elm) {
 	this._shown = false;
 	this._pendingAnimation = false;
 
-	this._jax.targetElm = elm instanceof JAX.HTMLElm ? elm : JAX.HTMLElm.create(elm);
+	this._jax.targetElm = elm instanceof JAX.NodeHTML ? elm : JAX.NodeHTML.create(elm);
 };
 
 JAX.Calendar.prototype.show = function() {
@@ -42,7 +42,7 @@ JAX.Calendar.prototype.show = function() {
 JAX.Calendar.prototype.hide = function() {
 	if (!this._shown || this._pendingAnimation) { return this; }
 
-	JAX.$$(document).stopListening("mousedown",this._ecDoc);
+	this._jax.doc.stopListening("mousedown",this._ecDoc);
 	this._ecDoc = null;
 
 	this._pendingAnimation = true;
@@ -50,7 +50,8 @@ JAX.Calendar.prototype.hide = function() {
 };
 
 JAX.Calendar.prototype._showingComplete = function() {
-	this._ecDoc = JAX.$$(document).listen("mousedown", "_tryHide", this);
+	this._jax.doc = JAX.$$(document);
+	this._ecDoc = this._jax.doc.listen("mousedown", "_tryHide", this);
 	this._shown = true;
 	this._pendingAnimation = false;
 };
@@ -148,7 +149,7 @@ JAX.Calendar.prototype._initYear = function(yearNumber, monthNumber) {
 
 JAX.Calendar.prototype._tryHide = function(e, elm) {
 	var node = JAX.$$(JAK.Events.getTarget(e));
-	if (!node.isChildOf(this._jax.container)) { this.hide(); }
+	if (node.jaxNodeType == 9 || !node.isChildOf(this._jax.container)) { this.hide(); }
 };
 
 JAX.Calendar.Day = JAK.ClassMaker.makeClass({

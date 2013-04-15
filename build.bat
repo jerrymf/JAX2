@@ -5,13 +5,11 @@ ECHO (function() { > jax.js
 ECHO. >> jax.js
 type ".\src\core.js" >> jax.js
 ECHO. >> jax.js
-type ".\src\inode.js" >> jax.js
+type ".\src\nodehtml.js" >> jax.js
 ECHO. >> jax.js
-type ".\src\textnode.js" >> jax.js
+type ".\src\nodetext.js" >> jax.js
 ECHO. >> jax.js
-type ".\src\htmlelm.js" >> jax.js
-ECHO. >> jax.js
-type ".\src\htmldoc.js" >> jax.js
+type ".\src\nodedoc.js" >> jax.js
 ECHO. >> jax.js
 type ".\src\animation.js" >> jax.js
 ECHO. >> jax.js
