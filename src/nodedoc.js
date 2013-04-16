@@ -25,15 +25,15 @@ JAX.NodeDoc.prototype.$$ = function(selector) {
 };
 
 JAX.NodeDoc.prototype.listen = function(type, method, obj, bindData) {
-	if (!type || !JAX.isString(type)) { 
-		throw new Error("JAX.NodeDoclisten: first parameter must be string. See doc for more information."); 
-	} else if (!method || (!JAX.isString(method) && !JAX.isFunction(method))) { 
+	if (!type || !typeof(type) == "string") { 
+		throw new Error("JAX.NodeDoc.listen: first parameter must be string. See doc for more information."); 
+	} else if (!method || (typeof(method) != "string" && typeof(method) != "string")) { 
 		throw new Error("JAX.NodeDoc.listen: second paremeter must be function or name of function. See doc for more information."); 
 	} else if (arguments.length > 4) { 
 		console.warn("JAX.NodeDoc.listen accepts maximally 4 arguments. See doc for more information."); 
 	}
 	
-	if (JAX.isString(method)) {
+	if (typeof(method) == "string") {
 		var obj = obj || window;
 		var method = obj[method];
 		if (!method) { throw new Error("JAX.NodeDoc.listen: method '" + method + "' was not found in " + obj + "."); }
@@ -58,8 +58,8 @@ JAX.NodeDoc.prototype.stopListening = function(type, listenerId) {
 		return this;
 	}
 
-	if (!JAX.isString(type)) {
-		throw new Error("JAX.NodeDoc.stopListening bad arguments. See doc for more information.")
+	if (typeof(type) != "string") {
+		throw new Error("JAX.NodeDoc.stopListening: type must be string. See doc for more information.")
 	}
 
 	var eventListeners = JAX.NodeDoc.events[type]; 

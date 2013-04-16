@@ -13,7 +13,7 @@ JAX.$ = function(selector, srcElement) {
 		for (var i=0, len=foundElms.length; i<len; i++) { jaxelms.push(JAX.NodeHTML.create(foundElms[i])); }
 
 		return new JAX.NodeArray(jaxelms);
-	} else if ("nodeType" in selector) {
+	} else if (selector.nodeType) {
 		switch(selector.nodeType) {
 			case 1: return new JAX.NodeArray(JAX.NodeHTML.create(selector));
 			case 3: return new JAX.NodeArray(new JAX.NodeText(selector));
@@ -34,7 +34,7 @@ JAX.$$ = function(selector, srcElement) {
 		var jaxelm = foundElm ? JAX.NodeHTML.create(foundElm) : null;
 
 		return jaxelm;
-	} else if ("nodeType" in selector) {
+	} else if (selector.nodeType) {
 		switch(selector.nodeType) {
 			case 1: return JAX.NodeHTML.create(selector);
 			case 3: return new JAX.NodeText(selector);
@@ -55,8 +55,9 @@ JAX.make = function(tagString, html, srcDocument) {
 	var currentAttrName = "";
 	var inAttributes = false;
 
-	if (html && !JAX.isString(html) && !JAX.isNumber(html)) { throw new Error("JAX.make: Second parameter 'html' must be a string or number"); }
-	if (tagString.length && ".#[=] ".indexOf(tagString[0]) > -1) { throw new Error("JAX.make: Tagname must be first."); }
+	if (!tagString || typeof(tagString) != "string") { throw new Error("JAX.make: First parameter must be a string"); }
+	if (html && typeof(html) != "string" && typeof(html) != "number") { throw new Error("JAX.make: Second parameter 'html' must be a string or number"); }
+	if (".#[=] ".indexOf(tagString[0]) > -1) { throw new Error("JAX.make: Tagname must be first."); }
 
 	for (var i=0, len=tagString.length; i<len; i++) {
 		var character = tagString[i];
@@ -112,7 +113,7 @@ JAX.make = function(tagString, html, srcDocument) {
 
 		switch(type) {
 			case "tagname": 
-				tagName += (character + ""); 
+				tagName += (character + "");
 			break;
 			case "attribute-name":
 				currentAttrName += (character + "");
@@ -124,8 +125,11 @@ JAX.make = function(tagString, html, srcDocument) {
 
 	}
 
-	var elm = JAX.NodeHTML.create(JAK.mel(tagName, attributes, {}, srcDocument || document));
-	return elm;
+	var d = srcDocument || document;
+	var createdNode = d.createElement(tagName);
+	for (var p in attributes) { createdNode[p] = attributes[p]; }
+
+	return JAX.NodeHTML.create(createdNode);
 };
 
 JAX.makeText = function(text) {

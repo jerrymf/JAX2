@@ -4,9 +4,15 @@ JAX.NodeHTML = JAK.ClassMaker.makeClass({
 });
 
 JAX.NodeHTML.create = function(node) {
-	var jaxId = node.getAttribute("data-jax-id");
-	if (!jaxId || !(jaxId in JAX.allnodes)) { return new JAX.NodeHTML(node); }
-	return JAX.allnodes[jaxId].instance;
+	var _JAX = JAX;
+
+	if (node && node.nodeType) {
+		var jaxId = node.getAttribute("data-jax-id");
+		if (!jaxId || !(jaxId in _JAX.allnodes)) { return new _JAX.NodeHTML(node); }
+		return _JAX.allnodes[jaxId].instance;
+	}
+
+	throw new Error("JAX.NodeHTML.create: arguments must be only html node");
 };
 
 JAX.NodeHTML.prototype.jaxNodeType = 1;
@@ -25,12 +31,13 @@ JAX.NodeHTML.prototype.$constructor = function(node) {
 		}
 
 		/* create shortcut to modify static attribute, where are stored all information about node */
-		JAX.allnodes[this._jaxId] = JAX.allnodes[this._jaxId] || {};
-		this._storage = JAX.allnodes[this._jaxId];
+		var storage = JAX.allnodes[this._jaxId] || {};
+		this._storage = storage;
 		this._storage.instance = this;
 		this._storage.events = this._storage.events || {};
 		this._storage.lockQueue = [];
 		this._storage.locked = false;
+		JAX.allnodes[this._jaxId] = storage;
 
 		return;
 	}
@@ -47,7 +54,7 @@ JAX.NodeHTML.prototype.$destructor = function() {
 };
 
 JAX.NodeHTML.prototype.destroy = function() {
-	if (this._checkLocked(this.destroy, arguments)) { return this; }
+	if (this._storage.locked) { this._queueMethod(this.destroy, arguments); return this; }
 	this.stopListening();
 	this.removeFromDOM();
 	this.clear();
@@ -70,9 +77,10 @@ JAX.NodeHTML.prototype.addClass = function() {
 
 	if (classNames.length == 1) { classNames = classNames[0]; }
 
-	if (this._checkLocked(this.addClass, arguments)) {
+	if (this._storage.locked) {
+		this._queueMethod(this.addClass, arguments); 
 		return this; 
-	} else if (JAX.isString(classNames)) {
+	} else if (typeof(classNames) == "string") {
 		var classes = classNames.split(" ");
 		var currclasses = this._node.className.split(" ");
 
@@ -84,7 +92,7 @@ JAX.NodeHTML.prototype.addClass = function() {
 		this._node.className = currclasses.join(" ");
 
 		return this;
-	} else if (JAX.isArray(classNames)) {
+	} else if (classNames instanceof Array) {
 		for (var i=0, len=classNames.length; i<len; i++) { this.addClass(classNames[i]); }
 
 		return this;
@@ -99,9 +107,10 @@ JAX.NodeHTML.prototype.removeClass = function() {
 
 	if (classNames.length == 1) { classNames = classNames[0]; }
 
-	if (this._checkLocked(this.removeClass, arguments)) { 
+	if (this._storage.locked) {
+		this._queueMethod(this.removeClass, arguments); 
 		return this; 
-	} else if (JAX.isString(classNames)) {
+	} else if (typeof(classNames) == "string") {
 		var classes = classNames.split(" ");
 		var currclasses = this._node.className.split(" ");
 
@@ -112,7 +121,7 @@ JAX.NodeHTML.prototype.removeClass = function() {
 
 		this._node.className = currclasses.join(" ");
 		return this;
-	} else if (JAX.isArray(classNames)) {
+	} else if (classNames instanceof Array) {
 		for (var i=0, len=classNames.length; i<len; i++) { this.removeClass(classNames[i]); }
 
 		return this;
@@ -122,7 +131,7 @@ JAX.NodeHTML.prototype.removeClass = function() {
 };
 
 JAX.NodeHTML.prototype.hasClass = function(className) {
-	if (JAX.isString(classname)) {  
+	if (typeof(classname) == "string") {  
 		var names = className.split(" ");
 
 		while(names.length) {
@@ -139,9 +148,10 @@ JAX.NodeHTML.prototype.hasClass = function(className) {
 JAX.NodeHTML.prototype.id = function(id) {
 	if (!arguments.length) { 
 		return this.attr("id"); 
-	} else if (this._checkLocked(this.id, arguments)) { 
+	} else if (this._storage.locked) {
+		this._queueMethod(this.id, arguments); 
 		return this; 
-	} else if (JAX.isString(id)) { 
+	} else if (typeof(id) == "string") { 
 		this.attr({id:id}); 
 		return this;
 	}
@@ -152,9 +162,10 @@ JAX.NodeHTML.prototype.id = function(id) {
 JAX.NodeHTML.prototype.html = function(innerHTML) {
 	if (!arguments.length) { 
 		return innerHTML; 
-	} else if (this._checkLocked(this.html, arguments)) { 
+	} else if (this._storage.locked) {
+		this._queueMethod(this.html, arguments); 
 		return this; 
-	} else if (JAX.isString(innerHTML)) {
+	} else if (typeof(innerHTML) == "string") {
 		this._node.innerHTML = innerHTML;
 		return this;
 	}
@@ -167,13 +178,14 @@ JAX.NodeHTML.prototype.add = function() {
 
 	if (nodes.length == 1) { nodes = nodes[0]; }
 
-	if (this._checkLocked(this.add, nodes)) { 
+	if (this._storage.locked) {
+		this._queueMethod(this.add, arguments); 
 		return this; 
 	} else if (nodes && nodes instanceof Array) { 
 		for (var i=0, len=nodes.length; i<len; i++) { this.add(nodes[i]); }
-	} else if (nodes && (nodes.nodeType || nodes.jaxNodeType)) {
+	} else if (nodes && (nodes.nodeType || JAX.isJAXNode(nodes))) {
+		var node = nodes.jaxNodeType ? nodes.node() : nodes;
 		try {
-			var node = nodes.jaxNodeType ? nodes.node() : nodes;
 			this._node.appendChild(node);
 			return this;
 		} catch(e) {}
@@ -186,12 +198,13 @@ JAX.NodeHTML.prototype.add = function() {
 };
 
 JAX.NodeHTML.prototype.addBefore = function(node, nodeBefore) {
-	if (this._checkLocked(this.addBefore, arguments)) { 
-		return this; 
+	if (this._storage.locked) {
+		this._queueMethod(this.addBefore, arguments); 
+		return this;  
 	} else if (node && (node.nodeType || JAX.isJAXNode(node)) && (nodeBefore.nodeType || JAX.isJAXNode(nodeBefore))) {
+		var node = node.jaxNodeType ? node.node() : node;
+		var nodeBefore = nodeBefore.jaxNodeType ? nodeBefore.node() : nodeBefore;
 		try {
-			var node = JAX.isJAXNode(node) ? node.node() : node;
-			var nodeBefore = nodeBefore.jaxNodeType ? nodeBefore.node() : nodeBefore;
 			this._node.insertBefore(node, nodeBefore);
 			return this;
 		} catch(e) {}
@@ -201,11 +214,12 @@ JAX.NodeHTML.prototype.addBefore = function(node, nodeBefore) {
 };
 
 JAX.NodeHTML.prototype.appendTo = function(node) {
-	if (this._checkLocked(this.appendTo, arguments)) {
+	if (this._storage.locked) {
+		this._queueMethod(this.appendTo, arguments); 
 		return this; 
 	} else if (node && (node.nodeType || JAX.isJAXNode(node))) { 
+		var node = node.jaxNodeType ? node.node() : node;
 		try {
-			var node = JAX.isJAXNode(node) ? node.node() : node;
 			node.appendChild(this._node);
 			return this;
 		} catch(e) {}
@@ -215,11 +229,12 @@ JAX.NodeHTML.prototype.appendTo = function(node) {
 };
 
 JAX.NodeHTML.prototype.appendBefore = function(node) {
-	if (this._checkLocked(this.appendBefore, arguments)) { 
+	if (this._storage.locked) {
+		this._queueMethod(this.appendBefore, arguments); 
 		return this; 
 	} else if (node && (node.nodeType || JAX.isJAXNode(node))) {
 		try {
-			var node = JAX.isJAXNode(node) ? node.node() : node;
+			var node = node.jaxNodeType ? node.node() : node;
 			node.parentNode.insertBefore(this._node, node);
 		} catch(e) {}
 	}
@@ -228,7 +243,10 @@ JAX.NodeHTML.prototype.appendBefore = function(node) {
 };
 
 JAX.NodeHTML.prototype.removeFromDOM = function() {
-	if (this._checkLocked(this.removeFromDOM, arguments)) { return this; }
+	if (this._storage.locked) {
+		this._queueMethod(this.removeFromDOM, arguments); 
+		return this; 
+	}
 
 	try {
 		this._node.parentNode.removeChild(this._node);
@@ -245,15 +263,15 @@ JAX.NodeHTML.prototype.clone = function(withContent) {
 };
 
 JAX.NodeHTML.prototype.listen = function(type, method, obj, bindData) {
-	if (!type || !JAX.isString(type)) { 
+	if (!type || typeof(type) != "string") { 
 		throw new Error("JAX.NodeHTML.listen: first parameter must be string. See doc for more information."); 
-	} else if (!method || (!JAX.isString(method) && !JAX.isFunction(method))) { 
+	} else if (!method || (typeof(method) != "string" && typeof(method) != "function")) { 
 		throw new Error("JAX.NodeHTML.listen: second paremeter must be function or name of function. See doc for more information."); 
 	} else if (arguments.length > 4) { 
 		console.warn("JAX.NodeHTML.listen accepts maximally 4 arguments. See doc for more information."); 
 	}
 	
-	if (JAX.isString(method)) {
+	if (typeof(method) == "string") {
 		var obj = obj || window;
 		var method = obj[method];
 		if (!method) { throw new Error("JAX.NodeHTML.listen: method '" + method + "' was not found in " + obj + "."); }
@@ -269,9 +287,10 @@ JAX.NodeHTML.prototype.listen = function(type, method, obj, bindData) {
 };
 
 JAX.NodeHTML.prototype.stopListening = function(type, listenerId) {
-	if (this._checkLocked(this.stopListening, arguments)) { 
+	if (this._storage.locked) {
+		this._queueMethod(this.stopListening, arguments); 
 		return this; 
-	}
+	} 
 
 	if (!arguments.length) {
 		var events = this._storage.events;
@@ -279,7 +298,7 @@ JAX.NodeHTML.prototype.stopListening = function(type, listenerId) {
 		return this;
 	}
 
-	if (!JAX.isString(type)) {
+	if (typeof(type) != "string") {
 		throw new Error("JAX.NodeHTML.stopListening bad arguments. See doc for more information.")
 	}
 
@@ -317,16 +336,17 @@ JAX.NodeHTML.prototype.attr = function() {
 		return [];
 	}
 
-	if (JAX.isString(attributes)) { 
+	if (typeof(attributes) == "string") { 
 		return this._node.getAttribute(attributes); 
-	} else if (JAX.isArray(attributes)) {
+	} else if (attributes instanceof Array) {
 		var attrs = {};
 		for (var i=0, len=attributes.length; i<len; i++) { 
 			var attribute = attributes[i];
 			attrs[attribute] = this._node.getAttribute(attribute);
 		}
 		return attrs;	
-	} else if (this._checkLocked(this.attr, attributes)) { 
+	} else if (this._storage.locked) {
+		this._queueMethod(this.attr, arguments); 
 		return this; 
 	}
 
@@ -349,9 +369,9 @@ JAX.NodeHTML.prototype.style = function() {
 		return [];
 	}
 
-	if (JAX.isString(cssStyles)) { 
+	if (typeof(cssStyles) == "string") { 
 		return cssStyles == "opacity" ? this._getOpacity() : this._node.style[cssStyles]; 
-	} else if (JAX.isArray(cssStyles)) {
+	} else if (cssStyles instanceof Array) {
 		var css = {};
 		for (var i=0, len=cssStyles.length; i<len; i++) {
 			var cssStyle = cssStyles[i];
@@ -359,9 +379,10 @@ JAX.NodeHTML.prototype.style = function() {
 			css[cssStyle] = this._node.style[cssStyle];
 		}
 		return css;
-	} else if (this._checkLocked(this.style, cssStyles)) { 
+	} else if (this._storage.locked) {
+		this._queueMethod(this.style, arguments); 
 		return this; 
-	}
+	} 
 
 	for (var p in cssStyles) {
 		var value = cssStyles[p];
@@ -373,15 +394,22 @@ JAX.NodeHTML.prototype.style = function() {
 };
 
 JAX.NodeHTML.prototype.displayOn = function(displayValue) {
-	if (this._checkLocked(this.displayOn, arguments)) { return this; }
-	this.style({"display":displayValue || ""});
+	if (this._storage.locked) {
+		this._queueMethod(this.displayOn, arguments); 
+		return this; 
+	} 
+
+	this._node.style["display"] = displayValue || "";
 
 	return this;
 };
 
 JAX.NodeHTML.prototype.displayOff = function() {
-	if (this._checkLocked(this.displayOff, arguments)) { return this; }
-	this.style({"display":"none"});
+	if (this._storage.locked) {
+		this._queueMethod(this.displayOff, arguments); 
+		return this; 
+	} 
+	this._node.style["display"] = "none";
 
 	return this;
 };
@@ -398,7 +426,7 @@ JAX.NodeHTML.prototype.computedStyle = function() {
 		return [];
 	}
 
-	if (JAX.isString(cssStyles)) { 
+	if (typeof(cssStyles) == "string") { 
 		return JAK.DOM.getStyle(this._node, cssStyles); 
 	}
 
@@ -427,7 +455,10 @@ JAX.NodeHTML.prototype.width = function(value) {
 		return width; 
 	}
 
-	if (this._checkLocked(this.width, arguments)) { return this; }
+	if (this._storage.locked) {
+		this._queueMethod(this.width, arguments); 
+		return this; 
+	} 
 
 	var paddingLeft = parseInt(this.computedStyle("padding-left"),10);
 	var paddingRight = parseInt(this.computedStyle("padding-right"), 10);
@@ -459,7 +490,10 @@ JAX.NodeHTML.prototype.height = function(value) {
 		return height; 
 	}
 
-	if (this._checkLocked(this.height, arguments)) { return this; }
+	if (this._storage.locked) {
+		this._queueMethod(this.height, arguments); 
+		return this; 
+	} 
 
 	var paddingTop = parseInt(this.computedStyle("padding-top"),10);
 	var paddingBottom = parseInt(this.computedStyle("padding-bottom"), 10);
@@ -499,14 +533,17 @@ JAX.NodeHTML.prototype.childs = function() {
 };
 
 JAX.NodeHTML.prototype.clear = function() {
-	if (this._checkLocked(this.clear, arguments)) { return this; }
+	if (this._storage.locked) {
+		this._queueMethod(this.clear, arguments); 
+		return this; 
+	} 
 	JAK.DOM.clear(this._node);
 	return this;
 };
 
 JAX.NodeHTML.prototype.contains = function(node) {
 	if (node && (node.nodeType || JAX.isJAXNode(node))) {
-		var elm = JAX.isJAXNode(node) ? node.node().parentNode : node.parentNode;
+		var elm = node.jaxNodeType ? node.node().parentNode : node.parentNode;
 		while(elm) {
 			if (elm == this._node) { return true; }
 			elm = elm.parentNode;
@@ -519,7 +556,7 @@ JAX.NodeHTML.prototype.contains = function(node) {
 
 JAX.NodeHTML.prototype.isChildOf = function(node) {
 	if (node && (node.nodeType || JAX.isJAXNode(node))) {
-		var elm = JAX.isJAXNode(node) ? node : JAX.NodeHTML.create(node);
+		var elm = node.jaxNodeType ? node : JAX.NodeHTML.create(node);
 		return elm.contains(this);
 	}
 
@@ -527,11 +564,14 @@ JAX.NodeHTML.prototype.isChildOf = function(node) {
 };
 
 JAX.NodeHTML.prototype.fade = function(type, duration, completeCbk) {
-	if (this._checkLocked(this.fadeIn, arguments)) { return this; }
+	if (this._storage.locked) {
+		this._queueMethod(this.fade, arguments); 
+		return this; 
+	} 
 
-	if (!JAX.isString(type)) {
+	if (typeof(type) != "string") {
 		throw new Error("JAX.NodeHTML.fade accepts only String for first argument. See doc for more information.");
-	} else if ((duration && !JAX.isNumber(duration)) || (completeCbk && !JAX.isFunction(completeCbk))) {
+	} else if ((duration && typeof(duration) != "number") || (completeCbk && typeof(completeCbk) != "function")) {
 		throw new Error("JAX.NodeHTML.fade accepts only Number for duration argument and Function for completeCbk. See doc for more information.");
 	}
 
@@ -565,11 +605,14 @@ JAX.NodeHTML.prototype.fade = function(type, duration, completeCbk) {
 };
 
 JAX.NodeHTML.prototype.slide = function(type, duration, completeCbk) {
-	if (this._checkLocked(this.slideDown, arguments)) { return this; }
+	if (this._storage.locked) {
+		this._queueMethod(this.slide, arguments); 
+		return this; 
+	} 
 
-	if (!JAX.isString(type)) {
+	if (typeof(type) != "string") {
 		throw new Error("JAX.NodeHTML.slide accepts only String for first argument. See doc for more information.");
-	} else if ((duration && !JAX.isNumber(duration)) || (completeCbk && !JAX.isFunction(completeCbk))) {
+	} else if ((duration && typeof(duration) != "number") || (completeCbk && typeof(completeCbk) != "function")) {
 		throw new Error("JAX.NodeHTML.slide accepts only Number for duration argument and Function for completeCbk. See doc for more information.");
 	}
 
@@ -650,10 +693,8 @@ JAX.NodeHTML.prototype._lock = function() {
 	this._storage.locked = true;
 };
 
-JAX.NodeHTML.prototype._checkLocked = function(method, args) {
-	if (!this._storage.locked) { return false; }
+JAX.NodeHTML.prototype._queueMethod = function(method, args) {
 	this._storage.lockQueue.push({method:method, args:args});
-	return true;
 };
 
 JAX.NodeHTML.prototype._unlock = function() {

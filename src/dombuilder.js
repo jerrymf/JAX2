@@ -13,7 +13,7 @@ JAX.DOMBuilder.prototype.$constructor = function(doc) {
 JAX.DOMBuilder.prototype.open = function(element, attributes, styles) {
 	var jaxNode = null;
 
-	if (JAX.isString(element)) {
+	if (typeof(element) == "string") {
 		var jaxNode = JAX.make(element, "", this._doc);
 	} else if (element.nodeType) {
 		var jaxNode = JAX.$$(element);
@@ -37,7 +37,7 @@ JAX.DOMBuilder.prototype.open = function(element, attributes, styles) {
 }
 
 JAX.DOMBuilder.prototype.add = function(node, attributes, styles) {
-	if (JAX.isString(node)) {
+	if (typeof(node) == "string") {
 		var jaxNode = JAX.make(node);
 	} else if (node.nodeType) {
 		var jaxNode = JAX.$$(node);
@@ -58,7 +58,7 @@ JAX.DOMBuilder.prototype.add = function(node, attributes, styles) {
 };
 
 JAX.DOMBuilder.prototype.addText = function(txt) {
-	if (JAX.isString(txt)) {
+	if (typeof(txt) == "string") {
 		var jaxNode = JAX.makeText(node);
 
 		if (this._pointerJaxNode) {

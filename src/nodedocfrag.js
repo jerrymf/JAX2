@@ -40,7 +40,7 @@ JAX.NodeDocFrag.prototype.html = function(innerHTML) {
 
 	if (!arguments.length) { 
 		return div.appendChild(this._node).innerHTML;
-	} else if (JAX.isString(innerHTML)) {
+	} else if (typeof(innerHTML) == "string") {
 		div.innerHTML = innerHTML;
 		while(div.firstChild) { this._node.appendChild(div.firstChild); }
 		return this;
