@@ -66,7 +66,7 @@ JAX.NodeArray.prototype.style = function(properties) {
 	for (var i=0, len=this._jaxNodes.length; i<len; i++) { 
 		var jaxNode = this._jaxNodes[i];
 		if (jaxNode.jaxNodeType != 1) { continue; }
-		jaxNode.style(properties); 
+		jaxNode.styleCss(properties); 
 	}
 	return this;	
 };

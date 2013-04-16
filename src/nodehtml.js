@@ -363,11 +363,11 @@ JAX.NodeHTML.prototype.attr = function() {
 	return this;
 };
 
-JAX.NodeHTML.prototype.style = function() {
+JAX.NodeHTML.prototype.styleCss = function() {
 	var cssStyles = Array.prototype.slice.call(arguments);
 
 	if (cssStyles.length > 1) { 
-		return this.style(cssStyles);
+		return this.styleCss(cssStyles);
 	} else if (cssStyles.length == 1) {
 		cssStyles = cssStyles[0];
 	} else {
@@ -419,11 +419,11 @@ JAX.NodeHTML.prototype.displayOff = function() {
 	return this;
 };
 
-JAX.NodeHTML.prototype.computedStyle = function() {
+JAX.NodeHTML.prototype.computedStyleCss = function() {
 	var cssStyles = arguments;
 
 	if (cssStyles.length > 1) { 
-		return this.computedStyle(cssStyles);
+		return this.computedStyleCss(cssStyles);
 	} else if (cssStyles.length == 1) {
 		cssStyles = arguments[0];
 	} else {
@@ -449,16 +449,16 @@ JAX.NodeHTML.prototype.computedStyle = function() {
 
 JAX.NodeHTML.prototype.fullWidth = function(value) {
 	if (!arguments.length) { 
-		var backupStyle = this.style("display","visibility","position");
-		var isFixedPosition = this.computedStyle("position").indexOf("fixed") == 0;
-		var isDisplayNone = this.style("display").indexOf("none") == 0;
+		var backupStyle = this.styleCss("display","visibility","position");
+		var isFixedPosition = this.computedStyleCss("position").indexOf("fixed") == 0;
+		var isDisplayNone = this.styleCss("display").indexOf("none") == 0;
 
-		if (!isFixedPosition) { this.style({"position":"absolute"}); }
-		if (isDisplayNone) { this.style({"display":""}); }		
-		this.style({"visibility":"hidden"});
+		if (!isFixedPosition) { this.styleCss({"position":"absolute"}); }
+		if (isDisplayNone) { this.styleCss({"display":""}); }		
+		this.styleCss({"visibility":"hidden"});
 
 		var width = this._node.offsetWidth;
-		this.style(backupStyle);
+		this.styleCss(backupStyle);
 		return width; 
 	}
 
@@ -467,10 +467,10 @@ JAX.NodeHTML.prototype.fullWidth = function(value) {
 		return this; 
 	} 
 
-	var paddingLeft = parseFloat(this.computedStyle("padding-left"));
-	var paddingRight = parseFloat(this.computedStyle("padding-right"));
-	var borderLeft = parseFloat(this.computedStyle("border-left"));
-	var borderRight = parseFloat(this.computedStyle("border-right"));
+	var paddingLeft = parseFloat(this.computedStyleCss("padding-left"));
+	var paddingRight = parseFloat(this.computedStyleCss("padding-right"));
+	var borderLeft = parseFloat(this.computedStyleCss("border-left"));
+	var borderRight = parseFloat(this.computedStyleCss("border-right"));
 
 	if (isFinite(paddingLeft)) { value =- paddingLeft; }
 	if (isFinite(paddingRight)) { value =- paddingRight; }
@@ -483,16 +483,16 @@ JAX.NodeHTML.prototype.fullWidth = function(value) {
 
 JAX.NodeHTML.prototype.fullHeight = function(value) {
 	if (!arguments.length) { 
-		var backupStyle = this.style("display","visibility","position");
-		var isFixedPosition = this.computedStyle("position").indexOf("fixed") == 0;
-		var isDisplayNone = this.style("display").indexOf("none") == 0;
+		var backupStyle = this.styleCss("display","visibility","position");
+		var isFixedPosition = this.computedStyleCss("position").indexOf("fixed") == 0;
+		var isDisplayNone = this.styleCss("display").indexOf("none") == 0;
 
-		if (!isFixedPosition) { this.style({"position":"absolute"}); }
-		if (isDisplayNone) { this.style({"display":""}); }		
-		this.style({"visibility":"hidden"});
+		if (!isFixedPosition) { this.styleCss({"position":"absolute"}); }
+		if (isDisplayNone) { this.styleCss({"display":""}); }		
+		this.styleCss({"visibility":"hidden"});
 
 		var height = this._node.offsetHeight;
-		this.style(backupStyle);
+		this.styleCss(backupStyle);
 		return height; 
 	}
 
@@ -501,10 +501,10 @@ JAX.NodeHTML.prototype.fullHeight = function(value) {
 		return this; 
 	} 
 
-	var paddingTop = parseFloat(this.computedStyle("padding-top"));
-	var paddingBottom = parseFloat(this.computedStyle("padding-bottom"));
-	var borderTop = parseFloat(this.computedStyle("border-top"));
-	var borderBottom = parseFloat(this.computedStyle("border-bottom"));
+	var paddingTop = parseFloat(this.computedStyleCss("padding-top"));
+	var paddingBottom = parseFloat(this.computedStyleCss("padding-bottom"));
+	var borderTop = parseFloat(this.computedStyleCss("border-top"));
+	var borderBottom = parseFloat(this.computedStyleCss("border-bottom"));
 
 	if (isFinite(paddingTop)) { value =- paddingTop; }
 	if (isFinite(paddingBottom)) { value =- paddingBottom; }
@@ -593,10 +593,10 @@ JAX.NodeHTML.prototype.fade = function(type, duration, completeCbk) {
 	switch(type) {
 		case "in":
 			var sourceOpacity = 0;
-			var targetOpacity = parseFloat(this.computedStyle("opacity")) || 1;	
+			var targetOpacity = parseFloat(this.computedStyleCss("opacity")) || 1;	
 		break;
 		case "out":
-			var sourceOpacity = parseFloat(this.computedStyle("opacity")) || 1;
+			var sourceOpacity = parseFloat(this.computedStyleCss("opacity")) || 1;
 			var targetOpacity = 0;
 		break;
 		default:
@@ -632,7 +632,7 @@ JAX.NodeHTML.prototype.fadeTo = function(opacityValue, duration, completeCbk) {
 		throw new Error("JAX.NodeHTML.fadeTo only Function for completeCbk. See doc for more information.");
 	}
 
-	var sourceOpacity = parseFloat(this.computedStyle("opacity")) || 1;
+	var sourceOpacity = parseFloat(this.computedStyleCss("opacity")) || 1;
 	var targetOpacity = parseFloat(opacityValue);
 
 	var animation = new JAX.Animation(this);
@@ -665,25 +665,25 @@ JAX.NodeHTML.prototype.slide = function(type, duration, completeCbk) {
 
 	switch(type) {
 		case "down":
-			var backupStyles = this.style("height","overflow");
+			var backupStyles = this.styleCss("height","overflow");
 			var property = "height";
 			var source = 0;
 			var target = this.fullHeight();	
 		break;
 		case "up":
-			var backupStyles = this.style("height","overflow");
+			var backupStyles = this.styleCss("height","overflow");
 			var property = "height";
 			var source = this.fullHeight();
 			var target = 0;
 		break;
 		case "left":
-			var backupStyles = this.style("width","overflow");
+			var backupStyles = this.styleCss("width","overflow");
 			var property = "width";
 			var source = this.fullWidth();
 			var target = 0;	
 		break;
 		case "right":
-			var backupStyles = this.style("width","overflow");
+			var backupStyles = this.styleCss("width","overflow");
 			var property = "width";
 			var source = 0;
 			var target = this.fullWidth();
@@ -693,7 +693,7 @@ JAX.NodeHTML.prototype.slide = function(type, duration, completeCbk) {
 			return this;
 	}
 
-	this.style({"overflow": "hidden"});
+	this.styleCss({"overflow": "hidden"});
 
 	var animation = new JAX.Animation(this);
 	var func = function() {
