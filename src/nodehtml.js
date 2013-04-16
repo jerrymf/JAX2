@@ -597,8 +597,8 @@ JAX.NodeHTML.prototype.fade = function(type, duration, completeCbk) {
 
 	var animation = new JAX.Animation(this);
 	var func = function() {
-		if (completeCbk) { completeCbk(); }
 		this._unlock();
+		if (completeCbk) { completeCbk(); }
 	}.bind(this);
 
 	animation.addProperty("opacity", duration, sourceOpacity, targetOpacity);
@@ -656,8 +656,8 @@ JAX.NodeHTML.prototype.slide = function(type, duration, completeCbk) {
 	var animation = new JAX.Animation(this);
 	var func = function() {
 		for (var p in backupStyles) { this._node.style[p] = backupStyles[p]; }
-		if (completeCbk) { completeCbk(); }
 		this._unlock();
+		if (completeCbk) { completeCbk(); }
 	}.bind(this);
 
 	animation.addProperty(property, duration, source, target);
