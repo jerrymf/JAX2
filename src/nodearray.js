@@ -140,19 +140,33 @@ JAX.NodeArray.prototype.unshiftItem = function(node) {
 };
 
 JAX.NodeArray.prototype.fade = function(type, duration, completeCbk) {
+	var count = this._jaxNodes.length;
+
+	var f = function() {
+		count--;
+		if (!count) { completeCbk(); }
+	};
+
 	for (var i=0, len=this._jaxNodes.length; i<len; i++) {
 		var jaxNode = this._jaxNodes[i];
 		if (jaxNode.jaxNodeType != 1) { continue; }
-		jaxNode.fade(type, duration, completeCbk); 
+		jaxNode.fade(type, duration, f); 
 	}
 	return this;
 };
 
 JAX.NodeArray.prototype.slide = function(type, duration, completeCbk) {
+	var count = this._jaxNodes.length;
+
+	var f = function() {
+		count--;
+		if (!count) { completeCbk(); }
+	};
+
 	for (var i=0, len=this._jaxNodes.length; i<len; i++) {
 		var jaxNode = this._jaxNodes[i];
 		if (jaxNode.jaxNodeType != 1) { continue; }
-		jaxNode.slide(type, duration, completeCbk); 
+		jaxNode.slide(type, duration, f); 
 	}
 	return this;
 };

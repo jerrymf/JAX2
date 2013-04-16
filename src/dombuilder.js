@@ -93,7 +93,7 @@ JAX.DOMBuilder.prototype.appendTo = function(node) {
 		throw new Error("JAX.DOMBuilder.appendTo: argument can be only html node or instance of JAX.NodeHTML");
 	}
 
-	jaxNode.add(this._jax.container);
+	this._jax.container.appendTo(jaxNode);
 };
 
 JAX.DOMBuilder.prototype.getContainer = function() {

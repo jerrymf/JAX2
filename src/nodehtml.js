@@ -432,7 +432,7 @@ JAX.NodeHTML.prototype.computedStyle = function() {
 
 	if (typeof(cssStyles) == "string") { 
 		var value = JAK.DOM.getStyle(this._node, cssStyles);
-		if (this._node.runtimeStyle && !this._node.addListener && JAX.NodeHTML.MEASUREDVALUE.test(value)) { value = this._inPixels(value); }
+		if (this._node.runtimeStyle && !document.addEventListener && JAX.NodeHTML.MEASUREDVALUE.test(value)) { value = this._inPixels(value); }
 		return value;
 	}
 
@@ -441,7 +441,7 @@ JAX.NodeHTML.prototype.computedStyle = function() {
 	for (var i=0, len=cssStyles.length; i<len; i++) {
 		var cssStyle = cssStyles[i];
 		var value = JAK.DOM.getStyle(this._node, cssStyle);
-		if (this._node.runtimeStyle && !this._node.addListener && JAX.NodeHTML.MEASUREDVALUE.test(value)) { value = this._inPixels(value); }
+		if (this._node.runtimeStyle && !document.addEventListener && JAX.NodeHTML.MEASUREDVALUE.test(value)) { value = this._inPixels(value); }
 		css[cssStyle] = value;
 	}
 	return css;
@@ -520,23 +520,30 @@ JAX.NodeHTML.prototype.parent = function() {
 	return null;
 };
 
-JAX.NodeHTML.prototype.nextSibling = function() {
-	return this._node.nextSibling ? JAX.NodeHTML.create(this._node.nextSibling) : null;
+JAX.NodeHTML.prototype.nSibling = function() {
+	return this._node.nextSibling ? JAX.$$(this._node.nextSibling) : null;
 };
 
-JAX.NodeHTML.prototype.prevSibling = function() {
-	return this._node.previousSibling ? JAX.NodeHTML.create(this._node.previousSibling) : null;
+JAX.NodeHTML.prototype.pSibling = function() {
+	return this._node.previousSibling ? JAX.$$(this._node.previousSibling) : null;
 };
 
 JAX.NodeHTML.prototype.childs = function() {
 	var nodes = [];
 	for (var i=0, len=this._node.childNodes.length; i<len; i++) {
 		var childNode = this._node.childNodes[i];
-		if (childNode.nodeType == 3) { nodes.push(new JAX.NodeText(childNode)); continue; }
-		nodes.push(JAX.NodeHTML.create(childNode));
+		nodes.push(JAX.$$(childNode));
 	}
 	return nodes;
 };
+
+JAX.NodeHTML.prototype.fChild = function() {
+	return this._node.firstChild ? JAX.$$(this._node.firstChild) : null;
+}
+
+JAX.NodeHTML.prototype.lChild = function() {
+	return this._node.lastChild ? JAX.$$(this._node.lastChild) : null;
+}
 
 JAX.NodeHTML.prototype.clear = function() {
 	if (this._storage.locked) {
@@ -573,12 +580,14 @@ JAX.NodeHTML.prototype.fade = function(type, duration, completeCbk) {
 	if (this._storage.locked) {
 		this._queueMethod(this.fade, arguments); 
 		return this; 
-	} 
+	}
 
 	if (typeof(type) != "string") {
 		throw new Error("JAX.NodeHTML.fade accepts only String for first argument. See doc for more information.");
-	} else if ((duration && typeof(duration) != "number") || (completeCbk && typeof(completeCbk) != "function")) {
-		throw new Error("JAX.NodeHTML.fade accepts only Number for duration argument and Function for completeCbk. See doc for more information.");
+	} else if (duration && typeof(duration) != "number") {
+		throw new Error("JAX.NodeHTML.fade accepts only Number for duration argument. See doc for more information.");
+	} else if (completeCbk && typeof(completeCbk) != "function") {
+		throw new Error("JAX.NodeHTML.fade accepts only Function for completeCbk. See doc for more information.");
 	}
 
 	switch(type) {
@@ -617,8 +626,10 @@ JAX.NodeHTML.prototype.slide = function(type, duration, completeCbk) {
 
 	if (typeof(type) != "string") {
 		throw new Error("JAX.NodeHTML.slide accepts only String for first argument. See doc for more information.");
-	} else if ((duration && typeof(duration) != "number") || (completeCbk && typeof(completeCbk) != "function")) {
-		throw new Error("JAX.NodeHTML.slide accepts only Number for duration argument and Function for completeCbk. See doc for more information.");
+	} else if (duration && typeof(duration) != "number") {
+		throw new Error("JAX.NodeHTML.slide accepts only Number for duration argument. See doc for more information.");
+	} else if (completeCbk && typeof(completeCbk) != "function") {
+		throw new Error("JAX.NodeHTML.slide accepts only Function for completeCbk. See doc for more information.");
 	}
 
 	switch(type) {
