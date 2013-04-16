@@ -3,6 +3,8 @@ JAX.NodeHTML = JAK.ClassMaker.makeClass({
 	VERSION: "0.71"
 });
 
+JAX.NodeHTML.MEASUREDVALUE = /^(?:-)?\d+(\.\d+)?(px|%|em|in|cm|mm|ex|pt|pc)?$/i
+
 JAX.NodeHTML.create = function(node) {
 	var _JAX = JAX;
 
@@ -281,20 +283,23 @@ JAX.NodeHTML.prototype.listen = function(type, method, obj, bindData) {
 	var thisNode = this;
 	var f = function(e, node) { method(e, thisNode, bindData); }
 	var listenerId = JAK.Events.addListener(this._node, type, f);
-	this._storage.events[type] = [].concat(this._storage.events[type]).push(listenerId);
+	var evtListeners = this._storage.events[type] || [];
+	evtListeners.push(listenerId);
+	this._storage.events[type] = evtListeners;
 
 	return listenerId;
 };
 
 JAX.NodeHTML.prototype.stopListening = function(type, listenerId) {
 	if (this._storage.locked) {
-		this._queueMethod(this.stopListening, arguments); 
+		this._queueMethod(this.stopListening, arguments);
 		return this; 
 	} 
 
 	if (!arguments.length) {
 		var events = this._storage.events;
-		for (var p in events) { this.stopListening(p); }
+		for (var p in events) { this._destroyEvents(events[p]); }
+		this._storage.events = {};
 		return this;
 	}
 
@@ -310,7 +315,7 @@ JAX.NodeHTML.prototype.stopListening = function(type, listenerId) {
 
 	if (!listenerId) { 
 		this._destroyEvents(eventListeners);
-		delete this._storage.events[type];
+		this._storage.events[type] = [];
 		return this;
 	}
 
@@ -414,7 +419,6 @@ JAX.NodeHTML.prototype.displayOff = function() {
 	return this;
 };
 
-/* FIXME - polyfill computed style for IE8 */
 JAX.NodeHTML.prototype.computedStyle = function() {
 	var cssStyles = arguments;
 
@@ -427,20 +431,23 @@ JAX.NodeHTML.prototype.computedStyle = function() {
 	}
 
 	if (typeof(cssStyles) == "string") { 
-		return JAK.DOM.getStyle(this._node, cssStyles); 
+		var value = JAK.DOM.getStyle(this._node, cssStyles);
+		if (this._node.runtimeStyle && !this._node.addListener && JAX.NodeHTML.MEASUREDVALUE.test(value)) { value = this._inPixels(value); }
+		return value;
 	}
 
 	var css = {};
 	var properties = [].concat(cssStyles);
 	for (var i=0, len=cssStyles.length; i<len; i++) {
 		var cssStyle = cssStyles[i];
-		css[cssStyle] = JAK.DOM.getStyle(this._node, cssStyle);
+		var value = JAK.DOM.getStyle(this._node, cssStyle);
+		if (this._node.runtimeStyle && !this._node.addListener && JAX.NodeHTML.MEASUREDVALUE.test(value)) { value = this._inPixels(value); }
+		css[cssStyle] = value;
 	}
 	return css;
 };
 
-/* FIXME - for working in percentage values */
-JAX.NodeHTML.prototype.width = function(value) {
+JAX.NodeHTML.prototype.fullWidth = function(value) {
 	if (!arguments.length) { 
 		var backupStyle = this.style("display","visibility","position");
 		var isFixedPosition = this.computedStyle("position").indexOf("fixed") == 0;
@@ -460,22 +467,21 @@ JAX.NodeHTML.prototype.width = function(value) {
 		return this; 
 	} 
 
-	var paddingLeft = parseInt(this.computedStyle("padding-left"),10);
-	var paddingRight = parseInt(this.computedStyle("padding-right"), 10);
-	var borderLeft = parseInt(this.computedStyle("border-left"),10);
-	var borderRight = parseInt(this.computedStyle("border-right"), 10);
+	var paddingLeft = parseFloat(this.computedStyle("padding-left"));
+	var paddingRight = parseFloat(this.computedStyle("padding-right"));
+	var borderLeft = parseFloat(this.computedStyle("border-left"));
+	var borderRight = parseFloat(this.computedStyle("border-right"));
 
-	if (!isNaN(paddingLeft)) { value =- paddingLeft; }
-	if (!isNaN(paddingRight)) { value =- paddingRight; }
-	if (!isNaN(borderLeft)) { value =- borderLeft; }
-	if (!isNaN(borderRight)) { value =- borderRight; }
+	if (isFinite(paddingLeft)) { value =- paddingLeft; }
+	if (isFinite(paddingRight)) { value =- paddingRight; }
+	if (isFinite(borderLeft)) { value =- borderLeft; }
+	if (isFinite(borderRight)) { value =- borderRight; }
 
 	this._node.style.width = Math.max(value,0) + "px";
 	return this;
 };
 
-/* FIXME - for working in percentage values */
-JAX.NodeHTML.prototype.height = function(value) {
+JAX.NodeHTML.prototype.fullHeight = function(value) {
 	if (!arguments.length) { 
 		var backupStyle = this.style("display","visibility","position");
 		var isFixedPosition = this.computedStyle("position").indexOf("fixed") == 0;
@@ -495,15 +501,15 @@ JAX.NodeHTML.prototype.height = function(value) {
 		return this; 
 	} 
 
-	var paddingTop = parseInt(this.computedStyle("padding-top"),10);
-	var paddingBottom = parseInt(this.computedStyle("padding-bottom"), 10);
-	var borderTop = parseInt(this.computedStyle("border-top"),10);
-	var borderBottom = parseInt(this.computedStyle("border-bottom"), 10);
+	var paddingTop = parseFloat(this.computedStyle("padding-top"));
+	var paddingBottom = parseFloat(this.computedStyle("padding-bottom"));
+	var borderTop = parseFloat(this.computedStyle("border-top"));
+	var borderBottom = parseFloat(this.computedStyle("border-bottom"));
 
-	if (!isNaN(paddingTop)) { value =- paddingTop; }
-	if (!isNaN(paddingBottom)) { value =- paddingBottom; }
-	if (!isNaN(borderTop)) { value =- borderTop; }
-	if (!isNaN(borderBottom)) { value =- borderBottom; }
+	if (isFinite(paddingTop)) { value =- paddingTop; }
+	if (isFinite(paddingBottom)) { value =- paddingBottom; }
+	if (isFinite(borderTop)) { value =- borderTop; }
+	if (isFinite(borderBottom)) { value =- borderBottom; }
 
 	this._node.style.height = Math.max(value,0) + "px";
 	return this;
@@ -589,8 +595,6 @@ JAX.NodeHTML.prototype.fade = function(type, duration, completeCbk) {
 			return this;
 	}
 
-	this._lock();
-
 	var animation = new JAX.Animation(this);
 	var func = function() {
 		if (completeCbk) { completeCbk(); }
@@ -600,6 +604,7 @@ JAX.NodeHTML.prototype.fade = function(type, duration, completeCbk) {
 	animation.addProperty("opacity", duration, sourceOpacity, targetOpacity);
 	animation.addCallback(func);
 	animation.run();
+	this._lock();
 
 	return this;
 };
@@ -647,7 +652,6 @@ JAX.NodeHTML.prototype.slide = function(type, duration, completeCbk) {
 	}
 
 	this.style({"overflow": "hidden"});
-	this._lock();
 
 	var animation = new JAX.Animation(this);
 	var func = function() {
@@ -659,21 +663,33 @@ JAX.NodeHTML.prototype.slide = function(type, duration, completeCbk) {
 	animation.addProperty(property, duration, source, target);
 	animation.addCallback(func);
 	animation.run();
+	this._lock();
 
 	return this;
+};
+
+JAX.NodeHTML.prototype._inPixels = function(value) {
+	var style = this._node.style.left;
+	var rStyle = this._node.runtimeStyle.left; 
+    this._node.runtimeStyle.left = this._node.currentStyle.left;
+    this._node.style.left = value || 0;  
+    value = this._node.style.pixelLeft;
+    this._node.style.left = style;
+    this._node.runtimeStyle.left = rStyle;
+      
+    return value;
 };
 
 JAX.NodeHTML.prototype._setOpacity = function(value) {
 	var property = "";
 
-	if (JAK.Browser.client == "ie" || JAK.Browser.version < 9) { 
+	if (JAK.Browser.client == "ie" && JAK.Browser.version < 9) { 
 		property = "filter";
 		value = Math.round(100*value);
 		value = "progid:DXImageTransform.Microsoft.Alpha(opacity=" + value + ");";
 	} else {
 		property = "opacity";
 	}
-
 	this._node.style[property] = value + "";
 
 };

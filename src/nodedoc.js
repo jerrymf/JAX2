@@ -44,17 +44,17 @@ JAX.NodeDoc.prototype.listen = function(type, method, obj, bindData) {
 	var f = function(e, node) { method(e, thisNode, bindData); }
 	var listenerId = JAK.Events.addListener(this._doc, type, f);
 	var evtListeners = JAX.NodeDoc.events[type] || [];
-
 	evtListeners.push(listenerId);
 	JAX.NodeDoc.events[type] = evtListeners;
-
+	
 	return listenerId;
 };
 
 JAX.NodeDoc.prototype.stopListening = function(type, listenerId) {
 	if (!arguments.length) {
 		var events = JAX.NodeDoc.events;
-		for (var p in events) { this.stopListening(p); }
+		for (var p in events) { this._destroyEvents(events[p]); }
+		JAX.NodeDoc.events = {};
 		return this;
 	}
 
