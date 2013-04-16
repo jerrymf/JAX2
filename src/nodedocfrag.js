@@ -5,7 +5,9 @@ JAX.NodeDocFrag = JAK.ClassMaker.makeClass({
 
 JAX.NodeDocFrag.prototype.jaxNodeType = 11;
 
-JAX.NodeDocFrag.prototype.$constructor = function(docFrag) {
+JAX.NodeDocFrag.prototype.$constructor = function(doc, docFrag) {
+	this._doc = doc || document;
+
 	if (docFrag && docFrag.nodeType && docFrag.nodeType == 11) {  	
 		this._node = docFrag;
 		return;
@@ -13,7 +15,7 @@ JAX.NodeDocFrag.prototype.$constructor = function(docFrag) {
 		throw new Error("JAX.NodeDocFrag constructor accepts only documentFragment as its argument. See doc for more information.");
 	}
 	
-	this._node = document.createDocumentFragment();
+	this._node = this._doc.createDocumentFragment();
 };
 
 JAX.NodeDocFrag.prototype.$destructor = function() {

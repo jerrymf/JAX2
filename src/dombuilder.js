@@ -5,7 +5,7 @@ JAX.DOMBuilder = JAK.ClassMaker.makeClass({
 
 JAX.DOMBuilder.prototype.$constructor = function(doc) {
 	this._doc = doc || document;
-	this._dom = { container: this._doc.createDocumentFragment() };
+	this._jax = { container: new JAX.NodeDocFrag() };
 	this._pointerJaxNode = null;
 	this._stack = [];
 };
@@ -24,13 +24,12 @@ JAX.DOMBuilder.prototype.open = function(element, attributes, styles) {
 		if (style) { jaxNode.style(styles); }
 		if (!this._pointerJaxNode) {
 			this._stack.push(this._pointerJaxNode);
-			this._pointerJaxNode = jaxNode.node();
-			this._dom.container.appendChild(jaxNode.node()); 
+			this._jax.container.add(jaxNode); 
 		} else {
-			this._pointerJaxNode.appendChild(jaxNode);
+			this._pointerJaxNode.add(jaxNode);
 			this._stack.push(this._pointerJaxNode);
-			this._pointerJaxNode = jaxNode;
 		}
+		this._pointerJaxNode = jaxNode;
 		return jaxNode;
 	}
 
@@ -50,9 +49,9 @@ JAX.DOMBuilder.prototype.add = function(node, attributes, styles) {
 	if (style) { jaxNode.style(styles); }
 
 	if (this._pointerJaxNode) {
-		this._pointerJaxNode.add(jaxNode.node());
+		this._pointerJaxNode.add(jaxNode);
 	} else {
-		this._dom.container.appendChild(jaxNode.node());
+		this._jax.container.add(jaxNode);
 	}
 
 	return jaxNode;
@@ -63,9 +62,9 @@ JAX.DOMBuilder.prototype.addText = function(txt) {
 		var jaxNode = JAX.makeText(node);
 
 		if (this._pointerJaxNode) {
-			this._pointerJaxNode.add(jaxNode.node());
+			this._pointerJaxNode.add(jaxNode);
 		} else {
-			this._dom.container.appendChild(jaxNode.node());
+			this._jax.container.add(jaxNode);
 		}
 
 		return jaxNode;
@@ -94,15 +93,15 @@ JAX.DOMBuilder.prototype.appendTo = function(node) {
 		throw new Error("JAX.DOMBuilder.appendTo: argument can be only html node or instance of JAX.NodeHTML");
 	}
 
-	jaxNode.add(this._dom.container);
+	jaxNode.add(this._jax.container);
 };
 
-JAX.DOMBuilder.prototype.getDOM = function() {
-	return this._dom.container;
+JAX.DOMBuilder.prototype.getContainer = function() {
+	return this._jax.container;
 };
 
 JAX.DOMBuilder.prototype.clear = function() {
-	JAK.DOM.clear(this._dom.container);
+	this._jax.container.clear();
 	this._stack = [];
 };
 
