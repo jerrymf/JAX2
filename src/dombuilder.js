@@ -88,7 +88,7 @@ JAX.DOMBuilder.prototype.appendTo = function(node) {
 
 	if (node.nodeType) {
 		var jaxNode = JAX.$$(node);
-	} else if (JAX.isJAXNode(node) && node.jaxNodeType == 1)) {
+	} else if (JAX.isJAXNode(node) && node.jaxNodeType == 1) {
 		var jaxNode = node;
 	} else {
 		throw new Error("JAX.DOMBuilder.appendTo: argument can be only html node or instance of JAX.NodeHTML");

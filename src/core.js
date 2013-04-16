@@ -18,6 +18,7 @@ JAX.$ = function(selector, srcElement) {
 			case 1: return new JAX.NodeArray(JAX.NodeHTML.create(selector));
 			case 3: return new JAX.NodeArray(new JAX.NodeText(selector));
 			case 9: return new JAX.NodeArray(new JAX.NodeDoc(selector));
+			case 11: return new JAX.NodeArray(new JAX.NodeDocFrag(selector));
 		}
 	} else if (JAX.isJAXNode(selector)) {
 		return new JAX.NodeArray(selector);
@@ -38,6 +39,7 @@ JAX.$$ = function(selector, srcElement) {
 			case 1: return JAX.NodeHTML.create(selector);
 			case 3: return new JAX.NodeText(selector);
 			case 9: return new JAX.NodeDoc(selector);
+			case 11: return new JAX.NodeDocFrag(selector);
 		}
 	} else if (JAX.isJAXNode(selector)) {
 		return selector;
@@ -159,6 +161,6 @@ JAX.isDate = function(value) {
 };
 
 JAX.isJAXNode = function(node) {
-	return node instanceof JAX.NodeHTML || node instanceof JAX.NodeText || node instanceof JAX.NodeDoc;
+	return node instanceof JAX.NodeHTML || node instanceof JAX.NodeText || node instanceof JAX.NodeDoc || node instanceof JAX.NodeDocFrag;
 }
 

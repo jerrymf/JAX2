@@ -188,7 +188,7 @@ JAX.NodeHTML.prototype.add = function() {
 JAX.NodeHTML.prototype.addBefore = function(node, nodeBefore) {
 	if (this._checkLocked(this.addBefore, arguments)) { 
 		return this; 
-	} else if (node && (node.nodeType || JAX.isJAXNode(node)) && (nodeBefore.nodeType || nodeBefore.jaxNodeType)) {
+	} else if (node && (node.nodeType || JAX.isJAXNode(node)) && (nodeBefore.nodeType || JAX.isJAXNode(nodeBefore))) {
 		try {
 			var node = JAX.isJAXNode(node) ? node.node() : node;
 			var nodeBefore = nodeBefore.jaxNodeType ? nodeBefore.node() : nodeBefore;
