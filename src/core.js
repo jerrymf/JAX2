@@ -141,7 +141,8 @@ JAX.isNumber = function(value) {
 };
 
 JAX.isNumeric = function(value) {
-	return isFinite(value);
+	var val = parseFloat(value);
+	return val === value * 1 && isFinite(val);
 };
 
 JAX.isString = function(value) {
