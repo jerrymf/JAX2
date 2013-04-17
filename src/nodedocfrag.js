@@ -8,7 +8,7 @@ JAX.NodeDocFrag.prototype.jaxNodeType = 11;
 JAX.NodeDocFrag.prototype.$constructor = function(doc, docFrag) {
 	this._doc = doc || document;
 
-	if (docFrag && docFrag.nodeType && docFrag.nodeType == 11) {  	
+	if (typeof(docFrag) == "object" && docFrag.nodeType && docFrag.nodeType == 11) {  	
 		this._node = docFrag;
 		return;
 	} else if (docFrag) {
@@ -50,7 +50,7 @@ JAX.NodeDocFrag.prototype.html = function(innerHTML) {
 };
 
 JAX.NodeDocFrag.prototype.add = function() {
-	var nodes = Array.prototype.slice.call(arguments);
+	var nodes = [].slice.call(arguments);
 
 	if (nodes.length == 1) { nodes = nodes[0]; }
 
@@ -71,7 +71,7 @@ JAX.NodeDocFrag.prototype.add = function() {
 };
 
 JAX.NodeDocFrag.prototype.addBefore = function(node, nodeBefore) {
-	if (node && (node.nodeType || JAX.isJAXNode(node)) && (nodeBefore.nodeType || JAX.isJAXNode(nodeBefore))) {
+	if (typeof(node) == "object" && (node.nodeType || JAX.isJAXNode(node)) && typeof(nodeBefore) == "object" && (nodeBefore.nodeType || JAX.isJAXNode(nodeBefore))) {
 		try {
 			var node = JAX.isJAXNode(node) ? node.node() : node;
 			var nodeBefore = nodeBefore.jaxNodeType ? nodeBefore.node() : nodeBefore;
@@ -84,7 +84,7 @@ JAX.NodeDocFrag.prototype.addBefore = function(node, nodeBefore) {
 };
 
 JAX.NodeDocFrag.prototype.appendTo = function(node) {
-	if (node && (node.nodeType || JAX.isJAXNode(node))) { 
+	if (typeof(node) == "object" && (node.nodeType || JAX.isJAXNode(node))) { 
 		try {
 			var node = JAX.isJAXNode(node) ? node.node() : node;
 			node.appendChild(this._node);
@@ -96,7 +96,7 @@ JAX.NodeDocFrag.prototype.appendTo = function(node) {
 };
 
 JAX.NodeDocFrag.prototype.appendBefore = function(node) {
-	if (node && (node.nodeType || JAX.isJAXNode(node))) {
+	if (typeof(node) == "object" && (node.nodeType || JAX.isJAXNode(node))) {
 		try {
 			var node = JAX.isJAXNode(node) ? node.node() : node;
 			node.parentNode.insertBefore(this._node, node);
@@ -122,7 +122,7 @@ JAX.NodeDocFrag.prototype.clear = function() {
 };
 
 JAX.NodeDocFrag.prototype.contains = function(node) {
-	if (node && (node.nodeType || JAX.isJAXNode(node))) {
+	if (typeof(node) == "object" && (node.nodeType || JAX.isJAXNode(node))) {
 		var elm = JAX.isJAXNode(node) ? node.node().parentNode : node.parentNode;
 		while(elm) {
 			if (elm == this._node) { return true; }

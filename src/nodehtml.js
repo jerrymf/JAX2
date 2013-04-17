@@ -3,15 +3,20 @@ JAX.NodeHTML = JAK.ClassMaker.makeClass({
 	VERSION: "0.71"
 });
 
-JAX.NodeHTML.MEASUREDVALUE = /^(?:-)?\d+(\.\d+)?(px|%|em|in|cm|mm|ex|pt|pc)?$/i
+JAX.NodeHTML.MEASUREABLEVALUE = /^(?:-)?\d+(\.\d+)?(px|%|em|in|cm|mm|ex|pt|pc)?$/i
+JAX.NodeHTML.idCounter = -1;
 
 JAX.NodeHTML.create = function(node) {
-	var _JAX = JAX;
+	if (typeof(node) == "object" && node.nodeType) {
+		var jaxId = parseInt(node.getAttribute("data-jax-id"),10) || -1;
 
-	if (node && node.nodeType) {
-		var jaxId = node.getAttribute("data-jax-id");
-		if (!jaxId || !(jaxId in _JAX.allnodes)) { return new _JAX.NodeHTML(node); }
-		return _JAX.allnodes[jaxId].instance;
+		if (jaxId<0) {
+			var f = Object.create(JAX.NodeHTML.prototype);
+			f.init(node);
+			return f;
+		}
+
+		return JAX.allnodes[jaxId].instance;
 	}
 
 	throw new Error("JAX.NodeHTML.create: arguments must be only html node");
@@ -19,32 +24,37 @@ JAX.NodeHTML.create = function(node) {
 
 JAX.NodeHTML.prototype.jaxNodeType = 1;
 
-JAX.NodeHTML.prototype.$constructor = function(node) {
-	if (node && node.nodeType && node.nodeType == 1) {  	
+JAX.NodeHTML.prototype.$constructor = function() {
+	throw new Error("JAX.NodeHTML: you can not call this class with operator new. Use JAX.NodeHTML.create factory method instead of it.");
+};
+
+JAX.NodeHTML.prototype.init = function(node) {
+	if (typeof(node) == "object" && node.nodeType && node.nodeType == 1) {  	
 		this._node = node;
 
 		/* set jax id for new (old) node */
-		var oldJaxId = node.getAttribute("data-jax-id");
-		if (oldJaxId) {
-			this._jaxId = oldJaxId;	
+		var oldJaxId = parseInt(node.getAttribute("data-jax-id"),10) || -1;
+		if (oldJaxId > -1) {
+			this._jaxId = oldJaxId;
+			this._storage = JAX.allnodes[this._jaxId];
+			this._storage.instance = this;
 		} else {
-			this._jaxId = JAK.idGenerator();
+			this._jaxId = ++JAX.NodeHTML.idCounter;
 			node.setAttribute("data-jax-id", this._jaxId);
+			var storage = {
+				instance: this,
+				events: {},
+				lockQueue: [],
+				locked: false
+			};
+			JAX.allnodes[this._jaxId] = storage;
+			this._storage = storage;
 		}
-
-		/* create shortcut to modify static attribute, where are stored all information about node */
-		var storage = JAX.allnodes[this._jaxId] || {};
-		this._storage = storage;
-		this._storage.instance = this;
-		this._storage.events = this._storage.events || {};
-		this._storage.lockQueue = [];
-		this._storage.locked = false;
-		JAX.allnodes[this._jaxId] = storage;
 
 		return;
 	}
 
-	throw new Error("JAX.NodeHTML constructor accepts only HTML element as its parameter. See doc for more information.");
+	throw new Error("JAX.NodeHTML accepts only HTML element as its parameter. See doc for more information.");
 };
 
 JAX.NodeHTML.prototype.$destructor = function() {
@@ -75,7 +85,7 @@ JAX.NodeHTML.prototype.$$ = function(selector) {
 };
 
 JAX.NodeHTML.prototype.addClass = function() {
-	var classNames = Array.prototype.slice.call(arguments);
+	var classNames = [].slice.call(arguments);
 
 	if (classNames.length == 1) { classNames = classNames[0]; }
 
@@ -105,7 +115,7 @@ JAX.NodeHTML.prototype.addClass = function() {
 };
 
 JAX.NodeHTML.prototype.removeClass = function() {
-	var classNames = Array.prototype.slice.call(arguments);
+	var classNames = [].slice.call(arguments);
 
 	if (classNames.length == 1) { classNames = classNames[0]; }
 
@@ -176,7 +186,7 @@ JAX.NodeHTML.prototype.html = function(innerHTML) {
 };
 
 JAX.NodeHTML.prototype.add = function() {
-	var nodes = Array.prototype.slice.call(arguments);
+	var nodes = [].slice.call(arguments);
 
 	if (nodes.length == 1) { nodes = nodes[0]; }
 
@@ -203,7 +213,7 @@ JAX.NodeHTML.prototype.addBefore = function(node, nodeBefore) {
 	if (this._storage.locked) {
 		this._queueMethod(this.addBefore, arguments); 
 		return this;  
-	} else if (node && (node.nodeType || JAX.isJAXNode(node)) && (nodeBefore.nodeType || JAX.isJAXNode(nodeBefore))) {
+	} else if (typeof(node) == "object" && (node.nodeType || JAX.isJAXNode(node)) && (nodeBefore.nodeType || JAX.isJAXNode(nodeBefore))) {
 		var node = node.jaxNodeType ? node.node() : node;
 		var nodeBefore = nodeBefore.jaxNodeType ? nodeBefore.node() : nodeBefore;
 		try {
@@ -219,7 +229,7 @@ JAX.NodeHTML.prototype.appendTo = function(node) {
 	if (this._storage.locked) {
 		this._queueMethod(this.appendTo, arguments); 
 		return this; 
-	} else if (node && (node.nodeType || JAX.isJAXNode(node))) { 
+	} else if (typeof(node) == "object" && (node.nodeType || JAX.isJAXNode(node))) { 
 		var node = node.jaxNodeType ? node.node() : node;
 		try {
 			node.appendChild(this._node);
@@ -234,7 +244,7 @@ JAX.NodeHTML.prototype.appendBefore = function(node) {
 	if (this._storage.locked) {
 		this._queueMethod(this.appendBefore, arguments); 
 		return this; 
-	} else if (node && (node.nodeType || JAX.isJAXNode(node))) {
+	} else if (typeof(node) == "object" && (node.nodeType || JAX.isJAXNode(node))) {
 		try {
 			var node = node.jaxNodeType ? node.node() : node;
 			node.parentNode.insertBefore(this._node, node);
@@ -264,24 +274,24 @@ JAX.NodeHTML.prototype.clone = function(withContent) {
 	return JAX.NodeHTML.create(clone);
 };
 
-JAX.NodeHTML.prototype.listen = function(type, method, obj, bindData) {
+JAX.NodeHTML.prototype.listen = function(type, funcMethod, obj, bindData) {
 	if (!type || typeof(type) != "string") { 
 		throw new Error("JAX.NodeHTML.listen: first parameter must be string. See doc for more information."); 
-	} else if (!method || (typeof(method) != "string" && typeof(method) != "function")) { 
+	} else if (!funcMethod || (typeof(funcMethod) != "string" && typeof(funcMethod) != "function")) { 
 		throw new Error("JAX.NodeHTML.listen: second paremeter must be function or name of function. See doc for more information."); 
 	} else if (arguments.length > 4) { 
 		console.warn("JAX.NodeHTML.listen accepts maximally 4 arguments. See doc for more information."); 
 	}
 	
-	if (typeof(method) == "string") {
+	if (typeof(funcMethod) == "string") {
 		var obj = obj || window;
-		var method = obj[method];
-		if (!method) { throw new Error("JAX.NodeHTML.listen: method '" + method + "' was not found in " + obj + "."); }
-		method = method.bind(obj);
+		var funcMethod = obj[funcMethod];
+		if (!funcMethod) { throw new Error("JAX.NodeHTML.listen: method '" + funcMethod + "' was not found in " + obj + "."); }
+		funcMethod = funcMethod.bind(obj);
 	}
 
 	var thisNode = this;
-	var f = function(e, node) { method(e, thisNode, bindData); }
+	var f = function(e, node) { funcMethod(e, thisNode, bindData); }
 	var listenerId = JAK.Events.addListener(this._node, type, f);
 	var evtListeners = this._storage.events[type] || [];
 	evtListeners.push(listenerId);
@@ -331,7 +341,7 @@ JAX.NodeHTML.prototype.stopListening = function(type, listenerId) {
 };
 
 JAX.NodeHTML.prototype.attr = function() {
-	var attributes = Array.prototype.slice.call(arguments);
+	var attributes = [].slice.call(arguments);
 
 	if (attributes.length > 1) { 
 		return this.attr(attributes);
@@ -364,7 +374,7 @@ JAX.NodeHTML.prototype.attr = function() {
 };
 
 JAX.NodeHTML.prototype.style = function() {
-	var cssStyles = Array.prototype.slice.call(arguments);
+	var cssStyles = [].slice.call(arguments);
 
 	if (cssStyles.length > 1) { 
 		return this.style(cssStyles);
@@ -432,7 +442,7 @@ JAX.NodeHTML.prototype.computedStyle = function() {
 
 	if (typeof(cssStyles) == "string") { 
 		var value = JAK.DOM.getStyle(this._node, cssStyles);
-		if (this._node.runtimeStyle && !this._node.addListener && JAX.NodeHTML.MEASUREDVALUE.test(value)) { value = this._inPixels(value); }
+		if (this._node.runtimeStyle && !this._node.addListener && JAX.NodeHTML.MEASUREABLEVALUE.test(value)) { value = this._inPixels(value); }
 		return value;
 	}
 
@@ -441,7 +451,7 @@ JAX.NodeHTML.prototype.computedStyle = function() {
 	for (var i=0, len=cssStyles.length; i<len; i++) {
 		var cssStyle = cssStyles[i];
 		var value = JAK.DOM.getStyle(this._node, cssStyle);
-		if (this._node.runtimeStyle && !this._node.addListener && JAX.NodeHTML.MEASUREDVALUE.test(value)) { value = this._inPixels(value); }
+		if (this._node.runtimeStyle && !this._node.addListener && JAX.NodeHTML.MEASUREABLEVALUE.test(value)) { value = this._inPixels(value); }
 		css[cssStyle] = value;
 	}
 	return css;
@@ -548,7 +558,7 @@ JAX.NodeHTML.prototype.clear = function() {
 };
 
 JAX.NodeHTML.prototype.contains = function(node) {
-	if (node && (node.nodeType || JAX.isJAXNode(node))) {
+	if (typeof(node) == "object" && (node.nodeType || JAX.isJAXNode(node))) {
 		var elm = node.jaxNodeType ? node.node().parentNode : node.parentNode;
 		while(elm) {
 			if (elm == this._node) { return true; }
@@ -561,7 +571,7 @@ JAX.NodeHTML.prototype.contains = function(node) {
 };
 
 JAX.NodeHTML.prototype.isChildOf = function(node) {
-	if (node && (node.nodeType || JAX.isJAXNode(node))) {
+	if (typeof(node) == "object" && (node.nodeType || JAX.isJAXNode(node))) {
 		var elm = node.jaxNodeType ? node : JAX.NodeHTML.create(node);
 		return elm.contains(this);
 	}

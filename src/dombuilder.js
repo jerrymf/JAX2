@@ -15,7 +15,7 @@ JAX.DOMBuilder.prototype.open = function(element, attributes, styles) {
 
 	if (typeof(element) == "string") {
 		var jaxNode = JAX.make(element, "", this._doc);
-	} else if (element.nodeType) {
+	} else if (typeof(element) == "object" && element.nodeType) {
 		var jaxNode = JAX.$$(element);
 	}
 
@@ -39,7 +39,7 @@ JAX.DOMBuilder.prototype.open = function(element, attributes, styles) {
 JAX.DOMBuilder.prototype.add = function(node, attributes, styles) {
 	if (typeof(node) == "string") {
 		var jaxNode = JAX.make(node);
-	} else if (node.nodeType) {
+	} else if (typeof(node) == "object" && node.nodeType) {
 		var jaxNode = JAX.$$(node);
 	} else if (!JAX.isJAXNode(node) && node.jaxNodeType == 9) {
 		throw new Error("JAX.DOMBuilder.add: argument can be only string, node or instance of JAX.NodeHTML or JAX.NodeText");
@@ -85,7 +85,7 @@ JAX.DOMBuilder.prototype.close = function() {
 JAX.DOMBuilder.prototype.appendTo = function(node) {
 	var jaxNode = null;
 
-	if (node.nodeType) {
+	if (typeof(node) == "object" && node.nodeType) {
 		var jaxNode = JAX.$$(node);
 	} else if (JAX.isJAXNode(node) && node.jaxNodeType == 1) {
 		var jaxNode = node;

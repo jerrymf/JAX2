@@ -2,7 +2,7 @@ JAX = {
 	VERSION: "1.96b"
 };
 
-JAX.allnodes = {};
+JAX.allnodes = [];
 
 JAX.$ = function(selector, srcElement) {
 	if (JAX.isString(selector)) {
@@ -13,7 +13,7 @@ JAX.$ = function(selector, srcElement) {
 		for (var i=0, len=foundElms.length; i<len; i++) { jaxelms.push(JAX.NodeHTML.create(foundElms[i])); }
 
 		return new JAX.NodeArray(jaxelms);
-	} else if (selector.nodeType) {
+	} else if (typeof(selector) == "object" && selector.nodeType) {
 		switch(selector.nodeType) {
 			case 1: return new JAX.NodeArray(JAX.NodeHTML.create(selector));
 			case 3: return new JAX.NodeArray(new JAX.NodeText(selector));
@@ -34,7 +34,7 @@ JAX.$$ = function(selector, srcElement) {
 		var jaxelm = foundElm ? JAX.NodeHTML.create(foundElm) : null;
 
 		return jaxelm;
-	} else if (selector.nodeType) {
+	} else if (typeof(selector) == "object" && selector.nodeType) {
 		switch(selector.nodeType) {
 			case 1: return JAX.NodeHTML.create(selector);
 			case 3: return new JAX.NodeText(selector);

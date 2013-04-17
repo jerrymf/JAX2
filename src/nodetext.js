@@ -6,7 +6,7 @@ JAX.NodeText = JAK.ClassMaker.makeClass({
 JAX.NodeText.prototype.jaxNodeType = 3;
 
 JAX.NodeText.prototype.$constructor = function(node) {
-	if (node && "nodeType" in node && node.nodeType == 3) { 
+	if (typeof(node) == "object" && node.nodeType && node.nodeType == 3) { 
 		this._node = node;
 		return;
 	}
@@ -19,7 +19,7 @@ JAX.NodeText.prototype.node = function() {
 };
 
 JAX.NodeText.prototype.appendTo = function(node) {
-	if (node && (node.nodeType || JAX.isJAXNode(node))) {
+	if (typeof(node) == "object" && (node.nodeType || JAX.isJAXNode(node))) {
 		var node = node.jaxNodeType ? node.node() : node;
 		try {
 			node.appendChild(this._node);
@@ -31,7 +31,7 @@ JAX.NodeText.prototype.appendTo = function(node) {
 };
 
 JAX.NodeText.prototype.appendBefore = function(node, nodeBefore) {
-	if (node && (node.nodeType || JAX.isJAXNode(node))) {
+	if (typeof(node) == "object" && (node.nodeType || JAX.isJAXNode(node))) {
 		var node = node.jaxNodeType ? node.node() : node;
 		try {
 			node.parentNode.insertBefore(this._node, node);

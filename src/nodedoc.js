@@ -8,7 +8,7 @@ JAX.NodeDoc.events = {};
 JAX.NodeDoc.prototype.jaxNodeType = 9;
 
 JAX.NodeDoc.prototype.$constructor = function(doc) {
-	if (doc && "nodeType" in doc && doc.nodeType == 9) {
+	if (typeof(doc) == "object" && doc.nodeType && doc.nodeType == 9) {
 		this._doc = doc;
 		return;
 	}
@@ -24,24 +24,24 @@ JAX.NodeDoc.prototype.$$ = function(selector) {
 	return JAX.$$(selector, this._doc);
 };
 
-JAX.NodeDoc.prototype.listen = function(type, method, obj, bindData) {
+JAX.NodeDoc.prototype.listen = function(type, funcMethod, obj, bindData) {
 	if (!type || !typeof(type) == "string") { 
 		throw new Error("JAX.NodeDoc.listen: first parameter must be string. See doc for more information."); 
-	} else if (!method || (typeof(method) != "string" && typeof(method) != "string")) { 
+	} else if (!funcMethod || (typeof(funcMethod) != "string" && typeof(funcMethod) != "string")) { 
 		throw new Error("JAX.NodeDoc.listen: second paremeter must be function or name of function. See doc for more information."); 
 	} else if (arguments.length > 4) { 
 		console.warn("JAX.NodeDoc.listen accepts maximally 4 arguments. See doc for more information."); 
 	}
 	
-	if (typeof(method) == "string") {
+	if (typeof(funcMethod) == "string") {
 		var obj = obj || window;
-		var method = obj[method];
-		if (!method) { throw new Error("JAX.NodeDoc.listen: method '" + method + "' was not found in " + obj + "."); }
-		method = method.bind(obj);
+		var funcMethod = obj[funcMethod];
+		if (!funcMethod) { throw new Error("JAX.NodeDoc.listen: funcMethod '" + funcMethod + "' was not found in " + obj + "."); }
+		funcMethod = funcMethod.bind(obj);
 	}
 
 	var thisNode = this;
-	var f = function(e, node) { method(e, thisNode, bindData); }
+	var f = function(e, node) { funcMethod(e, thisNode, bindData); }
 	var listenerId = JAK.Events.addListener(this._doc, type, f);
 	var evtListeners = JAX.NodeDoc.events[type] || [];
 	evtListeners.push(listenerId);

@@ -3,16 +3,16 @@ JAX.NodeArray = JAK.ClassMaker.makeClass({
 	VERSION: "0.1"
 });
 
-
 JAX.NodeArray.prototype.length = 0;
 
 JAX.NodeArray.prototype.$constructor = function(JAXNodes) {
 	var JAXNodes = [].concat(JAXNodes);
-	this._jaxNodes = [];
+	var len = JAXNodes.length;
+	this._jaxNodes = new Array(len);
 
-	for (var i=0, len=JAXNodes.length; i<len; i++) { 
+	for (var i=0; i<len; i++) { 
 		var JAXNode = JAXNodes[i];
-		if (JAX.isJAXNode(JAXNode)) { this._jaxNodes.push(JAXNode); continue; }
+		if (JAX.isJAXNode(JAXNode)) { this._jaxNodes[i] = JAXNode; continue; }
 		throw new Error("JAX.NodeArray: " + JAXNode + " is not instance of JAX.NodeHTML class"); 
 	}
 	this.length = this._jaxNodes.length;
@@ -27,19 +27,21 @@ JAX.NodeArray.prototype.items = function() {
 };
 
 JAX.NodeArray.prototype.addClass = function() {
+	var classes = [].slice.call(arguments);
 	for (var i=0, len=this._jaxNodes.length; i<len; i++) { 
 		var jaxNode = this._jaxNodes[i];
 		if (jaxNode.jaxNodeType != 1) { continue; }
-		jaxNode.addClass(Array.prototype.slice.call(arguments)); 
+		jaxNode.addClass(); 
 	}
 	return this;
 };
 
 JAX.NodeArray.prototype.removeClass = function() {
+	var classes = [].slice.call(arguments);
 	for (var i=0, len=this._jaxNodes.length; i<len; i++) { 
 		var jaxNode = this._jaxNodes[i];
 		if (jaxNode.jaxNodeType != 1) { continue; }
-		jaxNode.removeClass(Array.prototype.slice.call(arguments)); 
+		jaxNode.removeClass(classes); 
 	}
 	return this;
 };
