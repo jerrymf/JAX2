@@ -57,8 +57,8 @@ JAX.NodeDocFrag.prototype.add = function() {
 	if (nodes && nodes instanceof Array) { 
 		for (var i=0, len=nodes.length; i<len; i++) { this.add(nodes[i]); }
 	} else if (nodes && (nodes.nodeType || nodes.jaxNodeType)) {
+		var node = nodes.jaxNodeType ? nodes.node() : nodes;
 		try {
-			var node = nodes.jaxNodeType ? nodes.node() : nodes;
 			this._node.appendChild(node);
 			return this;
 		} catch(e) {}
@@ -72,9 +72,9 @@ JAX.NodeDocFrag.prototype.add = function() {
 
 JAX.NodeDocFrag.prototype.addBefore = function(node, nodeBefore) {
 	if (typeof(node) == "object" && (node.nodeType || JAX.isJAXNode(node)) && typeof(nodeBefore) == "object" && (nodeBefore.nodeType || JAX.isJAXNode(nodeBefore))) {
+		var node = node.jaxNodeType ? node.node() : node;
+		var nodeBefore = nodeBefore.jaxNodeType ? nodeBefore.node() : nodeBefore;
 		try {
-			var node = JAX.isJAXNode(node) ? node.node() : node;
-			var nodeBefore = nodeBefore.jaxNodeType ? nodeBefore.node() : nodeBefore;
 			this._node.insertBefore(node, nodeBefore);
 			return this;
 		} catch(e) {}
@@ -85,8 +85,8 @@ JAX.NodeDocFrag.prototype.addBefore = function(node, nodeBefore) {
 
 JAX.NodeDocFrag.prototype.appendTo = function(node) {
 	if (typeof(node) == "object" && (node.nodeType || JAX.isJAXNode(node))) { 
+		var node = node.jaxNodeType ? node.node() : node;
 		try {
-			var node = JAX.isJAXNode(node) ? node.node() : node;
 			node.appendChild(this._node);
 			return this;
 		} catch(e) {}
@@ -97,8 +97,8 @@ JAX.NodeDocFrag.prototype.appendTo = function(node) {
 
 JAX.NodeDocFrag.prototype.appendBefore = function(node) {
 	if (typeof(node) == "object" && (node.nodeType || JAX.isJAXNode(node))) {
+		var node = node.jaxNodeType ? node.node() : node;
 		try {
-			var node = JAX.isJAXNode(node) ? node.node() : node;
 			node.parentNode.insertBefore(this._node, node);
 		} catch(e) {}
 	}

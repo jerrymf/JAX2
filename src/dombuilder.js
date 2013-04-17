@@ -21,7 +21,7 @@ JAX.DOMBuilder.prototype.open = function(element, attributes, styles) {
 
 	if (jaxNode && jaxNode.jaxNodeType != 9) {
 		if (attributes) { jaxNode.attr(attributes); }
-		if (style) { jaxNode.style(styles); }
+		if (style) { jaxNode.styleCss(styles); }
 		if (!this._pointerJaxNode) {
 			this._stack.push(this._pointerJaxNode);
 			this._jax.container.add(jaxNode); 
@@ -46,7 +46,7 @@ JAX.DOMBuilder.prototype.add = function(node, attributes, styles) {
 	}
 
 	if (attributes) { jaxNode.attr(attributes); }
-	if (style) { jaxNode.style(styles); }
+	if (style) { jaxNode.styleCss(styles); }
 
 	if (this._pointerJaxNode) {
 		this._pointerJaxNode.add(jaxNode);
@@ -93,7 +93,7 @@ JAX.DOMBuilder.prototype.appendTo = function(node) {
 		throw new Error("JAX.DOMBuilder.appendTo: argument can be only html node or instance of JAX.NodeHTML");
 	}
 
-	jaxNode.add(this._jax.container);
+	this._jax.container.appendTo(jaxNode);
 };
 
 JAX.DOMBuilder.prototype.getContainer = function() {

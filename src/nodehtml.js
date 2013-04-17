@@ -373,11 +373,12 @@ JAX.NodeHTML.prototype.attr = function() {
 	return this;
 };
 
-JAX.NodeHTML.prototype.style = function() {
+	
+JAX.NodeHTML.prototype.styleCss = function() {
 	var cssStyles = [].slice.call(arguments);
-
+	
 	if (cssStyles.length > 1) { 
-		return this.style(cssStyles);
+		return this.styleCss(cssStyles);
 	} else if (cssStyles.length == 1) {
 		cssStyles = cssStyles[0];
 	} else {
@@ -429,11 +430,11 @@ JAX.NodeHTML.prototype.displayOff = function() {
 	return this;
 };
 
-JAX.NodeHTML.prototype.computedStyle = function() {
+JAX.NodeHTML.prototype.computedStyleCss = function() {
 	var cssStyles = arguments;
 
 	if (cssStyles.length > 1) { 
-		return this.computedStyle(cssStyles);
+		return this.computedStyleCss(cssStyles);
 	} else if (cssStyles.length == 1) {
 		cssStyles = arguments[0];
 	} else {
@@ -459,16 +460,16 @@ JAX.NodeHTML.prototype.computedStyle = function() {
 
 JAX.NodeHTML.prototype.fullWidth = function(value) {
 	if (!arguments.length) { 
-		var backupStyle = this.style("display","visibility","position");
-		var isFixedPosition = this.computedStyle("position").indexOf("fixed") == 0;
-		var isDisplayNone = this.style("display").indexOf("none") == 0;
+		var backupStyle = this.styleCss("display","visibility","position");
+		var isFixedPosition = this.computedStyleCss("position").indexOf("fixed") == 0;
+		var isDisplayNone = this.styleCss("display").indexOf("none") == 0;
 
-		if (!isFixedPosition) { this.style({"position":"absolute"}); }
-		if (isDisplayNone) { this.style({"display":""}); }		
-		this.style({"visibility":"hidden"});
+		if (!isFixedPosition) { this.styleCss({"position":"absolute"}); }
+		if (isDisplayNone) { this.styleCss({"display":""}); }		
+		this.styleCss({"visibility":"hidden"});
 
 		var width = this._node.offsetWidth;
-		this.style(backupStyle);
+		this.styleCss(backupStyle);
 		return width; 
 	}
 
@@ -477,10 +478,10 @@ JAX.NodeHTML.prototype.fullWidth = function(value) {
 		return this; 
 	} 
 
-	var paddingLeft = parseFloat(this.computedStyle("padding-left"));
-	var paddingRight = parseFloat(this.computedStyle("padding-right"));
-	var borderLeft = parseFloat(this.computedStyle("border-left"));
-	var borderRight = parseFloat(this.computedStyle("border-right"));
+	var paddingLeft = parseFloat(this.computedStyleCss("padding-left"));
+	var paddingRight = parseFloat(this.computedStyleCss("padding-right"));
+	var borderLeft = parseFloat(this.computedStyleCss("border-left"));
+	var borderRight = parseFloat(this.computedStyleCss("border-right"));
 
 	if (isFinite(paddingLeft)) { value =- paddingLeft; }
 	if (isFinite(paddingRight)) { value =- paddingRight; }
@@ -493,16 +494,16 @@ JAX.NodeHTML.prototype.fullWidth = function(value) {
 
 JAX.NodeHTML.prototype.fullHeight = function(value) {
 	if (!arguments.length) { 
-		var backupStyle = this.style("display","visibility","position");
-		var isFixedPosition = this.computedStyle("position").indexOf("fixed") == 0;
-		var isDisplayNone = this.style("display").indexOf("none") == 0;
+		var backupStyle = this.styleCss("display","visibility","position");
+		var isFixedPosition = this.computedStyleCss("position").indexOf("fixed") == 0;
+		var isDisplayNone = this.styleCss("display").indexOf("none") == 0;
 
-		if (!isFixedPosition) { this.style({"position":"absolute"}); }
-		if (isDisplayNone) { this.style({"display":""}); }		
-		this.style({"visibility":"hidden"});
+		if (!isFixedPosition) { this.styleCss({"position":"absolute"}); }
+		if (isDisplayNone) { this.styleCss({"display":""}); }		
+		this.styleCss({"visibility":"hidden"});
 
 		var height = this._node.offsetHeight;
-		this.style(backupStyle);
+		this.styleCss(backupStyle);
 		return height; 
 	}
 
@@ -511,10 +512,10 @@ JAX.NodeHTML.prototype.fullHeight = function(value) {
 		return this; 
 	} 
 
-	var paddingTop = parseFloat(this.computedStyle("padding-top"));
-	var paddingBottom = parseFloat(this.computedStyle("padding-bottom"));
-	var borderTop = parseFloat(this.computedStyle("border-top"));
-	var borderBottom = parseFloat(this.computedStyle("border-bottom"));
+	var paddingTop = parseFloat(this.computedStyleCss("padding-top"));
+	var paddingBottom = parseFloat(this.computedStyleCss("padding-bottom"));
+	var borderTop = parseFloat(this.computedStyleCss("border-top"));
+	var borderBottom = parseFloat(this.computedStyleCss("border-bottom"));
 
 	if (isFinite(paddingTop)) { value =- paddingTop; }
 	if (isFinite(paddingBottom)) { value =- paddingBottom; }
@@ -530,23 +531,30 @@ JAX.NodeHTML.prototype.parent = function() {
 	return null;
 };
 
-JAX.NodeHTML.prototype.nextSibling = function() {
-	return this._node.nextSibling ? JAX.NodeHTML.create(this._node.nextSibling) : null;
+JAX.NodeHTML.prototype.nSibling = function() {
+	return this._node.nextSibling ? JAX.$$(this._node.nextSibling) : null;
 };
 
-JAX.NodeHTML.prototype.prevSibling = function() {
-	return this._node.previousSibling ? JAX.NodeHTML.create(this._node.previousSibling) : null;
+JAX.NodeHTML.prototype.pSibling = function() {
+	return this._node.previousSibling ? JAX.$$(this._node.previousSibling) : null;
 };
 
 JAX.NodeHTML.prototype.childs = function() {
 	var nodes = [];
 	for (var i=0, len=this._node.childNodes.length; i<len; i++) {
 		var childNode = this._node.childNodes[i];
-		if (childNode.nodeType == 3) { nodes.push(new JAX.NodeText(childNode)); continue; }
-		nodes.push(JAX.NodeHTML.create(childNode));
+		nodes.push(JAX.$$(childNode));
 	}
 	return nodes;
 };
+
+JAX.NodeHTML.prototype.fChild = function() {
+	return this._node.firstChild ? JAX.$$(this._node.firstChild) : null;
+}
+
+JAX.NodeHTML.prototype.lChild = function() {
+	return this._node.lastChild ? JAX.$$(this._node.lastChild) : null;
+}
 
 JAX.NodeHTML.prototype.clear = function() {
 	if (this._storage.locked) {
@@ -583,27 +591,60 @@ JAX.NodeHTML.prototype.fade = function(type, duration, completeCbk) {
 	if (this._storage.locked) {
 		this._queueMethod(this.fade, arguments); 
 		return this; 
-	} 
+	}
 
 	if (typeof(type) != "string") {
 		throw new Error("JAX.NodeHTML.fade accepts only String for first argument. See doc for more information.");
-	} else if ((duration && typeof(duration) != "number") || (completeCbk && typeof(completeCbk) != "function")) {
-		throw new Error("JAX.NodeHTML.fade accepts only Number for duration argument and Function for completeCbk. See doc for more information.");
+	} else if (duration && typeof(duration) != "number") {
+		throw new Error("JAX.NodeHTML.fade accepts only Number for duration argument. See doc for more information.");
+	} else if (completeCbk && typeof(completeCbk) != "function") {
+		throw new Error("JAX.NodeHTML.fade accepts only Function for completeCbk. See doc for more information.");
 	}
 
 	switch(type) {
 		case "in":
 			var sourceOpacity = 0;
-			var targetOpacity = parseFloat(this.computedStyle("opacity")) || 1;	
+			var targetOpacity = parseFloat(this.computedStyleCss("opacity")) || 1;	
 		break;
 		case "out":
-			var sourceOpacity = parseFloat(this.computedStyle("opacity")) || 1;
+			var sourceOpacity = parseFloat(this.computedStyleCss("opacity")) || 1;
 			var targetOpacity = 0;
 		break;
 		default:
 			console.warn("JAX.NodeHTML.fade got unsupported type '" + type + "'.");
 			return this;
 	}
+
+	var animation = new JAX.Animation(this);
+	var func = function() {
+		this._unlock();
+		if (completeCbk) { completeCbk(); }
+	}.bind(this);
+
+	animation.addProperty("opacity", duration, sourceOpacity, targetOpacity);
+	animation.addCallback(func);
+	animation.run();
+	this._lock();
+
+	return this;
+};
+
+JAX.NodeHTML.prototype.fadeTo = function(opacityValue, duration, completeCbk) {
+	if (this._storage.locked) {
+		this._queueMethod(this.fade, arguments); 
+		return this; 
+	}
+
+	if (!isFinite(opacityValue)) {
+		throw new Error("JAX.NodeHTML.fadeTo accepts only numeric value for first argument. See doc for more information.");
+	} else if (duration && typeof(duration) != "number") {
+		throw new Error("JAX.NodeHTML.fadeTo accepts only Number for duration argument. See doc for more information.");
+	} else if (completeCbk && typeof(completeCbk) != "function") {
+		throw new Error("JAX.NodeHTML.fadeTo only Function for completeCbk. See doc for more information.");
+	}
+
+	var sourceOpacity = parseFloat(this.computedStyleCss("opacity")) || 1;
+	var targetOpacity = parseFloat(opacityValue);
 
 	var animation = new JAX.Animation(this);
 	var func = function() {
@@ -627,41 +668,43 @@ JAX.NodeHTML.prototype.slide = function(type, duration, completeCbk) {
 
 	if (typeof(type) != "string") {
 		throw new Error("JAX.NodeHTML.slide accepts only String for first argument. See doc for more information.");
-	} else if ((duration && typeof(duration) != "number") || (completeCbk && typeof(completeCbk) != "function")) {
-		throw new Error("JAX.NodeHTML.slide accepts only Number for duration argument and Function for completeCbk. See doc for more information.");
+	} else if (duration && typeof(duration) != "number") {
+		throw new Error("JAX.NodeHTML.slide accepts only Number for duration argument. See doc for more information.");
+	} else if (completeCbk && typeof(completeCbk) != "function") {
+		throw new Error("JAX.NodeHTML.slide accepts only Function for completeCbk. See doc for more information.");
 	}
 
 	switch(type) {
 		case "down":
-			var backupStyles = this.style("height","overflow");
+			var backupStyles = this.styleCss("height","overflow");
 			var property = "height";
 			var source = 0;
-			var target = this.height();	
+			var target = this.fullHeight();	
 		break;
 		case "up":
-			var backupStyles = this.style("height","overflow");
+			var backupStyles = this.styleCss("height","overflow");
 			var property = "height";
-			var source = this.height();
+			var source = this.fullHeight();
 			var target = 0;
 		break;
 		case "left":
-			var backupStyles = this.style("width","overflow");
+			var backupStyles = this.styleCss("width","overflow");
 			var property = "width";
-			var source = this.width();
+			var source = this.fullWidth();
 			var target = 0;	
 		break;
 		case "right":
-			var backupStyles = this.style("width","overflow");
+			var backupStyles = this.styleCss("width","overflow");
 			var property = "width";
 			var source = 0;
-			var target = this.width();
+			var target = this.fullWidth();
 		break;
 		default:
 			console.warn("JAX.NodeHTML.slide got unsupported type '" + type + "'.");
 			return this;
 	}
 
-	this.style({"overflow": "hidden"});
+	this.styleCss({"overflow": "hidden"});
 
 	var animation = new JAX.Animation(this);
 	var func = function() {
