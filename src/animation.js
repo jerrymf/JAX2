@@ -60,10 +60,13 @@ JAX.Animation.prototype.addProperty = function(property, duration, start, end, m
 			duration: (duration || 1),
 			method: method
 		});
+
 		return this;
 	}
 
-	new JAX.E({funcName:"JAX.Animation.addProperty", node:this._elm.node()}).message("first parameter", "supported property", "unsupported property: " + property).show(); 
+	new JAX.E({funcName:"JAX.Animation.addProperty", node:this._elm.node(), caller:this.addProperty.caller})
+		.message("first parameter", "supported property", "unsupported property: " + property)
+		.show(); 
 };
 
 JAX.Animation.prototype.addCallback = function(callback) {

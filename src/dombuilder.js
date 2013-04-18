@@ -14,9 +14,9 @@ JAX.DOMBuilder.prototype.open = function(element, attributes, styles) {
 	var jaxNode = null;
 
 	if (typeof(element) == "string") {
-		var jaxNode = JAX.make(element, "", this._doc);
+		jaxNode = JAX.make(element, "", this._doc);
 	} else if (typeof(element) == "object" && element.nodeType) {
-		var jaxNode = JAX.$$(element);
+		jaxNode = JAX.$$(element);
 	}
 
 	if (jaxNode && jaxNode.jaxNodeType != 9) {
@@ -33,7 +33,9 @@ JAX.DOMBuilder.prototype.open = function(element, attributes, styles) {
 		return jaxNode;
 	}
 
-	throw new Error("JAX.DOMBuilder.open: unsupported element");
+	new JAX.E({funcName:"JAX.DOMBuilder.open", caller:this.open.caller})
+		.message("first argument", "HTML Element definition compatible with JAX.make or HTML element", typeof(element))
+		.show(); 
 }
 
 JAX.DOMBuilder.prototype.add = function(node, attributes, styles) {
@@ -42,7 +44,9 @@ JAX.DOMBuilder.prototype.add = function(node, attributes, styles) {
 	} else if (typeof(node) == "object" && node.nodeType) {
 		var jaxNode = JAX.$$(node);
 	} else if (!JAX.isJAXNode(node) && node.jaxNodeType == 9) {
-		throw new Error("JAX.DOMBuilder.add: argument can be only string, node or instance of JAX.NodeHTML or JAX.NodeText");
+		new JAX.E({funcName:"JAX.DOMBuilder.add", caller:this.add.caller})
+		.message("first argument", "string, node, instance of JAX.NodeHTML, JAX.NodeText, JAX.NodeDocFrag", typeof(node))
+		.show(); 
 	}
 
 	if (attributes) { jaxNode.attr(attributes); }
@@ -70,7 +74,9 @@ JAX.DOMBuilder.prototype.addText = function(txt) {
 		return jaxNode;
 	}
 
-	throw new Error("JAX.DOMBuilder.addText: argument can be only string");
+	new JAX.E({funcName:"JAX.DOMBuilder.addText", caller:this.addText.caller})
+		.message("first argument", "string", typeof(node))
+		.show(); 
 };
 
 JAX.DOMBuilder.prototype.close = function() {
@@ -79,7 +85,9 @@ JAX.DOMBuilder.prototype.close = function() {
 		return;
 	}
 
-	throw new Error("JAX.DOMBuilder.close: there are no opened elements, so you can not close null element");
+	new JAX.E({funcName:"JAX.DOMBuilder.addText", caller:this.close.caller})
+		.message("closing", "opened element", "no opened element")
+		.show(); 
 };
 
 JAX.DOMBuilder.prototype.appendTo = function(node) {
@@ -90,7 +98,9 @@ JAX.DOMBuilder.prototype.appendTo = function(node) {
 	} else if (JAX.isJAXNode(node) && node.jaxNodeType == 1) {
 		var jaxNode = node;
 	} else {
-		throw new Error("JAX.DOMBuilder.appendTo: argument can be only html node or instance of JAX.NodeHTML");
+		new JAX.E({funcName:"JAX.DOMBuilder.appendTo", caller:this.appendTo.caller})
+		.message("argument", "html element, instance of JAX.NodeHTML or JAX.NodeDocFrag", typeof(node))
+		.show(); 
 	}
 
 	this._jax.container.appendTo(jaxNode);

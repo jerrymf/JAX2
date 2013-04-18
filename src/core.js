@@ -1,10 +1,6 @@
 JAX = {
-	VERSION: "1.96b"
+	VERSION: "1.97b"
 };
-
-JAX.ERROR = 1;
-JAX.WARN = 2;
-JAX.LOG = 3;
 
 JAX.allnodes = [];
 
@@ -60,11 +56,17 @@ JAX.make = function(tagString, html, srcDocument) {
 	var inAttributes = false;
 
 	if (!tagString || typeof(tagString) != "string") { 
-		new JAX.E({funcName:"JAX.make", value:tagString}).message("first parameter", "string", tagString).show(); 
+		new JAX.E({funcName:"JAX.make", value:tagString, caller:this.make.caller})
+			.message("first argument", "string", tagString)
+			.show(); 
 	} else if (html && typeof(html) != "string" && typeof(html) != "number") {
-		new JAX.E({funcName:"JAX.make", value:html}).message("second parameter", "string or number", html).show(); 
+		new JAX.E({funcName:"JAX.make", value:html, caller:this.make.caller})
+			.message("second argument", "string or number", html)
+			.show(); 
 	} else if (".#[=] ".indexOf(tagString[0]) > -1) {
-		new JAX.E({funcName:"JAX.make", value:tagString}).message("first parameter", "tagname first", tagString).show(); 
+		new JAX.E({funcName:"JAX.make", value:tagString, caller:this.make.caller})
+			.message("first argument", "tagname first", tagString)
+			.show(); 
 	}
 
 	for (var i=0, len=tagString.length; i<len; i++) {

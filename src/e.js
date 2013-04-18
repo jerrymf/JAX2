@@ -3,10 +3,12 @@ JAX.E = JAK.ClassMaker.makeClass({
 	VERSION: "0.1"
 });
 
+JAX.E.TRACED_CALLING = 20;
+
 JAX.E.prototype.$constructor = function(data) {
 	this._data = data || {};
 	this._message = "";
-	this._output = "";
+	this._output = "JAX.ERROR:\n\n";
 };
 
 JAX.E.prototype.message = function(forThe, expected, got) {
@@ -32,8 +34,36 @@ JAX.E.prototype._generateOutput = function() {
 		this._output += "Your value is: " + this._data.value + " and its type is " + typeof(this._data.value);
 	}
 	if (this._data.node) { 
-		this._output += "\n\nNode: " + this._stringifyNode();
+		this._output += "\n\n===";
+		this._output += "\nNode: " + this._stringifyNode();
+		this._output += "\n===";
 	}
+
+	if ("caller" in this._data) {
+		this._output += "\n\n===";
+		this._output += "\nTRACED CALLING SEQUENCE:";
+
+		if (this._data.caller) {
+			this._output += "\nCalled from:\n" + this._data.caller.toString(); 
+
+			var counter = JAX.E.TRACED_CALLING;
+
+			do {
+				this._data.caller = this._data.caller.caller; 
+				if (this._data.caller) { this._output += "\n\nAnd it was called from:\n" + this._data.caller.toString(); }
+				counter--;
+			} while(this._data.caller && counter);
+
+			if (this._data.caller) { 
+				this._output += "\n\n... and much more calling"; 
+			} else {
+				this._output += "\n\n... and it was probably called directly from window"; 
+			}
+			this._output += "\n===";
+		} else {
+			this._output += "\nProbably called directly from window"; 
+		}
+	}; 
 };
 
 JAX.E.prototype._stringifyNode = function() {
