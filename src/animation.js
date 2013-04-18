@@ -63,7 +63,7 @@ JAX.Animation.prototype.addProperty = function(property, duration, start, end, m
 		return this;
 	}
 
-	throw new Error("JAX.Animation.addProperty: property '" + property + "' not supported. See doc for more information."); 
+	new JAX.E({funcName:"JAX.Animation.addProperty", node:this._elm.node()}).message("first parameter", "supported property", "unsupported property: " + property).show(); 
 };
 
 JAX.Animation.prototype.addCallback = function(callback) {

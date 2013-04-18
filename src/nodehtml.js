@@ -44,8 +44,7 @@ JAX.NodeHTML.prototype.init = function(node) {
 			var storage = {
 				instance: this,
 				events: {},
-				lockQueue: [],
-				locked: false
+				lockQueue: []
 			};
 			JAX.allnodes[this._jaxId] = storage;
 			this._storage = storage;
@@ -66,7 +65,7 @@ JAX.NodeHTML.prototype.$destructor = function() {
 };
 
 JAX.NodeHTML.prototype.destroy = function() {
-	if (this._storage.locked) { this._queueMethod(this.destroy, arguments); return this; }
+	if (this._node.getAttribute("data-jax-locked")) { this._queueMethod(this.destroy, arguments); return this; }
 	this.stopListening();
 	this.removeFromDOM();
 	this.clear();
@@ -89,7 +88,7 @@ JAX.NodeHTML.prototype.addClass = function() {
 
 	if (classNames.length == 1) { classNames = classNames[0]; }
 
-	if (this._storage.locked) {
+	if (this._node.getAttribute("data-jax-locked")) {
 		this._queueMethod(this.addClass, arguments); 
 		return this; 
 	} else if (typeof(classNames) == "string") {
@@ -119,7 +118,7 @@ JAX.NodeHTML.prototype.removeClass = function() {
 
 	if (classNames.length == 1) { classNames = classNames[0]; }
 
-	if (this._storage.locked) {
+	if (this._node.getAttribute("data-jax-locked")) {
 		this._queueMethod(this.removeClass, arguments); 
 		return this; 
 	} else if (typeof(classNames) == "string") {
@@ -160,7 +159,7 @@ JAX.NodeHTML.prototype.hasClass = function(className) {
 JAX.NodeHTML.prototype.id = function(id) {
 	if (!arguments.length) { 
 		return this.attr("id"); 
-	} else if (this._storage.locked) {
+	} else if (this._node.getAttribute("data-jax-locked")) {
 		this._queueMethod(this.id, arguments); 
 		return this; 
 	} else if (typeof(id) == "string") { 
@@ -174,7 +173,7 @@ JAX.NodeHTML.prototype.id = function(id) {
 JAX.NodeHTML.prototype.html = function(innerHTML) {
 	if (!arguments.length) { 
 		return innerHTML; 
-	} else if (this._storage.locked) {
+	} else if (this._node.getAttribute("data-jax-locked")) {
 		this._queueMethod(this.html, arguments); 
 		return this; 
 	} else if (typeof(innerHTML) == "string") {
@@ -190,7 +189,7 @@ JAX.NodeHTML.prototype.add = function() {
 
 	if (nodes.length == 1) { nodes = nodes[0]; }
 
-	if (this._storage.locked) {
+	if (this._node.getAttribute("data-jax-locked")) {
 		this._queueMethod(this.add, arguments); 
 		return this; 
 	} else if (nodes && nodes instanceof Array) { 
@@ -210,7 +209,7 @@ JAX.NodeHTML.prototype.add = function() {
 };
 
 JAX.NodeHTML.prototype.addBefore = function(node, nodeBefore) {
-	if (this._storage.locked) {
+	if (this._node.getAttribute("data-jax-locked")) {
 		this._queueMethod(this.addBefore, arguments); 
 		return this;  
 	} else if (typeof(node) == "object" && (node.nodeType || JAX.isJAXNode(node)) && (nodeBefore.nodeType || JAX.isJAXNode(nodeBefore))) {
@@ -226,7 +225,7 @@ JAX.NodeHTML.prototype.addBefore = function(node, nodeBefore) {
 };
 
 JAX.NodeHTML.prototype.appendTo = function(node) {
-	if (this._storage.locked) {
+	if (this._node.getAttribute("data-jax-locked")) {
 		this._queueMethod(this.appendTo, arguments); 
 		return this; 
 	} else if (typeof(node) == "object" && (node.nodeType || JAX.isJAXNode(node))) { 
@@ -241,7 +240,7 @@ JAX.NodeHTML.prototype.appendTo = function(node) {
 };
 
 JAX.NodeHTML.prototype.appendBefore = function(node) {
-	if (this._storage.locked) {
+	if (this._node.getAttribute("data-jax-locked")) {
 		this._queueMethod(this.appendBefore, arguments); 
 		return this; 
 	} else if (typeof(node) == "object" && (node.nodeType || JAX.isJAXNode(node))) {
@@ -255,7 +254,7 @@ JAX.NodeHTML.prototype.appendBefore = function(node) {
 };
 
 JAX.NodeHTML.prototype.removeFromDOM = function() {
-	if (this._storage.locked) {
+	if (this._node.getAttribute("data-jax-locked")) {
 		this._queueMethod(this.removeFromDOM, arguments); 
 		return this; 
 	}
@@ -301,7 +300,7 @@ JAX.NodeHTML.prototype.listen = function(type, funcMethod, obj, bindData) {
 };
 
 JAX.NodeHTML.prototype.stopListening = function(type, listenerId) {
-	if (this._storage.locked) {
+	if (this._node.getAttribute("data-jax-locked")) {
 		this._queueMethod(this.stopListening, arguments);
 		return this; 
 	} 
@@ -360,7 +359,7 @@ JAX.NodeHTML.prototype.attr = function() {
 			attrs[attribute] = this._node.getAttribute(attribute);
 		}
 		return attrs;	
-	} else if (this._storage.locked) {
+	} else if (this._node.getAttribute("data-jax-locked")) {
 		this._queueMethod(this.attr, arguments); 
 		return this; 
 	}
@@ -395,7 +394,7 @@ JAX.NodeHTML.prototype.styleCss = function() {
 			css[cssStyle] = this._node.style[cssStyle];
 		}
 		return css;
-	} else if (this._storage.locked) {
+	} else if (this._node.getAttribute("data-jax-locked")) {
 		this._queueMethod(this.style, arguments); 
 		return this; 
 	} 
@@ -410,7 +409,7 @@ JAX.NodeHTML.prototype.styleCss = function() {
 };
 
 JAX.NodeHTML.prototype.displayOn = function(displayValue) {
-	if (this._storage.locked) {
+	if (this._node.getAttribute("data-jax-locked")) {
 		this._queueMethod(this.displayOn, arguments); 
 		return this; 
 	} 
@@ -421,7 +420,7 @@ JAX.NodeHTML.prototype.displayOn = function(displayValue) {
 };
 
 JAX.NodeHTML.prototype.displayOff = function() {
-	if (this._storage.locked) {
+	if (this._node.getAttribute("data-jax-locked")) {
 		this._queueMethod(this.displayOff, arguments); 
 		return this; 
 	} 
@@ -430,11 +429,11 @@ JAX.NodeHTML.prototype.displayOff = function() {
 	return this;
 };
 
-JAX.NodeHTML.prototype.computedStyleCss = function() {
+JAX.NodeHTML.prototype.computedCss = function() {
 	var cssStyles = arguments;
 
 	if (cssStyles.length > 1) { 
-		return this.computedStyleCss(cssStyles);
+		return this.computedCss(cssStyles);
 	} else if (cssStyles.length == 1) {
 		cssStyles = arguments[0];
 	} else {
@@ -461,7 +460,7 @@ JAX.NodeHTML.prototype.computedStyleCss = function() {
 JAX.NodeHTML.prototype.fullWidth = function(value) {
 	if (!arguments.length) { 
 		var backupStyle = this.styleCss("display","visibility","position");
-		var isFixedPosition = this.computedStyleCss("position").indexOf("fixed") == 0;
+		var isFixedPosition = this.computedCss("position").indexOf("fixed") == 0;
 		var isDisplayNone = this.styleCss("display").indexOf("none") == 0;
 
 		if (!isFixedPosition) { this.styleCss({"position":"absolute"}); }
@@ -473,15 +472,15 @@ JAX.NodeHTML.prototype.fullWidth = function(value) {
 		return width; 
 	}
 
-	if (this._storage.locked) {
+	if (this._node.getAttribute("data-jax-locked")) {
 		this._queueMethod(this.width, arguments); 
 		return this; 
 	} 
 
-	var paddingLeft = parseFloat(this.computedStyleCss("padding-left"));
-	var paddingRight = parseFloat(this.computedStyleCss("padding-right"));
-	var borderLeft = parseFloat(this.computedStyleCss("border-left"));
-	var borderRight = parseFloat(this.computedStyleCss("border-right"));
+	var paddingLeft = parseFloat(this.computedCss("padding-left"));
+	var paddingRight = parseFloat(this.computedCss("padding-right"));
+	var borderLeft = parseFloat(this.computedCss("border-left"));
+	var borderRight = parseFloat(this.computedCss("border-right"));
 
 	if (isFinite(paddingLeft)) { value =- paddingLeft; }
 	if (isFinite(paddingRight)) { value =- paddingRight; }
@@ -495,7 +494,7 @@ JAX.NodeHTML.prototype.fullWidth = function(value) {
 JAX.NodeHTML.prototype.fullHeight = function(value) {
 	if (!arguments.length) { 
 		var backupStyle = this.styleCss("display","visibility","position");
-		var isFixedPosition = this.computedStyleCss("position").indexOf("fixed") == 0;
+		var isFixedPosition = this.computedCss("position").indexOf("fixed") == 0;
 		var isDisplayNone = this.styleCss("display").indexOf("none") == 0;
 
 		if (!isFixedPosition) { this.styleCss({"position":"absolute"}); }
@@ -507,15 +506,15 @@ JAX.NodeHTML.prototype.fullHeight = function(value) {
 		return height; 
 	}
 
-	if (this._storage.locked) {
+	if (this._node.getAttribute("data-jax-locked")) {
 		this._queueMethod(this.height, arguments); 
 		return this; 
 	} 
 
-	var paddingTop = parseFloat(this.computedStyleCss("padding-top"));
-	var paddingBottom = parseFloat(this.computedStyleCss("padding-bottom"));
-	var borderTop = parseFloat(this.computedStyleCss("border-top"));
-	var borderBottom = parseFloat(this.computedStyleCss("border-bottom"));
+	var paddingTop = parseFloat(this.computedCss("padding-top"));
+	var paddingBottom = parseFloat(this.computedCss("padding-bottom"));
+	var borderTop = parseFloat(this.computedCss("border-top"));
+	var borderBottom = parseFloat(this.computedCss("border-bottom"));
 
 	if (isFinite(paddingTop)) { value =- paddingTop; }
 	if (isFinite(paddingBottom)) { value =- paddingBottom; }
@@ -557,7 +556,7 @@ JAX.NodeHTML.prototype.lChild = function() {
 }
 
 JAX.NodeHTML.prototype.clear = function() {
-	if (this._storage.locked) {
+	if (this._node.getAttribute("data-jax-locked")) {
 		this._queueMethod(this.clear, arguments); 
 		return this; 
 	} 
@@ -588,7 +587,7 @@ JAX.NodeHTML.prototype.isChildOf = function(node) {
 };
 
 JAX.NodeHTML.prototype.fade = function(type, duration, completeCbk) {
-	if (this._storage.locked) {
+	if (this._node.getAttribute("data-jax-locked")) {
 		this._queueMethod(this.fade, arguments); 
 		return this; 
 	}
@@ -604,10 +603,10 @@ JAX.NodeHTML.prototype.fade = function(type, duration, completeCbk) {
 	switch(type) {
 		case "in":
 			var sourceOpacity = 0;
-			var targetOpacity = parseFloat(this.computedStyleCss("opacity")) || 1;	
+			var targetOpacity = parseFloat(this.computedCss("opacity")) || 1;	
 		break;
 		case "out":
-			var sourceOpacity = parseFloat(this.computedStyleCss("opacity")) || 1;
+			var sourceOpacity = parseFloat(this.computedCss("opacity")) || 1;
 			var targetOpacity = 0;
 		break;
 		default:
@@ -617,20 +616,20 @@ JAX.NodeHTML.prototype.fade = function(type, duration, completeCbk) {
 
 	var animation = new JAX.Animation(this);
 	var func = function() {
-		this._unlock();
+		this.unlock();
 		if (completeCbk) { completeCbk(); }
 	}.bind(this);
 
 	animation.addProperty("opacity", duration, sourceOpacity, targetOpacity);
 	animation.addCallback(func);
 	animation.run();
-	this._lock();
+	this.lock();
 
 	return this;
 };
 
 JAX.NodeHTML.prototype.fadeTo = function(opacityValue, duration, completeCbk) {
-	if (this._storage.locked) {
+	if (this._node.getAttribute("data-jax-locked")) {
 		this._queueMethod(this.fade, arguments); 
 		return this; 
 	}
@@ -643,25 +642,25 @@ JAX.NodeHTML.prototype.fadeTo = function(opacityValue, duration, completeCbk) {
 		throw new Error("JAX.NodeHTML.fadeTo only Function for completeCbk. See doc for more information.");
 	}
 
-	var sourceOpacity = parseFloat(this.computedStyleCss("opacity")) || 1;
+	var sourceOpacity = parseFloat(this.computedCss("opacity")) || 1;
 	var targetOpacity = parseFloat(opacityValue);
 
 	var animation = new JAX.Animation(this);
 	var func = function() {
-		this._unlock();
+		this.unlock();
 		if (completeCbk) { completeCbk(); }
 	}.bind(this);
 
 	animation.addProperty("opacity", duration, sourceOpacity, targetOpacity);
 	animation.addCallback(func);
 	animation.run();
-	this._lock();
+	this.lock();
 
 	return this;
 };
 
 JAX.NodeHTML.prototype.slide = function(type, duration, completeCbk) {
-	if (this._storage.locked) {
+	if (this._node.getAttribute("data-jax-locked")) {
 		this._queueMethod(this.slide, arguments); 
 		return this; 
 	} 
@@ -709,16 +708,33 @@ JAX.NodeHTML.prototype.slide = function(type, duration, completeCbk) {
 	var animation = new JAX.Animation(this);
 	var func = function() {
 		for (var p in backupStyles) { this._node.style[p] = backupStyles[p]; }
-		this._unlock();
+		this.unlock();
 		if (completeCbk) { completeCbk(); }
 	}.bind(this);
 
 	animation.addProperty(property, duration, source, target);
 	animation.addCallback(func);
 	animation.run();
-	this._lock();
+	this.lock();
 
 	return this;
+};
+
+JAX.NodeHTML.prototype.lock = function() {
+	this._node.setAttribute("data-jax-locked","1");
+};
+
+JAX.NodeHTML.prototype.isLocked = function() {
+	return !!this._node.getAttribute("data-jax-locked");
+}
+
+JAX.NodeHTML.prototype.unlock = function() {
+	var queue = this._storage.lockQueue;
+	this._node.removeAttribute("data-jax-locked");
+	while(queue.length) {
+		var q = queue.shift();
+		q.method.apply(this, q.args);
+	}
 };
 
 JAX.NodeHTML.prototype._inPixels = function(value) {
@@ -758,21 +774,8 @@ JAX.NodeHTML.prototype._getOpacity = function() {
 	return this._node.style["opacity"];
 };
 
-JAX.NodeHTML.prototype._lock = function() {
-	this._storage.locked = true;
-};
-
 JAX.NodeHTML.prototype._queueMethod = function(method, args) {
 	this._storage.lockQueue.push({method:method, args:args});
-};
-
-JAX.NodeHTML.prototype._unlock = function() {
-	var queue = this._storage.lockQueue;
-	this._storage.locked = false;
-	while(queue.length) {
-		var q = queue.shift();
-		q.method.apply(this, q.args);
-	}
 };
 
 JAX.NodeHTML.prototype._destroyEvents = function(eventListeners) {

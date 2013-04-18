@@ -19,6 +19,8 @@ type ".\src\dombuilder.js" >> jax.js
 ECHO. >> jax.js
 type ".\src\animation.js" >> jax.js
 ECHO. >> jax.js
+type ".\src\e.js" >> jax.js
+ECHO. >> jax.js
 ECHO if (!window.JAX) { window.JAX = JAX; } >> jax.js
 ECHO. >> jax.js
 ECHO })(); >> jax.js

@@ -2,6 +2,10 @@ JAX = {
 	VERSION: "1.96b"
 };
 
+JAX.ERROR = 1;
+JAX.WARN = 2;
+JAX.LOG = 3;
+
 JAX.allnodes = [];
 
 JAX.$ = function(selector, srcElement) {
@@ -55,9 +59,13 @@ JAX.make = function(tagString, html, srcDocument) {
 	var currentAttrName = "";
 	var inAttributes = false;
 
-	if (!tagString || typeof(tagString) != "string") { throw new Error("JAX.make: First parameter must be a string"); }
-	if (html && typeof(html) != "string" && typeof(html) != "number") { throw new Error("JAX.make: Second parameter 'html' must be a string or number"); }
-	if (".#[=] ".indexOf(tagString[0]) > -1) { throw new Error("JAX.make: Tagname must be first."); }
+	if (!tagString || typeof(tagString) != "string") { 
+		new JAX.E({funcName:"JAX.make", value:tagString}).message("first parameter", "string", tagString).show(); 
+	} else if (html && typeof(html) != "string" && typeof(html) != "number") {
+		new JAX.E({funcName:"JAX.make", value:html}).message("second parameter", "string or number", html).show(); 
+	} else if (".#[=] ".indexOf(tagString[0]) > -1) {
+		new JAX.E({funcName:"JAX.make", value:tagString}).message("first parameter", "tagname first", tagString).show(); 
+	}
 
 	for (var i=0, len=tagString.length; i<len; i++) {
 		var character = tagString[i];
