@@ -8,13 +8,18 @@ JAX.E.TRACED_CALLING = 20;
 JAX.E.prototype.$constructor = function(data) {
 	this._data = data || {};
 	this._message = "";
-	this._output = "JAX.ERROR:\n\n";
+	this._output = "JAX Error:";
 };
 
-JAX.E.prototype.message = function(forThe, expected, got) {
-	this._message = "For " + forThe + " ";
+JAX.E.prototype.expected = function(forThe, expected, got) {
+	this._message += "\n\nFor " + forThe + " ";
 	this._message += "I expected " + expected + ". ";
-	this._message += "I got " + got + " from you. ";
+	this._message += "I got " + got + " with type '" + typeof(got) + "' from you. ";
+	return this;
+};
+
+JAX.E.prototype.message = function(text) {
+	this._message += "\n\n" + text;
 	return this;
 };
 
@@ -30,9 +35,7 @@ JAX.E.prototype._generateOutput = function() {
 	if (this._message) {
 		this._output += this._message;
 	}
-	if (this._data.value) { 
-		this._output += "Your value is: " + this._data.value + " and its type is " + typeof(this._data.value);
-	}
+
 	if (this._data.node) { 
 		this._output += "\n\n===";
 		this._output += "\nNode: " + this._stringifyNode();
@@ -43,18 +46,20 @@ JAX.E.prototype._generateOutput = function() {
 		this._output += "\n\n===";
 		this._output += "\nTRACED CALLING SEQUENCE:";
 
-		if (this._data.caller) {
-			this._output += "\nCalled from:\n" + this._data.caller.toString(); 
+		var caller = this._data.caller.caller;
+
+		if (caller) {
+			this._output += "\nCalled from:\n" + caller.toString(); 
 
 			var counter = JAX.E.TRACED_CALLING;
 
 			do {
-				this._data.caller = this._data.caller.caller; 
-				if (this._data.caller) { this._output += "\n\nAnd it was called from:\n" + this._data.caller.toString(); }
+				caller = caller.caller; 
+				if (caller) { this._output += "\n\nAnd it was called from:\n" + caller.caller.toString(); }
 				counter--;
-			} while(this._data.caller && counter);
+			} while(caller && counter);
 
-			if (this._data.caller) { 
+			if (caller) { 
 				this._output += "\n\n... and much more calling"; 
 			} else {
 				this._output += "\n\n... and it was probably called directly from window"; 

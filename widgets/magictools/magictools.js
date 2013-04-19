@@ -4,13 +4,13 @@ JAX.MagicTools = JAK.ClassMaker.makeSingleton({
 });
 
 JAX.MagicTools.prototype.$constructor = function() {
-	this._dom = {};
+	this._jax = {};
 	this._ec = [];
 
 	/* vytvoreni zakladnich kontejneru */
-	this._dom.container = JAX.make("div#JAX-MagicTools");
-	this._dom.tabs = JAX.make("div.jaxmt-tabs").appendTo(this._dom.container);
-	this._dom.content = JAX.make("div.jaxmt-content").appendTo(this._dom.container);
+	this._jax.container = JAX.make("div#JAX-MagicTools");
+	this._jax.tabs = JAX.make("div.jaxmt-tabs").appendTo(this._jax.container);
+	this._jax.content = JAX.make("div.jaxmt-content").appendTo(this._jax.container);
 
 	this._active = false;
 	this._activateKeys = [73,68,68,81,68]; /* aktivace pred iddqd */
@@ -23,12 +23,12 @@ JAX.MagicTools.prototype.$constructor = function() {
 
 JAX.MagicTools.prototype.activate = function() {
 	if (this._active) { return; }
-	this._dom.container.appendTo(document.body);
+	this._jax.container.appendTo(document.body);
 };
 
 JAX.MagicTools.prototype.deactivate = function() {
 	if (!this._active) { return; }
-	this._dom.container.removeFromDOM();
+	this._jax.container.removeFromDOM();
 };
 
 JAX.MagicTools.prototype._handleKey = function(e, elm) {

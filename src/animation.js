@@ -64,8 +64,8 @@ JAX.Animation.prototype.addProperty = function(property, duration, start, end, m
 		return this;
 	}
 
-	new JAX.E({funcName:"JAX.Animation.addProperty", node:this._elm.node(), caller:this.addProperty.caller})
-		.message("first parameter", "supported property", "unsupported property: " + property)
+	new JAX.E({funcName:"JAX.Animation.addProperty", node:this._elm.node(), caller:this.addProperty})
+		.expected("first parameter", "supported property", "unsupported property: " + property)
 		.show(); 
 };
 

@@ -12,48 +12,24 @@ JAX.NodeHTML.create = function(node) {
 
 		if (jaxId<0) {
 			var f = Object.create(JAX.NodeHTML.prototype);
-			f.init(node);
+			f._init(node);
 			return f;
 		}
 
 		return JAX.allnodes[jaxId].instance;
 	}
 
-	throw new Error("JAX.NodeHTML.create: arguments must be only html node");
+	new JAX.E({funcName:"JAX.NodeHTML.create", caller:this.create})
+		.expected("first argument", "HTML node", node)
+		.show();
 };
 
 JAX.NodeHTML.prototype.jaxNodeType = 1;
 
 JAX.NodeHTML.prototype.$constructor = function() {
-	throw new Error("JAX.NodeHTML: you can not call this class with operator new. Use JAX.NodeHTML.create factory method instead of it.");
-};
-
-JAX.NodeHTML.prototype.init = function(node) {
-	if (typeof(node) == "object" && node.nodeType && node.nodeType == 1) {  	
-		this._node = node;
-
-		/* set jax id for new (old) node */
-		var oldJaxId = parseInt(node.getAttribute("data-jax-id"),10) || -1;
-		if (oldJaxId > -1) {
-			this._jaxId = oldJaxId;
-			this._storage = JAX.allnodes[this._jaxId];
-			this._storage.instance = this;
-		} else {
-			this._jaxId = ++JAX.NodeHTML.idCounter;
-			node.setAttribute("data-jax-id", this._jaxId);
-			var storage = {
-				instance: this,
-				events: {},
-				lockQueue: []
-			};
-			JAX.allnodes[this._jaxId] = storage;
-			this._storage = storage;
-		}
-
-		return;
-	}
-
-	throw new Error("JAX.NodeHTML accepts only HTML element as its parameter. See doc for more information.");
+	new JAX.E({funcName:"JAX.NodeHTML.$constructor", caller:this.$constructor})
+		.message("you can not call this class with operator new. Use JAX.NodeHTML.create factory method instead of it")
+		.show();
 };
 
 JAX.NodeHTML.prototype.$destructor = function() {
@@ -109,8 +85,9 @@ JAX.NodeHTML.prototype.addClass = function() {
 		return this;
 	}
 
-	throw new Error("JAX.NodeHTML.addClass accepts only string as its parameter. See doc for more information.");
-	
+	new JAX.E({funcName:"JAX.NodeHTML.addClass", caller:this.addClass})
+		expected("arguments", "string or array of strings", classNames)
+		.show();
 };
 
 JAX.NodeHTML.prototype.removeClass = function() {
@@ -138,7 +115,9 @@ JAX.NodeHTML.prototype.removeClass = function() {
 		return this;
 	}
 
-	throw new Error("JAX.NodeHTML.removeClass accepts only string as its parameter. See doc for more information.");
+	new JAX.E({funcName:"JAX.NodeHTML.removeClass", caller:this.removeClass})
+		expected("arguments", "string or array of strings", classNames)
+		.show();
 };
 
 JAX.NodeHTML.prototype.hasClass = function(className) {
@@ -153,7 +132,9 @@ JAX.NodeHTML.prototype.hasClass = function(className) {
 		return false;
 	}
 
-	throw new Error("JAX.NodeHTML.hasClass accepts only string as its parameter. See doc for more information.");
+	new JAX.E({funcName:"JAX.NodeHTML.hasClass", caller:this.hasClass})
+		expected("first argument", "string", className)
+		.show();
 };
 
 JAX.NodeHTML.prototype.id = function(id) {
@@ -176,8 +157,8 @@ JAX.NodeHTML.prototype.html = function(innerHTML) {
 	} else if (this._node.getAttribute("data-jax-locked")) {
 		this._queueMethod(this.html, arguments); 
 		return this; 
-	} else if (typeof(innerHTML) == "string") {
-		this._node.innerHTML = innerHTML;
+	} else if (typeof(innerHTML) == "string" || typeof(innerHTML) == "number") {
+		this._node.innerHTML = innerHTML + "";
 		return this;
 	}
 	
@@ -735,6 +716,34 @@ JAX.NodeHTML.prototype.unlock = function() {
 		var q = queue.shift();
 		q.method.apply(this, q.args);
 	}
+};
+
+JAX.NodeHTML.prototype._init = function(node) {
+	if (typeof(node) == "object" && node.nodeType && node.nodeType == 1) {  	
+		this._node = node;
+
+		/* set jax id for new (old) node */
+		var oldJaxId = parseInt(node.getAttribute("data-jax-id"),10) || -1;
+		if (oldJaxId > -1) {
+			this._jaxId = oldJaxId;
+			this._storage = JAX.allnodes[this._jaxId];
+			this._storage.instance = this;
+		} else {
+			this._jaxId = ++JAX.NodeHTML.idCounter;
+			node.setAttribute("data-jax-id", this._jaxId);
+			var storage = {
+				instance: this,
+				events: {},
+				lockQueue: []
+			};
+			JAX.allnodes[this._jaxId] = storage;
+			this._storage = storage;
+		}
+
+		return;
+	}
+
+	throw new Error("JAX.NodeHTML accepts only HTML element as its parameter. See doc for more information.");
 };
 
 JAX.NodeHTML.prototype._inPixels = function(value) {

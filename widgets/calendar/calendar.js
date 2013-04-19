@@ -224,7 +224,7 @@ JAX.Calendar.Day.View.prototype.getContainer = function() {
 
 JAX.Calendar.Day.View.prototype._build = function() {
 	this._jax.container = JAX.make("td");
-	this._jax.number = JAX.make("span", this._day.getDayNumber()+1).appendTo(this._jax.container);
+	this._jax.number = JAX.make("span").html(this._day.getDayNumber()+1).appendTo(this._jax.container);
 };
 
 JAX.Calendar.Month = JAK.ClassMaker.makeClass({
@@ -301,7 +301,7 @@ JAX.Calendar.Month.View.prototype._build = function() {
 	var monthTitle = this._month.getMonthName() + " " + this._month.getYear().getYearNumber();
 	this._jax.container = JAX.make("div.jax-cal-month");
 	this._jax.header = JAX.make("div.jax-cal-month-header").appendTo(this._jax.container);
-	this._jax.monthName = JAX.make("span.jax-cal-month-title", monthTitle).appendTo(this._jax.header);
+	this._jax.monthName = JAX.make("span.jax-cal-month-title").html(monthTitle).appendTo(this._jax.header);
 
 	this._jax.table = JAX.make("table").appendTo(this._jax.container);
 	this._jax.content = JAX.make("tbody").appendTo(this._jax.table);
@@ -310,7 +310,7 @@ JAX.Calendar.Month.View.prototype._build = function() {
 
 	var dayNames = JAX.Calendar.Day.DAY_NAMES_SHORT;
 	for (var i=0, len=dayNames.length; i<len; i++) {
-		this._jax.header.add(JAX.make("th", dayNames[i]));
+		this._jax.header.add(JAX.make("th").html(dayNames[i]));
 	}
 
 	var startCell = this._days[0].getDayInWeek();
@@ -441,6 +441,6 @@ JAX.Calendar.Button.prototype.getContainer = function() {
 };
 
 JAX.Calendar.Button.prototype._build = function() {
-	this._jax.container = JAX.make("a.jax-cal-button", this._text);
+	this._jax.container = JAX.make("a.jax-cal-button").html(this._text);
 };
 

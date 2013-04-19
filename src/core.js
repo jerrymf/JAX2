@@ -2,6 +2,8 @@ JAX = {
 	VERSION: "1.97b"
 };
 
+JAX.TAG_RXP = /^([a-zA-Z]*)/g;
+JAX.CLASS_ID_RXP = /([\.#])([^\.#]*)/g;
 JAX.allnodes = [];
 
 JAX.$ = function(selector, srcElement) {
@@ -48,102 +50,67 @@ JAX.$$ = function(selector, srcElement) {
 	return false;
 };
 
-JAX.make = function(tagString, html, srcDocument) {
-	var attributes = html ? {innerHTML:html} : {};
-	var tagName = "";
-	var type="tagname";
-	var currentAttrName = "";
-	var inAttributes = false;
+JAX.make = function(tagString, attrs, styles, srcDocument) {
+	var attrs = attrs || {};
+	var styles = styles || {};
 
 	if (!tagString || typeof(tagString) != "string") { 
-		new JAX.E({funcName:"JAX.make", value:tagString, caller:this.make.caller})
-			.message("first argument", "string", tagString)
-			.show(); 
-	} else if (html && typeof(html) != "string" && typeof(html) != "number") {
-		new JAX.E({funcName:"JAX.make", value:html, caller:this.make.caller})
-			.message("second argument", "string or number", html)
-			.show(); 
-	} else if (".#[=] ".indexOf(tagString[0]) > -1) {
-		new JAX.E({funcName:"JAX.make", value:tagString, caller:this.make.caller})
-			.message("first argument", "tagname first", tagString)
+		new JAX.E({funcName:"JAX.make", caller:this.make})
+			.expected("first argument", "string", tagString)
 			.show(); 
 	}
 
-	for (var i=0, len=tagString.length; i<len; i++) {
-		var character = tagString[i];
-
-		switch(character) {
-			case ".":
-				if (inAttributes && type == "attribute-value") { break; }
-
-				if (!("className" in attributes)) { 
-					attributes["className"] = ""; 
-				} else {
-					attributes["className"] += " "; 
-				}
-
-				type="attribute-value"; 
-				currentAttrName = "className";
-				continue;
-			break;
-			case "#":
-				if (inAttributes && type == "attribute-value") { break; }
-
-				if (!("id" in attributes)) {
-					attributes["id"] = "";
-				} else {	
-					attributes["id"] += " ";
-				}
-
-				type="attribute-value"; 
-				currentAttrName = "id";
-				continue;
-			break;
-			case "[":
-				type="attribute-name"; 
-				currentAttrName = "";
-				inAttributes = true;
-				continue;
-			break;
-			case "=":
-				if (type != "attribute-name") { break; }
-				attributes[currentAttrName] = "";
-				type="attribute-value";
-				continue; 
-			break;
-			case "]":
-				type="";
-				inAttributes = false;
-				continue;
-			break;
-			case " ":
-				if (type != "attribute-value") { continue; }
-			break;
-		}
-
-		switch(type) {
-			case "tagname": 
-				tagName += (character + "");
-			break;
-			case "attribute-name":
-				currentAttrName += (character + "");
-			break;
-			case "attribute-value":
-				attributes[currentAttrName] += (character + "");
-			break;
-		}
-
+	if (attrs && typeof(attrs) != "object") {
+		new JAX.E({funcName:"JAX.make", caller:this.make})
+			.expected("second argument", "associative array", attrs)
+			.show(); 
 	}
 
-	var d = srcDocument || document;
-	var createdNode = d.createElement(tagName);
-	for (var p in attributes) { createdNode[p] = attributes[p]; }
+	if (styles && typeof(styles) != "object") {
+		new JAX.E({funcName:"JAX.make", caller:this.make})
+			.expected("third argument", "associative array", styles)
+			.show(); 
+	}
+
+	if (srcDocument && (typeof(srcDocument) != "object" || (!srcDocument.nodeType || (srcDocument.nodeType != 9 && srcDocument.nodeType == 11)))) {
+		new JAX.E({funcName:"JAX.make", caller:this.make})
+			.expected("third argument", "associative array", srcDocument)
+			.show(); 
+	}
+
+	var tagName = tagString.match(JAX.TAG_RXP) || [];
+
+	if (tagName.length == 1) {
+		tagName = tagName[0];
+		tagString = tagString.substring(tagName.length, tagString.length);
+	} else {
+		new JAX.E({funcName:"JAX.make", value:tagString, caller:this.make})
+			.expected("first argument", "tagname first", tagString)
+			.show();
+	}
+
+	tagString.replace(JAX.CLASS_ID_RXP, function(match, p1, p2) {
+		var property = p1 == "#" ? "id" : "className";
+
+		if (!(property in attrs)) { 
+			attrs[property] = ""; 
+		} else {
+			attrs[property] += " ";
+		}
+
+		attrs[property] += p2;
+	});
+
+	var createdNode = (srcDocument || document).createElement(tagName);
+
+	for (var p in attrs) { createdNode[p] = attrs[p]; }
+	for (var p in styles) { createdNode.style[p] = styles[p]; }
 
 	return JAX.NodeHTML.create(createdNode);
 };
 
-JAX.makeText = function(text) {
-	return new JAX.NodeText(JAK.ctext(text));
+JAX.makeText = function(text, doc) {
+	return new JAX.NodeText((doc || document).createTextNode(text));
 };
 
 JAX.isNumber = function(value) {

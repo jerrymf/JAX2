@@ -14,14 +14,12 @@ JAX.DOMBuilder.prototype.open = function(element, attributes, styles) {
 	var jaxNode = null;
 
 	if (typeof(element) == "string") {
-		jaxNode = JAX.make(element, "", this._doc);
+		jaxNode = JAX.make(element, attributes, styles, this._doc);
 	} else if (typeof(element) == "object" && element.nodeType) {
 		jaxNode = JAX.$$(element);
 	}
 
 	if (jaxNode && jaxNode.jaxNodeType != 9) {
-		if (attributes) { jaxNode.attr(attributes); }
-		if (styles) { jaxNode.styleCss(styles); }
 		if (!this._pointerJaxNode) {
 			this._stack.push(this._pointerJaxNode);
 			this._jax.container.add(jaxNode); 
@@ -33,19 +31,21 @@ JAX.DOMBuilder.prototype.open = function(element, attributes, styles) {
 		return jaxNode;
 	}
 
-	new JAX.E({funcName:"JAX.DOMBuilder.open", caller:this.open.caller})
-		.message("first argument", "HTML Element definition compatible with JAX.make or HTML element", typeof(element))
+	new JAX.E({funcName:"JAX.DOMBuilder.open", caller:this.open})
+		.expected("first argument", "HTML Element definition compatible with JAX.make or HTML element", element)
 		.show(); 
 }
 
 JAX.DOMBuilder.prototype.add = function(node, attributes, styles) {
 	if (typeof(node) == "string") {
-		var jaxNode = JAX.make(node);
+		var jaxNode = JAX.make(node, attributes, styles);
 	} else if (typeof(node) == "object" && node.nodeType) {
 		var jaxNode = JAX.$$(node);
+		if (attributes) { jaxNode.attr(attributes); }
+		if (styles) { jaxNode.style(styles); }
 	} else if (!JAX.isJAXNode(node) && node.jaxNodeType == 9) {
-		new JAX.E({funcName:"JAX.DOMBuilder.add", caller:this.add.caller})
-		.message("first argument", "string, node, instance of JAX.NodeHTML, JAX.NodeText, JAX.NodeDocFrag", typeof(node))
+		new JAX.E({funcName:"JAX.DOMBuilder.add", caller:this.add})
+		.expected("first argument", "string, node, instance of JAX.NodeHTML, JAX.NodeText, JAX.NodeDocFrag", node)
 		.show(); 
 	}
 
@@ -74,8 +74,8 @@ JAX.DOMBuilder.prototype.addText = function(txt) {
 		return jaxNode;
 	}
 
-	new JAX.E({funcName:"JAX.DOMBuilder.addText", caller:this.addText.caller})
-		.message("first argument", "string", typeof(node))
+	new JAX.E({funcName:"JAX.DOMBuilder.addText", caller:this.addText})
+		.expected("first argument", "string", typeof(node))
 		.show(); 
 };
 
@@ -85,8 +85,8 @@ JAX.DOMBuilder.prototype.close = function() {
 		return;
 	}
 
-	new JAX.E({funcName:"JAX.DOMBuilder.addText", caller:this.close.caller})
-		.message("closing", "opened element", "no opened element")
+	new JAX.E({funcName:"JAX.DOMBuilder.addText", caller:this.close})
+		.expected("closing", "opened element", "no opened element")
 		.show(); 
 };
 
@@ -98,8 +98,8 @@ JAX.DOMBuilder.prototype.appendTo = function(node) {
 	} else if (JAX.isJAXNode(node) && node.jaxNodeType == 1) {
 		var jaxNode = node;
 	} else {
-		new JAX.E({funcName:"JAX.DOMBuilder.appendTo", caller:this.appendTo.caller})
-		.message("argument", "html element, instance of JAX.NodeHTML or JAX.NodeDocFrag", typeof(node))
+		new JAX.E({funcName:"JAX.DOMBuilder.appendTo", caller:this.appendTo})
+		.expected("argument", "html element, instance of JAX.NodeHTML or JAX.NodeDocFrag", node)
 		.show(); 
 	}
 
