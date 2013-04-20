@@ -423,7 +423,7 @@ JAX.NodeHTML.prototype.computedCss = function() {
 
 	if (typeof(cssStyles) == "string") { 
 		var value = JAK.DOM.getStyle(this._node, cssStyles);
-		if (this._node.runtimeStyle && !this._node.addListener && JAX.NodeHTML.MEASUREABLEVALUE.test(value)) { value = this._inPixels(value); }
+		if (this._node.runtimeStyle && !this._node.addEventListener && JAX.NodeHTML.MEASUREABLEVALUE.test(value)) { value = this._inPixels(value); }
 		return value;
 	}
 

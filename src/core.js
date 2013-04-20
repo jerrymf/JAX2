@@ -10,9 +10,9 @@ JAX.$ = function(selector, srcElement) {
 	if (JAX.isString(selector)) {
 		var srcElement = srcElement || document;
 		var foundElms = srcElement.querySelectorAll(selector);
-		var jaxelms = [];
+		var jaxelms = new Array(foundElms.length);
 
-		for (var i=0, len=foundElms.length; i<len; i++) { jaxelms.push(JAX.NodeHTML.create(foundElms[i])); }
+		for (var i=0, len=foundElms.length; i<len; i++) { jaxelms[i] = JAX.NodeHTML.create(foundElms[i]); }
 
 		return new JAX.NodeArray(jaxelms);
 	} else if (typeof(selector) == "object" && selector.nodeType) {
@@ -72,7 +72,7 @@ JAX.make = function(tagString, attrs, styles, srcDocument) {
 			.show(); 
 	}
 
-	if (srcDocument && (typeof(srcDocument) != "object" || (!srcDocument.nodeType || (srcDocument.nodeType != 9 && srcDocument.nodeType == 11)))) {
+	if (srcDocument && (typeof(srcDocument) != "object" || (!srcDocument.nodeType || (srcDocument.nodeType != 9 && srcDocument.nodeType != 11)))) {
 		new JAX.E({funcName:"JAX.make", caller:this.make})
 			.expected("third argument", "associative array", srcDocument)
 			.show(); 
@@ -106,7 +106,10 @@ JAX.make = function(tagString, attrs, styles, srcDocument) {
 	for (var p in attrs) { createdNode[p] = attrs[p]; }
 	for (var p in styles) { createdNode.style[p] = styles[p]; }
 
-	return JAX.NodeHTML.create(createdNode);
+	var f = Object.create(JAX.NodeHTML.prototype);
+	f._init(createdNode);
+	
+	return f;
 };
 
 JAX.makeText = function(text, doc) {
