@@ -585,7 +585,9 @@ JAX.NodeHTML.prototype.contains = function(node) {
 		return false;
 	}
 	
-	throw new Error("JAX.NodeHTML.contains accepts only HTML element, JAX.NodeHTML or JAX.NodeText instance as its argument. See doc for more information.");
+	new JAX.E({funcName:"JAX.NodeHTML.contains", node:this._node, caller:this.contains})
+		.expected("first argument", "HTML element, text node, instance of JAX.NodeHTML or JAX.NodeText", node)
+		.show();
 };
 
 JAX.NodeHTML.prototype.isChildOf = function(node) {
@@ -594,7 +596,9 @@ JAX.NodeHTML.prototype.isChildOf = function(node) {
 		return elm.contains(this);
 	}
 
-	throw new Error("JAX.NodeHTML.contains accepts only HTML element, JAX.NodeHTML or JAX.NodeText instance as its argument. See doc for more information.");
+	new JAX.E({funcName:"JAX.NodeHTML.isChildOf", node:this._node, caller:this.isChildOf})
+		.expected("first argument", "HTML element, JAX.NodeHTML or JAX.NodeDocFrag", node)
+		.show();
 };
 
 JAX.NodeHTML.prototype.fade = function(type, duration, completeCbk) {
