@@ -12,8 +12,11 @@ JAX.NodeArray.prototype.$constructor = function(JAXNodes) {
 
 	for (var i=0; i<len; i++) { 
 		var JAXNode = JAXNodes[i];
+		if (typeof(JAXNode) == "object" && JAXNode.nodeType) { JAXNode = JAX.$$(JAXNode); }
 		if (JAX.isJAXNode(JAXNode)) { this._jaxNodes[i] = JAXNode; continue; }
-		throw new Error("JAX.NodeArray: " + JAXNode + " is not instance of JAX.NodeHTML class"); 
+		new JAX.E({funcName:"JAX.NodeArray.$constructor", caller:this.$constructor})
+			.expected("first argument", "HTML element, text node, JAX.NodeHTML or JAX.NodeText instance", JAXNode)
+			.show();
 	}
 	this.length = this._jaxNodes.length;
 };

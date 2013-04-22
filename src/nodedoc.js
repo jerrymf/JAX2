@@ -13,7 +13,9 @@ JAX.NodeDoc.prototype.$constructor = function(doc) {
 		return;
 	}
 
-	throw new Error("JAX.NodeDoc constructor accepts only document. See doc for more information.");
+	new JAX.E({funcName:"JAX.NodeDoc.$constructor", caller:this.$constructor})
+		.expected("first argument", "document element", doc)
+		.show(); 
 };
 
 JAX.NodeDoc.prototype.$ = function(selector) {
@@ -25,21 +27,29 @@ JAX.NodeDoc.prototype.$$ = function(selector) {
 };
 
 JAX.NodeDoc.prototype.listen = function(type, funcMethod, obj, bindData) {
-	if (!type || !typeof(type) == "string") { 
-		throw new Error("JAX.NodeDoc.listen: first parameter must be string. See doc for more information."); 
-	} else if (!funcMethod || (typeof(funcMethod) != "string" && typeof(funcMethod) != "string")) { 
-		throw new Error("JAX.NodeDoc.listen: second paremeter must be function or name of function. See doc for more information."); 
-	} else if (arguments.length > 4) { 
-		console.warn("JAX.NodeDoc.listen accepts maximally 4 arguments. See doc for more information."); 
-	}
-	
+	var error = 15;
+
+	if (type && typeof(type) == "string") { error -= 1; }
+	if (funcMethod && (typeof(funcMethod) == "string" || typeof(funcMethod) == "function")) { error -= 2; }
+	if (typeof(obj) == "object") { error -= 4; }
 	if (typeof(funcMethod) == "string") {
 		var obj = obj || window;
 		var funcMethod = obj[funcMethod];
-		if (!funcMethod) { throw new Error("JAX.NodeDoc.listen: funcMethod '" + funcMethod + "' was not found in " + obj + "."); }
-		funcMethod = funcMethod.bind(obj);
+		if (funcMethod) {
+			error -= 8; 
+			funcMethod = funcMethod.bind(obj);
+		}
 	}
 
+	if (error) {
+		var e = new JAX.E({funcName:"JAX.NodeDoc.listen", caller:this.listen});
+		if (error & 1) { e.expected("first argument", "string", type); }
+		if (error & 2) { e.expected("second argument", "string or function", doc); }
+		if (error & 4) { e.expected("third", "object", doc); }
+		if (error & 8) { e.message("Method '" + funcMethod + "' in second argument was not found in third argument " + obj + "."); }
+		e.show();
+	}
+	
 	var thisNode = this;
 	var f = function(e, node) { funcMethod(e, thisNode, bindData); }
 	var listenerId = JAK.Events.addListener(this._doc, type, f);
@@ -59,11 +69,13 @@ JAX.NodeDoc.prototype.stopListening = function(type, listenerId) {
 	}
 
 	if (typeof(type) != "string") {
-		throw new Error("JAX.NodeDoc.stopListening: type must be string. See doc for more information.")
+		new JAX.E({funcName:"JAX.NodeDoc.stopListening", caller:this.stopListening})
+		.expected("first argument", "string", type)
+		.show(); 
 	}
 
 	var eventListeners = JAX.NodeDoc.events[type]; 
-	if (!eventListeners) { console.warn("JAX.NodeDoc.stopListening: no event '" + type + "' found"); return this; }
+	if (!eventListeners) { return this; }
 
 	if (!listenerId) { 
 		this._destroyEvents(eventListeners);
@@ -78,7 +90,7 @@ JAX.NodeDoc.prototype.stopListening = function(type, listenerId) {
 		return this;
 	}
 
-	console.warn("JAX.NodeDoc.stopListening: no event listener id '" + listenerId + "' found. See doc for more information.");
+	if (window.console && window.console.warn) { console.warn("JAX.NodeDoc.stopListening: no event listener id '" + listenerId + "' found. See doc for more information."); }
 	return this;
 };
 
