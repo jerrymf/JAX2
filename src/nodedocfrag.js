@@ -1,21 +1,28 @@
 JAX.NodeDocFrag = JAK.ClassMaker.makeClass({
 	NAME: "JAX.NodeDocFrag",
-	VERSION: "0.1"
+	VERSION: "0.9"
 });
 
 JAX.NodeDocFrag.prototype.jaxNodeType = 11;
 
-JAX.NodeDocFrag.prototype.$constructor = function(doc, docFrag) {
-	this._doc = doc || document;
-
-	if (typeof(docFrag) == "object" && docFrag.nodeType && docFrag.nodeType == 11) {  	
-		this._node = docFrag;
-		return;
-	} else if (docFrag) {
-		throw new Error("JAX.NodeDocFrag constructor accepts only documentFragment as its argument. See doc for more information.");
+JAX.NodeDocFrag.prototype.$constructor = function(doc) {
+	if (typeof(doc) == "object" && doc.nodeType && (doc.nodeType == 9 || doc.nodeType == 11)) {
+		switch(doc.nodeType) {
+			case 9:
+				this._doc = doc;
+				this._node = this._doc.createDocumentFragment();
+			break;
+			case 11:
+				this._node = doc;
+				this._doc = doc.ownerDocument;
+			break;			
+		}
 	}
-	
-	this._node = this._doc.createDocumentFragment();
+
+	new JAX.E({funcName:"JAX.NodeDocFrag.$constructor", caller:this.$constructor})
+		.expected("first argument", "document element or documentFragment element", doc)
+		.show();
+
 };
 
 JAX.NodeDocFrag.prototype.$destructor = function() {
@@ -46,7 +53,10 @@ JAX.NodeDocFrag.prototype.html = function(innerHTML) {
 		return this;
 	}
 	
-	throw new Error("JAX.NodeDocFrag.html accepts only string as its argument. See doc for more information. ");	
+	new JAX.E({funcName:"JAX.NodeDocFrag.html", caller:this.html})
+		.expected("first argument", "string", innerHTML)
+		.message("You can call it with no argmuments. Then it will return string with html.")
+		.show();
 };
 
 JAX.NodeDocFrag.prototype.add = function() {
@@ -62,25 +72,30 @@ JAX.NodeDocFrag.prototype.add = function() {
 			this._node.appendChild(node);
 			return this;
 		} catch(e) {}
-	} else if (!nodes) { 
-		console.warn("JAX.NodeDocFrag.add is called with no argument, null or undefined."); 
-		return this;
 	}
 	
-	throw new Error("JAX.NodeDocFrag.add accepts only HTML node, textnode, JAX.NodeDocFrag or JAX.NodeText instance as its parameter. See doc for more information."); 
+	new JAX.E({funcName:"JAX.NodeDocFrag.add", caller:this.add})
+		.expected("arguments", "HTML node, textnode, JAX.NodeHTML, JAX.NodeDocFrag or JAX.NodeText instance", innerHTML)
+		.show();
 };
 
 JAX.NodeDocFrag.prototype.addBefore = function(node, nodeBefore) {
-	if (typeof(node) == "object" && (node.nodeType || JAX.isJAXNode(node)) && typeof(nodeBefore) == "object" && (nodeBefore.nodeType || JAX.isJAXNode(nodeBefore))) {
-		var node = node.jaxNodeType ? node.node() : node;
-		var nodeBefore = nodeBefore.jaxNodeType ? nodeBefore.node() : nodeBefore;
-		try {
-			this._node.insertBefore(node, nodeBefore);
-			return this;
-		} catch(e) {}
+	var error = 3;
+
+	if (typeof(node) == "object" && (node.nodeType || JAX.isJAXNode(node))) { var node = node.jaxNodeType ? node.node() : node; error -= 1;}
+	if (typeof(nodeBefore) == "object" && (nodeBefore.nodeType || JAX.isJAXNode(nodeBefore))) { var nodeBefore = nodeBefore.jaxNodeType ? nodeBefore.node() : nodeBefore; error -= 2;}
+
+	if (error) {
+		var e = new JAX.E({funcName:"JAX.NodeDocFrag.addBefore", caller:this.addBefore});
+		if (error & 1) { e.expected("first argument", "HTML element, textnode, JAX.nodeHTML, JAX.NodeDocFrag or JAX.NodeText instance", node); }
+		if (error & 2) { e.expected("second argument", "HTML node, textnode, JAX.NodeHTML or JAX.NodeText instance", nodeBefore); }
+		e.show();
 	}
 
-	throw new Error("JAX.NodeDocFrag.addBefore accepts only HTML element, textnode, JAX.NodeDocFrag or JAX.NodeText instance as its first argument. See doc for more information.");
+	try {
+		this._node.insertBefore(node, nodeBefore);
+		return this;
+	} catch(e) {}
 };
 
 JAX.NodeDocFrag.prototype.appendTo = function(node) {
@@ -92,7 +107,9 @@ JAX.NodeDocFrag.prototype.appendTo = function(node) {
 		} catch(e) {}
 	}
 
-	throw new Error("JAX.NodeDocFrag.appendTo accepts only HTML element, JAX.NodeDocFrag or JAX.NodeText instance as its argument. See doc for more information.");
+	new JAX.E({funcName:"JAX.NodeDocFrag.appendTo", caller:this.appendTo})
+		.expected("first argument", "HTML element, JAX.NodeHTML or JAX.NodeDocFrag instance", node)
+		.show();
 };
 
 JAX.NodeDocFrag.prototype.appendBefore = function(node) {
@@ -103,7 +120,9 @@ JAX.NodeDocFrag.prototype.appendBefore = function(node) {
 		} catch(e) {}
 	}
 
-	throw new Error("JAX.NodeDocFrag.appendBefore accepts only HTML element, JAX.NodeDocFrag or JAX.NodeText instance as its argument. See doc for more information."); 
+	new JAX.E({funcName:"JAX.NodeDocFrag.appendBefore", caller:this.appendBefore})
+		.expected("first argument", "HTML element, text node, JAX.NodeHTML, or JAX.NodeText instance", node)
+		.show();
 };
 
 JAX.NodeDocFrag.prototype.childs = function() {
@@ -131,6 +150,8 @@ JAX.NodeDocFrag.prototype.contains = function(node) {
 		return false;
 	}
 	
-	throw new Error("JAX.NodeDocFrag.contains accepts only HTML element, JAX.NodeDocFrag or JAX.NodeText instance as its argument. See doc for more information.");
+	new JAX.E({funcName:"JAX.NodeDocFrag.contains", caller:this.contains})
+		.expected("first argument", "HTML element, text node, JAX.NodeHTML, or JAX.NodeText instance", node)
+		.show();
 };
 

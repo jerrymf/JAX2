@@ -51,31 +51,23 @@ JAX.$$ = function(selector, srcElement) {
 };
 
 JAX.make = function(tagString, attrs, styles, srcDocument) {
+	var error = 15;
 	var attrs = attrs || {};
 	var styles = styles || {};
+	var srcDocument = srcDocument || document;
 
-	if (!tagString || typeof(tagString) != "string") { 
-		new JAX.E({funcName:"JAX.make", caller:this.make})
-			.expected("first argument", "string", tagString)
-			.show(); 
-	}
+	if (tagString && typeof(tagString) == "string") { error -= 1; }
+	if (typeof(attrs) == "object") { error -= 2; }
+	if (typeof(styles) == "object") { error -= 4; }
+	if (typeof(srcDocument) == "object" && srcDocument.nodeType && (srcDocument.nodeType == 9 || srcDocument.nodeType != 11)) { error -= 8; }
 
-	if (attrs && typeof(attrs) != "object") {
-		new JAX.E({funcName:"JAX.make", caller:this.make})
-			.expected("second argument", "associative array", attrs)
-			.show(); 
-	}
-
-	if (styles && typeof(styles) != "object") {
-		new JAX.E({funcName:"JAX.make", caller:this.make})
-			.expected("third argument", "associative array", styles)
-			.show(); 
-	}
-
-	if (srcDocument && (typeof(srcDocument) != "object" || (!srcDocument.nodeType || (srcDocument.nodeType != 9 && srcDocument.nodeType != 11)))) {
-		new JAX.E({funcName:"JAX.make", caller:this.make})
-			.expected("third argument", "associative array", srcDocument)
-			.show(); 
+	if (error) {
+		var e = new JAX.E({funcName:"JAX.make", caller:this.make});
+		if (error & 1) { e.expected("first argument", "string", tagString); }
+		if (error & 2) { e.expected("second argument", "associative array", attrs); }
+		if (error & 4) { e.expected("third argument", "associative array", styles); }
+		if (error & 8) { e.expected("fourth argument", "associative array", srcDocument); }
+		e.show();
 	}
 
 	var tagName = tagString.match(JAX.TAG_RXP) || [];
@@ -101,7 +93,7 @@ JAX.make = function(tagString, attrs, styles, srcDocument) {
 		attrs[property] += p2;
 	});
 
-	var createdNode = (srcDocument || document).createElement(tagName);
+	var createdNode = srcDocument.createElement(tagName);
 
 	for (var p in attrs) { createdNode[p] = attrs[p]; }
 	for (var p in styles) { createdNode.style[p] = styles[p]; }

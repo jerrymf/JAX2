@@ -19,6 +19,7 @@ JAX.E.prototype.expected = function(forThe, expected, got) {
 };
 
 JAX.E.prototype.message = function(text) {
+	if (!text) { return this; }
 	this._message += "\n\n" + text;
 	return this;
 };
@@ -55,7 +56,7 @@ JAX.E.prototype._generateOutput = function() {
 
 			do {
 				caller = caller.caller; 
-				if (caller) { this._output += "\n\nAnd it was called from:\n" + caller.caller.toString(); }
+				if (caller) { this._output += "\n\nAnd it was called from:\n" + caller.toString(); }
 				counter--;
 			} while(caller && counter);
 
