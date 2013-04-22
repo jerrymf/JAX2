@@ -28,24 +28,26 @@ JAX.NodeDoc.prototype.$$ = function(selector) {
 
 JAX.NodeDoc.prototype.listen = function(type, funcMethod, obj, bindData) {
 	var error = 15;
+	var obj = obj || window;
 
 	if (type && typeof(type) == "string") { error -= 1; }
 	if (funcMethod && (typeof(funcMethod) == "string" || typeof(funcMethod) == "function")) { error -= 2; }
 	if (typeof(obj) == "object") { error -= 4; }
 	if (typeof(funcMethod) == "string") {
-		var obj = obj || window;
 		var funcMethod = obj[funcMethod];
 		if (funcMethod) {
 			error -= 8; 
 			funcMethod = funcMethod.bind(obj);
 		}
+	} else {
+		error -= 8;
 	}
 
 	if (error) {
 		var e = new JAX.E({funcName:"JAX.NodeDoc.listen", caller:this.listen});
 		if (error & 1) { e.expected("first argument", "string", type); }
-		if (error & 2) { e.expected("second argument", "string or function", doc); }
-		if (error & 4) { e.expected("third", "object", doc); }
+		if (error & 2) { e.expected("second argument", "string or function", funcMethod); }
+		if (error & 4) { e.expected("third", "object", obj); }
 		if (error & 8) { e.message("Method '" + funcMethod + "' in second argument was not found in third argument " + obj + "."); }
 		e.show();
 	}

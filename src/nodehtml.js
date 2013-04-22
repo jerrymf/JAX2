@@ -20,7 +20,7 @@ JAX.NodeHTML.create = function(node) {
 	}
 
 	new JAX.E({funcName:"JAX.NodeHTML.create", caller:this.create})
-		.expected("first argument", "HTML node", node)
+		.expected("first argument", "HTML element", node)
 		.show();
 };
 
@@ -28,7 +28,7 @@ JAX.NodeHTML.prototype.jaxNodeType = 1;
 
 JAX.NodeHTML.prototype.$constructor = function() {
 	new JAX.E({funcName:"JAX.NodeHTML.$constructor", caller:this.$constructor})
-		.message("you can not call this class with operator new. Use JAX.NodeHTML.create factory method instead of it")
+		.message("You can not call this class with operator new. Use JAX.NodeHTML.create factory method instead of it")
 		.show();
 };
 
@@ -85,8 +85,8 @@ JAX.NodeHTML.prototype.addClass = function() {
 		return this;
 	}
 
-	new JAX.E({funcName:"JAX.NodeHTML.addClass", caller:this.addClass})
-		expected("arguments", "string or array of strings", classNames)
+	new JAX.E({funcName:"JAX.NodeHTML.addClass", node:this._node, caller:this.addClass})
+		.expected("arguments", "string or array of strings", classNames)
 		.show();
 };
 
@@ -115,8 +115,8 @@ JAX.NodeHTML.prototype.removeClass = function() {
 		return this;
 	}
 
-	new JAX.E({funcName:"JAX.NodeHTML.removeClass", caller:this.removeClass})
-		expected("arguments", "string or array of strings", classNames)
+	new JAX.E({funcName:"JAX.NodeHTML.removeClass", node:this._node, caller:this.removeClass})
+		.expected("arguments", "string or array of strings", classNames)
 		.show();
 };
 
@@ -132,8 +132,8 @@ JAX.NodeHTML.prototype.hasClass = function(className) {
 		return false;
 	}
 
-	new JAX.E({funcName:"JAX.NodeHTML.hasClass", caller:this.hasClass})
-		expected("first argument", "string", className)
+	new JAX.E({funcName:"JAX.NodeHTML.hasClass", node:this._node, caller:this.hasClass})
+		.expected("first argument", "string", className)
 		.show();
 };
 
@@ -148,7 +148,9 @@ JAX.NodeHTML.prototype.id = function(id) {
 		return this;
 	}
 
-	throw new Error("JAX.NodeHTML.id accepts only string as its argument. See doc for more information. ");
+	new JAX.E({funcName:"JAX.NodeHTML.id", node:this._node, caller:this.id})
+		.expected("first argument", "string", id)
+		.show();
 };
 
 JAX.NodeHTML.prototype.html = function(innerHTML) {
@@ -161,8 +163,11 @@ JAX.NodeHTML.prototype.html = function(innerHTML) {
 		this._node.innerHTML = innerHTML + "";
 		return this;
 	}
-	
-	throw new Error("JAX.NodeHTML.html accepts only string as its argument. See doc for more information. ");	
+
+	new JAX.E({funcName:"JAX.NodeHTML.html", node:this._node, caller:this.html})
+		.expected("first argument", "string", html)
+		.message("You can call it withou arguments. Then it will return innerHTML value.")
+		.show();
 };
 
 JAX.NodeHTML.prototype.add = function() {
@@ -181,28 +186,38 @@ JAX.NodeHTML.prototype.add = function() {
 			this._node.appendChild(node);
 			return this;
 		} catch(e) {}
-	} else if (!nodes) { 
-		console.warn("JAX.NodeHTML.add is called with no argument, null or undefined."); 
-		return this;
 	}
 	
-	throw new Error("JAX.NodeHTML.add accepts only HTML node, textnode, JAX.NodeHTML or JAX.NodeText instance as its parameter. See doc for more information."); 
+	new JAX.E({funcName:"JAX.NodeHTML.add", node:this._node, caller:this.add})
+		.expected("arguments", "HTML node, textnode, instance of JAX.NodeHTML, JAX.NodeText or JAX.NodeDocFrag", nodes)
+		.message("You can call it with arguments separated by comma or array or single argument.")
+		.show();
 };
 
 JAX.NodeHTML.prototype.addBefore = function(node, nodeBefore) {
+	var error = 3;
+
 	if (this._node.getAttribute("data-jax-locked")) {
 		this._queueMethod(this.addBefore, arguments); 
 		return this;  
-	} else if (typeof(node) == "object" && (node.nodeType || JAX.isJAXNode(node)) && (nodeBefore.nodeType || JAX.isJAXNode(nodeBefore))) {
-		var node = node.jaxNodeType ? node.node() : node;
-		var nodeBefore = nodeBefore.jaxNodeType ? nodeBefore.node() : nodeBefore;
-		try {
-			this._node.insertBefore(node, nodeBefore);
-			return this;
-		} catch(e) {}
+	} 
+
+	if (typeof(node) == "object" && (node.nodeType || JAX.isJAXNode(node))) { error -= 1; }
+	if (typeof(nodeBefore) == "object" && (nodeBefore.nodeType || JAX.isJAXNode(nodeBefore))) { error -= 2; }
+
+	if (error) {
+		var e = new JAX.E({funcName:"JAX.NodeHTML.addBefore", node:this._node, caller:this.addBefore});
+		if (error & 1) { e.expected("first argument", "HTML element, textnode, instance of JAX.NodeHTML, JAX.NodeText or JAX.NodeDocFrag", node); }
+		if (error & 2) { e.expected("second argument", "HTML element, textnode, instance of JAX.NodeHTML or JAX.NodeText", nodeBefore); }
+		e.show();
 	}
 
-	throw new Error("JAX.NodeHTML.addBefore accepts only HTML element, textnode, JAX.NodeHTML or JAX.NodeText instance as its first argument. See doc for more information.");
+	var node = node.jaxNodeType ? node.node() : node;
+	var nodeBefore = nodeBefore.jaxNodeType ? nodeBefore.node() : nodeBefore;
+	try {
+		this._node.insertBefore(node, nodeBefore);
+		return this;
+	} catch(e) {}
 };
 
 JAX.NodeHTML.prototype.appendTo = function(node) {
@@ -217,7 +232,9 @@ JAX.NodeHTML.prototype.appendTo = function(node) {
 		} catch(e) {}
 	}
 
-	throw new Error("JAX.NodeHTML.appendTo accepts only HTML element, JAX.NodeHTML or JAX.NodeText instance as its argument. See doc for more information.");
+	new JAX.E({funcName:"JAX.NodeHTML.appendTo", node:this._node, caller:this.appendTo})
+		.expected("first argument", "HTML element, instance of JAX.NodeHTML or JAX.NodeDocFrag", nodes)
+		.show();
 };
 
 JAX.NodeHTML.prototype.appendBefore = function(node) {
@@ -231,7 +248,9 @@ JAX.NodeHTML.prototype.appendBefore = function(node) {
 		} catch(e) {}
 	}
 
-	throw new Error("JAX.NodeHTML.appendBefore accepts only HTML element, JAX.NodeHTML or JAX.NodeText instance as its argument. See doc for more information."); 
+	new JAX.E({funcName:"JAX.NodeHTML.appendBefore", node:this._node, caller:this.appendBefore})
+		.expected("first argument", "HTML element, text node, instance of JAX.NodeHTML or JAX.NodeText", nodes)
+		.show();
 };
 
 JAX.NodeHTML.prototype.removeFromDOM = function() {
@@ -255,19 +274,29 @@ JAX.NodeHTML.prototype.clone = function(withContent) {
 };
 
 JAX.NodeHTML.prototype.listen = function(type, funcMethod, obj, bindData) {
-	if (!type || typeof(type) != "string") { 
-		throw new Error("JAX.NodeHTML.listen: first parameter must be string. See doc for more information."); 
-	} else if (!funcMethod || (typeof(funcMethod) != "string" && typeof(funcMethod) != "function")) { 
-		throw new Error("JAX.NodeHTML.listen: second paremeter must be function or name of function. See doc for more information."); 
-	} else if (arguments.length > 4) { 
-		console.warn("JAX.NodeHTML.listen accepts maximally 4 arguments. See doc for more information."); 
-	}
-	
+	var error = 15;
+	var obj = obj || window;
+
+	if (type && typeof(type) == "string") { error -= 1; }
+	if (funcMethod && (typeof(funcMethod) == "string" || typeof(funcMethod) == "function")) { error -= 2; }
+	if (typeof(obj) == "object") { error -= 4; }
 	if (typeof(funcMethod) == "string") {
-		var obj = obj || window;
 		var funcMethod = obj[funcMethod];
-		if (!funcMethod) { throw new Error("JAX.NodeHTML.listen: method '" + funcMethod + "' was not found in " + obj + "."); }
-		funcMethod = funcMethod.bind(obj);
+		if (funcMethod) {
+			error -= 8; 
+			funcMethod = funcMethod.bind(obj);
+		}
+	} else { 
+		error -= 8; 
+	}
+
+	if (error) {
+		var e = new JAX.E({funcName:"JAX.NodeHTML.listen", node:this._node, caller:this.listen});
+		if (error & 1) { e.expected("first argument", "string", type); }
+		if (error & 2) { e.expected("second argument", "string or function", funcMethod); }
+		if (error & 4) { e.expected("third", "object", obj); }
+		if (error & 8) { e.message("Method '" + funcMethod + "' in second argument was not found in third argument " + obj + "."); }
+		e.show();
 	}
 
 	var thisNode = this;
@@ -294,14 +323,13 @@ JAX.NodeHTML.prototype.stopListening = function(type, listenerId) {
 	}
 
 	if (typeof(type) != "string") {
-		throw new Error("JAX.NodeHTML.stopListening bad arguments. See doc for more information.")
+		new JAX.E({funcName:"JAX.NodeHTML.stopListening", node:this._node, caller:this.stopListening})
+		.expected("first argument", "string", type)
+		.show(); 
 	}
 
 	var eventListeners = this._storage.events[type]; 
-	if (!eventListeners) { 
-		console.warn("JAX.NodeHTML.stopListening: no event '" + type + "' found"); 
-		return this; 
-	}
+	if (!eventListeners) { return this; }
 
 	if (!listenerId) { 
 		this._destroyEvents(eventListeners);
@@ -316,7 +344,9 @@ JAX.NodeHTML.prototype.stopListening = function(type, listenerId) {
 		return this;
 	}
 
-	console.warn("JAX.NodeHTML.stopListening: no event listener id '" + listenerId + "' found. See doc for more information.");
+	if (window.console && window.console.warn) { 
+		console.warn("JAX.NodeHTML.stopListening: no event listener id '" + listenerId + "' found. See doc for more information."); 
+	}
 	return this;
 };
 
