@@ -5,7 +5,7 @@ JAX.DOMBuilder = JAK.ClassMaker.makeClass({
 
 JAX.DOMBuilder.prototype.$constructor = function(doc) {
 	this._doc = doc || document;
-	this._jax = { container: new JAX.NodeDocFrag() };
+	this._jax = { container: JAX.Node.create(document.createDocumentFragment) };
 	this._pointerJaxNode = null;
 	this._stack = [];
 };

@@ -12,17 +12,12 @@ JAX.$ = function(selector, srcElement) {
 		var foundElms = srcElement.querySelectorAll(selector);
 		var jaxelms = new Array(foundElms.length);
 
-		for (var i=0, len=foundElms.length; i<len; i++) { jaxelms[i] = JAX.NodeHTML.create(foundElms[i]); }
+		for (var i=0, len=foundElms.length; i<len; i++) { jaxelms[i] = JAX.Node.create(foundElms[i]); }
 
 		return new JAX.NodeArray(jaxelms);
 	} else if (typeof(selector) == "object" && selector.nodeType) {
-		switch(selector.nodeType) {
-			case 1: return new JAX.NodeArray(JAX.NodeHTML.create(selector));
-			case 3: return new JAX.NodeArray(new JAX.NodeText(selector));
-			case 9: return new JAX.NodeArray(new JAX.NodeDoc(selector));
-			case 11: return new JAX.NodeArray(new JAX.NodeDocFrag(selector));
-		}
-	} else if (JAX.isJAXNode(selector)) {
+		return new JAX.NodeArray(JAX.Node.create(selector));
+	} else if (selector instanceof JAX.Node) {
 		return new JAX.NodeArray(selector);
 	}
 	
@@ -33,17 +28,12 @@ JAX.$$ = function(selector, srcElement) {
 	if (JAX.isString(selector)) {
 		var srcElement = srcElement || document;
 		var foundElm = srcElement.querySelector(selector);
-		var jaxelm = foundElm ? JAX.NodeHTML.create(foundElm) : null;
+		var jaxelm = foundElm ? JAX.Node.create(foundElm) : null;
 
 		return jaxelm;
 	} else if (typeof(selector) == "object" && selector.nodeType) {
-		switch(selector.nodeType) {
-			case 1: return JAX.NodeHTML.create(selector);
-			case 3: return new JAX.NodeText(selector);
-			case 9: return new JAX.NodeDoc(selector);
-			case 11: return new JAX.NodeDocFrag(selector);
-		}
-	} else if (JAX.isJAXNode(selector)) {
+		return JAX.Node.create(selector);
+	} else if (selector instanceof JAX.Node) {
 		return selector;
 	}
 
@@ -66,7 +56,7 @@ JAX.make = function(tagString, attrs, styles, srcDocument) {
 		if (error & 1) { e.expected("first argument", "string", tagString); }
 		if (error & 2) { e.expected("second argument", "associative array", attrs); }
 		if (error & 4) { e.expected("third argument", "associative array", styles); }
-		if (error & 8) { e.expected("fourth argument", "associative array", srcDocument); }
+		if (error & 8) { e.expected("fourth argument", "document element", srcDocument); }
 		e.show();
 	}
 
@@ -98,7 +88,7 @@ JAX.make = function(tagString, attrs, styles, srcDocument) {
 	for (var p in attrs) { createdNode[p] = attrs[p]; }
 	for (var p in styles) { createdNode.style[p] = styles[p]; }
 
-	var f = Object.create(JAX.NodeHTML.prototype);
+	var f = Object.create(JAX.Node.prototype);
 	f._init(createdNode);
 	
 	return f;
@@ -138,6 +128,6 @@ JAX.isDate = function(value) {
 };
 
 JAX.isJAXNode = function(node) {
-	return node instanceof JAX.NodeHTML || node instanceof JAX.NodeText || node instanceof JAX.NodeDoc || node instanceof JAX.NodeDocFrag;
+	return node instanceof JAX.Node;
 }
 

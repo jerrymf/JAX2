@@ -13,7 +13,7 @@ JAX.Calendar.prototype.$constructor = function(elm) {
 	this._shown = false;
 	this._pendingAnimation = false;
 
-	this._jax.targetElm = elm instanceof JAX.NodeHTML ? elm : JAX.NodeHTML.create(elm);
+	this._jax.targetElm = elm instanceof JAX.Node ? elm : JAX.Node.create(elm);
 };
 
 JAX.Calendar.prototype.show = function() {

@@ -1,70 +1,106 @@
-JAX.NodeHTML = JAK.ClassMaker.makeClass({
-	NAME: "JAX.NodeHTML",
+JAX.Node = JAK.ClassMaker.makeClass({
+	NAME: "JAX.Node",
 	VERSION: "0.71"
 });
 
-JAX.NodeHTML.MEASUREABLEVALUE = /^(?:-)?\d+(\.\d+)?(%|em|in|cm|mm|ex|pt|pc)?$/i
-JAX.NodeHTML.idCounter = -1;
+JAX.Node.MEASUREABLEVALUE = /^(?:-)?\d+(\.\d+)?(%|em|in|cm|mm|ex|pt|pc)?$/i
+JAX.Node.instances = {
+	html: [],
+	text: [],
+	doc: [],
+	comment: []
+};
 
-JAX.NodeHTML.create = function(node) {
-	if (typeof(node) == "object" && node.nodeType && node.nodeType == 1) {
-		var jaxId = parseInt(node.getAttribute("data-jax-id"),10) || -1;
-
-		if (jaxId<0) {
-			var f = Object.create(JAX.NodeHTML.prototype);
-			f._init(node);
-			return f;
+JAX.Node.create = function(node) {
+	if (typeof(node) == "object" && node.nodeType) {
+		switch(node.nodeType) {
+			case 1:
+				var jaxId = parseInt(node.getAttribute("data-jax-id"),10);
+				if (typeof(jaxId) != "number") { jaxId = -1; }
+				if (jaxId > -1) { return JAX.Node.instances.html[jaxId].instance; }
+			break;
+			case 3:
+				var index = JAX.Node.instances.text.indexOf(node);
+				if (index > -1) { return JAX.Node.instances.text[index].instance; }
+			break;
+			case 8:
+				var index = JAX.Node.instances.comment.indexOf(node);
+				if (index > -1) { return JAX.Node.instances.comment[index].instance; }
+			break;
+			case 9:
+				var index = JAX.Node.instances.doc.indexOf(node);
+				if (index > -1) { return JAX.Node.instances.doc[index].instance; }
+			break;
 		}
 
-		return JAX.allnodes[jaxId].instance;
+		var f = Object.create(JAX.Node.prototype);
+		f._init(node);
+		return f;
 	}
 
-	new JAX.E({funcName:"JAX.NodeHTML.create", caller:this.create})
+	new JAX.E({funcName:"JAX.Node.create", caller:this.create})
 		.expected("first argument", "HTML element", node)
 		.show();
 };
 
-JAX.NodeHTML.prototype.jaxNodeType = 1;
+JAX.Node.prototype.jaxNodeType = 0;
 
-JAX.NodeHTML.prototype.$constructor = function() {
-	new JAX.E({funcName:"JAX.NodeHTML.$constructor", caller:this.$constructor})
-		.message("You can not call this class with operator new. Use JAX.NodeHTML.create factory method instead of it")
+JAX.Node.prototype.$constructor = function() {
+	new JAX.E({funcName:"JAX.Node.$constructor", caller:this.$constructor})
+		.message("You can not call this class with operator new. Use JAX.Node.create factory method instead of it")
 		.show();
 };
 
-JAX.NodeHTML.prototype.$destructor = function() {
+JAX.Node.prototype.$destructor = function() {
 	this.destroy();
+
+	switch (this._node.nodeType) {
+		case 1:
+			JAX.Node.instances.html[this._jaxId] = null;
+		break;
+		case 3:
+			JAX.Node.instances.text[this._jaxId] = null;
+		break;
+		case 8:
+			JAX.Node.instances.comment[this._jaxId] = null;
+		break;
+		case 9:
+			JAX.Node.instances.doc[this._jaxId] = null;
+		break;
+	};
+
 	this._node = null;
 	this._storage = null;
-	delete JAX.allnodes[this._jaxId];
-	this._jaxId = "";
+	this._jaxId = -1;
 };
 
-JAX.NodeHTML.prototype.destroy = function() {
-	if (this._node.getAttribute("data-jax-locked")) { this._queueMethod(this.destroy, arguments); return this; }
+JAX.Node.prototype.destroy = function() {
+	if (this._node.getAttribute && this._node.getAttribute("data-jax-locked")) { this._queueMethod(this.destroy, arguments); return this; }
 	this.stopListening();
 	this.removeFromDOM();
 	this.clear();
 };
 
-JAX.NodeHTML.prototype.node = function() {
+JAX.Node.prototype.node = function() {
 	return this._node;
 };
 
-JAX.NodeHTML.prototype.$ = function(selector) {
+JAX.Node.prototype.$ = function(selector) {
 	return JAX.$(selector, this._node);
 };
 
-JAX.NodeHTML.prototype.$$ = function(selector) {
+JAX.Node.prototype.$$ = function(selector) {
 	return JAX.$$(selector, this._node);
 };
 
-JAX.NodeHTML.prototype.addClass = function() {
+JAX.Node.prototype.addClass = function() {
+	if (this._node.nodeType != 1) { return this; }
+
 	var classNames = [].slice.call(arguments);
 
 	if (classNames.length == 1) { classNames = classNames[0]; }
 
-	if (this._node.getAttribute("data-jax-locked")) {
+	if (this._node.getAttribute && this._node.getAttribute("data-jax-locked")) {
 		this._queueMethod(this.addClass, arguments); 
 		return this; 
 	} else if (typeof(classNames) == "string") {
@@ -85,17 +121,19 @@ JAX.NodeHTML.prototype.addClass = function() {
 		return this;
 	}
 
-	new JAX.E({funcName:"JAX.NodeHTML.addClass", node:this._node, caller:this.addClass})
+	new JAX.E({funcName:"JAX.Node.addClass", node:this._node, caller:this.addClass})
 		.expected("arguments", "string or array of strings", classNames)
 		.show();
 };
 
-JAX.NodeHTML.prototype.removeClass = function() {
+JAX.Node.prototype.removeClass = function() {
+	if (this._node.nodeType != 1) { return this; }
+
 	var classNames = [].slice.call(arguments);
 
 	if (classNames.length == 1) { classNames = classNames[0]; }
 
-	if (this._node.getAttribute("data-jax-locked")) {
+	if (this._node.getAttribute && this._node.getAttribute("data-jax-locked")) {
 		this._queueMethod(this.removeClass, arguments); 
 		return this; 
 	} else if (typeof(classNames) == "string") {
@@ -115,12 +153,14 @@ JAX.NodeHTML.prototype.removeClass = function() {
 		return this;
 	}
 
-	new JAX.E({funcName:"JAX.NodeHTML.removeClass", node:this._node, caller:this.removeClass})
+	new JAX.E({funcName:"JAX.Node.removeClass", node:this._node, caller:this.removeClass})
 		.expected("arguments", "string or array of strings", classNames)
 		.show();
 };
 
-JAX.NodeHTML.prototype.hasClass = function(className) {
+JAX.Node.prototype.hasClass = function(className) {
+	if (this._node.nodeType != 1) { return this; }
+
 	if (typeof(classname) == "string") {  
 		var names = className.split(" ");
 
@@ -132,15 +172,17 @@ JAX.NodeHTML.prototype.hasClass = function(className) {
 		return false;
 	}
 
-	new JAX.E({funcName:"JAX.NodeHTML.hasClass", node:this._node, caller:this.hasClass})
+	new JAX.E({funcName:"JAX.Node.hasClass", node:this._node, caller:this.hasClass})
 		.expected("first argument", "string", className)
 		.show();
 };
 
-JAX.NodeHTML.prototype.id = function(id) {
+JAX.Node.prototype.id = function(id) {
+	if (this._node.nodeType != 1) { return !arguments.length ? "" : this; }
+
 	if (!arguments.length) { 
 		return this.attr("id"); 
-	} else if (this._node.getAttribute("data-jax-locked")) {
+	} else if (this._node.getAttribute && this._node.getAttribute("data-jax-locked")) {
 		this._queueMethod(this.id, arguments); 
 		return this; 
 	} else if (typeof(id) == "string") { 
@@ -148,15 +190,17 @@ JAX.NodeHTML.prototype.id = function(id) {
 		return this;
 	}
 
-	new JAX.E({funcName:"JAX.NodeHTML.id", node:this._node, caller:this.id})
+	new JAX.E({funcName:"JAX.Node.id", node:this._node, caller:this.id})
 		.expected("first argument", "string", id)
 		.show();
 };
 
-JAX.NodeHTML.prototype.html = function(innerHTML) {
+JAX.Node.prototype.html = function(innerHTML) {
+	if (this._node.nodeType != 1) { return !arguments.length ? "" : this; }
+
 	if (!arguments.length) { 
 		return innerHTML; 
-	} else if (this._node.getAttribute("data-jax-locked")) {
+	} else if (this._node.getAttribute && this._node.getAttribute("data-jax-locked")) {
 		this._queueMethod(this.html, arguments); 
 		return this; 
 	} else if (typeof(innerHTML) == "string" || typeof(innerHTML) == "number") {
@@ -164,18 +208,18 @@ JAX.NodeHTML.prototype.html = function(innerHTML) {
 		return this;
 	}
 
-	new JAX.E({funcName:"JAX.NodeHTML.html", node:this._node, caller:this.html})
+	new JAX.E({funcName:"JAX.Node.html", node:this._node, caller:this.html})
 		.expected("first argument", "string", html)
 		.message("You can call it withou arguments. Then it will return innerHTML value.")
 		.show();
 };
 
-JAX.NodeHTML.prototype.add = function() {
+JAX.Node.prototype.add = function() {
 	var nodes = [].slice.call(arguments);
 
 	if (nodes.length == 1) { nodes = nodes[0]; }
 
-	if (this._node.getAttribute("data-jax-locked")) {
+	if (this._node.getAttribute && this._node.getAttribute("data-jax-locked")) {
 		this._queueMethod(this.add, arguments); 
 		return this; 
 	} else if (nodes && nodes instanceof Array) { 
@@ -188,16 +232,16 @@ JAX.NodeHTML.prototype.add = function() {
 		} catch(e) {}
 	}
 	
-	new JAX.E({funcName:"JAX.NodeHTML.add", node:this._node, caller:this.add})
-		.expected("arguments", "HTML node, textnode, instance of JAX.NodeHTML, JAX.NodeText or JAX.NodeDocFrag", nodes)
+	new JAX.E({funcName:"JAX.Node.add", node:this._node, caller:this.add})
+		.expected("arguments", "HTML node, textnode, instance of JAX.Node, JAX.NodeText or JAX.NodeDocFrag", nodes)
 		.message("You can call it with arguments separated by comma or array or single argument.")
 		.show();
 };
 
-JAX.NodeHTML.prototype.addBefore = function(node, nodeBefore) {
+JAX.Node.prototype.addBefore = function(node, nodeBefore) {
 	var error = 3;
 
-	if (this._node.getAttribute("data-jax-locked")) {
+	if (this._node.getAttribute && this._node.getAttribute("data-jax-locked")) {
 		this._queueMethod(this.addBefore, arguments); 
 		return this;  
 	} 
@@ -206,9 +250,9 @@ JAX.NodeHTML.prototype.addBefore = function(node, nodeBefore) {
 	if (typeof(nodeBefore) == "object" && (nodeBefore.nodeType || JAX.isJAXNode(nodeBefore))) { error -= 2; }
 
 	if (error) {
-		var e = new JAX.E({funcName:"JAX.NodeHTML.addBefore", node:this._node, caller:this.addBefore});
-		if (error & 1) { e.expected("first argument", "HTML element, textnode, instance of JAX.NodeHTML, JAX.NodeText or JAX.NodeDocFrag", node); }
-		if (error & 2) { e.expected("second argument", "HTML element, textnode, instance of JAX.NodeHTML or JAX.NodeText", nodeBefore); }
+		var e = new JAX.E({funcName:"JAX.Node.addBefore", node:this._node, caller:this.addBefore});
+		if (error & 1) { e.expected("first argument", "HTML element, textnode, instance of JAX.Node, JAX.NodeText or JAX.NodeDocFrag", node); }
+		if (error & 2) { e.expected("second argument", "HTML element, textnode, instance of JAX.Node or JAX.NodeText", nodeBefore); }
 		e.show();
 	}
 
@@ -220,8 +264,8 @@ JAX.NodeHTML.prototype.addBefore = function(node, nodeBefore) {
 	} catch(e) {}
 };
 
-JAX.NodeHTML.prototype.appendTo = function(node) {
-	if (this._node.getAttribute("data-jax-locked")) {
+JAX.Node.prototype.appendTo = function(node) {
+	if (this._node.getAttribute && this._node.getAttribute("data-jax-locked")) {
 		this._queueMethod(this.appendTo, arguments); 
 		return this; 
 	} else if (typeof(node) == "object" && (node.nodeType || JAX.isJAXNode(node))) { 
@@ -232,13 +276,13 @@ JAX.NodeHTML.prototype.appendTo = function(node) {
 		} catch(e) {}
 	}
 
-	new JAX.E({funcName:"JAX.NodeHTML.appendTo", node:this._node, caller:this.appendTo})
-		.expected("first argument", "HTML element, instance of JAX.NodeHTML or JAX.NodeDocFrag", nodes)
+	new JAX.E({funcName:"JAX.Node.appendTo", node:this._node, caller:this.appendTo})
+		.expected("first argument", "HTML element, instance of JAX.Node or JAX.NodeDocFrag", nodes)
 		.show();
 };
 
-JAX.NodeHTML.prototype.appendBefore = function(node) {
-	if (this._node.getAttribute("data-jax-locked")) {
+JAX.Node.prototype.appendBefore = function(node) {
+	if (this._node.getAttribute && this._node.getAttribute("data-jax-locked")) {
 		this._queueMethod(this.appendBefore, arguments); 
 		return this; 
 	} else if (typeof(node) == "object" && (node.nodeType || JAX.isJAXNode(node))) {
@@ -248,13 +292,13 @@ JAX.NodeHTML.prototype.appendBefore = function(node) {
 		} catch(e) {}
 	}
 
-	new JAX.E({funcName:"JAX.NodeHTML.appendBefore", node:this._node, caller:this.appendBefore})
-		.expected("first argument", "HTML element, text node, instance of JAX.NodeHTML or JAX.NodeText", nodes)
+	new JAX.E({funcName:"JAX.Node.appendBefore", node:this._node, caller:this.appendBefore})
+		.expected("first argument", "HTML element, text node, instance of JAX.Node or JAX.NodeText", nodes)
 		.show();
 };
 
-JAX.NodeHTML.prototype.removeFromDOM = function() {
-	if (this._node.getAttribute("data-jax-locked")) {
+JAX.Node.prototype.removeFromDOM = function() {
+	if (this._node.getAttribute && this._node.getAttribute("data-jax-locked")) {
 		this._queueMethod(this.removeFromDOM, arguments); 
 		return this; 
 	}
@@ -266,14 +310,26 @@ JAX.NodeHTML.prototype.removeFromDOM = function() {
 	return this;
 };
 
-JAX.NodeHTML.prototype.clone = function(withContent) {
+JAX.Node.prototype.clone = function(withContent) {
+	if (this._node.nodeType != 1) {
+		new JAX.E({funcName:"JAX.Node.clone", node:this._node, caller:this.clone})
+		.message("You can not use this method for this element. You can use it only for element with nodeType == 1.")
+		.show();
+	}
+
 	var withContent = !!withContent;
 	var clone = this._node.cloneNode(withContent);
 	clone.setAttribute("data-jax-id","");
-	return JAX.NodeHTML.create(clone);
+	return JAX.Node.create(clone);
 };
 
-JAX.NodeHTML.prototype.listen = function(type, funcMethod, obj, bindData) {
+JAX.Node.prototype.listen = function(type, funcMethod, obj, bindData) {
+	if ([1,9].indexOf(this._node.nodeType) == -1) { 
+		new JAX.E({funcName:"JAX.Node.listen", node:this._node, caller:this.listen})
+		.message("You can not use this method for this element. You can use it only for element with nodeType == 1.")
+		.show();
+	}
+
 	var error = 15;
 	var obj = obj || window;
 
@@ -291,7 +347,7 @@ JAX.NodeHTML.prototype.listen = function(type, funcMethod, obj, bindData) {
 	}
 
 	if (error) {
-		var e = new JAX.E({funcName:"JAX.NodeHTML.listen", node:this._node, caller:this.listen});
+		var e = new JAX.E({funcName:"JAX.Node.listen", node:this._node, caller:this.listen});
 		if (error & 1) { e.expected("first argument", "string", type); }
 		if (error & 2) { e.expected("second argument", "string or function", funcMethod); }
 		if (error & 4) { e.expected("third", "object", obj); }
@@ -309,8 +365,14 @@ JAX.NodeHTML.prototype.listen = function(type, funcMethod, obj, bindData) {
 	return listenerId;
 };
 
-JAX.NodeHTML.prototype.stopListening = function(type, listenerId) {
-	if (this._node.getAttribute("data-jax-locked")) {
+JAX.Node.prototype.stopListening = function(type, listenerId) {
+	if ([1,9].indexOf(this._node.nodeType) == -1) { 
+		new JAX.E({funcName:"JAX.Node.stopListening", node:this._node, caller:this.stopListening})
+		.message("You can not use this method for this element. You can use it only for element with nodeType == 1.")
+		.show();
+	}
+
+	if (this._node.getAttribute && this._node.getAttribute("data-jax-locked")) {
 		this._queueMethod(this.stopListening, arguments);
 		return this; 
 	} 
@@ -323,7 +385,7 @@ JAX.NodeHTML.prototype.stopListening = function(type, listenerId) {
 	}
 
 	if (typeof(type) != "string") {
-		new JAX.E({funcName:"JAX.NodeHTML.stopListening", node:this._node, caller:this.stopListening})
+		new JAX.E({funcName:"JAX.Node.stopListening", node:this._node, caller:this.stopListening})
 		.expected("first argument", "string", type)
 		.show(); 
 	}
@@ -345,12 +407,12 @@ JAX.NodeHTML.prototype.stopListening = function(type, listenerId) {
 	}
 
 	if (window.console && window.console.warn) { 
-		console.warn("JAX.NodeHTML.stopListening: no event listener id '" + listenerId + "' found. See doc for more information."); 
+		console.warn("JAX.Node.stopListening: no event listener id '" + listenerId + "' found. See doc for more information."); 
 	}
 	return this;
 };
 
-JAX.NodeHTML.prototype.attr = function() {
+JAX.Node.prototype.attr = function() {
 	var attributes = [].slice.call(arguments);
 
 	if (attributes.length > 1) { 
@@ -358,22 +420,25 @@ JAX.NodeHTML.prototype.attr = function() {
 	} else if (attributes.length == 1) {
 		attributes = attributes[0];
 	} else {
-		return [];
+		return {};
 	}
 
 	if (typeof(attributes) == "string") { 
-		return this._node.getAttribute(attributes); 
+		return this._node.nodeType == 1 ? node.getAttribute(attributes) : ""; 
 	} else if (attributes instanceof Array) {
 		var attrs = {};
+		if (this._node.nodeType != 1) { return attrs; }
 		for (var i=0, len=attributes.length; i<len; i++) { 
 			var attribute = attributes[i];
-			attrs[attribute] = this._node.getAttribute(attribute);
+			attrs[attribute] = node.getAttribute(attribute);
 		}
 		return attrs;	
-	} else if (this._node.getAttribute("data-jax-locked")) {
+	} else if (this._node.getAttribute && this._node.getAttribute("data-jax-locked")) {
 		this._queueMethod(this.attr, arguments); 
 		return this; 
 	}
+
+	if (this._node.nodeType != 1) { return this; }
 
 	for (var p in attributes) {
 		var value = attributes[p];
@@ -384,7 +449,7 @@ JAX.NodeHTML.prototype.attr = function() {
 };
 
 	
-JAX.NodeHTML.prototype.styleCss = function() {
+JAX.Node.prototype.styleCss = function() {
 	var cssStyles = [].slice.call(arguments);
 	
 	if (cssStyles.length > 1) { 
@@ -395,20 +460,24 @@ JAX.NodeHTML.prototype.styleCss = function() {
 		return [];
 	}
 
-	if (typeof(cssStyles) == "string") { 
+	if (typeof(cssStyles) == "string") {
+		if (this._node.nodeType != 1) { return ""; }
 		return cssStyles == "opacity" ? this._getOpacity() : this._node.style[cssStyles]; 
 	} else if (cssStyles instanceof Array) {
 		var css = {};
+		if (this._node.nodeType != 1) { return css; }
 		for (var i=0, len=cssStyles.length; i<len; i++) {
 			var cssStyle = cssStyles[i];
 			if (cssStyle == "opacity") { css[cssStyle] = this._getOpacity(); continue; }
 			css[cssStyle] = this._node.style[cssStyle];
 		}
 		return css;
-	} else if (this._node.getAttribute("data-jax-locked")) {
+	} else if (this._node.getAttribute && this._node.getAttribute("data-jax-locked")) {
 		this._queueMethod(this.style, arguments); 
 		return this; 
 	} 
+
+	if (this._node.nodeType != 1) { return this; }
 
 	for (var p in cssStyles) {
 		var value = cssStyles[p];
@@ -419,8 +488,10 @@ JAX.NodeHTML.prototype.styleCss = function() {
 	return this;
 };
 
-JAX.NodeHTML.prototype.displayOn = function(displayValue) {
-	if (this._node.getAttribute("data-jax-locked")) {
+JAX.Node.prototype.displayOn = function(displayValue) {
+	if (this._node.nodeType != 1) { return this; }
+
+	if (this._node.getAttribute && this._node.getAttribute("data-jax-locked")) {
 		this._queueMethod(this.displayOn, arguments); 
 		return this; 
 	} 
@@ -430,8 +501,10 @@ JAX.NodeHTML.prototype.displayOn = function(displayValue) {
 	return this;
 };
 
-JAX.NodeHTML.prototype.displayOff = function() {
-	if (this._node.getAttribute("data-jax-locked")) {
+JAX.Node.prototype.displayOff = function() {
+	if (this._node.nodeType != 1) { return this; }
+
+	if (this._node.getAttribute && this._node.getAttribute("data-jax-locked")) {
 		this._queueMethod(this.displayOff, arguments); 
 		return this; 
 	} 
@@ -440,7 +513,7 @@ JAX.NodeHTML.prototype.displayOff = function() {
 	return this;
 };
 
-JAX.NodeHTML.prototype.computedCss = function() {
+JAX.Node.prototype.computedCss = function() {
 	var cssStyles = arguments;
 
 	if (cssStyles.length > 1) { 
@@ -451,24 +524,27 @@ JAX.NodeHTML.prototype.computedCss = function() {
 		return [];
 	}
 
-	if (typeof(cssStyles) == "string") { 
+	if (typeof(cssStyles) == "string") {
+		if (this._node.nodeType != 1) { return ""; }
 		var value = JAK.DOM.getStyle(this._node, cssStyles);
-		if (this._node.runtimeStyle && !this._node.addEventListener && JAX.NodeHTML.MEASUREABLEVALUE.test(value)) { value = this._inPixels(value); }
+		if (this._node.runtimeStyle && !this._node.addEventListener && JAX.Node.MEASUREABLEVALUE.test(value)) { value = this._inPixels(value); }
 		return value;
 	}
 
 	var css = {};
+	if (this._node.nodeType != 1) { return css; }
 	var properties = [].concat(cssStyles);
+
 	for (var i=0, len=cssStyles.length; i<len; i++) {
 		var cssStyle = cssStyles[i];
 		var value = JAK.DOM.getStyle(this._node, cssStyle);
-		if (this._node.runtimeStyle && !this._node.addEventListener && JAX.NodeHTML.MEASUREABLEVALUE.test(value)) { value = this._inPixels(value); }
+		if (this._node.runtimeStyle && !this._node.addEventListener && JAX.Node.MEASUREABLEVALUE.test(value)) { value = this._inPixels(value); }
 		css[cssStyle] = value;
 	}
 	return css;
 };
 
-JAX.NodeHTML.prototype.fullWidth = function(value) {
+JAX.Node.prototype.fullWidth = function(value) {
 	if (!arguments.length) { 
 		var backupStyle = this.styleCss("display","visibility","position");
 		var isFixedPosition = this.computedCss("position").indexOf("fixed") == 0;
@@ -483,7 +559,7 @@ JAX.NodeHTML.prototype.fullWidth = function(value) {
 		return width; 
 	}
 
-	if (this._node.getAttribute("data-jax-locked")) {
+	if (this._node.getAttribute && this._node.getAttribute("data-jax-locked")) {
 		this._queueMethod(this.width, arguments); 
 		return this; 
 	} 
@@ -502,7 +578,7 @@ JAX.NodeHTML.prototype.fullWidth = function(value) {
 	return this;
 };
 
-JAX.NodeHTML.prototype.fullHeight = function(value) {
+JAX.Node.prototype.fullHeight = function(value) {
 	if (!arguments.length) { 
 		var backupStyle = this.styleCss("display","visibility","position");
 		var isFixedPosition = this.computedCss("position").indexOf("fixed") == 0;
@@ -517,7 +593,7 @@ JAX.NodeHTML.prototype.fullHeight = function(value) {
 		return height; 
 	}
 
-	if (this._node.getAttribute("data-jax-locked")) {
+	if (this._node.getAttribute && this._node.getAttribute("data-jax-locked")) {
 		this._queueMethod(this.height, arguments); 
 		return this; 
 	} 
@@ -536,20 +612,20 @@ JAX.NodeHTML.prototype.fullHeight = function(value) {
 	return this;
 };
 
-JAX.NodeHTML.prototype.parent = function() {
-	if (this._node.parentNode) { return JAX.NodeHTML.create(this._node.parentNode); }
+JAX.Node.prototype.parent = function() {
+	if (this._node.parentNode) { return JAX.Node.create(this._node.parentNode); }
 	return null;
 };
 
-JAX.NodeHTML.prototype.nSibling = function() {
+JAX.Node.prototype.nSibling = function() {
 	return this._node.nextSibling ? JAX.$$(this._node.nextSibling) : null;
 };
 
-JAX.NodeHTML.prototype.pSibling = function() {
+JAX.Node.prototype.pSibling = function() {
 	return this._node.previousSibling ? JAX.$$(this._node.previousSibling) : null;
 };
 
-JAX.NodeHTML.prototype.childs = function() {
+JAX.Node.prototype.childs = function() {
 	var nodes = [];
 	for (var i=0, len=this._node.childNodes.length; i<len; i++) {
 		var childNode = this._node.childNodes[i];
@@ -558,16 +634,22 @@ JAX.NodeHTML.prototype.childs = function() {
 	return nodes;
 };
 
-JAX.NodeHTML.prototype.fChild = function() {
+JAX.Node.prototype.fChild = function() {
 	return this._node.firstChild ? JAX.$$(this._node.firstChild) : null;
 }
 
-JAX.NodeHTML.prototype.lChild = function() {
+JAX.Node.prototype.lChild = function() {
 	return this._node.lastChild ? JAX.$$(this._node.lastChild) : null;
 }
 
-JAX.NodeHTML.prototype.clear = function() {
-	if (this._node.getAttribute("data-jax-locked")) {
+JAX.Node.prototype.clear = function() {
+	if (this._node.nodeType != 1) {
+		new JAX.E({funcName:"JAX.Node.clear", node:this._node, caller:this.clear})
+		.message("You can not use this method for this element. You can use it only for element with nodeType == 1.")
+		.show();
+	}
+
+	if (this._node.getAttribute && this._node.getAttribute("data-jax-locked")) {
 		this._queueMethod(this.clear, arguments); 
 		return this; 
 	} 
@@ -575,7 +657,13 @@ JAX.NodeHTML.prototype.clear = function() {
 	return this;
 };
 
-JAX.NodeHTML.prototype.contains = function(node) {
+JAX.Node.prototype.contains = function(node) {
+	if (this._node.nodeType != 1) {
+		new JAX.E({funcName:"JAX.Node.contains", node:this._node, caller:this.contains})
+		.message("You can not use this method for this element. You can use it only for element with nodeType == 1.")
+		.show();
+	}
+
 	if (typeof(node) == "object" && (node.nodeType || JAX.isJAXNode(node))) {
 		var elm = node.jaxNodeType ? node.node().parentNode : node.parentNode;
 		while(elm) {
@@ -585,27 +673,39 @@ JAX.NodeHTML.prototype.contains = function(node) {
 		return false;
 	}
 	
-	new JAX.E({funcName:"JAX.NodeHTML.contains", node:this._node, caller:this.contains})
-		.expected("first argument", "HTML element, text node, instance of JAX.NodeHTML or JAX.NodeText", node)
+	new JAX.E({funcName:"JAX.Node.contains", node:this._node, caller:this.contains})
+		.expected("first argument", "HTML element, text node, instance of JAX.Node or JAX.NodeText", node)
 		.show();
 };
 
-JAX.NodeHTML.prototype.isChildOf = function(node) {
+JAX.Node.prototype.isChildOf = function(node) {
+	if ([1,3,8].indexOf(this._node.nodeType) == -1) {
+		new JAX.E({funcName:"JAX.Node.displayOn", node:this._node, caller:this.displayOn})
+		.message("You can not use this method for this element. You can use it only for element with nodeType == 1.")
+		.show();
+	}
+
 	if (typeof(node) == "object" && (node.nodeType || JAX.isJAXNode(node))) {
-		var elm = node.jaxNodeType ? node : JAX.NodeHTML.create(node);
+		var elm = node.jaxNodeType ? node : JAX.Node.create(node);
 		return elm.contains(this);
 	}
 
-	new JAX.E({funcName:"JAX.NodeHTML.isChildOf", node:this._node, caller:this.isChildOf})
-		.expected("first argument", "HTML element, JAX.NodeHTML or JAX.NodeDocFrag", node)
+	new JAX.E({funcName:"JAX.Node.isChildOf", node:this._node, caller:this.isChildOf})
+		.expected("first argument", "HTML element, JAX.Node or JAX.NodeDocFrag", node)
 		.show();
 };
 
-JAX.NodeHTML.prototype.fade = function(type, duration, completeCbk) {
+JAX.Node.prototype.fade = function(type, duration, completeCbk) {
+	if (this._node.nodeType != 1) {
+		new JAX.E({funcName:"JAX.Node.fade", node:this._node, caller:this.fade})
+		.message("You can not use this method for this element. You can use it only for element with nodeType == 1.")
+		.show();
+	}
+
 	var error = 7;
 	var duration = duration || 0;
 
-	if (this._node.getAttribute("data-jax-locked")) {
+	if (this._node.getAttribute && this._node.getAttribute("data-jax-locked")) {
 		this._queueMethod(this.fade, arguments); 
 		return this; 
 	}
@@ -615,7 +715,7 @@ JAX.NodeHTML.prototype.fade = function(type, duration, completeCbk) {
 	if (!completeCbk || typeof(completeCbk) == "function") { error -= 4; }
 
 	if (error) {
-		var e = JAX.E({funcName:"JAX.NodeHTML.fade", node:this._node, caller:this.fade});
+		var e = JAX.E({funcName:"JAX.Node.fade", node:this._node, caller:this.fade});
 		if (error & 1) { e.expected("first argument", "string", type); }
 		if (error & 2) { e.expected("second argument", "number", duration); }
 		if (error & 4) { e.expected("third argument", "function", completeCbk); }
@@ -632,7 +732,7 @@ JAX.NodeHTML.prototype.fade = function(type, duration, completeCbk) {
 			var targetOpacity = 0;
 		break;
 		default:
-			console.warn("JAX.NodeHTML.fade got unsupported type '" + type + "'.");
+			console.warn("JAX.Node.fade got unsupported type '" + type + "'.");
 			return this;
 	}
 
@@ -650,11 +750,17 @@ JAX.NodeHTML.prototype.fade = function(type, duration, completeCbk) {
 	return this;
 };
 
-JAX.NodeHTML.prototype.fadeTo = function(opacityValue, duration, completeCbk) {
+JAX.Node.prototype.fadeTo = function(opacityValue, duration, completeCbk) {
+	if (this._node.nodeType != 1) {
+		new JAX.E({funcName:"JAX.Node.fadeTo", node:this._node, caller:this.fadeTo})
+		.message("You can not use this method for this element. You can use it only for element with nodeType == 1.")
+		.show();
+	}
+
 	var error = 7;
 	var duration = duration || 0;
 
-	if (this._node.getAttribute("data-jax-locked")) {
+	if (this._node.getAttribute && this._node.getAttribute("data-jax-locked")) {
 		this._queueMethod(this.fade, arguments); 
 		return this; 
 	}
@@ -664,7 +770,7 @@ JAX.NodeHTML.prototype.fadeTo = function(opacityValue, duration, completeCbk) {
 	if (!completeCbk || typeof(completeCbk) == "function") { error -= 4; }
 
 	if (error) {
-		var e = JAX.E({funcName:"JAX.NodeHTML.fadeTo", node:this._node, caller:this.fadeTo});
+		var e = JAX.E({funcName:"JAX.Node.fadeTo", node:this._node, caller:this.fadeTo});
 		if (error & 1) { e.expected("first argument", "number", opacityValue); }
 		if (error & 2) { e.expected("second argument", "number", duration); }
 		if (error & 4) { e.expected("third argument", "function", completeCbk); }
@@ -688,11 +794,17 @@ JAX.NodeHTML.prototype.fadeTo = function(opacityValue, duration, completeCbk) {
 	return this;
 };
 
-JAX.NodeHTML.prototype.slide = function(type, duration, completeCbk) {
+JAX.Node.prototype.slide = function(type, duration, completeCbk) {
+	if (this._node.nodeType != 1) {
+		new JAX.E({funcName:"JAX.Node.slide", node:this._node, caller:this.slide})
+		.message("You can not use this method for this element. You can use it only for element with nodeType == 1.")
+		.show();
+	}
+
 	var error = 7;
 	var duration = duration || 0;
 
-	if (this._node.getAttribute("data-jax-locked")) {
+	if (this._node.getAttribute && this._node.getAttribute("data-jax-locked")) {
 		this._queueMethod(this.slide, arguments); 
 		return this; 
 	} 
@@ -702,7 +814,7 @@ JAX.NodeHTML.prototype.slide = function(type, duration, completeCbk) {
 	if (!completeCbk || typeof(completeCbk) == "function") { error -= 4; }
 
 	if (error) {
-		var e = JAX.E({funcName:"JAX.NodeHTML.slide", node:this._node, caller:this.slide});
+		var e = JAX.E({funcName:"JAX.Node.slide", node:this._node, caller:this.slide});
 		if (error & 1) { e.expected("first argument", "string", type); }
 		if (error & 2) { e.expected("second argument", "number", duration); }
 		if (error & 4) { e.expected("third argument", "function", completeCbk); }
@@ -735,7 +847,7 @@ JAX.NodeHTML.prototype.slide = function(type, duration, completeCbk) {
 			var target = this.fullWidth();
 		break;
 		default:
-			if (window.console && window.console.warn) { console.warn("JAX.NodeHTML.slide got unsupported type '" + type + "'."); }
+			if (window.console && window.console.warn) { console.warn("JAX.Node.slide got unsupported type '" + type + "'."); }
 			return this;
 	}
 
@@ -756,46 +868,93 @@ JAX.NodeHTML.prototype.slide = function(type, duration, completeCbk) {
 	return this;
 };
 
-JAX.NodeHTML.prototype.lock = function() {
-	this._node.setAttribute("data-jax-locked","1");
+JAX.Node.prototype.lock = function() {
+	if (this._node.nodeType == 1) { this._node.setAttribute("data-jax-locked","1"); }
+	return this;
 };
 
-JAX.NodeHTML.prototype.isLocked = function() {
-	return !!this._node.getAttribute("data-jax-locked");
+JAX.Node.prototype.isLocked = function() {
+	if (this._node.nodeType != 1) { return false; }
+
+	return !!node.getAttribute("data-jax-locked");
 }
 
-JAX.NodeHTML.prototype.unlock = function() {
-	var queue = this._storage.lockQueue;
-	this._node.removeAttribute("data-jax-locked");
-	while(queue.length) {
-		var q = queue.shift();
-		q.method.apply(this, q.args);
+JAX.Node.prototype.unlock = function() {
+	if (this._node.nodeType == 1) {
+		var queue = this._storage.lockQueue;
+		this._node.removeAttribute("data-jax-locked");
+		while(queue.length) {
+			var q = queue.shift();
+			q.method.apply(this, q.args);
+		}
 	}
+
+	return this;
 };
 
-JAX.NodeHTML.prototype._init = function(node) {  	
+JAX.Node.prototype._init = function(node) {  	
 	this._node = node;
+	this.jaxNodeType = this._node.nodeType;
 
 	/* set jax id for new (old) node */
-	var oldJaxId = parseInt(node.getAttribute("data-jax-id"),10) || -1;
+	var oldJaxId = -1;
+	if (node.getAttribute) { 
+		var oldJaxId = parseInt(node.getAttribute("data-jax-id"),10);
+		if (typeof(oldJaxId) != "number") { oldJaxId = -1; }
+	}
+
 	if (oldJaxId > -1) {
 		this._jaxId = oldJaxId;
-		this._storage = JAX.allnodes[this._jaxId];
+		this._storage = JAX.Node.instances.html[this._jaxId];
 		this._storage.instance = this;
-	} else {
-		this._jaxId = ++JAX.NodeHTML.idCounter;
-		node.setAttribute("data-jax-id", this._jaxId);
-		var storage = {
-			instance: this,
-			events: {},
-			lockQueue: []
-		};
-		JAX.allnodes[this._jaxId] = storage;
-		this._storage = storage;
+		return;
+	}
+
+	switch(this._node.nodeType) {
+		case 1:
+			this._jaxId = JAX.Node.instances.html.length;
+			this._node.setAttribute("data-jax-id", this._jaxId);
+
+			var storage = {
+				instance: this,
+				events: {},
+				lockQueue: []
+			};
+
+			JAX.Node.instances.html.push(storage);
+			this._storage = storage;
+		break;
+		case 3:
+			this._jaxId = JAX.Node.instances.text.length;
+
+			var storage = { instance: this };
+
+			JAX.Node.instances.text.push(storage);
+			this._storage = storage;
+		break;
+		case 8:
+			this._jaxId = JAX.Node.instances.comment.length;
+
+			var storage = { instance: this };
+
+			JAX.Node.instances.comment.push(storage);
+			this._storage = storage;
+		break;
+		case 9:
+			this._jaxId = JAX.Node.instances.doc.length;
+
+			var storage = { 
+				instance: this,
+				events: {}
+			};
+
+			JAX.Node.instances.doc.push(storage);
+			this._storage = storage;
+		break;
 	}
 };
 
-JAX.NodeHTML.prototype._inPixels = function(value) {
+JAX.Node.prototype._inPixels = function(value) {
 	var style = this._node.style.left;
 	var rStyle = this._node.runtimeStyle.left; 
     this._node.runtimeStyle.left = this._node.currentStyle.left;
@@ -807,7 +966,7 @@ JAX.NodeHTML.prototype._inPixels = function(value) {
     return value;
 };
 
-JAX.NodeHTML.prototype._setOpacity = function(value) {
+JAX.Node.prototype._setOpacity = function(value) {
 	var property = "";
 
 	if (JAK.Browser.client == "ie" && JAK.Browser.version < 9) { 
@@ -821,7 +980,7 @@ JAX.NodeHTML.prototype._setOpacity = function(value) {
 
 };
 
-JAX.NodeHTML.prototype._getOpacity = function() {
+JAX.Node.prototype._getOpacity = function() {
 	if (JAK.Browser.client == "ie" && JAK.Browser.version < 9) {
 		var value = "";
 		this._node.style.filter.replace(JAX.Animation.REGEXP_OPACITY, function(match1, match2) {
@@ -832,11 +991,11 @@ JAX.NodeHTML.prototype._getOpacity = function() {
 	return this._node.style["opacity"];
 };
 
-JAX.NodeHTML.prototype._queueMethod = function(method, args) {
+JAX.Node.prototype._queueMethod = function(method, args) {
 	this._storage.lockQueue.push({method:method, args:args});
 };
 
-JAX.NodeHTML.prototype._destroyEvents = function(eventListeners) {
+JAX.Node.prototype._destroyEvents = function(eventListeners) {
 	JAK.Events.removeListeners(eventListeners);
 };
 
