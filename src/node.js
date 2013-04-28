@@ -4,33 +4,46 @@ JAX.Node = JAK.ClassMaker.makeClass({
 });
 
 JAX.Node.MEASUREABLEVALUE = /^(?:-)?\d+(\.\d+)?(%|em|in|cm|mm|ex|pt|pc)?$/i
-JAX.Node.instances = {
-	html: [],
-	text: [],
-	doc: [],
-	comment: []
-};
+
+JAX.Node.ELEMENT_NODE = 1;
+JAX.Node.TEXT_NODE = 3;
+JAX.Node.COMMENT_NODE = 8;
+JAX.Node.DOCUMENT_NODE = 9;
+JAX.Node.DOCUMENT_FRAGMENT_NODE = 11;
+
+JAX.Node.instances = {};
+JAX.Node.instances[JAX.Node.ELEMENT_NODE] = {};
+JAX.Node.instances[JAX.Node.TEXT_NODE] = {};
+JAX.Node.instances[JAX.Node.COMMENT_NODE] = {};
+JAX.Node.instances[JAX.Node.DOCUMENT_NODE] = {};
+JAX.Node.instances[JAX.Node.DOCUMENT_FRAGMENT_NODE] = {};
+
+JAX.Node._ids = {};
+JAX.Node._ids[JAX.Node.ELEMENT_NODE] = 0;
+JAX.Node._ids[JAX.Node.TEXT_NODE] = 0;
+JAX.Node._ids[JAX.Node.COMMENT_NODE] = 0;
+JAX.Node._ids[JAX.Node.DOCUMENT_NODE] = 0;
+JAX.Node._ids[JAX.Node.DOCUMENT_FRAGMENT_NODE] = 0;
 
 JAX.Node.create = function(node) {
 	if (typeof(node) == "object" && node.nodeType) {
-		switch(node.nodeType) {
-			case 1:
-				var jaxId = parseInt(node.getAttribute("data-jax-id"),10);
-				if (typeof(jaxId) != "number") { jaxId = -1; }
-				if (jaxId > -1) { return JAX.Node.instances.html[jaxId].instance; }
-			break;
-			case 3:
-				var index = JAX.Node.instances.text.indexOf(node);
-				if (index > -1) { return JAX.Node.instances.text[index].instance; }
-			break;
-			case 8:
-				var index = JAX.Node.instances.comment.indexOf(node);
-				if (index > -1) { return JAX.Node.instances.comment[index].instance; }
-			break;
-			case 9:
-				var index = JAX.Node.instances.doc.indexOf(node);
-				if (index > -1) { return JAX.Node.instances.doc[index].instance; }
-			break;
+		var nodeType = node.nodeType;
+
+		if (nodeType in JAX.Node.instances) {
+			switch(nodeType) {
+				case JAX.Node.ELEMENT_NODE:
+					var jaxId = parseInt(node.getAttribute("data-jax-id"),10);
+					if (typeof(jaxId) != "number") { jaxId = -1; }
+					if (jaxId > -1) { return JAX.Node.instances[JAX.Node.ELEMENT_NODE][jaxId].instance; }
+				break;
+				default:
+					var index = -1;
+					var instances = JAX.Node.instances[nodeType];
+					for (var i in instances) { 
+						if (node == instances[i].node) { index = i; break; }
+					}
+					if (index > -1) { return JAX.Node.instances[nodeType][index].instance; }
+			}
 		}
 
 		var f = Object.create(JAX.Node.prototype);
@@ -54,20 +67,7 @@ JAX.Node.prototype.$constructor = function() {
 JAX.Node.prototype.$destructor = function() {
 	this.destroy();
 
-	switch (this._node.nodeType) {
-		case 1:
-			JAX.Node.instances.html[this._jaxId] = null;
-		break;
-		case 3:
-			JAX.Node.instances.text[this._jaxId] = null;
-		break;
-		case 8:
-			JAX.Node.instances.comment[this._jaxId] = null;
-		break;
-		case 9:
-			JAX.Node.instances.doc[this._jaxId] = null;
-		break;
-	};
+	if (this._node.nodeType in JAX.Node.instances) { delete JAX.Node.instances[this._node.nodeType][this._jaxId]; }
 
 	this._node = null;
 	this._storage = null;
@@ -76,9 +76,9 @@ JAX.Node.prototype.$destructor = function() {
 
 JAX.Node.prototype.destroy = function() {
 	if (this._node.getAttribute && this._node.getAttribute("data-jax-locked")) { this._queueMethod(this.destroy, arguments); return this; }
-	this.stopListening();
-	this.removeFromDOM();
-	this.clear();
+	if ([1,9].indexOf(this._node.nodeType) != -1) { this.stopListening(); }
+	if ([1,3,8].indexOf(this._node.nodeType) != -1) { this.removeFromDOM(); }
+	if ([1,11].indexOf(this._node.nodeType) != -1) { this.clear(); }
 };
 
 JAX.Node.prototype.node = function() {
@@ -626,6 +626,7 @@ JAX.Node.prototype.pSibling = function() {
 };
 
 JAX.Node.prototype.childs = function() {
+	if (!this._node.childNodes) { return []; }
 	var nodes = [];
 	for (var i=0, len=this._node.childNodes.length; i<len; i++) {
 		var childNode = this._node.childNodes[i];
@@ -643,7 +644,7 @@ JAX.Node.prototype.lChild = function() {
 }
 
 JAX.Node.prototype.clear = function() {
-	if (this._node.nodeType != 1) {
+	if (this._node.nodeType != 1 && this._node.nodeType != 11) {
 		new JAX.E({funcName:"JAX.Node.clear", node:this._node, caller:this.clear})
 		.message("You can not use this method for this element. You can use it only for element with nodeType == 1.")
 		.show();
@@ -910,47 +911,45 @@ JAX.Node.prototype._init = function(node) {
 		return;
 	}
 
-	switch(this._node.nodeType) {
-		case 1:
-			this._jaxId = JAX.Node.instances.html.length;
-			this._node.setAttribute("data-jax-id", this._jaxId);
+	if (this._node.nodeType in JAX.Node.instances) {
+		switch(this._node.nodeType) {
+			case JAX.Node.ELEMENT_NODE:
+				this._jaxId = JAX.Node._ids[JAX.Node.ELEMENT_NODE]++;
+				this._node.setAttribute("data-jax-id", this._jaxId);
 
-			var storage = {
-				instance: this,
-				events: {},
-				lockQueue: []
-			};
+				var storage = {
+					instance: this,
+					events: {},
+					lockQueue: []
+				};
 
-			JAX.Node.instances.html.push(storage);
-			this._storage = storage;
-		break;
-		case 3:
-			this._jaxId = JAX.Node.instances.text.length;
+				JAX.Node.instances[JAX.Node.ELEMENT_NODE][this._jaxId] = storage;
+				this._storage = storage;
+			break;
+			case JAX.Node.TEXT_NODE:
+			case JAX.Node.COMMENT_NODE:
+			case JAX.Node.DOCUMENT_FRAGMENT_NODE:
+				var nodeType = this._node.nodeType;
+				this._jaxId = JAX.Node._ids[nodeType]++;
 
-			var storage = { instance: this };
+				var storage = { instance: this, node: node };
 
-			JAX.Node.instances.text.push(storage);
-			this._storage = storage;
-		break;
-		case 8:
-			this._jaxId = JAX.Node.instances.comment.length;
+				JAX.Node.instances[nodeType][this._jaxId] = storage;
+				this._storage = storage;
+			break;
+			case JAX.Node.DOCUMENT_NODE:
+				this._jaxId = JAX.Node._ids[JAX.Node.DOCUMENT_NODE]++;
 
-			var storage = { instance: this };
+				var storage = { 
+					instance: this,
+					events: {},
+					node: node
+				};
 
-			JAX.Node.instances.comment.push(storage);
-			this._storage = storage;
-		break;
-		case 9:
-			this._jaxId = JAX.Node.instances.doc.length;
-
-			var storage = { 
-				instance: this,
-				events: {}
-			};
-
-			JAX.Node.instances.doc.push(storage);
-			this._storage = storage;
-		break;
+				JAX.Node.instances[JAX.Node.DOCUMENT_NODE][this._jaxId] = storage;
+				this._storage = storage;
+			break;
+		}
 	}
 };
 
