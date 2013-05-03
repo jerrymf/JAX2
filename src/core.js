@@ -2,12 +2,11 @@ JAX = {
 	VERSION: "1.97b"
 };
 
-JAX.TAG_RXP = /^([a-zA-Z]*)/g;
+JAX.TAG_RXP = /^([a-zA-Z]+[a-zA-Z0-9]*)/g;
 JAX.CLASS_ID_RXP = /([\.#])([^\.#]*)/g;
-JAX.allnodes = [];
 
 JAX.$ = function(selector, srcElement) {
-	if (JAX.isString(selector)) {
+	if (typeof(selector) == "string") {
 		var srcElement = srcElement || document;
 		var foundElms = srcElement.querySelectorAll(selector);
 		var jaxelms = new Array(foundElms.length);
@@ -25,7 +24,7 @@ JAX.$ = function(selector, srcElement) {
 };
 
 JAX.$$ = function(selector, srcElement) {
-	if (JAX.isString(selector)) {
+	if (typeof(selector) == "string") {
 		var srcElement = srcElement || document;
 		var foundElm = srcElement.querySelector(selector);
 		var jaxelm = foundElm ? JAX.Node.create(foundElm) : null;
@@ -95,7 +94,7 @@ JAX.make = function(tagString, attrs, styles, srcDocument) {
 };
 
 JAX.makeText = function(text, doc) {
-	return new JAX.NodeText((doc || document).createTextNode(text));
+	return JAX.Node.create((doc || document).createTextNode(text));
 };
 
 JAX.isNumber = function(value) {

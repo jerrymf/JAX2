@@ -224,6 +224,7 @@ JAX.Node.prototype.add = function() {
 		return this; 
 	} else if (nodes && nodes instanceof Array) { 
 		for (var i=0, len=nodes.length; i<len; i++) { this.add(nodes[i]); }
+		return this;
 	} else if (nodes && (nodes.nodeType || JAX.isJAXNode(nodes))) {
 		var node = nodes.jaxNodeType ? nodes.node() : nodes;
 		try {

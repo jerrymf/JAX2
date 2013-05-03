@@ -5,13 +5,13 @@ JAX.DOMBuilder = JAK.ClassMaker.makeClass({
 
 JAX.DOMBuilder.prototype.$constructor = function(doc) {
 	this._doc = doc || document;
-	this._jax = { container: JAX.Node.create(document.createDocumentFragment) };
+	this._jax = { container: JAX.Node.create(document.createDocumentFragment()) };
 	this._pointerJaxNode = null;
 	this._stack = [];
 };
 
 JAX.DOMBuilder.prototype.open = function(element, attributes, styles) {
-	var jaxNode = null;
+	var jaxNode = element;
 
 	if (typeof(element) == "string") {
 		jaxNode = JAX.make(element, attributes, styles, this._doc);
@@ -37,13 +37,17 @@ JAX.DOMBuilder.prototype.open = function(element, attributes, styles) {
 }
 
 JAX.DOMBuilder.prototype.add = function(node, attributes, styles) {
+	var jaxNode = node;
+
 	if (typeof(node) == "string") {
-		var jaxNode = JAX.make(node, attributes, styles);
+		jaxNode = JAX.make(node, attributes, styles);
 	} else if (typeof(node) == "object" && node.nodeType) {
-		var jaxNode = JAX.$$(node);
+		jaxNode = JAX.$$(node);
 		if (attributes) { jaxNode.attr(attributes); }
 		if (styles) { jaxNode.style(styles); }
-	} else if (!JAX.isJAXNode(node) && node.jaxNodeType == 9) {
+	}
+
+	if (!JAX.isJAXNode(node) && node.jaxNodeType == 9) {
 		new JAX.E({funcName:"JAX.DOMBuilder.add", caller:this.add})
 		.expected("first argument", "string, node, instance of JAX.NodeHTML, JAX.NodeText, JAX.NodeDocFrag", node)
 		.show(); 
@@ -63,7 +67,7 @@ JAX.DOMBuilder.prototype.add = function(node, attributes, styles) {
 
 JAX.DOMBuilder.prototype.addText = function(txt) {
 	if (typeof(txt) == "string") {
-		var jaxNode = JAX.makeText(node);
+		var jaxNode = JAX.makeText(txt);
 
 		if (this._pointerJaxNode) {
 			this._pointerJaxNode.add(jaxNode);
