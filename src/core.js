@@ -1,6 +1,6 @@
 /* version 1.99 */
 
-JAX = function(selector, srcElement) {
+var JAX = function(selector, srcElement) {
 	if (typeof(selector) == "string") {
 		var srcElement = srcElement || document;
 		var foundElm = srcElement.querySelector(selector);
