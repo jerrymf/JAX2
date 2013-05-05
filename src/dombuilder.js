@@ -16,7 +16,7 @@ JAX.DOMBuilder.prototype.open = function(element, attributes, styles) {
 	if (typeof(element) == "string") {
 		jaxNode = JAX.make(element, attributes, styles, this._doc);
 	} else if (typeof(element) == "object" && element.nodeType) {
-		jaxNode = JAX.$$(element);
+		jaxNode = JAX(element);
 	}
 
 	if (jaxNode && jaxNode.jaxNodeType != 9) {
@@ -42,7 +42,7 @@ JAX.DOMBuilder.prototype.add = function(node, attributes, styles) {
 	if (typeof(node) == "string") {
 		jaxNode = JAX.make(node, attributes, styles);
 	} else if (typeof(node) == "object" && node.nodeType) {
-		jaxNode = JAX.$$(node);
+		jaxNode = JAX(node);
 		if (attributes) { jaxNode.attr(attributes); }
 		if (styles) { jaxNode.style(styles); }
 	}
@@ -98,7 +98,7 @@ JAX.DOMBuilder.prototype.appendTo = function(node) {
 	var jaxNode = null;
 
 	if (typeof(node) == "object" && node.nodeType) {
-		var jaxNode = JAX.$$(node);
+		var jaxNode = JAX(node);
 	} else if (JAX.isJAXNode(node) && node.jaxNodeType == 1) {
 		var jaxNode = node;
 	} else {

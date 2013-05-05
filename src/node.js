@@ -86,11 +86,11 @@ JAX.Node.prototype.node = function() {
 };
 
 JAX.Node.prototype.$ = function(selector) {
-	return JAX.$(selector, this._node);
+	return JAX.all(selector, this._node);
 };
 
 JAX.Node.prototype.$$ = function(selector) {
-	return JAX.$$(selector, this._node);
+	return JAX(selector, this._node);
 };
 
 JAX.Node.prototype.addClass = function() {
@@ -619,11 +619,11 @@ JAX.Node.prototype.parent = function() {
 };
 
 JAX.Node.prototype.nSibling = function() {
-	return this._node.nextSibling ? JAX.$$(this._node.nextSibling) : null;
+	return this._node.nextSibling ? JAX(this._node.nextSibling) : null;
 };
 
 JAX.Node.prototype.pSibling = function() {
-	return this._node.previousSibling ? JAX.$$(this._node.previousSibling) : null;
+	return this._node.previousSibling ? JAX(this._node.previousSibling) : null;
 };
 
 JAX.Node.prototype.childs = function() {
@@ -631,17 +631,17 @@ JAX.Node.prototype.childs = function() {
 	var nodes = [];
 	for (var i=0, len=this._node.childNodes.length; i<len; i++) {
 		var childNode = this._node.childNodes[i];
-		nodes.push(JAX.$$(childNode));
+		nodes.push(JAX(childNode));
 	}
 	return nodes;
 };
 
 JAX.Node.prototype.fChild = function() {
-	return this._node.firstChild ? JAX.$$(this._node.firstChild) : null;
+	return this._node.firstChild ? JAX(this._node.firstChild) : null;
 }
 
 JAX.Node.prototype.lChild = function() {
-	return this._node.lastChild ? JAX.$$(this._node.lastChild) : null;
+	return this._node.lastChild ? JAX(this._node.lastChild) : null;
 }
 
 JAX.Node.prototype.clear = function() {

@@ -1,23 +1,29 @@
 REM Zretezeni vsech knihoven do jedne
 @ECHO OFF
 
-ECHO (function() { > jax.js
-ECHO. >> jax.js
-type ".\src\core.js" >> jax.js
-ECHO. >> jax.js
-type ".\src\node.js" >> jax.js
-ECHO. >> jax.js
-type ".\src\nodearray.js" >> jax.js
-ECHO. >> jax.js
-type ".\src\dombuilder.js" >> jax.js
-ECHO. >> jax.js
-type ".\src\animation.js" >> jax.js
-ECHO. >> jax.js
-type ".\src\e.js" >> jax.js
-ECHO. >> jax.js
-ECHO if (!window.JAX) { window.JAX = JAX; } >> jax.js
-ECHO. >> jax.js
-ECHO })(); >> jax.js
+ECHO (function() { > ".\lib\jax.js"
+ECHO. >> ".\lib\jax.js"
+type ".\src\core.js" >> ".\lib\jax.js"
+ECHO. >> ".\lib\jax.js"
+type ".\src\node.js" >> ".\lib\jax.js"
+ECHO. >> ".\lib\jax.js"
+type ".\src\nodearray.js" >> ".\lib\jax.js"
+ECHO. >> ".\lib\jax.js"
+type ".\src\dombuilder.js" >> ".\lib\jax.js"
+ECHO. >> ".\lib\jax.js"
+type ".\src\animation.js" >> ".\lib\jax.js"
+ECHO. >> ".\lib\jax.js"
+type ".\src\e.js" >> ".\lib\jax.js"
+ECHO. >> ".\lib\jax.js"
+type ".\src\common.js" >> ".\lib\jax.js"
+ECHO. >> ".\lib\jax.js"
+ECHO })(); >> ".\lib\jax.js"
 
-XCOPY /Y jax.js "./lib/jax.js"
-DEL jax.js
+XCOPY /y ".\src\dependencies\jak.js" ".\lib\jak.js"
+XCOPY /y ".\src\dependencies\interpolator.js" ".\lib\interpolator.js"
+
+type ".\lib\jak.js" > ".\lib\jax-all.js"
+type ".\lib\interpolator.js" >> ".\lib\jax-all.js"
+type ".\lib\jax.js" >> ".\lib\jax-all.js"
+
+java -jar ".\bin\compiler.jar" --js ".\lib\jax-all.js"  --js_output_file ".\lib\jax-all-minified.js" --compilation_level ADVANCED_OPTIMIZATIONS

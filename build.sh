@@ -9,12 +9,12 @@ cat nodearray.js >> ../lib/jax.js
 cat dombuilder.js >> ../lib/jax.js
 cat animation.js >> ../lib/jax.js
 cat e.js >> ../lib/jax.js
-cp ./dependencies/jak.js ../lib/jak.js
-cp ./dependencies/interpolator.js ../lib/interpolator.js
 
-echo "if (!window.JAX) { window.JAX = JAX; }" >> ../lib/jax.js
 echo "" >> ../lib/jax.js
 echo "})();" >> ../lib/jax.js
+
+cp ./dependencies/jak.js ../lib/jak.js
+cp ./dependencies/interpolator.js ../lib/interpolator.js
 
 cat ../lib/jak.js > ../lib/jax-all.js
 cat ../lib/interpolator.js >> ../lib/jax-all.js

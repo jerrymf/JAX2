@@ -1,11 +1,22 @@
-JAX = {
-	VERSION: "1.97b"
+/* version 1.99 */
+
+JAX = function(selector, srcElement) {
+	if (typeof(selector) == "string") {
+		var srcElement = srcElement || document;
+		var foundElm = srcElement.querySelector(selector);
+		var jaxelm = foundElm ? JAX.Node.create(foundElm) : null;
+
+		return jaxelm;
+	} else if (typeof(selector) == "object" && selector.nodeType) {
+		return JAX.Node.create(selector);
+	} else if (selector instanceof JAX.Node) {
+		return selector;
+	}
+
+	return false;
 };
 
-JAX.TAG_RXP = /^([a-zA-Z]+[a-zA-Z0-9]*)/g;
-JAX.CLASS_ID_RXP = /([\.#])([^\.#]*)/g;
-
-JAX.$ = function(selector, srcElement) {
+JAX.all = function(selector, srcElement) {
 	if (typeof(selector) == "string") {
 		var srcElement = srcElement || document;
 		var foundElms = srcElement.querySelectorAll(selector);
@@ -23,21 +34,8 @@ JAX.$ = function(selector, srcElement) {
 	return false;
 };
 
-JAX.$$ = function(selector, srcElement) {
-	if (typeof(selector) == "string") {
-		var srcElement = srcElement || document;
-		var foundElm = srcElement.querySelector(selector);
-		var jaxelm = foundElm ? JAX.Node.create(foundElm) : null;
-
-		return jaxelm;
-	} else if (typeof(selector) == "object" && selector.nodeType) {
-		return JAX.Node.create(selector);
-	} else if (selector instanceof JAX.Node) {
-		return selector;
-	}
-
-	return false;
-};
+JAX.TAG_RXP = /^([a-zA-Z]+[a-zA-Z0-9]*)/g;
+JAX.CLASS_ID_RXP = /([\.#])([^\.#]*)/g;
 
 JAX.make = function(tagString, attrs, styles, srcDocument) {
 	var error = 15;

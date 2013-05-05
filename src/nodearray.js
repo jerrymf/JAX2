@@ -12,7 +12,7 @@ JAX.NodeArray.prototype.$constructor = function(JAXNodes) {
 
 	for (var i=0; i<len; i++) { 
 		var JAXNode = JAXNodes[i];
-		if (typeof(JAXNode) == "object" && JAXNode.nodeType) { JAXNode = JAX.$$(JAXNode); }
+		if (typeof(JAXNode) == "object" && JAXNode.nodeType) { JAXNode = JAX(JAXNode); }
 		if (JAX.isJAXNode(JAXNode)) { this._jaxNodes[i] = JAXNode; continue; }
 		new JAX.E({funcName:"JAX.NodeArray.$constructor", caller:this.$constructor})
 			.expected("first argument", "HTML element, text node, JAX.NodeHTML or JAX.NodeText instance", JAXNode)
@@ -122,7 +122,7 @@ JAX.NodeArray.prototype.filterItems = function(func) {
 };
 
 JAX.NodeArray.prototype.pushItem = function(node) {
-	var JAXNode = JAX.$$(node);
+	var JAXNode = JAX(node);
 	this.length++;
 	this._jaxNodes.push(JAXNode);
 	return this;
@@ -139,7 +139,7 @@ JAX.NodeArray.prototype.shiftItem = function() {
 };
 
 JAX.NodeArray.prototype.unshiftItem = function(node) {
-	var JAXNode = JAX.$$(node);
+	var JAXNode = JAX(node);
 	this.length++;
 	return this._jaxNodes.unshift(JAXNode);
 };

@@ -50,7 +50,7 @@ JAX.Calendar.prototype.hide = function() {
 };
 
 JAX.Calendar.prototype._showingComplete = function() {
-	this._jax.doc = JAX.$$(document);
+	this._jax.doc = JAX(document);
 	this._ecDoc = this._jax.doc.listen("mousedown", "_tryHide", this);
 	this._shown = true;
 	this._pendingAnimation = false;
@@ -148,7 +148,7 @@ JAX.Calendar.prototype._initYear = function(yearNumber, monthNumber) {
 };
 
 JAX.Calendar.prototype._tryHide = function(e, elm) {
-	var node = JAX.$$(JAK.Events.getTarget(e));
+	var node = JAX(JAK.Events.getTarget(e));
 	if (node.jaxNodeType == 9 || !node.isChildOf(this._jax.container)) { this.hide(); }
 };
 
