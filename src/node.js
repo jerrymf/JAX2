@@ -697,14 +697,14 @@ JAX.Node.prototype.isChildOf = function(node) {
 		.show();
 };
 
-JAX.Node.prototype.fade = function(type, duration, completeCbk) {
+JAX.Node.prototype.fade = function(type, duration) {
 	if (this._node.nodeType != 1) {
 		new JAX.E({funcName:"JAX.Node.fade", node:this._node, caller:this.fade})
 		.message("You can not use this method for this element. You can use it only for element with nodeType == 1.")
 		.show();
 	}
 
-	var error = 7;
+	var error = 3;
 	var duration = duration || 0;
 
 	if (this._node.getAttribute && this._node.getAttribute("data-jax-locked")) {
@@ -714,13 +714,11 @@ JAX.Node.prototype.fade = function(type, duration, completeCbk) {
 
 	if (typeof(type) == "string") { error -= 1; }
 	if (typeof(duration) == "number") { error -= 2; }
-	if (!completeCbk || typeof(completeCbk) == "function") { error -= 4; }
 
 	if (error) {
 		var e = JAX.E({funcName:"JAX.Node.fade", node:this._node, caller:this.fade});
 		if (error & 1) { e.expected("first argument", "string", type); }
 		if (error & 2) { e.expected("second argument", "number", duration); }
-		if (error & 4) { e.expected("third argument", "function", completeCbk); }
 		e.show();
 	}
 
@@ -738,28 +736,31 @@ JAX.Node.prototype.fade = function(type, duration, completeCbk) {
 			return this;
 	}
 
-	var animation = new JAX.Animation(this);
-	var func = function() {
+	var func = function(whenDone) {
 		this.unlock();
-		if (completeCbk) { completeCbk(); }
+		if (this._whenFXDone) { this._whenFXDone(); }
+		this._whenFXDone = null;
 	}.bind(this);
 
-	animation.addProperty("opacity", duration, sourceOpacity, targetOpacity);
-	animation.addCallback(func);
-	animation.run();
+	var fx = new JAX.FX(this);
+	fx.addProperty("opacity", duration, sourceOpacity, targetOpacity)
+	  .whenDone(func)
+	  .run();
+
 	this.lock();
 
-	return this;
+	var whenDoneFunc = function(whenDone) { this._whenFXDone = whenDone; }.bind(this);
+	return {whenDone:whenDoneFunc};
 };
 
-JAX.Node.prototype.fadeTo = function(opacityValue, duration, completeCbk) {
+JAX.Node.prototype.fadeTo = function(opacityValue, duration) {
 	if (this._node.nodeType != 1) {
 		new JAX.E({funcName:"JAX.Node.fadeTo", node:this._node, caller:this.fadeTo})
 		.message("You can not use this method for this element. You can use it only for element with nodeType == 1.")
 		.show();
 	}
 
-	var error = 7;
+	var error = 3;
 	var duration = duration || 0;
 
 	if (this._node.getAttribute && this._node.getAttribute("data-jax-locked")) {
@@ -769,41 +770,42 @@ JAX.Node.prototype.fadeTo = function(opacityValue, duration, completeCbk) {
 
 	if (JAX.isNumeric(opacityValue)) { error -= 1; }
 	if (typeof(duration) == "number") { error -= 2; }
-	if (!completeCbk || typeof(completeCbk) == "function") { error -= 4; }
 
 	if (error) {
 		var e = JAX.E({funcName:"JAX.Node.fadeTo", node:this._node, caller:this.fadeTo});
 		if (error & 1) { e.expected("first argument", "number", opacityValue); }
 		if (error & 2) { e.expected("second argument", "number", duration); }
-		if (error & 4) { e.expected("third argument", "function", completeCbk); }
 		e.show();
 	}
 
 	var sourceOpacity = parseFloat(this.computedCss("opacity")) || 1;
 	var targetOpacity = parseFloat(opacityValue);
 
-	var animation = new JAX.Animation(this);
-	var func = function() {
+	var func = function(whenDone) {
 		this.unlock();
-		if (completeCbk) { completeCbk(); }
+		if (this._whenFXDone) { this._whenFXDone(); }
+		this._whenFXDone = null;
 	}.bind(this);
 
-	animation.addProperty("opacity", duration, sourceOpacity, targetOpacity);
-	animation.addCallback(func);
-	animation.run();
+	var fx = new JAX.FX(this);
+	fx.addProperty("opacity", duration, sourceOpacity, targetOpacity)
+	  .whenDone(func)
+	  .run();
+
 	this.lock();
 
-	return this;
+	var whenDoneFunc = function(whenDone) { this._whenFXDone = whenDone; }.bind(this);
+	return {whenDone:whenDoneFunc};
 };
 
-JAX.Node.prototype.slide = function(type, duration, completeCbk) {
+JAX.Node.prototype.slide = function(type, duration) {
 	if (this._node.nodeType != 1) {
 		new JAX.E({funcName:"JAX.Node.slide", node:this._node, caller:this.slide})
 		.message("You can not use this method for this element. You can use it only for element with nodeType == 1.")
 		.show();
 	}
 
-	var error = 7;
+	var error = 3;
 	var duration = duration || 0;
 
 	if (this._node.getAttribute && this._node.getAttribute("data-jax-locked")) {
@@ -819,7 +821,6 @@ JAX.Node.prototype.slide = function(type, duration, completeCbk) {
 		var e = JAX.E({funcName:"JAX.Node.slide", node:this._node, caller:this.slide});
 		if (error & 1) { e.expected("first argument", "string", type); }
 		if (error & 2) { e.expected("second argument", "number", duration); }
-		if (error & 4) { e.expected("third argument", "function", completeCbk); }
 		e.show();
 	}
 
@@ -855,19 +856,22 @@ JAX.Node.prototype.slide = function(type, duration, completeCbk) {
 
 	this.styleCss({"overflow": "hidden"});
 
-	var animation = new JAX.Animation(this);
-	var func = function() {
+	var func = function(whenDone) {
 		for (var p in backupStyles) { this._node.style[p] = backupStyles[p]; }
 		this.unlock();
-		if (completeCbk) { completeCbk(); }
+		if (this._whenFXDone) { this._whenFXDone(); }
+		this._whenFXDone = null;
 	}.bind(this);
 
-	animation.addProperty(property, duration, source, target);
-	animation.addCallback(func);
-	animation.run();
+	var fx = new JAX.FX(this);
+	fx.addProperty(property, duration, source, target)
+	  .whenDone(func)
+	  .run();
+
 	this.lock();
 
-	return this;
+	var whenDoneFunc = function(whenDone) { this._whenFXDone = whenDone; }.bind(this);
+	return {whenDone:whenDoneFunc};
 };
 
 JAX.Node.prototype.lock = function() {
@@ -897,6 +901,7 @@ JAX.Node.prototype.unlock = function() {
 JAX.Node.prototype._init = function(node) {  	
 	this._node = node;
 	this.jaxNodeType = this._node.nodeType;
+	this._whenFXDone = null;
 
 	/* set jax id for new (old) node */
 	var oldJaxId = -1;
@@ -983,7 +988,7 @@ JAX.Node.prototype._setOpacity = function(value) {
 JAX.Node.prototype._getOpacity = function() {
 	if (JAK.Browser.client == "ie" && JAK.Browser.version < 9) {
 		var value = "";
-		this._node.style.filter.replace(JAX.Animation.REGEXP_OPACITY, function(match1, match2) {
+		this._node.style.filter.replace(JAX.FX.REGEXP_OPACITY, function(match1, match2) {
 			value = match2;
 		});
 		return value ? (parseInt(value, 10)/100)+"" : value;

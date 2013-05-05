@@ -7,7 +7,7 @@ cat core.js >> ../lib/jax.js
 cat node.js >> ../lib/jax.js
 cat nodearray.js >> ../lib/jax.js
 cat dombuilder.js >> ../lib/jax.js
-cat animation.js >> ../lib/jax.js
+cat fx.js >> ../lib/jax.js
 cat e.js >> ../lib/jax.js
 
 echo "" >> ../lib/jax.js

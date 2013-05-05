@@ -1,10 +1,10 @@
-JAX.Animation = JAK.ClassMaker.makeClass({
-	NAME: "JAX.Animation",
+JAX.FX = JAK.ClassMaker.makeClass({
+	NAME: "JAX.FX",
 	VERSION: "0.32"
 });
 
-JAX.Animation._TRANSITION_PROPERTY = "";
-JAX.Animation._TRANSITION_EVENT = "";
+JAX.FX._TRANSITION_PROPERTY = "";
+JAX.FX._TRANSITION_EVENT = "";
 
 (function() {
 	var transitions = {
@@ -17,14 +17,14 @@ JAX.Animation._TRANSITION_EVENT = "";
 
 	for (p in transitions) {
 		if (p in document.createElement("div").style) {
-			JAX.Animation._TRANSITION_PROPERTY = p;
-			JAX.Animation._TRANSITION_EVENT = transitions[p];
+			JAX.FX._TRANSITION_PROPERTY = p;
+			JAX.FX._TRANSITION_EVENT = transitions[p];
 			break; 
 		}
 	}
 })();
 
-JAX.Animation._SUPPORTED_PROPERTIES = {
+JAX.FX._SUPPORTED_PROPERTIES = {
 	"width": {defaultUnit:"px", css:"width" },
 	"height":{defaultUnit:"px", css:"height" },
 	"top": {defaultUnit:"px", css:"top" },
@@ -36,19 +36,19 @@ JAX.Animation._SUPPORTED_PROPERTIES = {
 	"color": {defaultUnit:"", css:"color" },
 	"backgroundColor": {defaultUnit:"", css:"background-color" }
 };
-JAX.Animation._REGEXP_OPACITY = new RegExp("alpha\(opacity=['\"]?([0-9]+)['\"]?\)");
+JAX.FX._REGEXP_OPACITY = new RegExp("alpha\(opacity=['\"]?([0-9]+)['\"]?\)");
 
-JAX.Animation.prototype.$constructor = function(element) {
+JAX.FX.prototype.$constructor = function(element) {
 	this._elm = JAX.isJAXNode(element) ? element : JAX.Node.create(element);
 	this._properties = [];
 	this._interpolators = [];
 	this._callback = null;
 	this._running = false;
-	this._transitionSupport = !!JAX.Animation._TRANSITION_PROPERTY;
+	this._transitionSupport = !!JAX.FX._TRANSITION_PROPERTY;
 };
 
-JAX.Animation.prototype.addProperty = function(property, duration, start, end, method) {
-	if (property in JAX.Animation._SUPPORTED_PROPERTIES) { 
+JAX.FX.prototype.addProperty = function(property, duration, start, end, method) {
+	if (property in JAX.FX._SUPPORTED_PROPERTIES) { 
 		var cssEnd = this._parseCSSValue(property, end);
 		var cssStart = this._parseCSSValue(property, start); 
 		var method = this._transitionSupport ? (method || "linear") : "LINEAR";
@@ -64,34 +64,34 @@ JAX.Animation.prototype.addProperty = function(property, duration, start, end, m
 		return this;
 	}
 
-	new JAX.E({funcName:"JAX.Animation.addProperty", node:this._elm.node(), caller:this.addProperty})
+	new JAX.E({funcName:"JAX.FX.addProperty", node:this._elm.node(), caller:this.addProperty})
 		.expected("first parameter", "supported property", "unsupported property: " + property)
 		.show(); 
 };
 
-JAX.Animation.prototype.addCallback = function(callback) {
+JAX.FX.prototype.whenDone = function(callback) {
 	this._callback = callback;
 	return this;
 };
 
-JAX.Animation.prototype.run = function() {
+JAX.FX.prototype.run = function() {
 	this._running = true;
 	if (!this._transitionSupport) { this._initInterpolators(); return this; }
 	this._initTransition();
 	return this;
 };
 
-JAX.Animation.prototype.isRunning = function() {
+JAX.FX.prototype.isRunning = function() {
 	return this._running;
 };
 
-JAX.Animation.prototype.stop = function() {
+JAX.FX.prototype.stop = function() {
 	if (!this._transitionSupport) { this._stopInterpolators(); return this; }
 	this._stopTransition();
 	return this;
 };
 
-JAX.Animation.prototype._initInterpolators = function() {
+JAX.FX.prototype._initInterpolators = function() {
 	for(var i=0, len=this._properties.length; i<len; i++) {
 		var property = this._properties[i];
 
@@ -110,13 +110,13 @@ JAX.Animation.prototype._initInterpolators = function() {
 	}
 };
 
-JAX.Animation.prototype._stopInterpolators = function() {
+JAX.FX.prototype._stopInterpolators = function() {
 	for (var i=0, len=this._interpolators.length; i<len; i++) { this._endInterpolator(i); }
 }
 
-JAX.Animation.prototype._initTransition = function() {
-	var tp = JAX.Animation._TRANSITION_PROPERTY;
-	var te = JAX.Animation._TRANSITION_EVENT;
+JAX.FX.prototype._initTransition = function() {
+	var tp = JAX.FX._TRANSITION_PROPERTY;
+	var te = JAX.FX._TRANSITION_EVENT;
 	var tps = [];
 	var node = this._elm.node();
 	var style = node.style;
@@ -137,29 +137,29 @@ JAX.Animation.prototype._initTransition = function() {
 	}
 };
 
-JAX.Animation.prototype._stopTransition = function() {
+JAX.FX.prototype._stopTransition = function() {
 	var node = this._elm.node();
 	var style = this._elm.node().style;
 
 	for(var i=0, len=this._properties.length; i<len; i++) {
 		var property = this._properties[i].property;
-		var value = window.getComputedStyle(node).getPropertyValue(JAX.Animation._SUPPORTED_PROPERTIES[property].css);
+		var value = window.getComputedStyle(node).getPropertyValue(JAX.FX._SUPPORTED_PROPERTIES[property].css);
 		style[property] = value;
 	}
 
 	this._endTransition();
 };
 
-JAX.Animation.prototype._parseCSSValue = function(property, cssValue) {
+JAX.FX.prototype._parseCSSValue = function(property, cssValue) {
 	var value = parseFloat(cssValue);
 	var unit = (cssValue+"").replace(value, "");
 
 	if (unit) { return { "value": value, "unit": unit }; }
 
-	return { "value": value, "unit": JAX.Animation._SUPPORTED_PROPERTIES[property].defaultUnit };
+	return { "value": value, "unit": JAX.FX._SUPPORTED_PROPERTIES[property].defaultUnit };
 };
 
-JAX.Animation.prototype._endInterpolator = function(index) {
+JAX.FX.prototype._endInterpolator = function(index) {
 	this._interpolators[index].stop();
 	this._interpolators.splice(index, 1);
 	if (this._interpolators.length) { return; }
@@ -167,10 +167,10 @@ JAX.Animation.prototype._endInterpolator = function(index) {
 	this._running = false;
 };
 
-JAX.Animation.prototype._endTransition = function() {
-	var te = JAX.Animation._TRANSITION_EVENT;
+JAX.FX.prototype._endTransition = function() {
+	var te = JAX.FX._TRANSITION_EVENT;
 	this._elm.stopListening(te, this._ecTransition);
-	this._elm.node().style[JAX.Animation._TRANSITION_PROPERTY] = "none";
+	this._elm.node().style[JAX.FX._TRANSITION_PROPERTY] = "none";
 	this._ecTransition = null;
 	this._running = false;
 	if (this._callback) { this._callback(); }
