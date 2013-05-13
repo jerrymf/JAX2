@@ -64,9 +64,10 @@ JAX.FX.prototype.addProperty = function(property, duration, start, end, method) 
 		return this;
 	}
 
-	new JAX.E({funcName:"JAX.FX.addProperty", node:this._elm.node(), caller:this.addProperty})
-		.expected("first parameter", "supported property", "unsupported property: " + property)
-		.show(); 
+	var properties = [];
+	for (var p in JAX.FX._SUPPORTED_PROPERTIES) { properties.concat(JAX.FX._SUPPORTED_PROPERTIES[p]); }
+
+	throw new Error("First argument must be supported property: " + properties.join(", "));
 };
 
 JAX.FX.prototype.whenDone = function(callback) {

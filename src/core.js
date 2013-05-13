@@ -38,24 +38,14 @@ JAX.TAG_RXP = /^([a-zA-Z]+[a-zA-Z0-9]*)/g;
 JAX.CLASS_ID_RXP = /([\.#])([^\.#]*)/g;
 
 JAX.make = function(tagString, attrs, styles, srcDocument) {
-	var error = 15;
 	var attrs = attrs || {};
 	var styles = styles || {};
 	var srcDocument = srcDocument || document;
 
-	if (tagString && typeof(tagString) == "string") { error -= 1; }
-	if (typeof(attrs) == "object") { error -= 2; }
-	if (typeof(styles) == "object") { error -= 4; }
-	if (typeof(srcDocument) == "object" && srcDocument.nodeType && (srcDocument.nodeType == 9 || srcDocument.nodeType != 11)) { error -= 8; }
-
-	if (error) {
-		var e = new JAX.E({funcName:"JAX.make", caller:this.make});
-		if (error & 1) { e.expected("first argument", "string", tagString); }
-		if (error & 2) { e.expected("second argument", "associative array", attrs); }
-		if (error & 4) { e.expected("third argument", "associative array", styles); }
-		if (error & 8) { e.expected("fourth argument", "document element", srcDocument); }
-		e.show();
-	}
+	if (!tagString || typeof(tagString) != "string") { throw new Error("First argument must be string."); }
+	if (typeof(attrs) != "object") { throw new Error("Second argument must be associative array."); }
+	if (typeof(styles) != "object") { throw new Error("Third argument must be associative array."); }
+	if (typeof(srcDocument) != "object" || !srcDocument.nodeType && [9,11].indexOf(srcDocument.nodeType) == -1) { throw new Error("Fourth argument must be document element."); }
 
 	var tagName = tagString.match(JAX.TAG_RXP) || [];
 
@@ -63,9 +53,7 @@ JAX.make = function(tagString, attrs, styles, srcDocument) {
 		tagName = tagName[0];
 		tagString = tagString.substring(tagName.length, tagString.length);
 	} else {
-		new JAX.E({funcName:"JAX.make", value:tagString, caller:this.make})
-			.expected("first argument", "tagname first", tagString)
-			.show();
+		throw new Error("Tagname must be first in element definition");
 	}
 
 	tagString.replace(JAX.CLASS_ID_RXP, function(match, p1, p2) {
@@ -109,7 +97,7 @@ JAX.isString = function(value) {
 };
 
 JAX.isArray = function(value) {
-	return value instanceof Array;
+	return Object.prototype.toString.call(value) == "[object Array]";
 };
 
 JAX.isFunction = function(value) {

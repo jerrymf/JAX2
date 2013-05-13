@@ -31,9 +31,7 @@ JAX.DOMBuilder.prototype.open = function(element, attributes, styles) {
 		return jaxNode;
 	}
 
-	new JAX.E({funcName:"JAX.DOMBuilder.open", caller:this.open})
-		.expected("first argument", "HTML Element definition compatible with JAX.make or HTML element", element)
-		.show(); 
+	throw new Error("First argument must be string with JAX.make compatible definition, node or instance of JAX.Node");
 }
 
 JAX.DOMBuilder.prototype.add = function(node, attributes, styles) {
@@ -47,10 +45,8 @@ JAX.DOMBuilder.prototype.add = function(node, attributes, styles) {
 		if (styles) { jaxNode.style(styles); }
 	}
 
-	if (!JAX.isJAXNode(node) && node.jaxNodeType == 9) {
-		new JAX.E({funcName:"JAX.DOMBuilder.add", caller:this.add})
-		.expected("first argument", "string, node, instance of JAX.NodeHTML, JAX.NodeText, JAX.NodeDocFrag", node)
-		.show(); 
+	if (!(node instanceof JAX.Node) || node.jaxNodeType == 9) {
+		throw new Error("First argument must be string with JAX.make compatible definition, node or instance of JAX.Node");
 	}
 
 	if (attributes) { jaxNode.attr(attributes); }
@@ -78,9 +74,7 @@ JAX.DOMBuilder.prototype.addText = function(txt) {
 		return jaxNode;
 	}
 
-	new JAX.E({funcName:"JAX.DOMBuilder.addText", caller:this.addText})
-		.expected("first argument", "string", typeof(node))
-		.show(); 
+	throw new Error("First argument must be a string");
 };
 
 JAX.DOMBuilder.prototype.close = function() {
@@ -89,9 +83,7 @@ JAX.DOMBuilder.prototype.close = function() {
 		return;
 	}
 
-	new JAX.E({funcName:"JAX.DOMBuilder.addText", caller:this.close})
-		.expected("closing", "opened element", "no opened element")
-		.show(); 
+	throw new Error("There is no opened element so you can not close anything");
 };
 
 JAX.DOMBuilder.prototype.appendTo = function(node) {
@@ -102,9 +94,7 @@ JAX.DOMBuilder.prototype.appendTo = function(node) {
 	} else if (JAX.isJAXNode(node) && node.jaxNodeType == 1) {
 		var jaxNode = node;
 	} else {
-		new JAX.E({funcName:"JAX.DOMBuilder.appendTo", caller:this.appendTo})
-		.expected("argument", "html element, instance of JAX.NodeHTML or JAX.NodeDocFrag", node)
-		.show(); 
+		throw new Error("You are trying to append me to unsupported element. I can be append only to html element or documentFragment element.");
 	}
 
 	this._jax.container.appendTo(jaxNode);
