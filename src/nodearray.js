@@ -12,7 +12,7 @@ JAX.NodeArray.prototype.$constructor = function(nodes) {
 
 	for (var i=0; i<len; i++) { 
 		var node = nodes[i];
-		if (typeof(node) == "object" && node.nodeType) { this._jaxNodes[i] = JAX(node); continue; }
+		if (typeof(node) === "object" && node.nodeType) { this._jaxNodes[i] = JAX(node); continue; }
 		if (JAX.isJAXNode(node)) { this._jaxNodes[i] = node; continue; }
 
 		throw new Error("First argument must be array of JAX.Node instances or html nodes");
@@ -32,7 +32,7 @@ JAX.NodeArray.prototype.addClass = function() {
 	var classes = [].slice.call(arguments);
 	for (var i=0, len=this._jaxNodes.length; i<len; i++) { 
 		var jaxNode = this._jaxNodes[i];
-		if (jaxNode.jaxNodeType != 1) { continue; }
+		if (jaxNode.jaxNodeType !== 1) { continue; }
 		jaxNode.addClass(); 
 	}
 	return this;
@@ -42,7 +42,7 @@ JAX.NodeArray.prototype.removeClass = function() {
 	var classes = [].slice.call(arguments);
 	for (var i=0, len=this._jaxNodes.length; i<len; i++) { 
 		var jaxNode = this._jaxNodes[i];
-		if (jaxNode.jaxNodeType != 1) { continue; }
+		if (jaxNode.jaxNodeType !== 1) { continue; }
 		jaxNode.removeClass(classes); 
 	}
 	return this;
@@ -51,7 +51,7 @@ JAX.NodeArray.prototype.removeClass = function() {
 JAX.NodeArray.prototype.displayOn = function(displayValue) {
 	for (var i=0, len=this._jaxNodes.length; i<len; i++) { 
 		var jaxNode = this._jaxNodes[i];
-		if (jaxNode.jaxNodeType != 1) { continue; }
+		if (jaxNode.jaxNodeType !== 1) { continue; }
 		jaxNode.displayOn(displayValue); 
 	}
 	return this;
@@ -60,7 +60,7 @@ JAX.NodeArray.prototype.displayOn = function(displayValue) {
 JAX.NodeArray.prototype.displayOff = function() {
 	for (var i=0, len=this._jaxNodes.length; i<len; i++) { 
 		var jaxNode = this._jaxNodes[i];
-		if (jaxNode.jaxNodeType != 1) { continue; }
+		if (jaxNode.jaxNodeType !== 1) { continue; }
 		jaxNode.displayOff(); 
 	}
 	return this;
@@ -69,7 +69,7 @@ JAX.NodeArray.prototype.displayOff = function() {
 JAX.NodeArray.prototype.style = function(properties) {
 	for (var i=0, len=this._jaxNodes.length; i<len; i++) { 
 		var jaxNode = this._jaxNodes[i];
-		if (jaxNode.jaxNodeType != 1) { continue; }
+		if (jaxNode.jaxNodeType !== 1) { continue; }
 		jaxNode.styleCss(properties); 
 	}
 	return this;	
@@ -78,7 +78,7 @@ JAX.NodeArray.prototype.style = function(properties) {
 JAX.NodeArray.prototype.attr = function(attributes) {
 	for (var i=0, len=this._jaxNodes.length; i<len; i++) { 
 		var jaxNode = this._jaxNodes[i];
-		if (jaxNode.jaxNodeType != 1) { continue; }
+		if (jaxNode.jaxNodeType !== 1) { continue; }
 		jaxNode.attr(attributes); 
 	}
 	return this;	
@@ -87,29 +87,29 @@ JAX.NodeArray.prototype.attr = function(attributes) {
 JAX.NodeArray.prototype.appendTo = function(node) {
 	for (var i=0, len=this._jaxNodes.length; i<len; i++) {
 		var jaxNode = this._jaxNodes[i];
-		if (jaxNode.jaxNodeType == 9) { continue; }
+		if (jaxNode.jaxNodeType === 9) { continue; }
 		jaxNode.appendTo(node); 
 	}
 	return this;
-}
+};
 
 JAX.NodeArray.prototype.removeFromDOM = function() {
 	for (var i=0, len=this._jaxNodes.length; i<len; i++) { 
 		var jaxNode = this._jaxNodes[i];
-		if (jaxNode.jaxNodeType == 9) { continue; }
+		if (jaxNode.jaxNodeType === 9) { continue; }
 		jaxNode.removeFromDOM(); 
 	}
 	return this;
-}
+};
 
 JAX.NodeArray.prototype.destroyItems = function() {
 	for (var i=0, len=this._jaxNodes.length; i<len; i++) {
 		var jaxNode = this._jaxNodes[i];
-		if (jaxNode.jaxNodeType != 1) { continue; }
+		if (jaxNode.jaxNodeType !== 1) { continue; }
 		jaxNode.destroy(); 
 	}
 	return this;
-}
+};
 
 JAX.NodeArray.prototype.forEachItem = function(cbk) {
 	this._jaxNodes.forEach(cbk, this);
@@ -153,7 +153,7 @@ JAX.NodeArray.prototype.fade = function(type, duration, completeCbk) {
 
 	for (var i=0, len=this._jaxNodes.length; i<len; i++) {
 		var jaxNode = this._jaxNodes[i];
-		if (jaxNode.jaxNodeType != 1) { continue; }
+		if (jaxNode.jaxNodeType !== 1) { continue; }
 		jaxNode.fade(type, duration, f); 
 	}
 	return this;
@@ -169,7 +169,7 @@ JAX.NodeArray.prototype.slide = function(type, duration, completeCbk) {
 
 	for (var i=0, len=this._jaxNodes.length; i<len; i++) {
 		var jaxNode = this._jaxNodes[i];
-		if (jaxNode.jaxNodeType != 1) { continue; }
+		if (jaxNode.jaxNodeType !== 1) { continue; }
 		jaxNode.slide(type, duration, f); 
 	}
 	return this;

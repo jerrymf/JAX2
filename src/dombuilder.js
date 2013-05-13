@@ -13,13 +13,13 @@ JAX.DOMBuilder.prototype.$constructor = function(doc) {
 JAX.DOMBuilder.prototype.open = function(element, attributes, styles) {
 	var jaxNode = element;
 
-	if (typeof(element) == "string") {
+	if (typeof(element) === "string") {
 		jaxNode = JAX.make(element, attributes, styles, this._doc);
-	} else if (typeof(element) == "object" && element.nodeType) {
+	} else if (typeof(element) === "object" && element.nodeType) {
 		jaxNode = JAX(element);
 	}
 
-	if (jaxNode && jaxNode.jaxNodeType != 9) {
+	if (jaxNode && jaxNode.jaxNodeType !== 9) {
 		if (!this._pointerJaxNode) {
 			this._stack.push(this._pointerJaxNode);
 			this._jax.container.add(jaxNode); 
@@ -32,20 +32,20 @@ JAX.DOMBuilder.prototype.open = function(element, attributes, styles) {
 	}
 
 	throw new Error("First argument must be string with JAX.make compatible definition, node or instance of JAX.Node");
-}
+};
 
 JAX.DOMBuilder.prototype.add = function(node, attributes, styles) {
 	var jaxNode = node;
 
-	if (typeof(node) == "string") {
+	if (typeof(node) === "string") {
 		jaxNode = JAX.make(node, attributes, styles);
-	} else if (typeof(node) == "object" && node.nodeType) {
+	} else if (typeof(node) === "object" && node.nodeType) {
 		jaxNode = JAX(node);
 		if (attributes) { jaxNode.attr(attributes); }
 		if (styles) { jaxNode.style(styles); }
 	}
 
-	if (!(node instanceof JAX.Node) || node.jaxNodeType == 9) {
+	if (!(jaxNode instanceof JAX.Node) || jaxNode.jaxNodeType === 9) {
 		throw new Error("First argument must be string with JAX.make compatible definition, node or instance of JAX.Node");
 	}
 
@@ -62,7 +62,7 @@ JAX.DOMBuilder.prototype.add = function(node, attributes, styles) {
 };
 
 JAX.DOMBuilder.prototype.addText = function(txt) {
-	if (typeof(txt) == "string") {
+	if (typeof(txt) === "string") {
 		var jaxNode = JAX.makeText(txt);
 
 		if (this._pointerJaxNode) {
@@ -89,9 +89,9 @@ JAX.DOMBuilder.prototype.close = function() {
 JAX.DOMBuilder.prototype.appendTo = function(node) {
 	var jaxNode = null;
 
-	if (typeof(node) == "object" && node.nodeType) {
+	if (typeof(node) === "object" && node.nodeType) {
 		var jaxNode = JAX(node);
-	} else if (JAX.isJAXNode(node) && node.jaxNodeType == 1) {
+	} else if (JAX.isJAXNode(node) && node.jaxNodeType === 1) {
 		var jaxNode = node;
 	} else {
 		throw new Error("You are trying to append me to unsupported element. I can be append only to html element or documentFragment element.");

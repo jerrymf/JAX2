@@ -102,7 +102,7 @@ JAX.FX.prototype._initInterpolators = function() {
 		});
 		
 		this._interpolators.push(interpolator);
-		if (["backgroundColor", "color"].indexOf(property.property) == 0) {
+		if (["backgroundColor", "color"].indexOf(property.property) === 0) {
 			interpolator.addColorProperty(property.property, property.cssStart.value, property.cssEnd.value);
 		} else {
 			interpolator.addProperty(property.property, property.cssStart.value, property.cssEnd.value, property.cssStart.unit);
@@ -113,7 +113,7 @@ JAX.FX.prototype._initInterpolators = function() {
 
 JAX.FX.prototype._stopInterpolators = function() {
 	for (var i=0, len=this._interpolators.length; i<len; i++) { this._endInterpolator(i); }
-}
+};
 
 JAX.FX.prototype._initTransition = function() {
 	var tp = JAX.FX._TRANSITION_PROPERTY;
