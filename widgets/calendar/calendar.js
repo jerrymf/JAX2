@@ -36,8 +36,8 @@ JAX.Calendar.prototype.show = function() {
 		.add(this._activeYearView.getContainer())
 		.appendTo(document.body)
 		.styleCss({top:pos.top+"px", left:pos.left+"px"})
-		.fade("in", 0.5)
-		.whenDone(this._showingComplete.bind(this));
+		.fade("in", 0.5, true)
+		.callWhenDone(this._showingComplete.bind(this));
 };
 
 JAX.Calendar.prototype.hide = function() {
@@ -48,8 +48,8 @@ JAX.Calendar.prototype.hide = function() {
 
 	this._pendingAnimation = true;
 	this._jax.container
-		.fade("out", 0.5)
-		.whenDone(this._hidingComplete.bind(this));
+		.fade("out", 0.5, true)
+		.callWhenDone(this._hidingComplete.bind(this));
 };
 
 JAX.Calendar.prototype._showingComplete = function() {

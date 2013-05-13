@@ -9,6 +9,7 @@ cat nodearray.js >> ../lib/jax.js
 cat dombuilder.js >> ../lib/jax.js
 cat fx.js >> ../lib/jax.js
 cat e.js >> ../lib/jax.js
+cat common.js >> ../lib/jax.js
 
 echo "" >> ../lib/jax.js
 echo "})();" >> ../lib/jax.js

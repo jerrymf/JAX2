@@ -42,7 +42,7 @@ JAX.FX.prototype.$constructor = function(element) {
 	this._elm = JAX.isJAXNode(element) ? element : JAX.Node.create(element);
 	this._properties = [];
 	this._interpolators = [];
-	this._callback = null;
+	this._callbacks = [];
 	this._running = false;
 	this._transitionSupport = !!JAX.FX._TRANSITION_PROPERTY;
 };
@@ -69,8 +69,8 @@ JAX.FX.prototype.addProperty = function(property, duration, start, end, method) 
 		.show(); 
 };
 
-JAX.FX.prototype.whenDone = function(callback) {
-	this._callback = callback;
+JAX.FX.prototype.callWhenDone = function(callback) {
+	this._callbacks.push(callback);
 	return this;
 };
 
@@ -163,8 +163,8 @@ JAX.FX.prototype._endInterpolator = function(index) {
 	this._interpolators[index].stop();
 	this._interpolators.splice(index, 1);
 	if (this._interpolators.length) { return; }
-	if (this._callback) { this._callback(); }
 	this._running = false;
+	for (var i=0, len=this._callbacks.length; i<len; i++) { this._callbacks[i](); }
 };
 
 JAX.FX.prototype._endTransition = function() {
@@ -173,6 +173,6 @@ JAX.FX.prototype._endTransition = function() {
 	this._elm.node().style[JAX.FX._TRANSITION_PROPERTY] = "none";
 	this._ecTransition = null;
 	this._running = false;
-	if (this._callback) { this._callback(); }
+	for (var i=0, len=this._callbacks.length; i<len; i++) { this._callbacks[i](); }
 };
 

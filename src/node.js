@@ -34,7 +34,10 @@ JAX.Node.create = function(node) {
 				case JAX.Node.ELEMENT_NODE:
 					var jaxId = parseInt(node.getAttribute("data-jax-id"),10);
 					if (typeof(jaxId) != "number") { jaxId = -1; }
-					if (jaxId > -1) { return JAX.Node.instances[JAX.Node.ELEMENT_NODE][jaxId].instance; }
+					if (jaxId > -1) {
+						var item = JAX.Node.instances[JAX.Node.ELEMENT_NODE][jaxId];
+						if (item) {return item.instance; }
+					}
 				break;
 				default:
 					var index = -1;
@@ -697,7 +700,7 @@ JAX.Node.prototype.isChildOf = function(node) {
 		.show();
 };
 
-JAX.Node.prototype.fade = function(type, duration) {
+JAX.Node.prototype.fade = function(type, duration, lockElm) {
 	if (this._node.nodeType != 1) {
 		new JAX.E({funcName:"JAX.Node.fade", node:this._node, caller:this.fade})
 		.message("You can not use this method for this element. You can use it only for element with nodeType == 1.")
@@ -736,24 +739,18 @@ JAX.Node.prototype.fade = function(type, duration) {
 			return this;
 	}
 
-	var func = function(whenDone) {
-		this.unlock();
-		if (this._whenFXDone) { this._whenFXDone(); }
-		this._whenFXDone = null;
-	}.bind(this);
+	var fx = new JAX.FX(this).addProperty("opacity", duration, sourceOpacity, targetOpacity);
 
-	var fx = new JAX.FX(this);
-	fx.addProperty("opacity", duration, sourceOpacity, targetOpacity)
-	  .whenDone(func)
-	  .run();
+	if (lockElm) { 
+		this.lock();
+		fx.callWhenDone(this.unlock.bind(this));
+	}
 
-	this.lock();
-
-	var whenDoneFunc = function(whenDone) { this._whenFXDone = whenDone; }.bind(this);
-	return {whenDone:whenDoneFunc};
+	fx.run();
+	return fx;
 };
 
-JAX.Node.prototype.fadeTo = function(opacityValue, duration) {
+JAX.Node.prototype.fadeTo = function(opacityValue, duration, lockElm) {
 	if (this._node.nodeType != 1) {
 		new JAX.E({funcName:"JAX.Node.fadeTo", node:this._node, caller:this.fadeTo})
 		.message("You can not use this method for this element. You can use it only for element with nodeType == 1.")
@@ -781,24 +778,19 @@ JAX.Node.prototype.fadeTo = function(opacityValue, duration) {
 	var sourceOpacity = parseFloat(this.computedCss("opacity")) || 1;
 	var targetOpacity = parseFloat(opacityValue);
 
-	var func = function(whenDone) {
-		this.unlock();
-		if (this._whenFXDone) { this._whenFXDone(); }
-		this._whenFXDone = null;
-	}.bind(this);
+	var fx = new JAX.FX(this).addProperty("opacity", duration, sourceOpacity, targetOpacity);
 
-	var fx = new JAX.FX(this);
-	fx.addProperty("opacity", duration, sourceOpacity, targetOpacity)
-	  .whenDone(func)
-	  .run();
+	if (lockElm) {
+		this.lock();
+		fx.callWhenDone(this.unlock.bind(this));
+	}
 
-	this.lock();
+	fx.run();
 
-	var whenDoneFunc = function(whenDone) { this._whenFXDone = whenDone; }.bind(this);
-	return {whenDone:whenDoneFunc};
+	return fx;
 };
 
-JAX.Node.prototype.slide = function(type, duration) {
+JAX.Node.prototype.slide = function(type, duration, lockElm) {
 	if (this._node.nodeType != 1) {
 		new JAX.E({funcName:"JAX.Node.slide", node:this._node, caller:this.slide})
 		.message("You can not use this method for this element. You can use it only for element with nodeType == 1.")
@@ -856,22 +848,20 @@ JAX.Node.prototype.slide = function(type, duration) {
 
 	this.styleCss({"overflow": "hidden"});
 
-	var func = function(whenDone) {
-		for (var p in backupStyles) { this._node.style[p] = backupStyles[p]; }
-		this.unlock();
-		if (this._whenFXDone) { this._whenFXDone(); }
-		this._whenFXDone = null;
-	}.bind(this);
 
-	var fx = new JAX.FX(this);
-	fx.addProperty(property, duration, source, target)
-	  .whenDone(func)
-	  .run();
+	var fx = new JAX.FX(this).addProperty(property, duration, source, target);
 
-	this.lock();
+	if (lockElm) {
+		var func = function(whenDone) {
+			for (var p in backupStyles) { this._node.style[p] = backupStyles[p]; }
+			this.unlock();
+		}.bind(this);
+		fx.callWhenDone(func);
+	}
+	
+	fx.run();
 
-	var whenDoneFunc = function(whenDone) { this._whenFXDone = whenDone; }.bind(this);
-	return {whenDone:whenDoneFunc};
+	return fx;
 };
 
 JAX.Node.prototype.lock = function() {
