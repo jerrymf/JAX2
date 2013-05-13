@@ -5,18 +5,17 @@ JAX.NodeArray = JAK.ClassMaker.makeClass({
 
 JAX.NodeArray.prototype.length = 0;
 
-JAX.NodeArray.prototype.$constructor = function(JAXNodes) {
-	var JAXNodes = [].concat(JAXNodes);
-	var len = JAXNodes.length;
+JAX.NodeArray.prototype.$constructor = function(nodes) {
+	var nodes = [].concat(nodes);
+	var len = nodes.length;
 	this._jaxNodes = new Array(len);
 
 	for (var i=0; i<len; i++) { 
-		var JAXNode = JAXNodes[i];
-		if (typeof(JAXNode) == "object" && JAXNode.nodeType) { JAXNode = JAX(JAXNode); }
-		if (JAX.isJAXNode(JAXNode)) { this._jaxNodes[i] = JAXNode; continue; }
-		new JAX.E({funcName:"JAX.NodeArray.$constructor", caller:this.$constructor})
-			.expected("first argument", "HTML element, text node, JAX.NodeHTML or JAX.NodeText instance", JAXNode)
-			.show();
+		var node = nodes[i];
+		if (typeof(node) == "object" && node.nodeType) { this._jaxNodes[i] = JAX(node); continue; }
+		if (JAX.isJAXNode(node)) { this._jaxNodes[i] = node; continue; }
+
+		throw new Error("First argument must be array of JAX.Node instances or html nodes");
 	}
 	this.length = this._jaxNodes.length;
 };
