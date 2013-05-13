@@ -94,7 +94,7 @@ JAX.DOMBuilder.prototype.appendTo = function(node) {
 	} else if (JAX.isJAXNode(node) && node.jaxNodeType === 1) {
 		var jaxNode = node;
 	} else {
-		throw new Error("You are trying to append me to unsupported element. I can be append only to html element or documentFragment element.");
+		throw new Error("You are trying to append me to unsupported element. I can be appended only to html element or documentFragment element.");
 	}
 
 	this._jax.container.appendTo(jaxNode);
