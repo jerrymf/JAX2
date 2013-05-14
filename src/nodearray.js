@@ -32,8 +32,7 @@ JAX.NodeArray.prototype.addClass = function() {
 	var classes = [].slice.call(arguments);
 	for (var i=0, len=this._jaxNodes.length; i<len; i++) { 
 		var jaxNode = this._jaxNodes[i];
-		if (jaxNode.jaxNodeType !== 1) { continue; }
-		jaxNode.addClass(); 
+		jaxNode.addClass(classes); 
 	}
 	return this;
 };
@@ -42,7 +41,6 @@ JAX.NodeArray.prototype.removeClass = function() {
 	var classes = [].slice.call(arguments);
 	for (var i=0, len=this._jaxNodes.length; i<len; i++) { 
 		var jaxNode = this._jaxNodes[i];
-		if (jaxNode.jaxNodeType !== 1) { continue; }
 		jaxNode.removeClass(classes); 
 	}
 	return this;
@@ -51,7 +49,6 @@ JAX.NodeArray.prototype.removeClass = function() {
 JAX.NodeArray.prototype.displayOn = function(displayValue) {
 	for (var i=0, len=this._jaxNodes.length; i<len; i++) { 
 		var jaxNode = this._jaxNodes[i];
-		if (jaxNode.jaxNodeType !== 1) { continue; }
 		jaxNode.displayOn(displayValue); 
 	}
 	return this;
@@ -60,7 +57,6 @@ JAX.NodeArray.prototype.displayOn = function(displayValue) {
 JAX.NodeArray.prototype.displayOff = function() {
 	for (var i=0, len=this._jaxNodes.length; i<len; i++) { 
 		var jaxNode = this._jaxNodes[i];
-		if (jaxNode.jaxNodeType !== 1) { continue; }
 		jaxNode.displayOff(); 
 	}
 	return this;
@@ -69,7 +65,6 @@ JAX.NodeArray.prototype.displayOff = function() {
 JAX.NodeArray.prototype.style = function(properties) {
 	for (var i=0, len=this._jaxNodes.length; i<len; i++) { 
 		var jaxNode = this._jaxNodes[i];
-		if (jaxNode.jaxNodeType !== 1) { continue; }
 		jaxNode.styleCss(properties); 
 	}
 	return this;	
@@ -78,7 +73,6 @@ JAX.NodeArray.prototype.style = function(properties) {
 JAX.NodeArray.prototype.attr = function(attributes) {
 	for (var i=0, len=this._jaxNodes.length; i<len; i++) { 
 		var jaxNode = this._jaxNodes[i];
-		if (jaxNode.jaxNodeType !== 1) { continue; }
 		jaxNode.attr(attributes); 
 	}
 	return this;	
@@ -87,7 +81,6 @@ JAX.NodeArray.prototype.attr = function(attributes) {
 JAX.NodeArray.prototype.appendTo = function(node) {
 	for (var i=0, len=this._jaxNodes.length; i<len; i++) {
 		var jaxNode = this._jaxNodes[i];
-		if (jaxNode.jaxNodeType === 9) { continue; }
 		jaxNode.appendTo(node); 
 	}
 	return this;
@@ -96,7 +89,6 @@ JAX.NodeArray.prototype.appendTo = function(node) {
 JAX.NodeArray.prototype.removeFromDOM = function() {
 	for (var i=0, len=this._jaxNodes.length; i<len; i++) { 
 		var jaxNode = this._jaxNodes[i];
-		if (jaxNode.jaxNodeType === 9) { continue; }
 		jaxNode.removeFromDOM(); 
 	}
 	return this;
@@ -105,7 +97,6 @@ JAX.NodeArray.prototype.removeFromDOM = function() {
 JAX.NodeArray.prototype.destroyItems = function() {
 	for (var i=0, len=this._jaxNodes.length; i<len; i++) {
 		var jaxNode = this._jaxNodes[i];
-		if (jaxNode.jaxNodeType !== 1) { continue; }
 		jaxNode.destroy(); 
 	}
 	return this;
@@ -153,7 +144,6 @@ JAX.NodeArray.prototype.fade = function(type, duration, completeCbk) {
 
 	for (var i=0, len=this._jaxNodes.length; i<len; i++) {
 		var jaxNode = this._jaxNodes[i];
-		if (jaxNode.jaxNodeType !== 1) { continue; }
 		jaxNode.fade(type, duration, f); 
 	}
 	return this;
@@ -169,7 +159,6 @@ JAX.NodeArray.prototype.slide = function(type, duration, completeCbk) {
 
 	for (var i=0, len=this._jaxNodes.length; i<len; i++) {
 		var jaxNode = this._jaxNodes[i];
-		if (jaxNode.jaxNodeType !== 1) { continue; }
 		jaxNode.slide(type, duration, f); 
 	}
 	return this;
