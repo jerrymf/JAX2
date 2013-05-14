@@ -94,16 +94,14 @@ JAX.Node.prototype.$$ = function(selector) {
 
 JAX.Node.prototype.addClass = function() {
 	if (this._node.nodeType !== 1) { throw new Error("You can not use this method for this node"); }
-
-	var classNames = [].slice.call(arguments);
-
-	if (classNames.length === 1) { classNames = [].concat(classNames[0]); }
-
+	
 	if (this._node.getAttribute && this._node.getAttribute("data-jax-locked")) {
 		this._queueMethod(this.addClass, arguments); 
 		return this; 
 	}
 	
+	var classNames = [].slice.call(arguments);
+	if (classNames.length === 1) { classNames = [].concat(classNames[0]); }
 	var currclasses = this._node.className.split(" ");
 	
 	for (var i=0, len=classNames.length; i<len; i++) {
@@ -123,16 +121,14 @@ JAX.Node.prototype.addClass = function() {
 
 JAX.Node.prototype.removeClass = function() {
 	if (this._node.nodeType !== 1) { throw new Error("You can not use this method for this node"); }
-
-	var classNames = [].slice.call(arguments);
-
-	if (classNames.length === 1) { classNames = [].concat(classNames[0]); }
-
+	
 	if (this._node.getAttribute && this._node.getAttribute("data-jax-locked")) {
 		this._queueMethod(this.removeClass, arguments); 
 		return this; 
 	}
 	
+	var classNames = [].slice.call(arguments);
+	if (classNames.length === 1) { classNames = [].concat(classNames[0]); }
 	var currclasses = this._node.className.split(" ");
 	
 	for (var i=0, len=classNames.length; i<len; i++) {
@@ -200,14 +196,13 @@ JAX.Node.prototype.html = function(innerHTML) {
 };
 
 JAX.Node.prototype.add = function() {
-	var nodes = [].slice.call(arguments);
-
-	if (nodes.length === 1) { nodes = [].concat(nodes[0]); }
-
 	if (this._node.getAttribute && this._node.getAttribute("data-jax-locked")) {
 		this._queueMethod(this.add, arguments); 
 		return this; 
 	}
+	
+	var nodes = [].slice.call(arguments);
+	if (nodes.length === 1) { nodes = [].concat(nodes[0]); }
 	
 	for (var i=0, len=nodes.length; i<len; i++) {
 		var node = nodes[i];
