@@ -35,7 +35,6 @@ JAX.all = function(selector, srcElement) {
 };
 
 JAX.TAG_RXP = /^([a-zA-Z]+[a-zA-Z0-9]*)/g;
-JAX.CLASS_ID_RXP = /([\.#])([^\.#]*)/g;
 
 JAX.make = function(tagString, attrs, styles, srcDocument) {
 	var attrs = attrs || {};
@@ -50,24 +49,29 @@ JAX.make = function(tagString, attrs, styles, srcDocument) {
 	var tagName = tagString.match(JAX.TAG_RXP) || [];
 
 	if (tagName.length === 1) {
-		tagName = tagName[0];
-		tagString = tagString.substring(tagName.length, tagString.length);
+		tagString = tagString.substring(tagName[0].length, tagString.length);
 	} else {
 		throw new Error("Tagname must be first in element definition");
 	}
-
-	tagString.replace(JAX.CLASS_ID_RXP, function(match, p1, p2) {
-		var property = p1 === "#" ? "id" : "className";
-
-		if (!(property in attrs)) { 
-			attrs[property] = ""; 
-		} else {
-			attrs[property] += " ";
-		}
-
-		attrs[property] += p2;
-	});
-
+	
+	var attrType = "";
+	for (var i=0, len=tagString.length; i<len; i++) {
+		var ch = tagString[i];
+		if (ch === "#") { 
+			attrType = "id"; 
+			attrs["id"] = "";
+		} else if (ch === ".") { 
+			attrType = "className";
+			if (attrs["className"]) { 
+				attrs["className"] += " ";
+			} else {
+				attrs["className"] = "";
+			}
+		} else if (attrType) {
+			attrs[attrType] += ch;
+		}	
+	}
+	
 	var createdNode = srcDocument.createElement(tagName);
 
 	for (var p in attrs) { createdNode[p] = attrs[p]; }
@@ -109,7 +113,7 @@ JAX.isBoolean = function(value) {
 };
 
 JAX.isDate = function(value) {
-	return value instanceof Date;
+	return Object.prototype.toString.call(value) === "[object Date]";
 };
 
 JAX.isJAXNode = function(node) {

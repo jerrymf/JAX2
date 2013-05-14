@@ -498,16 +498,27 @@ JAX.Node.prototype.fullWidth = function(value) {
 		this._queueMethod(this.width, arguments); 
 		return this; 
 	} 
+	
+	var boxSizing = this.computedCss("box-sizing") || this.computedCss("-moz-box-sizing") || this.computedCss("-webkit-box-sizing");
+	var paddingLeft = 0,
+		paddingRight = 0,
+		borderLeft = 0,
+		borderRight = 0;
 
-	var paddingLeft = parseFloat(this.computedCss("padding-left"));
-	var paddingRight = parseFloat(this.computedCss("padding-right"));
-	var borderLeft = parseFloat(this.computedCss("border-left"));
-	var borderRight = parseFloat(this.computedCss("border-right"));
+	if (!boxSizing || boxSizing === "content-box") {
+		var paddingLeft = parseFloat(this.computedCss("padding-left"));
+		var paddingRight = parseFloat(this.computedCss("padding-right"));
+	}
+	
+	if (boxSizing !== "border-box") {
+		var borderLeft = parseFloat(this.computedCss("border-left"));
+		var borderRight = parseFloat(this.computedCss("border-right"));
+	}
 
-	if (isFinite(paddingLeft)) { value =- paddingLeft; }
-	if (isFinite(paddingRight)) { value =- paddingRight; }
-	if (isFinite(borderLeft)) { value =- borderLeft; }
-	if (isFinite(borderRight)) { value =- borderRight; }
+	if (paddingLeft && isFinite(paddingLeft)) { value =- paddingLeft; }
+	if (paddingRight && isFinite(paddingRight)) { value =- paddingRight; }
+	if (borderLeft && isFinite(borderLeft)) { value =- borderLeft; }
+	if (borderRight && isFinite(borderRight)) { value =- borderRight; }
 
 	this._node.style.width = Math.max(value,0) + "px";
 	return this;
@@ -534,16 +545,27 @@ JAX.Node.prototype.fullHeight = function(value) {
 		this._queueMethod(this.height, arguments); 
 		return this; 
 	} 
+	
+	var boxSizing = this.computedCss("box-sizing") || this.computedCss("-moz-box-sizing") || this.computedCss("-webkit-box-sizing");
+	var paddingTop = 0,
+		paddingBottom = 0,
+		borderTop = 0,
+		borderBottom = 0;
 
-	var paddingTop = parseFloat(this.computedCss("padding-top"));
-	var paddingBottom = parseFloat(this.computedCss("padding-bottom"));
-	var borderTop = parseFloat(this.computedCss("border-top"));
-	var borderBottom = parseFloat(this.computedCss("border-bottom"));
-
-	if (isFinite(paddingTop)) { value =- paddingTop; }
-	if (isFinite(paddingBottom)) { value =- paddingBottom; }
-	if (isFinite(borderTop)) { value =- borderTop; }
-	if (isFinite(borderBottom)) { value =- borderBottom; }
+	if (!boxSizing || boxSizing === "content-box") {
+		paddingTop = parseFloat(this.computedCss("padding-top"));
+		paddingBottom = parseFloat(this.computedCss("padding-bottom"));
+	}
+	
+	if (boxSizing !== "border-box") {
+		borderTop = parseFloat(this.computedCss("border-top"));
+		borderBottom = parseFloat(this.computedCss("border-bottom"));
+	}
+	
+	if (paddingTop && isFinite(paddingTop)) { value =- paddingTop; }
+	if (paddingBottom && isFinite(paddingBottom)) { value =- paddingBottom; }
+	if (borderTop && isFinite(borderTop)) { value =- borderTop; }
+	if (borderBottom && isFinite(borderBottom)) { value =- borderBottom; }
 
 	this._node.style.height = Math.max(value,0) + "px";
 	return this;
