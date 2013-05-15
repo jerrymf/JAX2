@@ -62,7 +62,7 @@ JAX.NodeArray.prototype.displayOff = function() {
 	return this;
 };
 
-JAX.NodeArray.prototype.style = function(properties) {
+JAX.NodeArray.prototype.setStyleCss = function(properties) {
 	for (var i=0, len=this._jaxNodes.length; i<len; i++) { 
 		var jaxNode = this._jaxNodes[i];
 		jaxNode.styleCss(properties); 
@@ -70,7 +70,7 @@ JAX.NodeArray.prototype.style = function(properties) {
 	return this;	
 };
 
-JAX.NodeArray.prototype.attr = function(attributes) {
+JAX.NodeArray.prototype.setAttr = function(attributes) {
 	for (var i=0, len=this._jaxNodes.length; i<len; i++) { 
 		var jaxNode = this._jaxNodes[i];
 		jaxNode.attr(attributes); 
