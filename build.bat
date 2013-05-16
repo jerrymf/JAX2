@@ -1,9 +1,7 @@
 REM Zretezeni vsech knihoven do jedne
 @ECHO OFF
 
-ECHO (function() { > ".\lib\jax.js"
-ECHO. >> ".\lib\jax.js"
-type ".\src\core.js" >> ".\lib\jax.js"
+type ".\src\core.js" > ".\lib\jax.js"
 ECHO. >> ".\lib\jax.js"
 type ".\src\node.js" >> ".\lib\jax.js"
 ECHO. >> ".\lib\jax.js"
@@ -15,7 +13,6 @@ type ".\src\fx.js" >> ".\lib\jax.js"
 ECHO. >> ".\lib\jax.js"
 type ".\src\common.js" >> ".\lib\jax.js"
 ECHO. >> ".\lib\jax.js"
-ECHO })(); >> ".\lib\jax.js"
 
 XCOPY /y ".\src\dependencies\jak.js" ".\lib\jak.js"
 XCOPY /y ".\src\dependencies\interpolator.js" ".\lib\interpolator.js"
