@@ -135,7 +135,7 @@ JAX.makeText = function(text, srcDocument) {
  *
  * @param value testovana hodnota
  * @param {documentElement} [srcDocument=window.document] document node, ve kterém se má vytvářet
- * @returns {JAX.Node}
+ * @returns {string}
  */
 JAX.getTypeOf = function(value) {
 	if (typeof(value) === "number") {
