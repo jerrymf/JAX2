@@ -20,6 +20,6 @@ cat ../lib/jak.js > ../lib/jax-all.js
 cat ../lib/interpolator.js >> ../lib/jax-all.js
 cat ../lib/jax.js >> ../lib/jax-all.js
 
-java -jar ../bin/compiler.jar --js ../lib/jax-all.js  --js_output_file ../lib/jax-all-minified.js --compilation_level ADVANCED_OPTIMIZATIONS
+java -jar ../bin/compiler.jar --js ../lib/jax-all.js  --js_output_file ../lib/jax-all-minified.js
 
 cd ..

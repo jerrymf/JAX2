@@ -13,7 +13,7 @@ JAX.NodeArray.prototype.$constructor = function(nodes) {
 	for (var i=0; i<len; i++) { 
 		var node = nodes[i];
 		if (typeof(node) === "object" && node.nodeType) { this._jaxNodes[i] = JAX(node); continue; }
-		if (JAX.isJAXNode(node)) { this._jaxNodes[i] = node; continue; }
+		if (node instanceof JAX.Node) { this._jaxNodes[i] = node; continue; }
 
 		throw new Error("First argument must be array of JAX.Node instances or html nodes");
 	}

@@ -206,7 +206,7 @@ JAX.Node.prototype.add = function() {
 	
 	for (var i=0, len=nodes.length; i<len; i++) {
 		var node = nodes[i];
-		if (!node.nodeType && !JAX.isJAXNode(node)) { throw new Error("For arguments I expected html node, text node or JAX.Node instance. You can use array of them or you can separate them by comma."); }
+		if (!node.nodeType && !(node instanceof JAX.Node)) { throw new Error("For arguments I expected html node, text node or JAX.Node instance. You can use array of them or you can separate them by comma."); }
 		var node = node.jaxNodeType ? node.node() : node;
 		this._node.appendChild(node);
 	}
@@ -220,8 +220,8 @@ JAX.Node.prototype.addBefore = function(node, nodeBefore) {
 		return this;  
 	} 
 
-	if (typeof(node) !== "object" || (!node.nodeType && !JAX.isJAXNode(node))) { throw new Error("For first argument I expected html element, text node, documentFragment or JAX.Node instance"); }
-	if (typeof(nodeBefore) !== "object" || (!nodeBefore.nodeType && !JAX.isJAXNode(nodeBefore))) { throw new Error("For second argument I expected html element, text node or JAX.Node instance"); }
+	if (typeof(node) !== "object" || (!node.nodeType && !(node instanceof JAX.Node))) { throw new Error("For first argument I expected html element, text node, documentFragment or JAX.Node instance"); }
+	if (typeof(nodeBefore) !== "object" || (!nodeBefore.nodeType && !(nodeBefore instanceof JAX.Node))) { throw new Error("For second argument I expected html element, text node or JAX.Node instance"); }
 
 	var node = node.jaxNodeType ? node.node() : node;
 	var nodeBefore = nodeBefore.jaxNodeType ? nodeBefore.node() : nodeBefore;
@@ -234,7 +234,7 @@ JAX.Node.prototype.appendTo = function(node) {
 	if (this._node.getAttribute && this._node.getAttribute("data-jax-locked")) {
 		this._queueMethod(this.appendTo, arguments); 
 		return this; 
-	} else if (typeof(node) === "object" && (node.nodeType || JAX.isJAXNode(node))) { 
+	} else if (typeof(node) === "object" && (node.nodeType || node instanceof JAX.Node)) { 
 		var node = node.jaxNodeType ? node.node() : node;
 		node.appendChild(this._node);
 		return this;
@@ -247,7 +247,7 @@ JAX.Node.prototype.appendBefore = function(node) {
 	if (this._node.getAttribute && this._node.getAttribute("data-jax-locked")) {
 		this._queueMethod(this.appendBefore, arguments); 
 		return this; 
-	} else if (typeof(node) === "object" && (node.nodeType || JAX.isJAXNode(node))) {
+	} else if (typeof(node) === "object" && (node.nodeType || node instanceof JAX.Node)) {
 		var node = node.jaxNodeType ? node.node() : node;
 		node.parentNode.insertBefore(this._node, node);
 		return this;
@@ -613,7 +613,7 @@ JAX.Node.prototype.contains = function(node) {
 		throw new Error("You can not use this method for this element. You can use it only with html element")
 	}
 
-	if (typeof(node) === "object" && (node.nodeType || JAX.isJAXNode(node))) {
+	if (typeof(node) === "object" && (node.nodeType || node instanceof JAX.Node)) {
 		var elm = node.jaxNodeType ? node.node().parentNode : node.parentNode;
 		while(elm) {
 			if (elm === this._node) { return true; }
@@ -630,7 +630,7 @@ JAX.Node.prototype.isChildOf = function(node) {
 		throw new Error("You can not use this method for this element. You can use it only with html element or text node");
 	}
 
-	if (typeof(node) === "object" && (node.nodeType || JAX.isJAXNode(node))) {
+	if (typeof(node) === "object" && (node.nodeType || node instanceof JAX.Node)) {
 		var elm = node.jaxNodeType ? node : JAX.Node.create(node);
 		return elm.contains(this);
 	}

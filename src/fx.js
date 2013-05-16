@@ -39,7 +39,7 @@ JAX.FX._SUPPORTED_PROPERTIES = {
 JAX.FX._REGEXP_OPACITY = new RegExp("alpha\(opacity=['\"]?([0-9]+)['\"]?\)");
 
 JAX.FX.prototype.$constructor = function(element) {
-	this._elm = JAX.isJAXNode(element) ? element : JAX.Node.create(element);
+	this._elm = element instanceof JAX.Node ? element : JAX.Node.create(element);
 	this._properties = [];
 	this._interpolators = [];
 	this._callbacks = [];

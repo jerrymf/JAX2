@@ -1,5 +1,18 @@
-/* version 1.99 */
+/**
+ * @fileOverview core.js - JAX - JAk eXtended
+ * @author <a href="jerrymf@gmail.com">Marek Fojtl</a>
+ * @version 2.0
+ */
 
+/**
+ * Najde element, který odpovídá selector a vrátí instanci JAX.Node
+ * @example
+ * var jaxNode = JAX("#ads"); // vrati element s id ads
+ *
+ * @param {String|Node|JAX.Node} selector Řetězec splňující pravidla css3 (pro IE8 css2.1) selectoru, node nebo instance JAX.Node
+ * @param {Node} [srcElement=window.document] node ve kterém se má hledat
+ * @returns {JAX.Node|null}
+ */
 var JAX = function(selector, srcElement) {
 	if (typeof(selector) === "string") {
 		var srcElement = srcElement || document;
@@ -13,9 +26,18 @@ var JAX = function(selector, srcElement) {
 		return selector;
 	}
 
-	return false;
+	return null;
 };
 
+/**
+ * Najde elementy, které odpovídají selectoru a vrátí instanci JAX.NodeArray
+ * @example
+ * var jaxNodes = JAX.all("div.example"); // najde vsechny divy s className example a vrati instanci JAX.NodeArray
+ *
+ * @param {String|Node|JAX.Node} selector řetězec splňující pravidla css3 (pro IE8 css2.1) selectoru, node nebo instance JAX.Node
+ * @param {Node} [srcElement=window.document] node ve kterém se má hledat
+ * @returns {JAX.NodeArray|null}
+ */
 JAX.all = function(selector, srcElement) {
 	if (typeof(selector) === "string") {
 		var srcElement = srcElement || document;
@@ -31,11 +53,20 @@ JAX.all = function(selector, srcElement) {
 		return new JAX.NodeArray(selector);
 	}
 	
-	return false;
+	return null;
 };
 
-JAX.TAG_RXP = /^([a-zA-Z]+[a-zA-Z0-9]*)/g;
-
+/**
+ * Vytvoří element na základě zadaných parametrů a vrátí JAX.Node instanci
+ * @example
+ * var elm = JAX.make("div#ads.column"); // vytvori element div s id ads a className column
+ *
+ * @param {String} tagString řetězec definující název tagu (lze přidat i název tříd(y) a id, se kterými se má vytvořit)
+ * @param {Object} attrs asociativní pole atributů tagu
+ * @param {Object} styles asociativní pole stylů, které se mají přiřadit do node.style
+ * @param {documentElement} [srcDocument=window.document] document node, ve kterém se má vytvářet
+ * @returns {JAX.Node}
+ */
 JAX.make = function(tagString, attrs, styles, srcDocument) {
 	var attrs = attrs || {};
 	var styles = styles || {};
@@ -46,7 +77,7 @@ JAX.make = function(tagString, attrs, styles, srcDocument) {
 	if (typeof(styles) !== "object") { throw new Error("Third argument must be associative array."); }
 	if (typeof(srcDocument) !== "object" || !srcDocument.nodeType && [9,11].indexOf(srcDocument.nodeType) === -1) { throw new Error("Fourth argument must be document element."); }
 
-	var tagName = tagString.match(JAX.TAG_RXP) || [];
+	var tagName = tagString.match(/^([a-zA-Z]+[a-zA-Z0-9]*)/g) || [];
 
 	if (tagName.length === 1) {
 		tagString = tagString.substring(tagName[0].length, tagString.length);
@@ -83,40 +114,51 @@ JAX.make = function(tagString, attrs, styles, srcDocument) {
 	return f;
 };
 
-JAX.makeText = function(text, doc) {
-	return JAX.Node.create((doc || document).createTextNode(text));
+/**
+ * Vytvoří textový uzel a vrátí JAX.Node instanci
+ * @example
+ * var textNode = JAX.makeText("Hellow world");
+ *
+ * @param {String} text text, který má uzel obsahovat
+ * @param {documentElement} [srcDocument=window.document] document node, ve kterém se má vytvářet
+ * @returns {JAX.Node}
+ */
+JAX.makeText = function(text, srcDocument) {
+	return JAX.Node.create((srcDocument || document).createTextNode(text));
 };
 
-JAX.isNumber = function(value) {
-	return typeof(value) === "number";
-};
+/**
+ * Zjistí, jakého typu je zadaný parametr
+ * @example
+ * console.log(JAX.getTypeOf(10)); // vrati "number"
+ * console.log(JAX.getTypeOf("10")); // vrati "string"
+ *
+ * @param value testovana hodnota
+ * @param {documentElement} [srcDocument=window.document] document node, ve kterém se má vytvářet
+ * @returns {JAX.Node}
+ */
+JAX.getTypeOf = function(value) {
+	if (typeof(value) === "number") {
+		return "number";
+	} else if (typeof(value) === "string") {
+		return "string";
+	} else if (typeof(value) === "undefined") {
+		return "undefined";
+	} else if (typeof(value) === "function") {
+		return "function";
+	} else if (value === true || value === false) {
+		return "boolean";
+	} 
 
-JAX.isNumeric = function(value) {
-	var val = parseFloat(value);
-	return val === value * 1 && isFinite(val);
-};
+	var toStringResult = Object.prototype.toString.call(value);
 
-JAX.isString = function(value) {
-	return typeof(value) === "string";
-};
+	if (toStringResult === "[object Null]") {
+		return "null";	
+	} else if (toStringResult === "[object Array]") {
+		return "array";	
+	} else if (toStringResult === "[object Date]") {
+		return "date";
+	}
 
-JAX.isArray = function(value) {
-	return Object.prototype.toString.call(value) === "[object Array]";
+	return "object";
 };
-
-JAX.isFunction = function(value) {
-	return typeof(value) === "function";
-};
-
-JAX.isBoolean = function(value) {
-	return value === true || value === false;
-};
-
-JAX.isDate = function(value) {
-	return Object.prototype.toString.call(value) === "[object Date]";
-};
-
-JAX.isJAXNode = function(node) {
-	return node instanceof JAX.Node;
-};
-
