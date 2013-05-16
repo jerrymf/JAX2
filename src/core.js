@@ -148,13 +148,13 @@ JAX.getTypeOf = function(value) {
 		return "function";
 	} else if (value === true || value === false) {
 		return "boolean";
-	} 
+	} else if (value === null) {
+		return "null";
+	}
 
 	var toStringResult = Object.prototype.toString.call(value);
 
-	if (toStringResult === "[object Null]") {
-		return "null";	
-	} else if (toStringResult === "[object Array]") {
+	if (toStringResult === "[object Array]") {
 		return "array";	
 	} else if (toStringResult === "[object Date]") {
 		return "date";

@@ -10,7 +10,7 @@
  */ 
 JAX.DOMBuilder = JAK.ClassMaker.makeClass({
 	NAME: "JAX.DOMBuilder",
-	VERSION: "1.0"
+	VERSION: "2.0"
 });
 
 /**

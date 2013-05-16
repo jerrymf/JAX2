@@ -1,6 +1,16 @@
+/**
+ * @fileOverview fx.js - JAX - JAk eXtended
+ * @author <a href="jerrymf@gmail.com">Marek Fojtl</a>
+ * @version 1.0
+ */
+
+/**
+ * Pomocník pro snadnější tvorbu animací
+ * @class FX
+ */ 
 JAX.FX = JAK.ClassMaker.makeClass({
 	NAME: "JAX.FX",
-	VERSION: "0.32"
+	VERSION: "1.0"
 });
 
 JAX.FX._TRANSITION_PROPERTY = "";
