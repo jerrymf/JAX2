@@ -1,12 +1,12 @@
 /**
  * @fileOverview dombuilder.js - JAX - JAk eXtended
- * @author <a href="jerrymf@gmail.com">Marek Fojtl</a>
+ * @author <a href="mailto:jerrymf@gmail.com">Marek Fojtl</a>
  * @version 2.0
  */
 
 /**
  * Pomocník pro vytváření DOM elementů
- * @class DOM Builder 
+ * @class JAX.DOMBuilder 
  */ 
 JAX.DOMBuilder = JAK.ClassMaker.makeClass({
 	NAME: "JAX.DOMBuilder",

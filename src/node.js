@@ -3,7 +3,8 @@ JAX.Node = JAK.ClassMaker.makeClass({
 	VERSION: "0.71"
 });
 
-JAX.Node.MEASUREABLEVALUE = /^(?:-)?\d+(\.\d+)?(%|em|in|cm|mm|ex|pt|pc)?$/i;
+JAX.Node.MEASUREABLEVALUE_REGEXP = /^(?:-)?\d+(\.\d+)?(%|em|in|cm|mm|ex|pt|pc)?$/i;
+JAX.Node.OPACITY_REGEXP = /alpha\(opacity=['"]?([0-9]+)['"]?\)/i
 
 JAX.Node.ELEMENT_NODE = 1;
 JAX.Node.TEXT_NODE = 3;
@@ -458,7 +459,7 @@ JAX.Node.prototype.computedCss = function() {
 	if (typeof(cssStyles) === "string") {
 		if (this._node.nodeType !== 1) { return ""; }
 		var value = JAK.DOM.getStyle(this._node, cssStyles);
-		if (this._node.runtimeStyle && !this._node.addEventListener && JAX.Node.MEASUREABLEVALUE.test(value)) { value = this._inPixels(value); }
+		if (this._node.runtimeStyle && !this._node.addEventListener && JAX.Node.MEASUREABLEVALUE_REGEXP.test(value)) { value = this._inPixels(value); }
 		return value;
 	}
 
@@ -466,7 +467,7 @@ JAX.Node.prototype.computedCss = function() {
 	for (var i=0, len=cssStyles.length; i<len; i++) {
 		var cssStyle = cssStyles[i];
 		var value = JAK.DOM.getStyle(this._node, cssStyle);
-		if (this._node.runtimeStyle && !this._node.addEventListener && JAX.Node.MEASUREABLEVALUE.test(value)) { value = this._inPixels(value); }
+		if (this._node.runtimeStyle && !this._node.addEventListener && JAX.Node.MEASUREABLEVALUE_REGEXP.test(value)) { value = this._inPixels(value); }
 		css[cssStyle] = value;
 	}
 	return css;
@@ -886,7 +887,7 @@ JAX.Node.prototype._setOpacity = function(value) {
 JAX.Node.prototype._getOpacity = function() {
 	if (JAK.Browser.client === "ie" && JAK.Browser.version < 9) {
 		var value = "";
-		this._node.style.filter.replace(JAX.FX.REGEXP_OPACITY, function(match1, match2) {
+		this._node.style.filter.replace(JAX.NODE.OPACITY_REGEXP, function(match1, match2) {
 			value = match2;
 		});
 		return value ? (parseInt(value, 10)/100)+"" : value;

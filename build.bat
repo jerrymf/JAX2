@@ -14,8 +14,8 @@ ECHO. >> ".\lib\jax.js"
 type ".\src\common.js" >> ".\lib\jax.js"
 ECHO. >> ".\lib\jax.js"
 
-XCOPY /y ".\src\dependencies\jak.js" ".\lib\jak.js"
-XCOPY /y ".\src\dependencies\interpolator.js" ".\lib\interpolator.js"
+XCOPY /y ".\dependencies\jak.js" ".\lib\jak.js"
+XCOPY /y ".\dependencies\interpolator.js" ".\lib\interpolator.js"
 
 type ".\lib\jak.js" > ".\lib\jax-all.js"
 type ".\lib\interpolator.js" >> ".\lib\jax-all.js"

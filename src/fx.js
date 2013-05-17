@@ -1,12 +1,12 @@
 /**
  * @fileOverview fx.js - JAX - JAk eXtended
- * @author <a href="jerrymf@gmail.com">Marek Fojtl</a>
+ * @author <a href="mailto:jerrymf@gmail.com">Marek Fojtl</a>
  * @version 1.0
  */
 
 /**
  * Pomocník pro snadnější tvorbu animací
- * @class FX
+ * @class JAX.FX
  */ 
 JAX.FX = JAK.ClassMaker.makeClass({
 	NAME: "JAX.FX",
@@ -46,10 +46,26 @@ JAX.FX._SUPPORTED_PROPERTIES = {
 	"color": {defaultUnit:"", css:"color" },
 	"backgroundColor": {defaultUnit:"", css:"background-color" }
 };
-JAX.FX._REGEXP_OPACITY = new RegExp("alpha\(opacity=['\"]?([0-9]+)['\"]?\)");
 
-JAX.FX.prototype.$constructor = function(element) {
-	this._elm = element instanceof JAX.Node ? element : JAX.Node.create(element);
+JAX.FX._SUPPORTED_METHODS = [
+	"ease",
+	"linear",
+	"ease-in",
+	"ease-out",
+	"ease-in-out",
+	"cubic-bezier"
+];
+
+/**
+ * @constructor
+ * @example 
+ * var elm = JAX("#box");
+ * var fx = new JAX.FX(elm);
+ *
+ * @param {HTMLElm} elm html element, který se má animovat
+ */
+JAX.FX.prototype.$constructor = function(elm) {
+	this._elm = elm instanceof JAX.Node ? elm : JAX.Node.create(elm);
 	this._properties = [];
 	this._interpolators = [];
 	this._callbacks = [];
@@ -57,34 +73,92 @@ JAX.FX.prototype.$constructor = function(element) {
 	this._transitionSupport = !!JAX.FX._TRANSITION_PROPERTY;
 };
 
+/**
+ * Přidá css vlastnost, která se bude animovat. Pro každou vlastnost lze zadat různou délku animace a také hodnoty, od kterých se má začít a po které skončit. <br>
+ * Podporované css vlasnosti pro animaci: width, height, top, left, bottom, right, fontSize, opacity, color a backgroundColor
+ * @example 
+ * var elm = JAX("#box");
+ * var fx = new JAX.FX(elm);
+ * fx.addProperty("width", 2, 0, 200);
+ * fx.addProperty("height", 3, 0, 100);
+ * fx.run();
+ *
+ * @param {string} property css vlastnost, která se má animovat
+ * @param {number} duration délka v sekundách, lze zadat i desetinné číslo, např. 1.2
+ * @param {string} start počáteční hodnota - je dobré k ní uvést vždy i jednotky, pokud jde o číselnou hodnotu, jako výchozí se používají px
+ * @param {string} end koncová hodnota - je dobré k ní uvést vždy i jednotky, pokud jde o číselnou hodnotu, jako výchozí se používají px
+ * @param {string} method css transformační metoda (ease, linear, ease-in, ease-out, ... ) více na <a href="http://www.w3.org/TR/2009/WD-css3-transitions-20090320/#transition-timing-function_tag">webu W3C</a>, pozn.: pokud prohlížeč neumí transitions, je použito js řešení a metoda je vždy LINEAR
+ * @returns {JAX.FX}
+ */
 JAX.FX.prototype.addProperty = function(property, duration, start, end, method) {
-	if (property in JAX.FX._SUPPORTED_PROPERTIES) { 
-		var cssEnd = this._parseCSSValue(property, end);
-		var cssStart = this._parseCSSValue(property, start); 
-		var method = this._transitionSupport ? (method || "linear") : "LINEAR";
+	var duration = parseInt(duration);
+	var method = this._transitionSupport ? (method || "linear") : "LINEAR";
+	
+	if (typeof(property) != "string") { throw new Error("For first argument I expected string"); }
+	if (!isFinite(duration) || duration < 0) { throw new Error("For second argument I expected positive number"); }
+	if (typeof(start) != "string" && (typeof(start) != "number" || !isFinite(start))) { throw new Error("For third argument I expected string or number"); }
+	if (typeof(end) != "string" && (typeof(end) != "number" || !isFinite(end))) { throw new Error("For fourth argument I expected string or number"); }
+	if (typeof(method) != "string") { throw new Error("For fifth argument I expected string"); }
 
-		this._properties.push({
-			property: property,
-			cssStart: cssStart,
-			cssEnd: cssEnd,
-			duration: (duration || 1),
-			method: method
-		});
+	if (!(property in JAX.FX._SUPPORTED_PROPERTIES)) { 
+		var properties = [];
+		for (var p in JAX.FX._SUPPORTED_PROPERTIES) { properties.concat(JAX.FX._SUPPORTED_PROPERTIES[p]); }
+		throw new Error("First argument must be supported property: " + properties.join(", ")); 
+	}
+	var cssEnd = this._parseCSSValue(property, end);
+	var cssStart = this._parseCSSValue(property, start); 
+	var methodLowerCase = method.toLowerCase();
 
-		return this;
+	for (var i=0, len=JAX.FX._SUPPORTED_METHODS.length; i<len; i++) {
+		var supported = JAX.FX._SUPPORTED_METHODS[i];
+		if (methodLowerCase == supported || (supported == "cubic-bezier" && methodLowerCase.indexOf(supported) == 0)) { 
+			this._properties.push({
+				property: property,
+				cssStart: cssStart,
+				cssEnd: cssEnd,
+				duration: (duration || 1),
+				method: method
+			});
+			return this;
+		}
 	}
 
-	var properties = [];
-	for (var p in JAX.FX._SUPPORTED_PROPERTIES) { properties.concat(JAX.FX._SUPPORTED_PROPERTIES[p]); }
-
-	throw new Error("First argument must be supported property: " + properties.join(", "));
+	var methods = [];
+	for (var p in JAX.FX._SUPPORTED_METHODS) { methods.concat(JAX.FX._SUPPORTED_METHODS[p]); }
+	throw new Error("Fifth argument must be supported method: " + methods.join(", ")); 
 };
 
+/**
+ * Po doběhnutí celé animace zavolá funkci předanou parametrem. Opakovaným voláním této metody lze přidat více funkcí.
+ * @example 
+ * var func1 = function() { console.log("func1"); };
+ * var func2 = function() { console.log("func1"); };
+ * var elm = JAX("#box");
+ * var fx = new JAX.FX(elm);
+ * fx.addProperty("width", 2, 0, 200);
+ * fx.addProperty("height", 3, 0, 100);
+ * fx.callWhenDone(func1);
+ * fx.callWhenDone(func2);
+ * fx.run();
+ *
+ * @param {function} callback funkce, která se provede po doběhnutí celé animace
+ * @returns {JAX.FX}
+ */
 JAX.FX.prototype.callWhenDone = function(callback) {
 	this._callbacks.push(callback);
 	return this;
 };
 
+/**
+ * Spustí animaci
+ * @example
+ * var fx = new JAX.FX(elm);
+ * fx.addProperty("width", 2, 0, 200);
+ * fx.addProperty("height", 3, 0, 100);
+ * fx.run();
+ *
+ * @eturns {JAX.FX}
+ */
 JAX.FX.prototype.run = function() {
 	this._running = true;
 	if (!this._transitionSupport) { this._initInterpolators(); return this; }
@@ -92,10 +166,20 @@ JAX.FX.prototype.run = function() {
 	return this;
 };
 
+/**
+ * Zjistí, jestli animace právě běží
+ * 
+ * @returns {boolean}
+ */
 JAX.FX.prototype.isRunning = function() {
 	return this._running;
 };
 
+/**
+ * Stopne (zabije) animaci
+ * 
+ * @returns {JAX.FX}
+ */
 JAX.FX.prototype.stop = function() {
 	if (!this._transitionSupport) { this._stopInterpolators(); return this; }
 	this._stopTransition();
