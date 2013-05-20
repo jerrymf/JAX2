@@ -3,9 +3,6 @@ JAX.Node = JAK.ClassMaker.makeClass({
 	VERSION: "0.71"
 });
 
-JAX.Node.MEASUREABLEVALUE_REGEXP = /^(?:-)?\d+(\.\d+)?(%|em|in|cm|mm|ex|pt|pc)?$/i;
-JAX.Node.OPACITY_REGEXP = /alpha\(opacity=['"]?([0-9]+)['"]?\)/i
-
 JAX.Node.ELEMENT_NODE = 1;
 JAX.Node.TEXT_NODE = 3;
 JAX.Node.COMMENT_NODE = 8;
@@ -25,6 +22,9 @@ JAX.Node._ids[JAX.Node.TEXT_NODE] = 0;
 JAX.Node._ids[JAX.Node.COMMENT_NODE] = 0;
 JAX.Node._ids[JAX.Node.DOCUMENT_NODE] = 0;
 JAX.Node._ids[JAX.Node.DOCUMENT_FRAGMENT_NODE] = 0;
+
+JAX.Node._MEASUREABLEVALUE_REGEXP = /^(?:-)?\d+(\.\d+)?(%|em|in|cm|mm|ex|pt|pc)?$/i;
+JAX.Node._OPACITY_REGEXP = /alpha\(opacity=['"]?([0-9]+)['"]?\)/i
 
 JAX.Node.create = function(node) {
 	if (typeof(node) === "object" && node.nodeType) {
@@ -377,13 +377,13 @@ JAX.Node.prototype.attr = function() {
 };
 
 	
-JAX.Node.prototype.styleCss = function() {
+JAX.Node.prototype.css = function() {
 	if (this._node.nodeType !== 1) { throw new Error("You can not use this method for this node"); }
 	
 	var cssStyles = [].slice.call(arguments);
 	
 	if (cssStyles.length > 1) { 
-		return this.styleCss(cssStyles);
+		return this.css(cssStyles);
 	} else if (cssStyles.length === 1) {
 		cssStyles = cssStyles[0];
 	} else {
@@ -459,7 +459,7 @@ JAX.Node.prototype.computedCss = function() {
 	if (typeof(cssStyles) === "string") {
 		if (this._node.nodeType !== 1) { return ""; }
 		var value = JAK.DOM.getStyle(this._node, cssStyles);
-		if (this._node.runtimeStyle && !this._node.addEventListener && JAX.Node.MEASUREABLEVALUE_REGEXP.test(value)) { value = this._inPixels(value); }
+		if (this._node.runtimeStyle && !this._node.addEventListener && JAX.Node._MEASUREABLEVALUE_REGEXP.test(value)) { value = this._inPixels(value); }
 		return value;
 	}
 
@@ -467,7 +467,7 @@ JAX.Node.prototype.computedCss = function() {
 	for (var i=0, len=cssStyles.length; i<len; i++) {
 		var cssStyle = cssStyles[i];
 		var value = JAK.DOM.getStyle(this._node, cssStyle);
-		if (this._node.runtimeStyle && !this._node.addEventListener && JAX.Node.MEASUREABLEVALUE_REGEXP.test(value)) { value = this._inPixels(value); }
+		if (this._node.runtimeStyle && !this._node.addEventListener && JAX.Node._MEASUREABLEVALUE_REGEXP.test(value)) { value = this._inPixels(value); }
 		css[cssStyle] = value;
 	}
 	return css;
@@ -477,16 +477,16 @@ JAX.Node.prototype.fullWidth = function(value) {
 	if ([1,9].indexOf(this._node.nodeType) === -1) { throw new Error("You can not use this method for this node"); }
 	
 	if (!arguments.length) { 
-		var backupStyle = this.styleCss("display","visibility","position");
+		var backupStyle = this.css("display","visibility","position");
 		var isFixedPosition = this.computedCss("position").indexOf("fixed") === 0;
-		var isDisplayNone = this.styleCss("display").indexOf("none") === 0;
+		var isDisplayNone = this.css("display").indexOf("none") === 0;
 
-		if (!isFixedPosition) { this.styleCss({"position":"absolute"}); }
-		if (isDisplayNone) { this.styleCss({"display":""}); }		
-		this.styleCss({"visibility":"hidden"});
+		if (!isFixedPosition) { this.css({"position":"absolute"}); }
+		if (isDisplayNone) { this.css({"display":""}); }		
+		this.css({"visibility":"hidden"});
 
 		var width = this._node.offsetWidth;
-		this.styleCss(backupStyle);
+		this.css(backupStyle);
 		return width; 
 	}
 
@@ -524,16 +524,16 @@ JAX.Node.prototype.fullHeight = function(value) {
 	if ([1,9].indexOf(this._node.nodeType) === -1) { throw new Error("You can not use this method for this node"); }
 	
 	if (!arguments.length) { 
-		var backupStyle = this.styleCss("display","visibility","position");
+		var backupStyle = this.css("display","visibility","position");
 		var isFixedPosition = this.computedCss("position").indexOf("fixed") === 0;
-		var isDisplayNone = this.styleCss("display").indexOf("none") === 0;
+		var isDisplayNone = this.css("display").indexOf("none") === 0;
 
-		if (!isFixedPosition) { this.styleCss({"position":"absolute"}); }
-		if (isDisplayNone) { this.styleCss({"display":""}); }		
-		this.styleCss({"visibility":"hidden"});
+		if (!isFixedPosition) { this.css({"position":"absolute"}); }
+		if (isDisplayNone) { this.css({"display":""}); }		
+		this.css({"visibility":"hidden"});
 
 		var height = this._node.offsetHeight;
-		this.styleCss(backupStyle);
+		this.css(backupStyle);
 		return height; 
 	}
 
@@ -727,25 +727,25 @@ JAX.Node.prototype.slide = function(type, duration, lockElm) {
 
 	switch(type) {
 		case "down":
-			var backupStyles = this.styleCss("height","overflow");
+			var backupStyles = this.css("height","overflow");
 			var property = "height";
 			var source = 0;
 			var target = this.fullHeight();	
 		break;
 		case "up":
-			var backupStyles = this.styleCss("height","overflow");
+			var backupStyles = this.css("height","overflow");
 			var property = "height";
 			var source = this.fullHeight();
 			var target = 0;
 		break;
 		case "left":
-			var backupStyles = this.styleCss("width","overflow");
+			var backupStyles = this.css("width","overflow");
 			var property = "width";
 			var source = this.fullWidth();
 			var target = 0;	
 		break;
 		case "right":
-			var backupStyles = this.styleCss("width","overflow");
+			var backupStyles = this.css("width","overflow");
 			var property = "width";
 			var source = 0;
 			var target = this.fullWidth();
@@ -755,7 +755,7 @@ JAX.Node.prototype.slide = function(type, duration, lockElm) {
 			return this;
 	}
 
-	this.styleCss({"overflow": "hidden"});
+	this.css({"overflow": "hidden"});
 
 
 	var fx = new JAX.FX(this).addProperty(property, duration, source, target);

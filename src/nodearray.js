@@ -1,11 +1,11 @@
 JAX.NodeArray = JAK.ClassMaker.makeClass({
 	NAME: "JAX.NodeArray",
-	VERSION: "0.1"
+	VERSION: "1.0"
 });
 
-JAX.NodeArray.prototype.length = 0;
-
 JAX.NodeArray.prototype.$constructor = function(nodes) {
+	this.length = 0;
+
 	var nodes = [].concat(nodes);
 	var len = nodes.length;
 	this._jaxNodes = new Array(len);
@@ -48,40 +48,35 @@ JAX.NodeArray.prototype.removeClass = function() {
 
 JAX.NodeArray.prototype.displayOn = function(displayValue) {
 	for (var i=0, len=this._jaxNodes.length; i<len; i++) { 
-		var jaxNode = this._jaxNodes[i];
-		jaxNode.displayOn(displayValue); 
+		this._jaxNodes[i].displayOn(displayValue); 
 	}
 	return this;
 };
 
 JAX.NodeArray.prototype.displayOff = function() {
 	for (var i=0, len=this._jaxNodes.length; i<len; i++) { 
-		var jaxNode = this._jaxNodes[i];
-		jaxNode.displayOff(); 
+		this._jaxNodes[i].displayOff();
 	}
 	return this;
 };
 
-JAX.NodeArray.prototype.setStyleCss = function(properties) {
+JAX.NodeArray.prototype.css = function(properties) {
 	for (var i=0, len=this._jaxNodes.length; i<len; i++) { 
-		var jaxNode = this._jaxNodes[i];
-		jaxNode.styleCss(properties); 
+		this._jaxNodes[i].css(properties);
 	}
 	return this;	
 };
 
-JAX.NodeArray.prototype.setAttr = function(attributes) {
+JAX.NodeArray.prototype.attr = function(attributes) {
 	for (var i=0, len=this._jaxNodes.length; i<len; i++) { 
-		var jaxNode = this._jaxNodes[i];
-		jaxNode.attr(attributes); 
+		this._jaxNodes[i].attr(attributes); 
 	}
 	return this;	
 };
 
 JAX.NodeArray.prototype.appendTo = function(node) {
 	for (var i=0, len=this._jaxNodes.length; i<len; i++) {
-		var jaxNode = this._jaxNodes[i];
-		jaxNode.appendTo(node); 
+		this._jaxNodes[i].appendTo(node);
 	}
 	return this;
 };
@@ -96,8 +91,7 @@ JAX.NodeArray.prototype.removeFromDOM = function() {
 
 JAX.NodeArray.prototype.destroyItems = function() {
 	for (var i=0, len=this._jaxNodes.length; i<len; i++) {
-		var jaxNode = this._jaxNodes[i];
-		jaxNode.destroy(); 
+		this._jaxNodes[i].destroy(); 
 	}
 	return this;
 };
@@ -134,32 +128,48 @@ JAX.NodeArray.prototype.unshiftItem = function(node) {
 	return this._jaxNodes.unshift(JAXNode);
 };
 
-JAX.NodeArray.prototype.fade = function(type, duration, completeCbk) {
+JAX.NodeArray.prototype.fade = function(type, duration, whenDone, lockElm) {
 	var count = this._jaxNodes.length;
 
 	var f = function() {
 		count--;
-		if (!count) { completeCbk(); }
+		if (!count) { whenDone(); }
 	};
 
 	for (var i=0, len=this._jaxNodes.length; i<len; i++) {
-		var jaxNode = this._jaxNodes[i];
-		jaxNode.fade(type, duration, f); 
+		var fx = this._jaxNodes[i].fade(type, duration, lockElm);
+		if (whenDone) { fx.callWhenDone(f); }
 	}
 	return this;
 };
 
-JAX.NodeArray.prototype.slide = function(type, duration, completeCbk) {
+JAX.NodeArray.prototype.fadeTo = function(opacityValue, duration, whenDone, lockElm) {
 	var count = this._jaxNodes.length;
 
 	var f = function() {
 		count--;
-		if (!count) { completeCbk(); }
+		if (!count) { whenDone(); }
 	};
 
 	for (var i=0, len=this._jaxNodes.length; i<len; i++) {
-		var jaxNode = this._jaxNodes[i];
-		jaxNode.slide(type, duration, f); 
+		var fx = this._jaxNodes[i].fadeTo(opacityValue, duration, lockElm);
+		if (whenDone) { fx.callWhenDone(f); }
+	}
+	return this;
+};
+
+
+JAX.NodeArray.prototype.slide = function(type, duration, whenDone, lockElm) {
+	var count = this._jaxNodes.length;
+
+	var f = function() {
+		count--;
+		if (!count) { whenDone(); }
+	};
+
+	for (var i=0, len=this._jaxNodes.length; i<len; i++) {
+		var fx = this._jaxNodes[i].slide(type, duration, lockElm);
+		if (whenDone) { fx.callWhenDone(f); }
 	}
 	return this;
 };

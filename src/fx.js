@@ -57,7 +57,7 @@ JAX.FX._SUPPORTED_METHODS = [
 ];
 
 /**
- * @constructor
+ * constructor
  * @example 
  * var elm = JAX("#box");
  * var fx = new JAX.FX(elm);

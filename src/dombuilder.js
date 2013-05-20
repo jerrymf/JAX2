@@ -6,15 +6,14 @@
 
 /**
  * Pomocník pro vytváření DOM elementů
- * @class JAX.DOMBuilder 
+ * @class JAX.DOMBuilder
  */ 
 JAX.DOMBuilder = JAK.ClassMaker.makeClass({
 	NAME: "JAX.DOMBuilder",
 	VERSION: "2.0"
 });
 
-/**
- * @constructor 
+/** 
  * @example 
  * var db = new JAX.DOMBuilder();
  *
@@ -28,7 +27,7 @@ JAX.DOMBuilder.prototype.$constructor = function(doc) {
 };
 
 /**
- * Vytváří nový element a nastaví na něj interně ukazatel, takže další vytvářené elementy se budou přidávat do tohoto elementu
+ * @method Vytvoří nový element a nastaví na něj interně ukazatel, takže další vytvářené elementy se budou přidávat do tohoto elementu
  * @example
  * var db = new JAX.DOMBuilder();
  * db.open("div",{},{width:"100px"});
@@ -51,7 +50,7 @@ JAX.DOMBuilder.prototype.open = function(element, attributes, styles) {
 };
 
 /**
- * Vytvoří nový element a připojí ho do elementu, na který má nastaven ukazatel
+ * @method Vytvoří nový element a připojí ho do elementu, na který má nastaven ukazatel
  * @example
  * var db = new JAX.DOMBuilder();
  * db.add("div");
@@ -79,7 +78,7 @@ JAX.DOMBuilder.prototype.add = function(node, attributes, styles) {
 	}
 
 	if (attributes) { jaxNode.attr(attributes); }
-	if (styles) { jaxNode.styleCss(styles); }
+	if (styles) { jaxNode.css(styles); }
 
 	if (this._pointerJaxNode) {
 		this._pointerJaxNode.add(jaxNode);

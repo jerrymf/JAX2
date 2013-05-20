@@ -5,7 +5,7 @@
  */
 
 /**
- * Najde element, který odpovídá selector a vrátí instanci JAX.Node
+ * @method Najde element, který odpovídá selector a vrátí instanci JAX.Node
  * @example
  * var jaxNode = JAX("#ads"); // vrati element s id ads
  *
@@ -30,7 +30,7 @@ var JAX = function(selector, srcElement) {
 };
 
 /**
- * Najde elementy, které odpovídají selectoru a vrátí instanci JAX.NodeArray
+ * @method Najde elementy, které odpovídají selectoru a vrátí instanci JAX.NodeArray
  * @example
  * var jaxNodes = JAX.all("div.example"); // najde vsechny divy s className example a vrati instanci JAX.NodeArray
  *
@@ -57,7 +57,7 @@ JAX.all = function(selector, srcElement) {
 };
 
 /**
- * Vytvoří element na základě zadaných parametrů a vrátí JAX.Node instanci
+ * @method Vytvoří element na základě zadaných parametrů a vrátí JAX.Node instanci
  * @example
  * var elm = JAX.make("div#ads.column"); // vytvori element div s id ads a className column
  *
@@ -115,7 +115,7 @@ JAX.make = function(tagString, attrs, styles, srcDocument) {
 };
 
 /**
- * Vytvoří textový uzel a vrátí JAX.Node instanci
+ * @method Vytvoří textový uzel a vrátí JAX.Node instanci
  * @example
  * var textNode = JAX.makeText("Hellow world");
  *
@@ -128,7 +128,7 @@ JAX.makeText = function(text, srcDocument) {
 };
 
 /**
- * Zjistí, jakého typu je zadaný parametr
+ * @method Zjistí, jakého typu je zadaný parametr
  * @example
  * console.log(JAX.getTypeOf(10)); // vrati "number"
  * console.log(JAX.getTypeOf("10")); // vrati "string"

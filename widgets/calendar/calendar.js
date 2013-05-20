@@ -35,7 +35,7 @@ JAX.Calendar.prototype.show = function() {
 	this._jax.container
 		.add(this._activeYearView.getContainer())
 		.appendTo(document.body)
-		.styleCss({top:pos.top+"px", left:pos.left+"px"})
+		.css({top:pos.top+"px", left:pos.left+"px"})
 		.fade("in", 0.5, true)
 		.callWhenDone(this._showingComplete.bind(this));
 };
