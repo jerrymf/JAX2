@@ -25,7 +25,7 @@ JAX.FX._TRANSITION_EVENT = "";
       "MSTransition":"MSTransitionEnd"
     };
 
-	for (p in transitions) {
+	for (var p in transitions) {
 		if (p in document.createElement("div").style) {
 			JAX.FX._TRANSITION_PROPERTY = p;
 			JAX.FX._TRANSITION_EVENT = transitions[p];

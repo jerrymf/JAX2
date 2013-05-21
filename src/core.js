@@ -4,6 +4,8 @@
  * @version 2.0
  */
 
+"use strict";
+
 /**
  * @method Najde element, který odpovídá selector a vrátí instanci JAX.Node
  * @example
