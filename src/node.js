@@ -111,7 +111,7 @@ JAX.Node.prototype.addClass = function(classNames) {
 		var cName = classNames[i];
 		if (typeof(cName) !== "string") { 
 			cName += "";
-			JAX.Report.show("error","JAX.Node.addClass","Given arguments can be string, array of strings or strings separated by comma. Trying convert to string: " + cName, this._node);
+			JAX.Report.show("error","JAX.Node.addClass","Given arguments can be string or array of strings. Trying convert to string: " + cName, this._node);
 		}
 		var classes = cName.split(" ");
 		while(classes.length) {
@@ -143,7 +143,7 @@ JAX.Node.prototype.removeClass = function(classNames) {
 		var cName = classNames[i];
 		if (typeof(cName) !== "string") { 
 			cName += "";
-			JAX.Report.show("error","JAX.Node.removeClass","Given arguments can be string, array of strings or strings separated by comma. Trying convert to string: " + cName, this._node);
+			JAX.Report.show("error","JAX.Node.removeClass","Given arguments can be string, array of strings. Trying convert to string: " + cName, this._node);
 		}
 		var classes = cNames.split(" ");
 		while(classes.length) {

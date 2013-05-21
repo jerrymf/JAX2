@@ -4,12 +4,16 @@ JAX.Report = JAK.ClassMaker.makeStatic({
 });
 
 JAX.Report.show = function(type, func, msg, node) {
+	console.DEBUG = 1;
+
 	if (console[type]) {
 		console[type]("[" + func + "] » " + msg);
-		if (node) {
-			console.log("[JAX found problemt with node:");
+		if (node) { 
+			console.log("============================================================");
 			console.log(node);
+			console.log("============================================================"); 
 		}
+		return;
 	}
 	throw new Error("Bad console type: " + type); 
 };
