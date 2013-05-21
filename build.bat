@@ -11,6 +11,8 @@ type ".\src\dombuilder.js" >> ".\lib\jax.js"
 ECHO. >> ".\lib\jax.js"
 type ".\src\fx.js" >> ".\lib\jax.js"
 ECHO. >> ".\lib\jax.js"
+type ".\src\report.js" >> ".\lib\jax.js"
+ECHO. >> ".\lib\jax.js"
 type ".\src\common.js" >> ".\lib\jax.js"
 ECHO. >> ".\lib\jax.js"
 

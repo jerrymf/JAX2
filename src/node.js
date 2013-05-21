@@ -93,21 +93,26 @@ JAX.Node.prototype.$$ = function(selector) {
 	return JAX(selector, this._node);
 };
 
-JAX.Node.prototype.addClass = function() {
-	if (this._node.nodeType !== 1) { throw new Error("You can not use this method for this node"); }
+JAX.Node.prototype.addClass = function(classNames) {
+	if (this._node.nodeType !== 1) {
+		JAX.Report.show("warn","JAX.Node.addClass","You can not use this method for this node. Doing nothing.", this._node);
+		return this; 
+	}
 	
 	if (this._node.getAttribute && this._node.getAttribute("data-jax-locked")) {
 		this._queueMethod(this.addClass, arguments); 
 		return this; 
 	}
 	
-	var classNames = [].slice.call(arguments);
-	if (classNames.length === 1) { classNames = [].concat(classNames[0]); }
+	if (!(classNames instanceof Array)) { classNames = [].concat(classNames); }
 	var currclasses = this._node.className.split(" ");
 	
 	for (var i=0, len=classNames.length; i<len; i++) {
 		var cName = classNames[i];
-		if (typeof(cName) !== "string") { throw new Error("Given arguments can be string, array of strings or strings separated by comma."); }
+		if (typeof(cName) !== "string") { 
+			cName += "";
+			JAX.Report.show("error","JAX.Node.addClass","Given arguments can be string, array of strings or strings separated by comma. Trying convert to string: " + cName, this._node);
+		}
 		var classes = cName.split(" ");
 		while(classes.length) {
 			var newclass = classes.shift();
@@ -120,21 +125,26 @@ JAX.Node.prototype.addClass = function() {
 	return this;
 };
 
-JAX.Node.prototype.removeClass = function() {
-	if (this._node.nodeType !== 1) { throw new Error("You can not use this method for this node"); }
+JAX.Node.prototype.removeClass = function(classNames) {
+	if (this._node.nodeType !== 1) {
+		JAX.Report.show("warn","JAX.Node.removeClass","You can not use this method for this node. Doing nothing.", this._node);
+		return this;
+	}
 	
 	if (this._node.getAttribute && this._node.getAttribute("data-jax-locked")) {
 		this._queueMethod(this.removeClass, arguments); 
 		return this; 
 	}
 	
-	var classNames = [].slice.call(arguments);
-	if (classNames.length === 1) { classNames = [].concat(classNames[0]); }
+	if (!(classNames instanceof Array)) { classNames = [].concat(classNames); }
 	var currclasses = this._node.className.split(" ");
 	
 	for (var i=0, len=classNames.length; i<len; i++) {
 		var cName = classNames[i];
-		if (typeof(cName) !== "string") { throw new Error("Given arguments can be string, array of strings or strings separated by comma."); }
+		if (typeof(cName) !== "string") { 
+			cName += "";
+			JAX.Report.show("error","JAX.Node.removeClass","Given arguments can be string, array of strings or strings separated by comma. Trying convert to string: " + cName, this._node);
+		}
 		var classes = cNames.split(" ");
 		while(classes.length) {
 			var index = currclasses.indexOf(classes.shift());
@@ -148,66 +158,81 @@ JAX.Node.prototype.removeClass = function() {
 };
 
 JAX.Node.prototype.hasClass = function(className) {
-	if (this._node.nodeType !== 1) { throw new Error("You can not use this method for this node"); }
-
-	if (typeof(classname) === "string") {  
-		var names = className.split(" ");
-
-		while(names.length) {
-			var name = names.shift();
-			if (this._node.className.indexOf(name) !== -1) { return true; }
-		}
-
-		return false;
+	if (this._node.nodeType !== 1) { 
+		JAX.Report.show("warn","JAX.Node.hasClass","You can not use this method for this node. Doing nothing.", this._node);
+		return this;
 	}
-	
-	throw new Error("For first argument I expected string");
+
+	if (typeof(className) !== "string") {  
+		className += "";
+		JAX.Report.show("error","JAX.Node.hasClass","For first argument I expected string. Trying convert to string: " + className, this._node);
+	}
+
+	var names = className.split(" ");
+
+	while(names.length) {
+		var name = names.shift();
+		if (this._node.className.indexOf(name) === -1) { return false; }
+	}
+
+	return true;
 };
 
 JAX.Node.prototype.id = function(id) {
-	if (this._node.nodeType !== 1) { throw new Error("You can not use this method for this node"); }
+	if (this._node.nodeType !== 1) { 
+		JAX.Report.show("warn","JAX.Node.id","You can not use this method for this node. Doing nothing.", this._node);
+		return this;
+	}
 
 	if (!arguments.length) { 
 		return this.attr("id"); 
 	} else if (this._node.getAttribute && this._node.getAttribute("data-jax-locked")) {
 		this._queueMethod(this.id, arguments); 
 		return this; 
-	} else if (typeof(id) === "string") { 
-		this.attr({id:id}); 
-		return this;
 	}
-	
-	throw new Error("For first argument I expected string");
+
+	if (typeof(id) !== "string") {
+		id += "";
+		JAX.Report.show("warn","JAX.Node.id","For first argument I expected string. Trying convert to string: " + id, this._node);
+	}
+
+	this.attr({id:id}); 
+	return this;
 };
 
 JAX.Node.prototype.html = function(innerHTML) {
-	if (this._node.nodeType !== 1) { throw new Error("You can not use this method for this node"); }
+	if (this._node.nodeType !== 1) {
+		JAX.Report.show("warn","JAX.Node.html","You can not use this method for this node. Doing nothing.", this._node);
+		return this;
+	}
 
 	if (!arguments.length) { 
 		return innerHTML; 
 	} else if (this._node.getAttribute && this._node.getAttribute("data-jax-locked")) {
 		this._queueMethod(this.html, arguments); 
 		return this; 
-	} else if (typeof(innerHTML) === "string" || typeof(innerHTML) === "number") {
-		this._node.innerHTML = innerHTML + "";
-		return this;
 	}
-	
-	throw new Error("For first argument I expected string or number. You can call it also without arguments. Then it will return innerHTML value");
+
+	if (typeof(innerHTML) !== "string" && typeof(innerHTML) !== "number") {
+		innerHTML += "";
+		JAX.Report.show("warn","JAX.Node.html","For first argument I expected string or number. Trying convert to string: " + innerHTML, this._node);
+	}
+
+	this._node.innerHTML = innerHTML + "";
+	return this;
 };
 
-JAX.Node.prototype.add = function() {
+JAX.Node.prototype.add = function(nodes) {
 	if (this._node.getAttribute && this._node.getAttribute("data-jax-locked")) {
 		this._queueMethod(this.add, arguments); 
 		return this; 
 	}
 	
-	var nodes = [].slice.call(arguments);
-	if (nodes.length === 1) { nodes = [].concat(nodes[0]); }
+	if (!(nodes instanceof Array)) { nodes = [].concat(nodes); }
 	
 	for (var i=0, len=nodes.length; i<len; i++) {
 		var node = nodes[i];
-		if (!node.nodeType && !(node instanceof JAX.Node)) { throw new Error("For arguments I expected html node, text node or JAX.Node instance. You can use array of them or you can separate them by comma."); }
+		if (!node.nodeType && !(node instanceof JAX.Node)) { throw new Error("For arguments I expected html node, text node or JAX.Node instance. You can use array of them."); }
 		var node = node.jaxNodeType ? node.node() : node;
 		this._node.appendChild(node);
 	}
@@ -258,7 +283,10 @@ JAX.Node.prototype.appendBefore = function(node) {
 };
 
 JAX.Node.prototype.removeFromDOM = function() {
-	if ([9,11].indexOf(this._node.nodeType) !== -1) { throw new Error("You can not use this method for this node"); }
+	if ([9,11].indexOf(this._node.nodeType) !== -1) { 
+		JAX.Report.show("warn","JAX.Node.removeFromDOM","You can not use this method for this node. Doing nothing.", this._node);
+		return this;
+	}
 	
 	if (this._node.getAttribute && this._node.getAttribute("data-jax-locked")) {
 		this._queueMethod(this.removeFromDOM, arguments); 
@@ -271,7 +299,10 @@ JAX.Node.prototype.removeFromDOM = function() {
 };
 
 JAX.Node.prototype.clone = function(withContent) {
-	if (this._node.nodeType !== 1) { throw new Error("You can not use this method for this element. You can use it only for element with nodeType === 1."); }
+	if (this._node.nodeType !== 1) { 
+		JAX.Report.show("warn","JAX.Node.clone","You can not use this method for this node. Doing nothing.", this._node);
+		return this;
+	}
 
 	var withContent = !!withContent;
 	var clone = this._node.cloneNode(withContent);
@@ -280,13 +311,26 @@ JAX.Node.prototype.clone = function(withContent) {
 };
 
 JAX.Node.prototype.listen = function(type, funcMethod, obj, bindData) {
-	if ([1,9].indexOf(this._node.nodeType) === -1) { throw new Error("You can not use this method for this element. You can use it only with html or document element"); }
+	if ([1,9].indexOf(this._node.nodeType) === -1) { 
+		JAX.Report.show("warn","JAX.Node.listen","You can not use this method for this node. Doing nothing.", this._node);
+		return this;
+	}
 	
 	var obj = obj || window;
 
-	if (!type || typeof(type) !== "string") { throw new Error("For first argument I expected string"); }
-	if (!funcMethod || (typeof(funcMethod) !== "string" && typeof(funcMethod) !== "function")) { throw new Error("For second argument I expected string or function"); }
-	if (typeof(obj) !== "object") { throw new Error("For third argument I expected referred object"); }
+	if (!type || typeof(type) !== "string") { 
+		type += "";
+		JAX.Report.show("error","JAX.Node.listen","For first argument I expected string. Tring convert to string: " + type, this._node);
+	}
+
+	if (!funcMethod || (typeof(funcMethod) !== "string" && typeof(funcMethod) !== "function")) { 
+		throw new Error("For second argument I expected string or function"); 
+	}
+
+	if (typeof(obj) !== "object") { 
+		throw new Error("For third argument I expected referred object"); 
+	}
+
 	if (typeof(funcMethod) === "string") {
 		var funcMethod = obj[funcMethod];
 		if (!funcMethod) { throw new Error("Given method in second argument was not found in referred object given in third argument"); } 
@@ -303,7 +347,10 @@ JAX.Node.prototype.listen = function(type, funcMethod, obj, bindData) {
 };
 
 JAX.Node.prototype.stopListening = function(type, listenerId) {
-	if ([1,9].indexOf(this._node.nodeType) === -1) { throw new Error("You can not use this method for this element. You can use it only with html or document element"); }
+	if ([1,9].indexOf(this._node.nodeType) === -1) { 
+		JAX.Report.show("warn","JAX.Node.stopListening","You can not use this method for this node. Doing nothing.", this._node);
+		return this;
+	}
 
 	if (this._node.getAttribute && this._node.getAttribute("data-jax-locked")) {
 		this._queueMethod(this.stopListening, arguments);
@@ -317,7 +364,10 @@ JAX.Node.prototype.stopListening = function(type, listenerId) {
 		return this;
 	}
 
-	if (typeof(type) !== "string") { throw new Error("For first argument I expected string"); }
+	if (typeof(type) !== "string") { 
+		type += "";
+		JAX.Report.show("error","JAX.Node.stopListening","For first argument I expected string. Tring convert to string: " + type, this._node);
+	}
 
 	var eventListeners = this._storage.events[type]; 
 	if (!eventListeners) { return this; }
@@ -338,27 +388,26 @@ JAX.Node.prototype.stopListening = function(type, listenerId) {
 	return this;
 };
 
-JAX.Node.prototype.attr = function() {
-	if (this._node.nodeType !== 1) { throw new Error("You can not use this method for this node"); }
-	
-	var attributes = [].slice.call(arguments);
-
-	if (attributes.length > 1) { 
-		return this.attr(attributes);
-	} else if (attributes.length === 1) {
-		attributes = attributes[0];
-	} else {
-		return {};
+JAX.Node.prototype.attr = function(property, value) {
+	if (this._node.nodeType !== 1) { 
+		JAX.Report.show("warn","JAX.Node.attr","You can not use this method for this node. Doing nothing.", this._node);
+		return this;
 	}
 
-	if (typeof(attributes) === "string") { 
-		return this._node.nodeType === 1 ? node.getAttribute(attributes) : ""; 
-	} else if (attributes instanceof Array) {
+	if (typeof(property) === "string") { 
+		if (arguments.length === 1) { 
+			return node.getAttribute(property); 
+		} 
+		this._node.setAttribute(property, value + "");
+		if (arguments.length > 2) { 
+			JAX.Report.warn("warn","JAX.Node.attr","Too much arguments.", this._node);
+		}
+		return this;
+	} else if (property instanceof Array) {
 		var attrs = {};
-		if (this._node.nodeType !== 1) { return attrs; }
-		for (var i=0, len=attributes.length; i<len; i++) { 
-			var attribute = attributes[i];
-			attrs[attribute] = node.getAttribute(attribute);
+		for (var i=0, len=property.length; i<len; i++) { 
+			var p = property[i];
+			attrs[p] = node.getAttribute(p);
 		}
 		return attrs;	
 	} else if (this._node.getAttribute && this._node.getAttribute("data-jax-locked")) {
@@ -366,10 +415,8 @@ JAX.Node.prototype.attr = function() {
 		return this; 
 	}
 
-	if (this._node.nodeType !== 1) { return this; }
-
-	for (var p in attributes) {
-		var value = attributes[p];
+	for (var p in property) {
+		var value = property[p];
 		this._node.setAttribute(p, value);
 	}
 
@@ -377,29 +424,27 @@ JAX.Node.prototype.attr = function() {
 };
 
 	
-JAX.Node.prototype.css = function() {
-	if (this._node.nodeType !== 1) { throw new Error("You can not use this method for this node"); }
-	
-	var cssStyles = [].slice.call(arguments);
-	
-	if (cssStyles.length > 1) { 
-		return this.css(cssStyles);
-	} else if (cssStyles.length === 1) {
-		cssStyles = cssStyles[0];
-	} else {
-		return [];
+JAX.Node.prototype.css = function(property, value) {
+	if (this._node.nodeType !== 1) { 
+		JAX.Report.show("warn","JAX.Node.css","You can not use this method for this node. Doing nothing.", this._node);
+		return this;
 	}
 
-	if (typeof(cssStyles) === "string") {
-		if (this._node.nodeType !== 1) { return ""; }
-		return cssStyles === "opacity" ? this._getOpacity() : this._node.style[cssStyles]; 
-	} else if (cssStyles instanceof Array) {
+	if (typeof(property) === "string") {
+		if (arguments.length === 1) { 
+			return property === "opacity" ? this._getOpacity() : this._node.style[property]; 
+		}
+		this._node.style[property] = value; 
+		if (arguments.length > 2) { 
+			JAX.Report.warn("warn","JAX.Node.css","Too much arguments.", this._node);
+		}
+		return this;
+	} else if (property instanceof Array) {
 		var css = {};
-		if (this._node.nodeType !== 1) { return css; }
-		for (var i=0, len=cssStyles.length; i<len; i++) {
-			var cssStyle = cssStyles[i];
-			if (cssStyle === "opacity") { css[cssStyle] = this._getOpacity(); continue; }
-			css[cssStyle] = this._node.style[cssStyle];
+		for (var i=0, len=property.length; i<len; i++) {
+			var p = property[i];
+			if (p === "opacity") { css[p] = this._getOpacity(); continue; }
+			css[p] = this._node.style[p];
 		}
 		return css;
 	} else if (this._node.getAttribute && this._node.getAttribute("data-jax-locked")) {
@@ -407,10 +452,8 @@ JAX.Node.prototype.css = function() {
 		return this; 
 	} 
 
-	if (this._node.nodeType !== 1) { return this; }
-
-	for (var p in cssStyles) {
-		var value = cssStyles[p];
+	for (var p in property) {
+		var value = property[p];
 		if (p === "opacity") { this._setOpacity(value); continue; }
 		this._node.style[p] = value;
 	}
@@ -418,66 +461,36 @@ JAX.Node.prototype.css = function() {
 	return this;
 };
 
-JAX.Node.prototype.displayOn = function(displayValue) {
-	if (this._node.nodeType !== 1) { throw new Error("You can not use this method for this node"); }
-
-	if (this._node.getAttribute && this._node.getAttribute("data-jax-locked")) {
-		this._queueMethod(this.displayOn, arguments); 
-		return this; 
-	} 
-
-	this._node.style["display"] = displayValue || "";
-
-	return this;
-};
-
-JAX.Node.prototype.displayOff = function() {
-	if (this._node.nodeType !== 1) { throw new Error("You can not use this method for this node"); }
-
-	if (this._node.getAttribute && this._node.getAttribute("data-jax-locked")) {
-		this._queueMethod(this.displayOff, arguments); 
-		return this; 
-	} 
-	this._node.style["display"] = "none";
-
-	return this;
-};
-
-JAX.Node.prototype.computedCss = function() {
-	if (this._node.nodeType !== 1) { throw new Error("You can not use this method for this node"); }
-	
-	var cssStyles = arguments;
-
-	if (cssStyles.length > 1) { 
-		return this.computedCss(cssStyles);
-	} else if (cssStyles.length === 1) {
-		cssStyles = arguments[0];
-	} else {
-		return [];
+JAX.Node.prototype.computedCss = function(properties) {
+	if (this._node.nodeType !== 1) { 
+		JAX.Report.show("warn","JAX.Node.computedCss","You can not use this method for this node. Doing nothing.", this._node);
+		return this;
 	}
 
-	if (typeof(cssStyles) === "string") {
-		if (this._node.nodeType !== 1) { return ""; }
-		var value = JAK.DOM.getStyle(this._node, cssStyles);
+	if (typeof(properties) === "string") {
+		var value = JAK.DOM.getStyle(this._node, properties);
 		if (this._node.runtimeStyle && !this._node.addEventListener && JAX.Node._MEASUREABLEVALUE_REGEXP.test(value)) { value = this._inPixels(value); }
 		return value;
 	}
 
 	var css = {};
-	for (var i=0, len=cssStyles.length; i<len; i++) {
-		var cssStyle = cssStyles[i];
-		var value = JAK.DOM.getStyle(this._node, cssStyle);
+	for (var i=0, len=properties.length; i<len; i++) {
+		var p = properties[i];
+		var value = JAK.DOM.getStyle(this._node, p);
 		if (this._node.runtimeStyle && !this._node.addEventListener && JAX.Node._MEASUREABLEVALUE_REGEXP.test(value)) { value = this._inPixels(value); }
-		css[cssStyle] = value;
+		css[p] = value;
 	}
 	return css;
 };
 
 JAX.Node.prototype.fullWidth = function(value) {
-	if ([1,9].indexOf(this._node.nodeType) === -1) { throw new Error("You can not use this method for this node"); }
+	if ([1,9].indexOf(this._node.nodeType) === -1) { 
+		JAX.Report.show("warn","JAX.Node.fullWidth","You can not use this method for this node. Doing nothing.", this._node);
+		return this;
+	}
 	
 	if (!arguments.length) { 
-		var backupStyle = this.css("display","visibility","position");
+		var backupStyle = this.css(["display","visibility","position"]);
 		var isFixedPosition = this.computedCss("position").indexOf("fixed") === 0;
 		var isDisplayNone = this.css("display").indexOf("none") === 0;
 
@@ -521,10 +534,13 @@ JAX.Node.prototype.fullWidth = function(value) {
 };
 
 JAX.Node.prototype.fullHeight = function(value) {
-	if ([1,9].indexOf(this._node.nodeType) === -1) { throw new Error("You can not use this method for this node"); }
+	if ([1,9].indexOf(this._node.nodeType) === -1) { 
+		JAX.Report.show("warn","JAX.Node.fullHeight","You can not use this method for this node. Doing nothing.", this._node);
+		return this;
+	}
 	
 	if (!arguments.length) { 
-		var backupStyle = this.css("display","visibility","position");
+		var backupStyle = this.css(["display","visibility","position"]);
 		var isFixedPosition = this.computedCss("position").indexOf("fixed") === 0;
 		var isDisplayNone = this.css("display").indexOf("none") === 0;
 
@@ -599,7 +615,10 @@ JAX.Node.prototype.lChild = function() {
 };
 
 JAX.Node.prototype.clear = function() {
-	if ([1,11].indexOf(this._node.nodeType) === -1) { throw new Error("You can not use this method for this element. You can use it only with html node or documentFragment"); }
+	if ([1,11].indexOf(this._node.nodeType) === -1) { 
+		JAX.Report.show("warn","JAX.Node.clear","You can not use this method for this node. Doing nothing.", this._node);
+		return this;
+	}
 
 	if (this._node.getAttribute && this._node.getAttribute("data-jax-locked")) {
 		this._queueMethod(this.clear, arguments); 
@@ -611,7 +630,8 @@ JAX.Node.prototype.clear = function() {
 
 JAX.Node.prototype.contains = function(node) {
 	if (this._node.nodeType !== 1) {
-		throw new Error("You can not use this method for this element. You can use it only with html element")
+		JAX.Report.show("warn","JAX.Node.contains","You can not use this method for this node. Doing nothing.", this._node);
+		return false;
 	}
 
 	if (typeof(node) === "object" && (node.nodeType || node instanceof JAX.Node)) {
@@ -628,7 +648,8 @@ JAX.Node.prototype.contains = function(node) {
 
 JAX.Node.prototype.isChildOf = function(node) {
 	if ([1,3,8].indexOf(this._node.nodeType) === -1) {
-		throw new Error("You can not use this method for this element. You can use it only with html element or text node");
+		JAX.Report.show("warn","JAX.Node.contains","You can not use this method for this node. Doing nothing.", this._node);
+		return false;
 	}
 
 	if (typeof(node) === "object" && (node.nodeType || node instanceof JAX.Node)) {
@@ -641,7 +662,8 @@ JAX.Node.prototype.isChildOf = function(node) {
 
 JAX.Node.prototype.fade = function(type, duration, lockElm) {
 	if (this._node.nodeType !== 1) {
-		throw new Error("You can not use this method for this element. You can use it only with html element")
+		JAX.Report.show("warn","JAX.Node.fade","You can not use this method for this node. Doing nothing.", this._node);
+		return this;
 	}
 
 	var duration = parseFloat(duration) || 0;
@@ -651,8 +673,14 @@ JAX.Node.prototype.fade = function(type, duration, lockElm) {
 		return this; 
 	}
 
-	if (typeof(type) !== "string") { throw new Error("For first argument I expected string"); }
-	if (duration < 0) { throw new Error("For second argument I expected positive number"); }
+	if (typeof(type) !== "string") {
+		type += "";
+		JAX.Report.show("error","JAX.Node.fade","For first argument I expected string. Trying convert to string: " + type, this._node); 
+	}
+	if (duration < 0) { 
+		duration = 0;
+		JAX.Report.show("error","JAX.Node.fade","For second argument I expected positive number, but I got negative. I set zero value.", this._node); 
+	}
 
 	switch(type) {
 		case "in":
@@ -664,7 +692,7 @@ JAX.Node.prototype.fade = function(type, duration, lockElm) {
 			var targetOpacity = 0;
 		break;
 		default:
-			console.warn("I got unsupported type '" + type + "'.");
+			JAX.Report.show("warn","JAX.Node.fade","I got unsupported type '" + type + "'.", this._node);
 			return this;
 	}
 
@@ -681,10 +709,11 @@ JAX.Node.prototype.fade = function(type, duration, lockElm) {
 
 JAX.Node.prototype.fadeTo = function(opacityValue, duration, lockElm) {
 	if (this._node.nodeType !== 1) {
-		throw new Error("You can not use this method for this element. You can use it only with html element");
+		JAX.Report.show("warn","JAX.Node.fade","You can not use this method for this node. Doing nothing.", this._node);
+		return this;
 	}
 	
-	var opacityValue = parseFloat(opacityValue);
+	var opacityValue = parseFloat(opacityValue) || 0;
 	var duration = parseFloat(duration) || 0;
 
 	if (this._node.getAttribute && this._node.getAttribute("data-jax-locked")) {
@@ -692,8 +721,14 @@ JAX.Node.prototype.fadeTo = function(opacityValue, duration, lockElm) {
 		return this; 
 	}
 
-	if (typeof(opacityValue) !== "number") { throw new Error("For first argument I expected number"); }
-	if (duration<0) { throw new Error("For second argument I expected positive number"); }
+	if (opacityValue<0) {
+		opacityValue = 0;
+		JAX.Report.show("error","JAX.Node.fadeTo","For first argument I expected positive number, but I got negative. I set zero value.", this._node); 
+	}
+	if (duration<0) { 
+		duration = 0;
+		JAX.Report.show("error","JAX.Node.fadeTo","For second argument I expected positive number, but I got negative. I set zero value.", this._node); 
+	}
 
 	var sourceOpacity = parseFloat(this.computedCss("opacity")) || 1;
 	var targetOpacity = parseFloat(opacityValue);
@@ -712,7 +747,8 @@ JAX.Node.prototype.fadeTo = function(opacityValue, duration, lockElm) {
 
 JAX.Node.prototype.slide = function(type, duration, lockElm) {
 	if (this._node.nodeType !== 1) {
-		throw new Error("You can not use this method for this element. You can use it only with html element");
+		JAX.Report.show("warn","JAX.Node.slide","You can not use this method for this node. Doing nothing.", this._node);
+		return this;
 	}
 
 	var duration = parseFloat(duration) || 0;
@@ -722,36 +758,42 @@ JAX.Node.prototype.slide = function(type, duration, lockElm) {
 		return this; 
 	} 
 
-	if (typeof(type) !== "string") { throw new Error("For first argument I expected string"); }
-	if (duration<0) { throw new Error("For first argument I expected positive number"); }
+	if (typeof(type) !== "string") {
+		type += "";
+		JAX.Report.show("error","JAX.Node.slide","For first argument I expected string. Trying convert to string: " + type, this._node);
+	}
+	if (duration<0) {
+		duration = 0;
+		JAX.Report.show("error","JAX.Node.slide","For second argument I expected positive number, but I got negative. I set zero value.", this._node); 
+	}
 
 	switch(type) {
 		case "down":
-			var backupStyles = this.css("height","overflow");
+			var backupStyles = this.css(["height","overflow"]);
 			var property = "height";
 			var source = 0;
 			var target = this.fullHeight();	
 		break;
 		case "up":
-			var backupStyles = this.css("height","overflow");
+			var backupStyles = this.css(["height","overflow"]);
 			var property = "height";
 			var source = this.fullHeight();
 			var target = 0;
 		break;
 		case "left":
-			var backupStyles = this.css("width","overflow");
+			var backupStyles = this.css(["width","overflow"]);
 			var property = "width";
 			var source = this.fullWidth();
 			var target = 0;	
 		break;
 		case "right":
-			var backupStyles = this.css("width","overflow");
+			var backupStyles = this.css(["width","overflow"]);
 			var property = "width";
 			var source = 0;
 			var target = this.fullWidth();
 		break;
 		default:
-			if (window.console && window.console.warn) { console.warn("I got unsupported type '" + type + "'."); }
+			JAX.Report.show("warn","JAX.Node.slide","I got unsupported type '" + type + "'.", this._node);
 			return this;
 	}
 

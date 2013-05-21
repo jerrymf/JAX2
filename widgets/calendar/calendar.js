@@ -293,11 +293,11 @@ JAX.Calendar.Month.View.prototype.getContainer = function() {
 };
 
 JAX.Calendar.Month.View.prototype.show = function() {
-	this._jax.container.displayOn();
+	this._jax.container.css("display", "");
 };
 
 JAX.Calendar.Month.View.prototype.hide = function() {
-	this._jax.container.displayOff();
+	this._jax.container.css("display", "none");
 };
 
 JAX.Calendar.Month.View.prototype._build = function() {

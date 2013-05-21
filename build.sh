@@ -7,6 +7,7 @@ cat node.js >> ../lib/jax.js
 cat nodearray.js >> ../lib/jax.js
 cat dombuilder.js >> ../lib/jax.js
 cat fx.js >> ../lib/jax.js
+cat report.js >> ../lib/jax.js
 cat common.js >> ../lib/jax.js
 echo "" >> ../lib/jax.js
 cp ../dependencies/jak.js ../lib/jak.js

@@ -28,49 +28,55 @@ JAX.NodeArray.prototype.items = function() {
 	return this._jaxNodes.slice();
 };
 
-JAX.NodeArray.prototype.addClass = function() {
-	var classes = [].slice.call(arguments);
+JAX.NodeArray.prototype.addClass = function(classNames) {
 	for (var i=0, len=this._jaxNodes.length; i<len; i++) { 
 		var jaxNode = this._jaxNodes[i];
-		jaxNode.addClass(classes); 
+		jaxNode.addClass(classNames); 
 	}
 	return this;
 };
 
-JAX.NodeArray.prototype.removeClass = function() {
-	var classes = [].slice.call(arguments);
+JAX.NodeArray.prototype.removeClass = function(classNames) {
 	for (var i=0, len=this._jaxNodes.length; i<len; i++) { 
 		var jaxNode = this._jaxNodes[i];
-		jaxNode.removeClass(classes); 
+		jaxNode.removeClass(classNames); 
 	}
 	return this;
 };
 
-JAX.NodeArray.prototype.displayOn = function(displayValue) {
-	for (var i=0, len=this._jaxNodes.length; i<len; i++) { 
-		this._jaxNodes[i].displayOn(displayValue); 
+JAX.NodeArray.prototype.css = function(property, value) {
+	if (arguments.length == 1) {
+		if (typeof(property) === "string" || property instanceof Array) {
+			var styles = new Array(len);
+			for (var i=0; i<this.length; i++) { 
+				styles[i] = this._jaxNodes[i].css(property);
+			}
+			return styles;
+		}
 	}
-	return this;
-};
 
-JAX.NodeArray.prototype.displayOff = function() {
 	for (var i=0, len=this._jaxNodes.length; i<len; i++) { 
-		this._jaxNodes[i].displayOff();
+		this._jaxNodes[i].css(property, value);
 	}
-	return this;
-};
 
-JAX.NodeArray.prototype.css = function(properties) {
-	for (var i=0, len=this._jaxNodes.length; i<len; i++) { 
-		this._jaxNodes[i].css(properties);
-	}
 	return this;	
 };
 
-JAX.NodeArray.prototype.attr = function(attributes) {
-	for (var i=0, len=this._jaxNodes.length; i<len; i++) { 
-		this._jaxNodes[i].attr(attributes); 
+JAX.NodeArray.prototype.attr = function(property, value) {
+	if (arguments.length == 1) {
+		if (typeof(property) === "string" || property instanceof Array) {
+			var attrs = new Array(len);
+			for (var i=0; i<len; i++) { 
+				attrs[i] = this._jaxNodes[i].attr(property);
+			}
+			return attrs;
+		}
 	}
+
+	for (var i=0; i<this.length; i++) { 
+		this._jaxNodes[i].attr(property, value); 
+	}
+
 	return this;	
 };
 
