@@ -483,13 +483,13 @@ JAX.Node.prototype.computedCss = function(properties) {
 	return css;
 };
 
-JAX.Node.prototype.fullWidth = function(value) {
+JAX.Node.prototype.realSize = function(sizeType, value) {
 	if ([1,9].indexOf(this._node.nodeType) === -1) { 
-		JAX.Report.show("warn","JAX.Node.width","You can not use this method for this node. Doing nothing.", this._node);
+		JAX.Report.show("warn","JAX.Node.realSize","You can not use this method for this node. Doing nothing.", this._node);
 		return this;
 	}
 	
-	if (!arguments.length) { 
+	if (arguments.length === 1) { 
 		var backupStyle = this.css(["display","visibility","position"]);
 		var isFixedPosition = this.computedCss("position").indexOf("fixed") === 0;
 		var isDisplayNone = this.css("display").indexOf("none") === 0;
@@ -498,39 +498,9 @@ JAX.Node.prototype.fullWidth = function(value) {
 		if (isDisplayNone) { this.css({"display":""}); }		
 		this.css({"visibility":"hidden"});
 
-		var width = this._node.offsetWidth;
+		var size = sizeType == "width" ? this._node.offsetWidth : this._node.offsetHeight;
 		this.css(backupStyle);
-		return width; 
-	}
-
-	if (this._node.getAttribute && this._node.getAttribute("data-jax-locked")) {
-		this._queueMethod(this.width, arguments); 
-		return this; 
-	} 
-	
-	var value = this._getSizeWithBoxSizing("width");
-	this._node.style.width = Math.max(value,0) + "px";
-	return this;
-};
-
-JAX.Node.prototype.fullHeight = function(value) {
-	if ([1,9].indexOf(this._node.nodeType) === -1) { 
-		JAX.Report.show("warn","JAX.Node.fullHeight","You can not use this method for this node. Doing nothing.", this._node);
-		return this;
-	}
-	
-	if (!arguments.length) { 
-		var backupStyle = this.css(["display","visibility","position"]);
-		var isFixedPosition = this.computedCss("position").indexOf("fixed") === 0;
-		var isDisplayNone = this.css("display").indexOf("none") === 0;
-
-		if (!isFixedPosition) { this.css({"position":"absolute"}); }
-		if (isDisplayNone) { this.css({"display":""}); }		
-		this.css({"visibility":"hidden"});
-
-		var height = this._node.offsetHeight;
-		this.css(backupStyle);
-		return height; 
+		return size; 
 	}
 
 	if (this._node.getAttribute && this._node.getAttribute("data-jax-locked")) {
@@ -538,7 +508,7 @@ JAX.Node.prototype.fullHeight = function(value) {
 		return this; 
 	}
 
-	var value = this._getSizeWithBoxSizing("height");
+	var value = this._getSizeWithBoxSizing(sizeType, value);
 	this._node.style.height = Math.max(value,0) + "px";
 	return this;
 };
@@ -732,25 +702,25 @@ JAX.Node.prototype.slide = function(type, duration, lockElm) {
 			var backupStyles = this.css(["height","overflow"]);
 			var property = "height";
 			var source = 0;
-			var target = this.fullHeight();	
+			var target = this._getSizeWithBoxSizing("height");
 		break;
 		case "up":
 			var backupStyles = this.css(["height","overflow"]);
 			var property = "height";
-			var source = this.fullHeight();
+			var source = this._getSizeWithBoxSizing("height");
 			var target = 0;
 		break;
 		case "left":
 			var backupStyles = this.css(["width","overflow"]);
 			var property = "width";
-			var source = this.fullWidth();
+			var source = this._getSizeWithBoxSizing("height");
 			var target = 0;	
 		break;
 		case "right":
 			var backupStyles = this.css(["width","overflow"]);
 			var property = "width";
 			var source = 0;
-			var target = this.fullWidth();
+			var target = this._getSizeWithBoxSizing("height");
 		break;
 		default:
 			JAX.Report.show("warn","JAX.Node.slide","I got unsupported type '" + type + "'.", this._node);
@@ -897,7 +867,7 @@ JAX.Node.prototype._getOpacity = function() {
 	return this._node.style["opacity"];
 };
 
-JAX.Node.prototype._getSizeWithBoxSizing = function(sizeType) {
+JAX.Node.prototype._getSizeWithBoxSizing = function(sizeType, value) {
 	var boxSizing = this.computedCss("box-sizing") 
 				 || this.computedCss("-moz-box-sizing")
 				 || this.computedCss("-webkit-box-sizing");
@@ -909,8 +879,11 @@ JAX.Node.prototype._getSizeWithBoxSizing = function(sizeType) {
 		paddingPropertyX = "padding-" + (sizeType == "width" ? "left" : "top"),
 		paddingPropertyY = "padding-" + (sizeType == "width" ? "right" : "bottom"),
 		borderPropertyX = "border-" + (sizeType == "width" ? "left" : "top"),
-		borderPropertyY = "border-" + (sizeType == "width" ? "right" : "bottom"),
-		value = (sizeType == "width" ? this._node.offsetWidth : this._node.offsetHeight);
+		borderPropertyY = "border-" + (sizeType == "width" ? "right" : "bottom");
+
+	if (arguments.length === 1) {
+		var value = (sizeType == "width" ? this._node.offsetWidth : this._node.offsetHeight);
+	}
 
 	if (!boxSizing || boxSizing === "content-box") {
 		paddingX = parseFloat(this.computedCss(paddingPropertyX));
