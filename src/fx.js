@@ -57,7 +57,7 @@ JAX.FX._SUPPORTED_METHODS = [
 ];
 
 /**
- * constructor
+ * @method constructor
  * @example 
  * var elm = JAX("#box");
  * var fx = new JAX.FX(elm);
@@ -74,7 +74,7 @@ JAX.FX.prototype.$constructor = function(elm) {
 };
 
 /**
- * Přidá css vlastnost, která se bude animovat. Pro každou vlastnost lze zadat různou délku animace a také hodnoty, od kterých se má začít a po které skončit. <br>
+ * @method Přidá css vlastnost, která se bude animovat. Pro každou vlastnost lze zadat různou délku animace a také hodnoty, od kterých se má začít a po které skončit. <br>
  * Podporované css vlasnosti pro animaci: width, height, top, left, bottom, right, fontSize, opacity, color a backgroundColor
  * @example 
  * var elm = JAX("#box");
@@ -129,7 +129,7 @@ JAX.FX.prototype.addProperty = function(property, duration, start, end, method) 
 };
 
 /**
- * Po doběhnutí celé animace zavolá funkci předanou parametrem. Opakovaným voláním této metody lze přidat více funkcí.
+ * @method Po doběhnutí celé animace zavolá funkci předanou parametrem. Opakovaným voláním této metody lze přidat více funkcí.
  * @example 
  * var func1 = function() { console.log("func1"); };
  * var func2 = function() { console.log("func1"); };
@@ -150,7 +150,7 @@ JAX.FX.prototype.callWhenDone = function(callback) {
 };
 
 /**
- * Spustí animaci
+ * @method Spustí animaci
  * @example
  * var fx = new JAX.FX(elm);
  * fx.addProperty("width", 2, 0, 200);
@@ -167,7 +167,7 @@ JAX.FX.prototype.run = function() {
 };
 
 /**
- * Zjistí, jestli animace právě běží
+ * @method Zjistí, jestli animace právě běží
  * 
  * @returns {boolean}
  */
@@ -176,7 +176,7 @@ JAX.FX.prototype.isRunning = function() {
 };
 
 /**
- * Stopne (zabije) animaci
+ * @method Stopne (zabije) animaci
  * 
  * @returns {JAX.FX}
  */

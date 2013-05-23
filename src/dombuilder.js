@@ -90,7 +90,7 @@ JAX.DOMBuilder.prototype.add = function(node, attributes, styles) {
 };
 
 /**
- * Vytvoří nový textový uzel a připojí ho do elementu, na který má nastaven ukazatel
+ * @method Vytvoří nový textový uzel a připojí ho do elementu, na který má nastaven ukazatel
  * @example
  * var db = new JAX.DOMBuilder();
  * db.open("span");
@@ -118,7 +118,7 @@ JAX.DOMBuilder.prototype.addText = function(txt) {
 };
 
 /**
- * "Uzavře aktuálně otevřený element metodou JAX.DOMBuilder.open". Znamená to, že ukazatel se nastaví na rodičovský prvek tohoto elementu, pokud existuje.
+ * @method "Uzavře aktuálně otevřený element metodou JAX.DOMBuilder.open". Znamená to, že ukazatel se nastaví na rodičovský prvek tohoto elementu, pokud existuje.
  * @example
  * var db = new JAX.DOMBuilder();
  * db.open("span");
@@ -139,7 +139,7 @@ JAX.DOMBuilder.prototype.close = function() {
 };
 
 /**
- * Vezme svůj HTML obsah a připne ho do cílového prvku
+ * @method Vezme svůj HTML obsah a připne ho do cílového prvku
  * @example
  * var db = new JAX.DOMBuilder();
  * db.open("span");
@@ -167,7 +167,7 @@ JAX.DOMBuilder.prototype.appendTo = function(node) {
 };
 
 /**
- * Vrací instance JAX.Node s HTML obsahem
+ * @method Vrací instance JAX.Node s HTML obsahem
  * @example
  * var db = new JAX.DOMBuilder();
  * db.add("span", {innerHTML:"Hello world"});
@@ -180,7 +180,7 @@ JAX.DOMBuilder.prototype.getContainer = function() {
 };
 
 /**
- * Vymaže HTML obsah
+ * @method Vymaže HTML obsah
  * @example
  * var db = new JAX.DOMBuilder();
  * db.add("span", {innerHTML:"Hello world"});
