@@ -577,6 +577,35 @@ JAX.Node.prototype.stopListening = function(id) {
 	return this;
 };
 
+JAX.Node.prototype.prop = function(property, value) {
+	if (typeof(property) === "string") { 
+		if (arguments.length === 1) { 
+			return this._node[property]; 
+		}
+		this._node[property] = value;
+		if (arguments.length > 2) { 
+			JAX.Report.warn("warn","JAX.Node.attr","Too much arguments.", this._node);
+		}
+		return this;
+	} else if (property instanceof Array) {
+		var props = {};
+		for (var i=0, len=property.length; i<len; i++) { 
+			var p = property[i];
+			props[p] = this._node[p];
+		}
+		return props;	
+	} else if (this._node.getAttribute && this._node.getAttribute("data-jax-locked")) {
+		this._queueMethod(this.prop, arguments); 
+		return this; 
+	}
+
+	for (var p in property) {
+		this._node[p] = property[p];
+	}
+
+	return this;
+};
+
 /**
  * @method nastaví nebo získá html atributy
  * @example
@@ -598,7 +627,7 @@ JAX.Node.prototype.attr = function(property, value) {
 
 	if (typeof(property) === "string") { 
 		if (arguments.length === 1) { 
-			return node.getAttribute(property); 
+			return this._node.getAttribute(property); 
 		} 
 		this._node.setAttribute(property, value + "");
 		if (arguments.length > 2) { 
@@ -609,7 +638,7 @@ JAX.Node.prototype.attr = function(property, value) {
 		var attrs = {};
 		for (var i=0, len=property.length; i<len; i++) { 
 			var p = property[i];
-			attrs[p] = node.getAttribute(p);
+			attrs[p] = this._node.getAttribute(p);
 		}
 		return attrs;	
 	} else if (this._node.getAttribute && this._node.getAttribute("data-jax-locked")) {
@@ -618,8 +647,7 @@ JAX.Node.prototype.attr = function(property, value) {
 	}
 
 	for (var p in property) {
-		var value = property[p];
-		this._node.setAttribute(p, value);
+		this._node.setAttribute(p, property[p]);
 	}
 
 	return this;
