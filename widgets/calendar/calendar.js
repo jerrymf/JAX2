@@ -60,7 +60,7 @@ JAX.Calendar.prototype._showingComplete = function() {
 };
 
 JAX.Calendar.prototype._hidingComplete = function() {
-	this._jax.container.destroy();
+	this._jax.container.$destructor();
 
 	for (var i in this._yearViews) { delete this._yearViews[i]; }
 	for (var i in this._buttons) { delete this._buttons[i]; }
@@ -126,7 +126,7 @@ JAX.Calendar.prototype._onButtonClick = function(type, e, elm) {
 		break;
 	}
 
-	this._activeYearView.getContainer().removeFromDOM();
+	this._activeYearView.getContainer().remove();
 	this._activeYearView = this._yearViews[this._current.year.getYearNumber()].view;
 	this._activeYearView.setActiveMonth(this._current.month);
 	this._jax.container.add(this._activeYearView.getContainer());
@@ -152,7 +152,7 @@ JAX.Calendar.prototype._initYear = function(yearNumber, monthNumber) {
 
 JAX.Calendar.prototype._tryHide = function(e, elm) {
 	var node = JAX(JAK.Events.getTarget(e));
-	if (node.jaxNodeType == 9 || !node.isChildOf(this._jax.container)) { this.hide(); }
+	if (node.jaxNodeType == 9 || !node.isIn(this._jax.container)) { this.hide(); }
 };
 
 JAX.Calendar.Day = JAK.ClassMaker.makeClass({

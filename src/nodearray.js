@@ -4,8 +4,6 @@ JAX.NodeArray = JAK.ClassMaker.makeClass({
 });
 
 JAX.NodeArray.prototype.$constructor = function(nodes) {
-	this.length = 0;
-
 	var nodes = [].concat(nodes);
 	var len = nodes.length;
 	this._jaxNodes = new Array(len);
@@ -108,7 +106,12 @@ JAX.NodeArray.prototype.forEachItem = function(cbk) {
 };
 
 JAX.NodeArray.prototype.filterItems = function(func) {
-	return new JAX.NodeArray(this._jaxNodes.filter(func));
+	var filtered = [];
+	for (var i=0, len=this._jaxNodes.length; i<len; i++) {
+		var jaxNode = this._jaxNodes[i];
+		if (func(jaxNode)) { filtered.push(jaxNode); }
+	}
+	return new JAX.NodeArray(filtered);
 };
 
 JAX.NodeArray.prototype.pushItem = function(node) {
