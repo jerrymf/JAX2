@@ -489,7 +489,7 @@ JAX.Node.prototype.clone = function(withContent) {
  * @method navěsí posluchač události na element a vrátí event id. Pokud událost proběhne, vyvolá se zadané funkce. Do této funkce jsou pak předány parametry event (window.Event), jaxlm (instance JAX.Node) a bindData
  * @example
  * document.body.innerHTML = "<span>Ahoj svete!</span>";
- * var func = function(e, jaxElm) { alert(elm.html()); };
+ * var func = function(jaxE, jaxElm) { alert(jaxElm.html()); };
  * var eventId = JAX(document.body.firstChild).listen("click", func); // navesi udalost click na span
  *
  * @param {String} type typ události, na kterou chceme reagovat ("click", "mousedown", ...)
@@ -525,7 +525,7 @@ JAX.Node.prototype.listen = function(type, funcMethod, obj, bindData) {
 		funcMethod = funcMethod.bind(obj);
 	}
 
-	var f = function(e, node) { funcMethod(e, JAX(node), bindData); };
+	var f = function(e, node) { funcMethod(new JAX.Event(e), JAX(node), bindData); };
 	var listenerId = JAK.Events.addListener(this._node, type, f);
 	var evtListeners = this._storage.events[type] || [];
 	evtListeners.push(listenerId);

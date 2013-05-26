@@ -96,8 +96,8 @@ JAX.Calendar.prototype._init = function() {
 	}
 };
 
-JAX.Calendar.prototype._onButtonClick = function(type, e, elm) {
-	JAK.Events.cancelDef(e);
+JAX.Calendar.prototype._onButtonClick = function(type, jaxE, jaxElm) {
+	jaxE.cancel();
 	var currentYearNumber = this._current.year.getYearNumber();
 	var currentMonthNumber = this._current.month.getMonthNumber();
 
@@ -150,8 +150,8 @@ JAX.Calendar.prototype._initYear = function(yearNumber, monthNumber) {
 	this._current.month = newYear.getMonths()[monthNumber];
 };
 
-JAX.Calendar.prototype._tryHide = function(e, elm) {
-	var node = JAX(JAK.Events.getTarget(e));
+JAX.Calendar.prototype._tryHide = function(jaxE, jaxElm) {
+	var node = jaxE.target();
 	if (node.jaxNodeType == 9 || !node.isIn(this._jax.container)) { this.hide(); }
 };
 

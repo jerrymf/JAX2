@@ -42,42 +42,6 @@ JAX.NodeArray.prototype.removeClass = function(classNames) {
 	return this;
 };
 
-JAX.NodeArray.prototype.css = function(property, value) {
-	if (arguments.length == 1) {
-		if (typeof(property) === "string" || property instanceof Array) {
-			var styles = new Array(len);
-			for (var i=0; i<this.length; i++) { 
-				styles[i] = this._jaxNodes[i].css(property);
-			}
-			return styles;
-		}
-	}
-
-	for (var i=0, len=this._jaxNodes.length; i<len; i++) { 
-		this._jaxNodes[i].css(property, value);
-	}
-
-	return this;	
-};
-
-JAX.NodeArray.prototype.attr = function(property, value) {
-	if (arguments.length == 1) {
-		if (typeof(property) === "string" || property instanceof Array) {
-			var attrs = new Array(len);
-			for (var i=0; i<len; i++) { 
-				attrs[i] = this._jaxNodes[i].attr(property);
-			}
-			return attrs;
-		}
-	}
-
-	for (var i=0; i<this.length; i++) { 
-		this._jaxNodes[i].attr(property, value); 
-	}
-
-	return this;	
-};
-
 JAX.NodeArray.prototype.appendTo = function(node) {
 	for (var i=0, len=this._jaxNodes.length; i<len; i++) {
 		this._jaxNodes[i].appendTo(node);
@@ -85,7 +49,7 @@ JAX.NodeArray.prototype.appendTo = function(node) {
 	return this;
 };
 
-JAX.NodeArray.prototype.removeFromDOM = function() {
+JAX.NodeArray.prototype.remove = function() {
 	for (var i=0, len=this._jaxNodes.length; i<len; i++) { 
 		var jaxNode = this._jaxNodes[i];
 		jaxNode.removeFromDOM(); 
@@ -93,9 +57,18 @@ JAX.NodeArray.prototype.removeFromDOM = function() {
 	return this;
 };
 
+JAX.NodeArray.prototype.areIn = function(node) {
+	for (var i=0, len=this._jaxNodes.length; i<len; i++) {
+		var jaxNode = this._jaxNodes[i];
+		if (!jaxNode.isIn(node)) { return false; }
+	}
+
+	return true;
+};
+
 JAX.NodeArray.prototype.destroyItems = function() {
 	for (var i=0, len=this._jaxNodes.length; i<len; i++) {
-		this._jaxNodes[i].destroy(); 
+		this._jaxNodes[i].$destructor(); 
 	}
 	return this;
 };
