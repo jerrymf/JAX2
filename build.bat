@@ -15,8 +15,6 @@ type ".\src\fx.js" >> ".\lib\jax.js"
 ECHO. >> ".\lib\jax.js"
 type ".\src\report.js" >> ".\lib\jax.js"
 ECHO. >> ".\lib\jax.js"
-type ".\src\common.js" >> ".\lib\jax.js"
-ECHO. >> ".\lib\jax.js"
 
 XCOPY /y ".\dependencies\jak.js" ".\lib\jak.js"
 XCOPY /y ".\dependencies\interpolator.js" ".\lib\interpolator.js"

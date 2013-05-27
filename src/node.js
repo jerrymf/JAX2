@@ -288,7 +288,7 @@ JAX.Node.prototype.html = function(innerHTML) {
 	}
 
 	if (!arguments.length) { 
-		return innerHTML; 
+		return this._node.innerHTML; 
 	} else if (this._node.getAttribute && this._node.getAttribute("data-jax-locked")) {
 		this._queueMethod(this.html, arguments); 
 		return this; 
@@ -908,20 +908,38 @@ JAX.Node.prototype.clear = function() {
 	return this;
 };
 
+/** 
+ * @method porovná, jestli element odpovídá zadaným kritériím
+ * @example
+ * document.body.innerHTML = "<span>1</span><span>2</span><em>3</em>";
+ * if (JAX("body").first().eq("span")) { alert("span je prvni"); }
+ *
+ * @param {Node | JAX.Node | String} node uzel | instance JAX.Node | CSS3 (2.1) selector
+ * @returns {Boolean}
+ */
 JAX.Node.prototype.eq = function(node) {
 	if (typeof(node) === "object" && (node.nodeType || node instanceof JAX.Node)) {
 		var elm = node.jaxNodeType ? node.node() : node;
 		return elm == this._node;
 	} else if (typeof(node) === "string") {
 		if (/^[a-zA-Z0-9]+$/g.test(node)) { return !!(this._node.tagName && this._node.tagName.toLowerCase() == node); }
-		return !!JAX.all(node).filterItems(
-			function(jaxElm) { return jaxElm.eq(this); }.bind(this)
+		return !!JAX.all(node).filterNodes(
+			function(jaxElm) { return jaxElm.eq(this._node); }.bind(this)
 		).length;
 	}
 
 	return false;
 };
 
+/** 
+ * @method zjistí, jestli element obsahuje node podle zadaných kritérií
+ * @example
+ * document.body.innerHTML = "<div><span>1</span><span>2</span><em>3</em></div>";
+ * if (JAX("body").first().contains("em")) { alert("Obsahuje em"); }
+ *
+ * @param {Node | JAX.Node | String} node uzel | instance JAX.Node | CSS3 (2.1) selector
+ * @returns {Boolean}
+ */
 JAX.Node.prototype.contains = function(node) {
 	if (this._node.nodeType !== 1) {
 		JAX.Report.show("warn","JAX.Node.contains","You can not use this method for this node. Doing nothing.", this._node);
@@ -942,6 +960,15 @@ JAX.Node.prototype.contains = function(node) {
 	throw new Error("For first argument I expected html element, text node, string with CSS3 compatible selector or JAX.Node instance");
 };
 
+/** 
+ * @method zjistí, jestli element obsahuje node podle zadaných kritérií
+ * @example
+ * document.body.innerHTML = "<div><span>1</span><span>2<em>3</em></span></div>";
+ * if (JAX("em").isIn("span")) { alert("Span obsahuje em"); }
+ *
+ * @param {Node | JAX.Node | String} node uzel | instance JAX.Node | CSS3 (2.1) selector
+ * @returns {Boolean}
+ */
 JAX.Node.prototype.isIn = function(node) {
 	if ([1,3,8].indexOf(this._node.nodeType) === -1) {
 		JAX.Report.show("warn","JAX.Node.contains","You can not use this method for this node. Doing nothing.", this._node);
@@ -951,11 +978,34 @@ JAX.Node.prototype.isIn = function(node) {
 	if (typeof(node) === "object" && (node.nodeType || node instanceof JAX.Node)) {
 		var elm = node.jaxNodeType ? node : JAX.Node.create(node);
 		return elm.contains(this);
+	} else if (typeof(node) === "string") {
+		if (/^[a-zA-Z0-9]+$/g.test(node)) { 
+			var parent = this._node;
+			node = node.toLowerCase();
+			while((parent = parent.parentNode)) {
+				if (parent.tagName && parent.tagName.toLowerCase() == node) { return true; }
+			}
+			return false;
+		}
+		return !!JAX.all(node).filterNodes(
+			function(jaxElm) { return jaxElm.contains(this._node); }.bind(this)
+		).length;
 	}
 	
 	throw new Error("For first argument I expected html element or JAX.Node instance");
 };
 
+/** 
+ * @method animuje průhlednost dle typu
+ * @example
+ * document.body.innerHTML = "<div><span>1</span><span>2<em>3</em></span></div>";
+ * JAX("body div").fade("out", 2);
+ *
+ * @param {String} type typ "in" nebo "out"
+ * @param {Number} duration délka animace v sec
+ * @param {Boolean} lockElm má se zamknout element?
+ * @returns {JAX.FX}
+ */
 JAX.Node.prototype.fade = function(type, duration, lockElm) {
 	if (this._node.nodeType !== 1) {
 		JAX.Report.show("warn","JAX.Node.fade","You can not use this method for this node. Doing nothing.", this._node);
@@ -1003,6 +1053,17 @@ JAX.Node.prototype.fade = function(type, duration, lockElm) {
 	return fx;
 };
 
+/**
+ * @method animuje průhlednost do určité hodnoty
+ * @example
+ * document.body.innerHTML = "<div><span>1</span><span>2<em>3</em></span></div>";
+ * JAX("body div").fadeTo(0.5, 2);
+ *
+ * @param {Number} opacityValue do jaké hodnoty od 0 do 1 se má průhlednost animovat
+ * @param {Number} duration délka animace v sec
+ * @param {Boolean} lockElm má se zamknout element?
+ * @returns {JAX.FX}
+ */
 JAX.Node.prototype.fadeTo = function(opacityValue, duration, lockElm) {
 	if (this._node.nodeType !== 1) {
 		JAX.Report.show("warn","JAX.Node.fade","You can not use this method for this node. Doing nothing.", this._node);
@@ -1041,6 +1102,17 @@ JAX.Node.prototype.fadeTo = function(opacityValue, duration, lockElm) {
 	return fx;
 };
 
+/**
+ * @method zobrazí element pomocí animace výšky nebo šířky
+ * @example
+ * document.body.innerHTML = "<div><span>1</span><span>2<em>3</em></span></div>";
+ * JAX("body div").slide("down", 1);
+ *
+ * @param {String} type udává typu efektu - "down", "up", "left" nebo "right"
+ * @param {Number} duration délka animace v sec
+ * @param {Boolean} lockElm má se zamknout element?
+ * @returns {JAX.FX}
+ */
 JAX.Node.prototype.slide = function(type, duration, lockElm) {
 	if (this._node.nodeType !== 1) {
 		JAX.Report.show("warn","JAX.Node.slide","You can not use this method for this node. Doing nothing.", this._node);
@@ -1111,17 +1183,44 @@ JAX.Node.prototype.slide = function(type, duration, lockElm) {
 	return fx;
 };
 
+/**
+ * @method uzamkne element. V době, kdy je element uzamknutý JAX nemůže s tímto elementem nijak manipulovat.
+ * @example
+ * document.body.innerHTML = "<div><span>1</span><span>2<em>3</em></span></div>";
+ * JAX("body div").lock().addClass("trida"); // tato trida se neprida, dokud element neodemkneme
+ *
+ * @returns {JAX.Node}
+ */
 JAX.Node.prototype.lock = function() {
 	if (this._node.nodeType === 1) { this._node.setAttribute("data-jax-locked","1"); }
 	return this;
 };
 
+/**
+ * @method zjistí, jestli je element uzamknutý
+ * @example
+ * document.body.innerHTML = "<div><span>1</span><span>2<em>3</em></span></div>";
+ * var elm = JAX("body div").lock().addClass("trida"); // tato trida se neprida, dokud element neodemkneme
+ * if (elm.isLocked()) { alert("Element je uzamknuty"); }
+ *
+ * @returns {Boolean}
+ */
 JAX.Node.prototype.isLocked = function() {
 	if (this._node.nodeType !== 1) { return false; }
 
 	return !!this._node.getAttribute("data-jax-locked");
 };
 
+/**
+ * @method uzamkne element. V době, kdy je element uzamknutý JAX nemůže s tímto elementem nijak manipulovat.
+ * @example
+ * document.body.innerHTML = "<div><span>1</span><span>2<em>3</em></span></div>";
+ * var elm = JAX("body div").lock().addClass("trida"); // tato trida se neprida, dokud element neodemkneme
+ * console.log(elm.isLocked()); // vypise true
+ * setTimeout(function() { elm.unlock(); console.log(elm.isLocked()); }, 1000); // prida classu trida a vypise false
+ *
+ * @returns {JAX.Node}
+ */
 JAX.Node.prototype.unlock = function() {
 	if (!this.isLocked()) { return this; }
 	if (this._node.nodeType === 1) {
