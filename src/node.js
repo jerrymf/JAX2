@@ -152,7 +152,6 @@ JAX.Node.prototype.addClass = function(classNames) {
 	}
 	
 	if (!(classNames instanceof Array)) { classNames = [].concat(classNames); }
-	var currclasses = this._node.className.split(" ");
 	
 	for (var i=0, len=classNames.length; i<len; i++) {
 		var cName = classNames[i];
@@ -160,14 +159,8 @@ JAX.Node.prototype.addClass = function(classNames) {
 			cName += "";
 			JAX.Report.show("error","JAX.Node.addClass","Given arguments can be string or array of strings. Trying convert to string: " + cName, this._node);
 		}
-		var classes = cName.split(" ");
-		while(classes.length) {
-			var newclass = classes.shift();
-			if (currclasses.indexOf(newclass) === -1) { currclasses.push(newclass); }
-		}
+		JAK.DOM.addClass(this._node, cName);
 	}
-	
-	this._node.className = currclasses.join(" ");
 	
 	return this;
 };
@@ -192,7 +185,6 @@ JAX.Node.prototype.removeClass = function(classNames) {
 	}
 	
 	if (!(classNames instanceof Array)) { classNames = [].concat(classNames); }
-	var currclasses = this._node.className.split(" ");
 	
 	for (var i=0, len=classNames.length; i<len; i++) {
 		var cName = classNames[i];
@@ -200,14 +192,8 @@ JAX.Node.prototype.removeClass = function(classNames) {
 			cName += "";
 			JAX.Report.show("error","JAX.Node.removeClass","Given arguments can be string, array of strings. Trying convert to string: " + cName, this._node);
 		}
-		var classes = cNames.split(" ");
-		while(classes.length) {
-			var index = currclasses.indexOf(classes.shift());
-			if (index !== -1) { currclasses.splice(index, 1); }
-		}
+		JAK.DOM.removeClass(this._node, cName);
 	}
-	
-	this._node.className = currclasses.join(" ");
 	
 	return this;
 };
@@ -319,16 +305,17 @@ JAX.Node.prototype.text = function(text) {
 	}
 
 	if (!arguments.length) { 
-		if (this._node.innerHTML) { return this._getText(this._node); }
+		if ("innerHTML" in this._node) { return this._getText(this._node); }
 		return this._nodeValue;
 	} else if (this._node.getAttribute && this._node.getAttribute("data-jax-locked")) {
 		this._queueMethod(this.html, arguments); 
 		return this; 
 	}
 
-	if (this._node.innerHTML) { 
-		this._node.innerHTML = text;
-	} else {
+	if ("innerHTML" in this._node) { 
+		this.clear();
+		this._node.appendChild(this._node.ownerDocument.createTextNode(text));
+	} else if ("nodeValue" in this._node) {
 		this._node.nodeValue = text;
 	}
 
@@ -341,7 +328,7 @@ JAX.Node.prototype.text = function(text) {
  * document.body.innerHTML = "<span>Ahoj svete!</span>";
  * var jaxElm = JAX(document.body).add(JAX.make("span")); 
  *
- * @param {DOMNode | Array | JAX.NodeArray} nodes DOM uzel | pole DOM uzlů | instance JAX.NodeArray
+ * @param {Node | Node[] | JAX.NodeArray} nodes DOM uzel | pole DOM uzlů | instance JAX.NodeArray
  * @returns {JAX.Node}
  */
 JAX.Node.prototype.add = function(nodes) {
@@ -372,8 +359,8 @@ JAX.Node.prototype.add = function(nodes) {
  * document.body.innerHTML = "<span>Ahoj svete!</span>";
  * var jaxElm = JAX(document.body).add(JAX.make("span"), document.body.lastChild); // prida span pred posledni prvek v body 
  *
- * @param {DOMNode} node DOM uzel
- * @param {DOMNode} nodeBefore DOM uzel
+ * @param {Node | JAX.Node} node DOM uzel | instance JAX.Node
+ * @param {Node | JAX.Node} nodeBefore DOM uzel | instance JAX.Node
  * @returns {JAX.Node}
  */
 JAX.Node.prototype.addBefore = function(node, nodeBefore) {
@@ -402,7 +389,7 @@ JAX.Node.prototype.addBefore = function(node, nodeBefore) {
  * document.body.innerHTML = "<span>Ahoj svete!</span>";
  * var jaxElm = JAX.make("span").appendTo(document.body); // pripne span do body
  *
- * @param {DOMNode} node DOM uzel
+ * @param {Node | JAX.Node} node DOM uzel | instance JAX.Node
  * @returns {JAX.Node}
  */
 JAX.Node.prototype.appendTo = function(node) {
@@ -424,7 +411,7 @@ JAX.Node.prototype.appendTo = function(node) {
  * document.body.innerHTML = "<span>Ahoj svete!</span>";
  * var jaxElm = JAX.make("span").appendBefore(document.body.lastChild); // pripne span do body pred posledni prvek v body
  *
- * @param {DOMNode} node DOM uzel
+ * @param {Node | JAX.Node} node DOM uzel | instance JAX.Node
  * @returns {JAX.Node}
  */
 JAX.Node.prototype.appendBefore = function(node) {
@@ -438,6 +425,28 @@ JAX.Node.prototype.appendBefore = function(node) {
 	}
 	
 	throw new Error("For first argument I expected html element, text node or JAX.Node instance");
+};
+
+
+/**
+ * @method odstraní zadaný element z DOMu a nahradí ho za sebe
+ * @example
+ * document.body.innerHTML = "<span>Ahoj svete!</span>";
+ * var jaxElm = JAX.make("span.novy").replaceWith(document.body.lastChild); // odstrani prvek a nahradi ho za sebe
+ *
+ * @param {Node | JAX.Node} node DOM uzel | instance JAX.Node
+ * @returns {JAX.Node}
+ */
+JAX.Node.prototype.replaceWith = function(node) {
+	if (this._node.getAttribute && this._node.getAttribute("data-jax-locked")) {
+		this._queueMethod(this.replaceWith, arguments); 
+		return this; 
+	} else if (typeof(node) === "object" && (node.nodeType || node instanceof JAX.Node)) { 
+		var node = node.jaxNodeType ? node.node() : node;
+		this.appendBefore(node);
+		node.parentNode.removeChild(node);
+		return this;
+	}
 };
 
 /**

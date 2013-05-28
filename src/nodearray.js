@@ -38,30 +38,18 @@ JAX.NodeArray.prototype.$constructor = function(nodes) {
 };
 
 /**
- * @method vrátí konkrétní prvek (uzel) v poli
+ * @method vrátí konkrétní prvek (uzel) v poli nebo, pokud je volána bez parametru, tak celé pole
  * @example
  * document.body.innerHTML = "<span>1</span><span>2</span><div id='cisla'></div>";
  * var all = JAX.all("*");
  * var elm = jaxElms.jaxNode(1); // vrati v poradi druhy prvek
  *
  * @param {Number} index pořadový index prvku
- * @returns {JAX.Node}
+ * @returns {JAX.Node | JAX.Node[]}
  */
-JAX.NodeArray.prototype.jaxNode = function(index) {
+JAX.NodeArray.prototype.items = function(index) {
+	if (!arguments.length) { return this._jaxNodes.slice(); }
 	return this._jaxNodes[index];
-};
-
-/**
- * @method vrátí pole prvků, které si drží
- * @example
- * document.body.innerHTML = "<span>1</span><span>2</span><div id='cisla'></div>";
- * var all = new JAX.NodeArray(document.getElementsByTagName("*"));
- * var nodes = all.jaxNodes(); // vrati pole prvku
- *
- * @returns {JAX.Node[]}
- */
-JAX.NodeArray.prototype.jaxNodes = function() {
-	return this._jaxNodes.slice();
 };
 
 /**
