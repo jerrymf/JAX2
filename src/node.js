@@ -923,7 +923,7 @@ JAX.Node.prototype.eq = function(node) {
 		return elm == this._node;
 	} else if (typeof(node) === "string") {
 		if (/^[a-zA-Z0-9]+$/g.test(node)) { return !!(this._node.tagName && this._node.tagName.toLowerCase() == node); }
-		return !!JAX.all(node).filterNodes(
+		return !!this.parent().findAll(node).filterNodes(
 			function(jaxElm) { return jaxElm.eq(this._node); }.bind(this)
 		).length;
 	}
