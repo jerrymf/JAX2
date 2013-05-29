@@ -57,7 +57,10 @@ JAX.Node.create = function(node) {
 					if (typeof(jaxId) !== "number") { jaxId = -1; }
 					if (jaxId > -1) {
 						var item = JAX.Node.instances[JAX.Node.ELEMENT_NODE][jaxId];
-						if (item) {return item.instance; }
+						if (item) {
+							if (item.instance.node() == node) { return item.instance; }
+							node.removeAttribute("data-jax-id");
+						}
 					}
 				break;
 				default:
@@ -79,7 +82,7 @@ JAX.Node.create = function(node) {
 };
 
 /**
- * @static Metoda dohledá listener napříč všemi prvky, které zná a odregistruje ho 
+ * @static Metoda dohledá, kterému uzlu listener patří a odregistruje ho na něm
  * @example
  * var id = JAX(".trida").listen("click", function(jaxE, jaxElm) { alert("click!"); });
  * JAX.Node.removeListener(id); // funkce navazana na udalost click se nikdy neprovede, protoze je hned odregistrovan
@@ -105,7 +108,7 @@ JAX.Node.prototype.$constructor = function() {
  * JAX("#nejakeId").$destructor();
  */
 JAX.Node.prototype.$destructor = function() {
-	if (this._node.getAttribute && this._node.getAttribute("data-jax-locked")) { this._queueMethod(this.destroy, arguments); return this; }
+	this.unlock();
 	if ([1,9].indexOf(this._node.nodeType) !== -1) { this.stopListening(); }
 	if ([1,3,8].indexOf(this._node.nodeType) !== -1) { this.remove(); }
 
@@ -1289,7 +1292,7 @@ JAX.Node.prototype._init = function(node) {
 
 	if (oldJaxId > -1) {
 		this._jaxId = oldJaxId;
-		this._storage = JAX.Node.instances.html[this._jaxId];
+		this._storage = JAX.Node.instances[JAX.Node.ELEMENT_NODE][this._jaxId];
 		this._storage.instance = this;
 		return;
 	}

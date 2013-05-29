@@ -70,6 +70,22 @@ JAX.NodeArray.prototype.addClass = function(classNames) {
 };
 
 /**
+ * @method zjistí, jestli všechny prvky v poli mají nastavenu konkrétní classu
+ * @example
+ * document.body.innerHTML = "<span>1</span><span class='trida'>2</span><div id='cisla'></div>";
+ * console.log(JAX.all("span").haveClass("trida")); // vraci false
+ *
+ * @param {String} classNames třída
+ * @returns {Boolean}
+ */
+JAX.NodeArray.prototype.haveClass = function(className) {
+	for (var i=0, len=this._jaxNodes.length; i<len; i++) { 
+		if (!this._jaxNodes[i].hasClass(className)) { return false; } 
+	}
+	return true;
+};
+
+/**
  * @method odebere všem prvkům, které si drží, určitou classu
  * @example
  * document.body.innerHTML = "<span>1</span><span>2</span><div id='cisla'></div>";
