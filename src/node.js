@@ -26,6 +26,8 @@ JAX.Node.instances[JAX.Node.COMMENT_NODE] = {};
 JAX.Node.instances[JAX.Node.DOCUMENT_NODE] = {};
 JAX.Node.instances[JAX.Node.DOCUMENT_FRAGMENT_NODE] = {};
 
+JAX.Node._listeners = {};
+
 JAX.Node._ids = {};
 JAX.Node._ids[JAX.Node.ELEMENT_NODE] = 0;
 JAX.Node._ids[JAX.Node.TEXT_NODE] = 0;
@@ -74,6 +76,23 @@ JAX.Node.create = function(node) {
 	}
 	
 	throw new Error("First argument must be html element");
+};
+
+/**
+ * @static Metoda dohledá listener napříč všemi prvky, které zná a odregistruje ho 
+ * @example
+ * var id = JAX(".trida").listen("click", function(jaxE, jaxElm) { alert("click!"); });
+ * JAX.Node.removeListener(id); // funkce navazana na udalost click se nikdy neprovede, protoze je hned odregistrovan
+ *
+ * @param {String} listenerId listener Id vrácený metodou JAX.Node.listen
+ */
+JAX.Node.removeListener = function(listenerId) {
+	if (listenerId in JAX.Node._listeners) {
+		JAX.Node._listeners[listenerId].stopListening(listenerId);
+		return;
+	}
+
+	throw new Error("No listener found for id: " + listeneId);
 };
 
 JAX.Node.prototype.$constructor = function() {
@@ -490,7 +509,16 @@ JAX.Node.prototype.clone = function(withContent) {
 
 	var withContent = !!withContent;
 	var clone = this._node.cloneNode(withContent);
-	clone.setAttribute("data-jax-id","");
+
+	if (clone.removeAttribute) {
+		clone.removeAttribute("data-jax-id");
+	}
+
+	if (clone.querySelectorAll) {
+		var nodeList = clone.querySelectorAll("*[data-jax-id]");
+		for (var i=0, len=nodeList.length; i<len; i++) { nodeList[i].removeAttribute("data-jax-id"); }
+	}
+
 	return JAX.Node.create(clone);
 };
 
@@ -502,25 +530,28 @@ JAX.Node.prototype.clone = function(withContent) {
  * var eventId = JAX(document.body.firstChild).listen("click", func); // navesi udalost click na span
  *
  * @param {String} type typ události, na kterou chceme reagovat ("click", "mousedown", ...)
- * @param {String | Function} funcMethod název metody nebo instance funkce, která se má zavolat po té ,co je událost vyvolána
  * @param {Object} obj objekt, ve které se metoda uvedená pomocí stringu nachází. Pokud je funcMethod function, tento parameter lze nechat prázdný nebo null
+ * @param {String | Function} funcMethod název metody nebo instance funkce, která se má zavolat po té ,co je událost vyvolána
  * @param {any} bindData pokud je potřeba přenést zároveň s tím i nějakou hodnotu (String, Number, Asociativní pole, ...)
  * @returns {String} Event ID
  */
-JAX.Node.prototype.listen = function(type, funcMethod, obj, bindData) {
+JAX.Node.prototype.listen = function(type, obj, funcMethod, bindData) {
 	if ([1,9].indexOf(this._node.nodeType) === -1) { 
 		JAX.Report.show("warn","JAX.Node.listen","You can not use this method for this node. Doing nothing.", this._node);
 		return this;
 	}
 	
-	var obj = obj || window;
+	if (!funcMethod) {
+		var funcMethod = obj;
+		obj = window;
+	}
 
-	if (!type || typeof(type) !== "string") { 
+	if (typeof(type) !== "string") { 
 		type += "";
 		JAX.Report.show("error","JAX.Node.listen","For first argument I expected string. Trying convert to string: " + type, this._node);
 	}
 
-	if (!funcMethod || (typeof(funcMethod) !== "string" && typeof(funcMethod) !== "function")) { 
+	if (typeof(funcMethod) !== "string" && typeof(funcMethod) !== "function") { 
 		throw new Error("For second argument I expected string or function"); 
 	}
 
@@ -538,6 +569,7 @@ JAX.Node.prototype.listen = function(type, funcMethod, obj, bindData) {
 	var listenerId = JAK.Events.addListener(this._node, type, f);
 	var evtListeners = this._storage.events[type] || [];
 	evtListeners.push(listenerId);
+	JAX.Node._listeners[listenerId] = this;
 	this._storage.events[type] = evtListeners;
 
 	return listenerId;
@@ -583,11 +615,14 @@ JAX.Node.prototype.stopListening = function(id) {
 		return this;
 	}
 
-	var index = eventListeners.indexOf(id);
-	if (index > -1) {
-		this._destroyEvents([eventListeners[index]]);
-		eventListeners.splice(index, 1);
-		return this;
+	for (var p in this._storage.events) {
+		var eventListeners = this._storage.events[p];
+		var index = eventListeners.indexOf(id);
+		if (index > -1) {
+			this._destroyEvents([eventListeners[index]]);
+			eventListeners.splice(index, 1);
+			return this;
+		}
 	}
 
 	JAX.Report.show("warn","JAX.Node.stopListening","No listeners found. It seams that listener " + id + " does not exist.", this._node);
@@ -1144,48 +1179,45 @@ JAX.Node.prototype.slide = function(type, duration, lockElm) {
 		JAX.Report.show("error","JAX.Node.slide","For second argument I expected positive number, but I got negative. I set zero value.", this._node); 
 	}
 
+	var backupStyles = {};
 	switch(type) {
 		case "down":
-			var backupStyles = this.css(["height","overflow"]);
+			backupStyles = this.css(["overflow", "height"]);
 			var property = "height";
 			var source = 0;
 			var target = this._getSizeWithBoxSizing("height");
 		break;
 		case "up":
-			var backupStyles = this.css(["height","overflow"]);
 			var property = "height";
 			var source = this._getSizeWithBoxSizing("height");
 			var target = 0;
 		break;
 		case "left":
-			var backupStyles = this.css(["width","overflow"]);
 			var property = "width";
-			var source = this._getSizeWithBoxSizing("height");
+			var source = this._getSizeWithBoxSizing("width");
 			var target = 0;	
 		break;
 		case "right":
-			var backupStyles = this.css(["width","overflow"]);
+			backupStyles = this.css(["overflow", "width"]);
 			var property = "width";
 			var source = 0;
-			var target = this._getSizeWithBoxSizing("height");
+			var target = this._getSizeWithBoxSizing("width");
 		break;
 		default:
 			JAX.Report.show("warn","JAX.Node.slide","I got unsupported type '" + type + "'.", this._node);
 			return this;
 	}
 
-	this.css({"overflow": "hidden"});
+	this.css("overflow", "hidden");
 
 
 	var fx = new JAX.FX(this).addProperty(property, duration, source, target);
 
-	if (lockElm) {
-		var func = function() {
-			for (var p in backupStyles) { this._node.style[p] = backupStyles[p]; }
-			this.unlock();
-		}.bind(this);
-		fx.callWhenDone(func);
-	}
+	var func = function() {
+		for (var p in backupStyles) { this._node.style[p] = backupStyles[p]; }
+		if (lockElm) { this.unlock(); }
+	}.bind(this);
+	fx.callWhenDone(func);
 	
 	fx.run();
 
@@ -1394,6 +1426,10 @@ JAX.Node.prototype._queueMethod = function(method, args) {
 };
 
 JAX.Node.prototype._destroyEvents = function(eventListeners) {
-	JAK.Events.removeListeners(eventListeners);
+	for (var i=0, len=eventListeners.length; i<len; i++) { 
+		var eventListener = eventListeners[i];
+		delete JAX.Node._listeners[eventListener]; 
+		JAK.Events.removeListener(eventListener);
+	}
 };
 

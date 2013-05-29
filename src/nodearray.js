@@ -87,6 +87,63 @@ JAX.NodeArray.prototype.removeClass = function(classNames) {
 };
 
 /**
+ * @method nastaví html atributy
+ * @example
+ * document.body.innerHTML = "<input type='text' value='aaa'><input type='text' value='bbb'>";
+ * var jaxElms = JAX("body input");
+ * jaxElms.attr({"data-word":"demo"}); // nastavi vsem attribut data-word
+ *
+ * @param {String | Array | Object} property název atributu | pole názvů atributů | asociativní pole, např. {id:"mojeId", checked:"checked"}
+ * @param {value} value provede se nastavení příslušného atributu na určitou hodnotu
+ * @returns {JAX.NodeArray}
+ */
+JAX.NodeArray.prototype.attr = function(property, value) {
+	for (var i=0, len=this._jaxNodes.length; i<len; i++) { 
+		var jaxNode = this._jaxNodes[i];
+		jaxNode.attr(property, value);
+	}
+	return this;
+};
+
+/**
+ * @method nastaví css (style) vlastnost(i) všem elementům v poli
+ * @example
+ * document.body.innerHTML = "<input type='text' value='aaa'><input type='text' value='bbb'>";
+ * var jaxElms = JAX("body input");
+ * jaxElms.css("display", "none"); // skryje elementy
+ *
+ * @param {String | Array | Object} property název vlastnosti | pole názvů vlastností | asociativní pole, např. {display:"block", color:"red"}
+ * @param {value} value provede se nastavení příslušné vlastnosti na určitou hodnotu
+ * @returns {JAX.NodeArray}
+ */
+JAX.NodeArray.prototype.css = function(property, value) {
+	for (var i=0, len=this._jaxNodes.length; i<len; i++) { 
+		var jaxNode = this._jaxNodes[i];
+		jaxNode.css(property, value);
+	}
+	return this;
+};
+
+/**
+ * @method nastaví vlastnost(i) všem elementům v poli
+ * @example
+ * document.body.innerHTML = "<input type='text' value='aaa'><input type='text' value='bbb'>";
+ * var jaxElms = JAX("body input");
+ * jaxElms.prop("value","ccc"); // nastavi value na "ccc"
+ *
+ * @param {String | Array | Object} property název vlastnosti | pole názvů vlastností | asociativní pole, např. {id:"mojeId", checked:true}
+ * @param {value} value nastavení příslušné vlastnosti na určitou hodnotu
+ * @returns {JAX.NodeArray}
+ */
+JAX.NodeArray.prototype.prop = function(property, value) {
+	for (var i=0, len=this._jaxNodes.length; i<len; i++) { 
+		var jaxNode = this._jaxNodes[i];
+		jaxNode.prop(property, value);
+	}
+	return this;
+};
+
+/**
  * @method připne všechny prvky do zadaného nodu
  * @example 
  * document.body.innerHTML = "<span>1</span><span>2</span><div id='cisla'></div>";
@@ -156,13 +213,13 @@ JAX.NodeArray.prototype.destroyNodes = function() {
  * @method nad každým elementem zavolá funkci a předá jej jako parametr
  * @example 
  * document.body.innerHTML = "<span>1</span><span>2</span><div id='cisla'></div>";
- * JAX.all("span").forEachNode(function(elm) { elm.html("0"); });
+ * JAX.all("span").forEachItem(function(elm) { elm.html("0"); });
  *
  * @param {Function} func funkce, která se má provádět. Jako parametr je předána instance JAX.Node
  * @param {Object} obj context, ve kterém se má fce provést
  * @returns {JAX.NodeArray}
  */
-JAX.NodeArray.prototype.forEachNode = function(func, obj) {
+JAX.NodeArray.prototype.forEachItem = function(func, obj) {
 	this._jaxNodes.forEach(func, obj || this);
 	return this;
 };
@@ -171,13 +228,13 @@ JAX.NodeArray.prototype.forEachNode = function(func, obj) {
  * @method provede filtraci pole skrze zadanou funkci. Princip funguje podobně jako u <a href="https://developer.mozilla.org/en-US/docs/JavaScript/Reference/Global_Objects/Array/filter">Array.filter</a>
  * @example 
  * document.body.innerHTML = "<span>1</span><span>2</span><div id='cisla'></div>";
- * JAX.all("*").filterNodes(function(elm) { return elm.eq("span"); }); // v poli zustanou jen span elementy
+ * JAX.all("*").filterItems(function(elm) { return elm.eq("span"); }); // v poli zustanou jen span elementy
  *
  * @param {Function} func funkce, která se má provádět. Jako parametr je předána instance JAX.Node
  * @param {Object} obj context, ve kterém se má fce provést
  * @returns {JAX.NodeArray}
  */
-JAX.NodeArray.prototype.filterNodes = function(func, obj) {
+JAX.NodeArray.prototype.filterItems = function(func, obj) {
 	var filtered = this._jaxNodes.filter(func, obj || this);
 	return new JAX.NodeArray(filtered);
 };
@@ -186,12 +243,12 @@ JAX.NodeArray.prototype.filterNodes = function(func, obj) {
  * @method přidá prvek do pole
  * @example 
  * document.body.innerHTML = "<span>1</span><span>2</span><div id='cisla'></div>";
- * var nodes = JAX.all("span").pushNode(JAX("#cisla")); // prida ke spanum i div
+ * var nodes = JAX.all("span").pushItem(JAX("#cisla")); // prida ke spanum i div
  *
  * @param {Node | JAX.Node} node uzel | instance JAX.Node
  * @returns {JAX.NodeArray}
  */
-JAX.NodeArray.prototype.pushNode = function(node) {
+JAX.NodeArray.prototype.pushItem = function(node) {
 	var JAXNode = JAX(node);
 	this.length++;
 	this._jaxNodes.push(JAXNode);
@@ -202,11 +259,11 @@ JAX.NodeArray.prototype.pushNode = function(node) {
  * @method odebere a vrátí poslední prvek v poli
  * @example 
  * document.body.innerHTML = "<span>1</span><span>2</span><div id='cisla'></div>";
- * var lastSpan = JAX.all("span").popNode(); // vrati posledni span a odebere ho z pole
+ * var lastSpan = JAX.all("span").popItem(); // vrati posledni span a odebere ho z pole
  *
  * @returns {JAX.Node}
  */
-JAX.NodeArray.prototype.popNode = function() {
+JAX.NodeArray.prototype.popItem = function() {
 	this.length = Math.max(--this.length, 0);
 	return this._jaxNodes.pop();
 };
@@ -215,11 +272,11 @@ JAX.NodeArray.prototype.popNode = function() {
  * @method odebere a vrátí první prvek z pole
  * @example 
  * document.body.innerHTML = "<span>1</span><span>2</span><div id='cisla'></div>";
- * var firstSpan = JAX.all("span").shiftNode(); // vrati prvni span a odebere ho z pole
+ * var firstSpan = JAX.all("span").shiftItem(); // vrati prvni span a odebere ho z pole
  *
  * @returns {JAX.Node}
  */
-JAX.NodeArray.prototype.shiftNode = function() {
+JAX.NodeArray.prototype.shiftItem = function() {
 	this.length = Math.max(--this.length, 0);
 	return this._jaxNodes.shift();
 };
@@ -228,11 +285,11 @@ JAX.NodeArray.prototype.shiftNode = function() {
  * @method vloží prvek před stávající první prvek v poli
  * @example 
  * document.body.innerHTML = "<span>1</span><span>2</span><div id='cisla'></div>";
- * var firstSpan = JAX.all("span").unshiftNode(JAX("#cisla")); // vlozi div na prvni misto
+ * var firstSpan = JAX.all("span").unshiftItem(JAX("#cisla")); // vlozi div na prvni misto
  *
  * @returns {JAX.NodeArray}
  */
-JAX.NodeArray.prototype.unshiftNode = function(node) {
+JAX.NodeArray.prototype.unshiftItem = function(node) {
 	var JAXNode = JAX(node);
 	this.length++;
 	this._jaxNodes.unshift(JAXNode);

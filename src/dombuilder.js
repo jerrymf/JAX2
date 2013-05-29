@@ -41,7 +41,8 @@ JAX.DOMBuilder.prototype.$constructor = function(doc) {
  * @returns {JAX.Node}
  */
 JAX.DOMBuilder.prototype.open = function(element, attributes, styles) {
-	if (typeof(element) === "string" && typeof(element) === "object" && element.nodeType) {
+	if (typeof(element) === "string" || (typeof(element) === "object" && element.nodeType)) {
+		this._stack.push(this._pointerJaxNode);
 		this._pointerJaxNode = this.add(element, attributes, styles);
 		return this._pointerJaxNode;
 	}

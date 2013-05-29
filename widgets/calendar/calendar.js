@@ -54,7 +54,7 @@ JAX.Calendar.prototype.hide = function() {
 
 JAX.Calendar.prototype._showingComplete = function() {
 	this._jax.doc = JAX(document);
-	this._ecDoc = this._jax.doc.listen("mousedown", "_tryHide", this);
+	this._ecDoc = this._jax.doc.listen("mousedown", this, "_tryHide");
 	this._shown = true;
 	this._pendingAnimation = false;
 };

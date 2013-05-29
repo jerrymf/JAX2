@@ -225,7 +225,7 @@ JAX.FX.prototype._initTransition = function() {
 	node.offsetHeight; /* trick - donutime porhlizec k prekresleni */
 	node.style[tp] = tps.join(",");
 
-	this._ecTransition = this._elm.listen(te, "_endTransition", this);
+	this._ecTransition = this._elm.listen(te, this, "_endTransition");
 	for (var i=0, len=this._properties.length; i<len; i++) {
 		var property = this._properties[i];
 		style[property.property] = property.cssEnd.value + property.cssStart.unit;
