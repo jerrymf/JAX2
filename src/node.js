@@ -795,7 +795,32 @@ JAX.Node.prototype.realSize = function(sizeType, value) {
 	}
 
 	var value = this._getSizeWithBoxSizing(sizeType, value);
-	this._node.style.height = Math.max(value,0) + "px";
+	this._node.style[sizeType]= Math.max(value,0) + "px";
+	return this;
+};
+
+JAX.Node.prototype.contentSize = function(sizeType, value) {
+	if ([1].indexOf(this._node.nodeType) === -1) { 
+		JAX.Report.show("warn","JAX.Node.realSize","You can not use this method for this node. Doing nothing.", this._node);
+		return this;
+	}
+	
+	if (arguments.length === 1) { 
+		var backupStyle = this.css(["display","visibility","position"]);
+		var isFixedPosition = this.computedCss("position").indexOf("fixed") === 0;
+		var isDisplayNone = this.css("display").indexOf("none") === 0;
+
+		if (!isFixedPosition) { this.css("position","absolute"); }
+		if (isDisplayNone) { this.css("display",""); }		
+		this.css("visibility","hidden");
+
+		var size = this._getSizeWithBoxSizing(sizeType);
+		this.css(backupStyle);
+		return size; 
+	}
+
+	var value = parseInt(value, 10);
+	this._node.style[sizeType]= Math.max(value,0) + "px";
 	return this;
 };
 
@@ -995,6 +1020,31 @@ JAX.Node.prototype.isIn = function(node) {
 	throw new Error("For first argument I expected html element or JAX.Node instance");
 };
 
+JAX.Node.prototype.animate = function(property, duration, start, end) {
+	if (this._node.nodeType !== 1) {
+		JAX.Report.show("warn","JAX.Node.animate","You can not use this method for this node. Doing nothing.", this._node);
+		return this;
+	}
+
+	var duration = parseFloat(duration) || 0;
+
+	if (typeof(property) !== "string") {
+		type += "";
+		JAX.Report.show("error","JAX.Node.animate","For first argument I expected string. Trying convert to string: " + type, this._node); 
+	}
+
+	if (duration < 0) { 
+		duration = 0;
+		JAX.Report.show("error","JAX.Node.animate","For second argument I expected positive number, but I got negative. I set zero value.", this._node); 
+	}
+
+	var fx = new JAX.FX(this);
+	fx.addProperty(property, duration, start, end);
+	fx.run();
+
+	return fx;
+};
+
 /** 
  * @method animuje průhlednost dle typu
  * @example
@@ -1011,12 +1061,12 @@ JAX.Node.prototype.fade = function(type, duration) {
 		return this;
 	}
 
-	var duration = parseFloat(duration) || 0;
-
 	if (typeof(type) !== "string") {
 		type += "";
 		JAX.Report.show("error","JAX.Node.fade","For first argument I expected string. Trying convert to string: " + type, this._node); 
 	}
+
+	var duration = parseFloat(duration) || 0;
 	if (duration < 0) { 
 		duration = 0;
 		JAX.Report.show("error","JAX.Node.fade","For second argument I expected positive number, but I got negative. I set zero value.", this._node); 
@@ -1024,21 +1074,15 @@ JAX.Node.prototype.fade = function(type, duration) {
 
 	switch(type) {
 		case "in":
-			var sourceOpacity = 0;
-			var targetOpacity = parseFloat(this.computedCss("opacity")) || 1;	
+			return this.animate("opacity", duration, 0, 1);	
 		break;
 		case "out":
-			var sourceOpacity = parseFloat(this.computedCss("opacity")) || 1;
-			var targetOpacity = 0;
+			return this.animate("opacity", duration, 1, 0);
 		break;
 		default:
 			JAX.Report.show("warn","JAX.Node.fade","I got unsupported type '" + type + "'.", this._node);
 			return this;
 	}
-
-	var fx = new JAX.FX(this).addProperty("opacity", duration, sourceOpacity, targetOpacity).run();
-
-	return fx;
 };
 
 /**
@@ -1069,12 +1113,7 @@ JAX.Node.prototype.fadeTo = function(opacityValue, duration) {
 		JAX.Report.show("error","JAX.Node.fadeTo","For second argument I expected positive number, but I got negative. I set zero value.", this._node); 
 	}
 
-	var sourceOpacity = parseFloat(this.computedCss("opacity")) || 1;
-	var targetOpacity = parseFloat(opacityValue);
-
-	var fx = new JAX.FX(this).addProperty("opacity", duration, sourceOpacity, targetOpacity).run();;
-
-	return fx;
+	return this.animate("opacity", duration, null, opacityValue);
 };
 
 /**
@@ -1109,24 +1148,24 @@ JAX.Node.prototype.slide = function(type, duration) {
 		case "down":
 			backupStyles = this.css(["overflow", "height"]);
 			var property = "height";
-			var source = 0;
-			var target = this._getSizeWithBoxSizing("height");
+			var start = 0;
+			var end = null;
 		break;
 		case "up":
 			var property = "height";
-			var source = this._getSizeWithBoxSizing("height");
-			var target = 0;
+			var start = null
+			var end = 0;
 		break;
 		case "left":
 			var property = "width";
-			var source = this._getSizeWithBoxSizing("width");
-			var target = 0;	
+			var start = null;
+			var end = 0;	
 		break;
 		case "right":
 			backupStyles = this.css(["overflow", "width"]);
 			var property = "width";
-			var source = 0;
-			var target = this._getSizeWithBoxSizing("width");
+			var start = 0;
+			var end = null;
 		break;
 		default:
 			JAX.Report.show("warn","JAX.Node.slide","I got unsupported type '" + type + "'.", this._node);
@@ -1135,17 +1174,9 @@ JAX.Node.prototype.slide = function(type, duration) {
 
 	this.css("overflow", "hidden");
 
+	var func = function() { this.css(backupStyles); }.bind(this);
 
-	var fx = new JAX.FX(this).addProperty(property, duration, source, target);
-
-	var func = function() {
-		for (var p in backupStyles) { this._node.style[p] = backupStyles[p]; }
-	}.bind(this);
-	fx.callWhenDone(func);
-
-	fx.run();
-
-	return fx;
+	return this.animate(property, duration, start, end).callWhenDone(func);
 };
 
 JAX.Node.prototype._init = function(node) {

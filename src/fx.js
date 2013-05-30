@@ -35,16 +35,46 @@ JAX.FX._TRANSITION_EVENT = "";
 })();
 
 JAX.FX._SUPPORTED_PROPERTIES = {
-	"width": {defaultUnit:"px", css:"width" },
-	"height":{defaultUnit:"px", css:"height" },
-	"top": {defaultUnit:"px", css:"top" },
-	"left": {defaultUnit:"px", css:"left" },
-	"bottom": {defaultUnit:"px", css:"bottom" },
-	"right": {defaultUnit:"px", css:"right" },
-	"fontSize": {defaultUnit:"px", css:"font-size" },
-	"opacity": {defaultUnit:"", css:"opacity" },
-	"color": {defaultUnit:"", css:"color" },
-	"backgroundColor": {defaultUnit:"", css:"background-color" }
+	"width": {
+		defaultUnit:"px", 
+		css:"width" 
+	},
+	"height": {
+		defaultUnit:"px", 
+		css:"height" 
+	},
+	"top": {
+		defaultUnit:"px", 
+		css:"top" 
+	},
+	"left": {
+		defaultUnit:"px", 
+		css:"left" 
+	},
+	"bottom": {
+		defaultUnit:"px", 
+		css:"bottom" 
+	},
+	"right": {
+		defaultUnit:"px", 
+		css:"right" 
+	},
+	"fontSize": {
+		defaultUnit:"px", 
+		css:"font-size" 
+	},
+	"opacity": {
+		defaultUnit:"", 
+		css:"opacity" 
+	},
+	"color": {
+		defaultUnit:"", 
+		css:"color" 
+	},
+	"backgroundColor": {
+		defaultUnit:"", 
+		css:"background-color" 
+	}
 };
 
 JAX.FX._SUPPORTED_METHODS = [
@@ -95,39 +125,49 @@ JAX.FX.prototype.addProperty = function(property, duration, start, end, method) 
 	var duration = parseInt(duration);
 	var method = this._transitionSupport ? (method || "linear") : "LINEAR";
 	
-	if (typeof(property) != "string") { throw new Error("For first argument I expected string"); }
-	if (!isFinite(duration) || duration < 0) { throw new Error("For second argument I expected positive number"); }
-	if (typeof(start) != "string" && (typeof(start) != "number" || !isFinite(start))) { throw new Error("For third argument I expected string or number"); }
-	if (typeof(end) != "string" && (typeof(end) != "number" || !isFinite(end))) { throw new Error("For fourth argument I expected string or number"); }
-	if (typeof(method) != "string") { throw new Error("For fifth argument I expected string"); }
-
-	if (!(property in JAX.FX._SUPPORTED_PROPERTIES)) { 
-		var properties = [];
-		for (var p in JAX.FX._SUPPORTED_PROPERTIES) { properties.concat(JAX.FX._SUPPORTED_PROPERTIES[p]); }
-		throw new Error("First argument must be supported property: " + properties.join(", ")); 
+	if (typeof(property) != "string") { 
+		throw new Error("For first argument I expected string"); 
+	}
+	if (!isFinite(duration) || duration < 0) { 
+		throw new Error("For second argument I expected positive number"); 
+	}
+	if (start && typeof(start) != "string" && (typeof(start) != "number" || !isFinite(start))) { 
+		throw new Error("For third argument I expected string, number or null for automatic checking"); 
+	}
+	if (end && typeof(end) != "string" && (typeof(end) != "number" || !isFinite(end))) { 
+		throw new Error("For fourth argument I expected string or number"); 
+	}
+	if (start === null && end === null) {
+		throw new Error("At least one of start and end values must be defined."); 	
+	}
+	if (typeof(method) != "string") { 
+		throw new Error("For fifth argument I expected string"); 
 	}
 
-	var cssEnd = this._parseCSSValue(property, end);
-	var cssStart = this._parseCSSValue(property, start); 
-	var methodLowerCase = method.toLowerCase();
+	this._checkSupportedProperty(property);
+	this._checkSupportedMethod(method);
 
-	for (var i=0, len=JAX.FX._SUPPORTED_METHODS.length; i<len; i++) {
-		var supported = JAX.FX._SUPPORTED_METHODS[i];
-		if (methodLowerCase == supported || (supported == "cubic-bezier" && methodLowerCase.indexOf(supported) == 0)) { 
-			this._properties.push({
-				property: property,
-				cssStart: cssStart,
-				cssEnd: cssEnd,
-				duration: (duration || 1),
-				method: method
-			});
-			return this;
-		}
+	if (end || (typeof(end) == "number" && isFinite(end))) {
+		var cssEnd = this._parseCSSValue(property, end);
+	} else {
+		var cssEnd = this._foundCSSValue(property);;
 	}
 
-	var methods = [];
-	for (var p in JAX.FX._SUPPORTED_METHODS) { methods.concat(JAX.FX._SUPPORTED_METHODS[p]); }
-	throw new Error("Fifth argument must be supported method: " + methods.join(", ")); 
+	if (start || (typeof(start) == "number" && isFinite(start))) { 
+		var cssStart = this._parseCSSValue(property, start);
+	} else {
+		var cssStart = this._foundCSSValue(property);
+	}
+
+	this._properties.push({
+		property: property,
+		cssStart: cssStart,
+		cssEnd: cssEnd,
+		duration: (duration || 1),
+		method: method
+	});
+
+	return this;
 };
 
 /**
@@ -187,6 +227,29 @@ JAX.FX.prototype.stop = function() {
 	this._stopTransition();
 	return this;
 };
+
+JAX.FX.prototype._checkSupportedProperty = function(property) {
+	if (!(property in JAX.FX._SUPPORTED_PROPERTIES)) { 
+		var properties = [];
+
+		for (var p in JAX.FX._SUPPORTED_PROPERTIES) { 
+			properties.concat(JAX.FX._SUPPORTED_PROPERTIES[p]); 
+		}
+
+		throw new Error("First argument must be supported property: " + properties.join(", ")); 
+	}
+};
+
+JAX.FX.prototype._checkSupportedMethod = function(method) {
+	var method = method.toLowerCase();
+	if (JAX.FX._SUPPORTED_METHODS.indexOf(method) > -1 || method.indexOf("cubic-bezier") == 0) {
+		return;
+	}
+
+	var methods = [];
+	for (var p in JAX.FX._SUPPORTED_METHODS) { methods.concat(JAX.FX._SUPPORTED_METHODS[p]); }
+	throw new Error("Fifth argument must be supported method: " + methods.join(", ")); 
+}
 
 JAX.FX.prototype._initInterpolators = function() {
 	for(var i=0, len=this._properties.length; i<len; i++) {
@@ -250,16 +313,44 @@ JAX.FX.prototype._stopTransition = function() {
 };
 
 JAX.FX.prototype._parseCSSValue = function(property, cssValue) {
+	var unit = JAX.FX._SUPPORTED_PROPERTIES[property].defaultUnit;
+
 	if (property == "backgroundColor" || property == "color") {
 		var value = cssValue;
 	} else {
 		var value = parseFloat(cssValue);
-		var unit = (cssValue+"").replace(value, "");
-
-		if (unit) { return { "value": value, "unit": unit }; }
+		var foundUnit = (cssValue+"").replace(value, "");
+		if (foundUnit) { unit = foundUnit; }
 	}
 
-	return { "value": value, "unit": JAX.FX._SUPPORTED_PROPERTIES[property].defaultUnit };
+	return { 
+		value: value, 
+		unit: unit 
+	};
+};
+
+JAX.FX.prototype._foundCSSValue = function(property) {
+	var unit = JAX.FX._SUPPORTED_PROPERTIES[property].defaultUnit;
+
+	switch(property) {
+		case "width":
+		case "height":
+			var value = parseInt(this._elm.computedCss(JAX.FX._SUPPORTED_PROPERTIES[property].css));
+			if (!isFinite(value)) { value = this._elm.contentSize(property); }
+		break;
+		case "backgroundColor":
+		case "color":
+			var value = this._elm.computedCss(JAX.FX._SUPPORTED_PROPERTIES[property].css);
+		break;
+		default:
+			var cssValue = this._elm.computedCss(JAX.FX._SUPPORTED_PROPERTIES[property].css);
+			var value = parseFloat(cssValue);
+	}
+
+	return {
+		value:value,
+		unit: unit
+	}
 };
 
 JAX.FX.prototype._endInterpolator = function(index) {
