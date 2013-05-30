@@ -594,11 +594,6 @@ JAX.Node.prototype.stopListening = function(id) {
 		return this;
 	}
 
-	if (this._node.getAttribute && this._node.getAttribute("data-jax-locked")) {
-		this._queueMethod(this.stopListening, arguments);
-		return this; 
-	} 
-
 	if (!arguments.length) {
 		var events = this._storage.events;
 		for (var p in events) { this._destroyEvents(events[p]); }
@@ -624,6 +619,7 @@ JAX.Node.prototype.stopListening = function(id) {
 		if (index > -1) {
 			this._destroyEvents([eventListeners[index]]);
 			eventListeners.splice(index, 1);
+			if (!eventListeners.length) { delete this._storage.events[p]; }
 			return this;
 		}
 	}
@@ -651,6 +647,10 @@ JAX.Node.prototype.prop = function(property, value) {
 		if (arguments.length === 1) { 
 			return this._node[property]; 
 		}
+		if (this._node.getAttribute && this._node.getAttribute("data-jax-locked")) {
+			this._queueMethod(this.prop, arguments); 
+			return this; 
+		}
 		this._node[property] = value;
 		if (arguments.length > 2) { 
 			JAX.Report.warn("warn","JAX.Node.attr","Too much arguments.", this._node);
@@ -663,7 +663,9 @@ JAX.Node.prototype.prop = function(property, value) {
 			props[p] = this._node[p];
 		}
 		return props;	
-	} else if (this._node.getAttribute && this._node.getAttribute("data-jax-locked")) {
+	} 
+
+	if (this._node.getAttribute && this._node.getAttribute("data-jax-locked")) {
 		this._queueMethod(this.prop, arguments); 
 		return this; 
 	}
@@ -697,7 +699,11 @@ JAX.Node.prototype.attr = function(property, value) {
 	if (typeof(property) === "string") { 
 		if (arguments.length === 1) { 
 			return this._node.getAttribute(property); 
-		} 
+		}
+		if (this._node.getAttribute && this._node.getAttribute("data-jax-locked")) {
+			this._queueMethod(this.attr, arguments); 
+			return this; 
+		}
 		this._node.setAttribute(property, value + "");
 		if (arguments.length > 2) { 
 			JAX.Report.warn("warn","JAX.Node.attr","Too much arguments.", this._node);
@@ -710,7 +716,9 @@ JAX.Node.prototype.attr = function(property, value) {
 			attrs[p] = this._node.getAttribute(p);
 		}
 		return attrs;	
-	} else if (this._node.getAttribute && this._node.getAttribute("data-jax-locked")) {
+	}
+
+	if (this._node.getAttribute && this._node.getAttribute("data-jax-locked")) {
 		this._queueMethod(this.attr, arguments); 
 		return this; 
 	}
@@ -745,6 +753,10 @@ JAX.Node.prototype.css = function(property, value) {
 		if (arguments.length === 1) { 
 			return property === "opacity" ? this._getOpacity() : this._node.style[property]; 
 		}
+		if (this._node.getAttribute && this._node.getAttribute("data-jax-locked")) {
+			this._queueMethod(this.css, arguments); 
+			return this;
+		}
 		this._node.style[property] = value; 
 		if (arguments.length > 2) { 
 			JAX.Report.warn("warn","JAX.Node.css","Too much arguments.", this._node);
@@ -758,10 +770,12 @@ JAX.Node.prototype.css = function(property, value) {
 			css[p] = this._node.style[p];
 		}
 		return css;
-	} else if (this._node.getAttribute && this._node.getAttribute("data-jax-locked")) {
-		this._queueMethod(this.style, arguments); 
-		return this; 
-	} 
+	}
+
+	if (this._node.getAttribute && this._node.getAttribute("data-jax-locked")) {
+		this._queueMethod(this.css, arguments); 
+		return this;
+	}
 
 	for (var p in property) {
 		var value = property[p];
@@ -1113,7 +1127,7 @@ JAX.Node.prototype.fade = function(type, duration, lockElm) {
  */
 JAX.Node.prototype.fadeTo = function(opacityValue, duration, lockElm) {
 	if (this._node.nodeType !== 1) {
-		JAX.Report.show("warn","JAX.Node.fade","You can not use this method for this node. Doing nothing.", this._node);
+		JAX.Report.show("warn","JAX.Node.fadeTo","You can not use this method for this node. Doing nothing.", this._node);
 		return this;
 	}
 	
@@ -1121,7 +1135,7 @@ JAX.Node.prototype.fadeTo = function(opacityValue, duration, lockElm) {
 	var duration = parseFloat(duration) || 0;
 
 	if (this._node.getAttribute && this._node.getAttribute("data-jax-locked")) {
-		this._queueMethod(this.fade, arguments); 
+		this._queueMethod(this.fadeTo, arguments); 
 		return this; 
 	}
 
@@ -1222,6 +1236,8 @@ JAX.Node.prototype.slide = function(type, duration, lockElm) {
 	}.bind(this);
 	fx.callWhenDone(func);
 	
+	if (lockElm) { this.lock(); }
+
 	fx.run();
 
 	return fx;
@@ -1271,6 +1287,7 @@ JAX.Node.prototype.unlock = function() {
 		var queue = this._storage.lockQueue;
 		this._node.removeAttribute("data-jax-locked");
 		while(queue.length) {
+			if (this.isLocked()) { return this; }
 			var q = queue.shift();
 			q.method.apply(this, q.args);
 		}
