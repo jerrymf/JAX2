@@ -24,7 +24,7 @@ var JAX = function(selector, srcElement) {
 		return jaxelm;
 	} else if (typeof(selector) === "object" && selector.nodeType) {
 		return JAX.Node.create(selector);
-	} else if (selector instanceof JAX.Node) {
+	} else if (selector && selector instanceof JAX.Node) {
 		return selector;
 	}
 
@@ -51,7 +51,7 @@ JAX.all = function(selector, srcElement) {
 		return new JAX.NodeArray(jaxelms);
 	} else if (typeof(selector) === "object" && selector.nodeType) {
 		return new JAX.NodeArray(JAX.Node.create(selector));
-	} else if (selector instanceof JAX.Node) {
+	} else if (selector && selector instanceof JAX.Node) {
 		return new JAX.NodeArray(selector);
 	}
 	

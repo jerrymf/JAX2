@@ -68,6 +68,7 @@ JAX.FX.prototype.$constructor = function(elm) {
 	this._elm = elm instanceof JAX.Node ? elm : JAX.Node.create(elm);
 	this._properties = [];
 	this._interpolators = [];
+	this._transitionCount = 0;
 	this._callbacks = [];
 	this._running = false;
 	this._transitionSupport = !!JAX.FX._TRANSITION_PROPERTY;
@@ -221,6 +222,7 @@ JAX.FX.prototype._initTransition = function() {
 		var property = this._properties[i];
 		style[property.property] = property.cssStart.value + property.cssStart.unit;
 		tps.push(JAX.FX._SUPPORTED_PROPERTIES[property.property].css + " " + property.duration + "s " + property.method);
+		this._transitionCount++;
 	}
 
 	setTimeout(function() {
@@ -269,8 +271,11 @@ JAX.FX.prototype._endInterpolator = function(index) {
 };
 
 JAX.FX.prototype._endTransition = function() {
+	this._transitionCount--;
+	if (this._transitionCount) { return; }
+
 	var te = JAX.FX._TRANSITION_EVENT;
-	this._elm.stopListening(te, this._ecTransition);
+	this._elm.stopListening(this._ecTransition);
 	this._elm.node().style[JAX.FX._TRANSITION_PROPERTY] = "none";
 	this._ecTransition = null;
 	this._running = false;

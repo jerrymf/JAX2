@@ -155,12 +155,14 @@ JAX.DOMBuilder.prototype.close = function() {
 JAX.DOMBuilder.prototype.appendTo = function(node) {
 	var jaxNode = null;
 
-	if (typeof(node) === "object" && node.nodeType) {
+	if ((typeof(node) === "object" && node.nodeType) || typeof(node) === "string") {
 		var jaxNode = JAX(node);
 	} else if (node instanceof JAX.Node && node.jaxNodeType === 1) {
 		var jaxNode = node;
-	} else {
-		throw new Error("You are trying to append me to unsupported element. I can be appended only to html element or documentFragment element.");
+	}
+
+	if (!jaxNode) {
+		throw new Error("You are trying to append me to unsupported or null element. I can be appended only to html element or documentFragment element.");
 	}
 
 	this._jax.container.appendTo(jaxNode);

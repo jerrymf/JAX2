@@ -6,6 +6,7 @@ cat core.js > ../lib/jax.js
 cat node.js >> ../lib/jax.js
 cat nodearray.js >> ../lib/jax.js
 cat event.js >> ../lib/jax.js
+cat listener.js >> ../lib/jax.js
 cat dombuilder.js >> ../lib/jax.js
 cat fx.js >> ../lib/jax.js
 cat report.js >> ../lib/jax.js

@@ -34,7 +34,12 @@ JAX.NodeArray.prototype.$constructor = function(nodes) {
 
 		throw new Error("First argument must be array of JAX.Node instances or html nodes");
 	}
-	this.length = this._jaxNodes.length;
+	this.length = len;
+};
+
+JAX.NodeArray.prototype.item = function(index) {
+	var index = index || 0;
+	return this._jaxNodes[index];
 };
 
 /**
@@ -42,14 +47,16 @@ JAX.NodeArray.prototype.$constructor = function(nodes) {
  * @example
  * document.body.innerHTML = "<span>1</span><span>2</span><div id='cisla'></div>";
  * var all = JAX.all("*");
- * var elm = jaxElms.jaxNode(1); // vrati v poradi druhy prvek
+ * var elms = jaxElms.jaxNode(0,2); // vrati dva prvky [0],[1]
  *
- * @param {Number} index pořadový index prvku
+ * @param {Number} from od indexu
+ * @param {Number} to po index
  * @returns {JAX.Node | JAX.Node[]}
  */
-JAX.NodeArray.prototype.items = function(index) {
+JAX.NodeArray.prototype.items = function(from, to) {
 	if (!arguments.length) { return this._jaxNodes.slice(); }
-	return this._jaxNodes[index];
+	var to = to || this._jaxNodes.length;
+	return this._jaxNodes.slice(from, to);
 };
 
 /**
@@ -225,13 +232,22 @@ JAX.NodeArray.prototype.destroyNodes = function() {
 	return;
 };
 
+JAX.NodeArray.prototype.listen = function(type, obj, funcMethod, bindData) {
+	var len = this._jaxNodes.length;
+	var listeners = new Array(len);
+	for(var i=0; i<len; i++) {
+		listeners[i] = this._jaxNodes[i].listen(type, obj, funcMethod, bindData);
+	}
+	return listeners;
+};
+
 /**
  * @method nad každým elementem zavolá funkci a předá jej jako parametr
  * @example 
  * document.body.innerHTML = "<span>1</span><span>2</span><div id='cisla'></div>";
  * JAX.all("span").forEachItem(function(elm) { elm.html("0"); });
  *
- * @param {Function} func funkce, která se má provádět. Jako parametr je předána instance JAX.Node
+ * @param {Function} func funkce, která se má provádět. Jako parametr je předána instance JAX.Node, aktuálně zpracovávaný index a jako třetí parametr je samotné pole
  * @param {Object} obj context, ve kterém se má fce provést
  * @returns {JAX.NodeArray}
  */
@@ -321,10 +337,9 @@ JAX.NodeArray.prototype.unshiftItem = function(node) {
  * @param {String} type typ "in" nebo "out"
  * @param {Number} duration délka animace v sec
  * @param {Function} whenDone funkce, která se provede po dokončení animace
- * @param {Boolean} lockElm má se zamknout element?
  * @returns {JAX.NodeArray}
  */
-JAX.NodeArray.prototype.fade = function(type, duration, whenDone, lockElm) {
+JAX.NodeArray.prototype.fade = function(type, duration, whenDone) {
 	var count = this._jaxNodes.length;
 
 	var f = function() {
@@ -333,7 +348,7 @@ JAX.NodeArray.prototype.fade = function(type, duration, whenDone, lockElm) {
 	};
 
 	for (var i=0, len=this._jaxNodes.length; i<len; i++) {
-		var fx = this._jaxNodes[i].fade(type, duration, lockElm);
+		var fx = this._jaxNodes[i].fade(type, duration);
 		if (whenDone) { fx.callWhenDone(f); }
 	}
 	return this;
@@ -348,10 +363,9 @@ JAX.NodeArray.prototype.fade = function(type, duration, whenDone, lockElm) {
  * @param {Number} opacityValue do jaké hodnoty od 0 do 1 se má průhlednost animovat
  * @param {Number} duration délka animace v sec
  * @param {Function} whenDone funkce, která se provede po dokončení animace
- * @param {Boolean} lockElm má se zamknout element?
  * @returns {JAX.NodeArray}
  */
-JAX.NodeArray.prototype.fadeTo = function(opacityValue, duration, whenDone, lockElm) {
+JAX.NodeArray.prototype.fadeTo = function(opacityValue, duration, whenDone) {
 	var count = this._jaxNodes.length;
 
 	var f = function() {
@@ -360,7 +374,7 @@ JAX.NodeArray.prototype.fadeTo = function(opacityValue, duration, whenDone, lock
 	};
 
 	for (var i=0, len=this._jaxNodes.length; i<len; i++) {
-		var fx = this._jaxNodes[i].fadeTo(opacityValue, duration, lockElm);
+		var fx = this._jaxNodes[i].fadeTo(opacityValue, duration);
 		if (whenDone) { fx.callWhenDone(f); }
 	}
 	return this;
@@ -375,10 +389,9 @@ JAX.NodeArray.prototype.fadeTo = function(opacityValue, duration, whenDone, lock
  * @param {String} type udává typu efektu - "down", "up", "left" nebo "right"
  * @param {Number} duration délka animace v sec
  * @param {Function} whenDone funkce, která se provede po dokončení animace
- * @param {Boolean} lockElm má se zamknout element?
  * @returns {JAX.NodeArray}
  */
-JAX.NodeArray.prototype.slide = function(type, duration, whenDone, lockElm) {
+JAX.NodeArray.prototype.slide = function(type, duration, whenDone) {
 	var count = this._jaxNodes.length;
 
 	var f = function() {
@@ -387,7 +400,7 @@ JAX.NodeArray.prototype.slide = function(type, duration, whenDone, lockElm) {
 	};
 
 	for (var i=0, len=this._jaxNodes.length; i<len; i++) {
-		var fx = this._jaxNodes[i].slide(type, duration, lockElm);
+		var fx = this._jaxNodes[i].slide(type, duration);
 		if (whenDone) { fx.callWhenDone(f); }
 	}
 	return this;
