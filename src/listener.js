@@ -1,3 +1,13 @@
+/**
+ * @fileOverview listener.js - JAX - JAk eXtended
+ * @author <a href="mailto:jerrymf@gmail.com">Marek Fojtl</a>
+ * @version 1.0
+ */
+
+/**
+ * Třída rezrezentující listener
+ * @class JAX.Listener
+ */ 
 JAX.Listener = JAK.ClassMaker.makeClass({
 	NAME: "JAX.Listener",
 	VERSION: "1.0"

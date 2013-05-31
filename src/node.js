@@ -783,15 +783,15 @@ JAX.Node.prototype.computedCss = function(properties) {
  * @example
  * <style> .trida { padding:20px; width:100px; } </style>
  * var jaxElm = JAX(document.body).addClass("trida");
- * console.log(jaxElm.realSize("width")); // vraci 140
+ * console.log(jaxElm.fullSize("width")); // vraci 140
  *
  * @param {String} sizeType "width" nebo "height"
  * @param {Number} value hodnota (v px)
  * @returns {Number | JAX.Node}
  */
-JAX.Node.prototype.realSize = function(sizeType, value) {
+JAX.Node.prototype.fullSize = function(sizeType, value) {
 	if ([1].indexOf(this._node.nodeType) === -1) { 
-		JAX.Report.show("warn","JAX.Node.realSize","You can not use this method for this node. Doing nothing.", this._node);
+		JAX.Report.show("warn","JAX.Node.fullSize","You can not use this method for this node. Doing nothing.", this._node);
 		return this;
 	}
 	
@@ -816,7 +816,7 @@ JAX.Node.prototype.realSize = function(sizeType, value) {
 
 JAX.Node.prototype.contentSize = function(sizeType, value) {
 	if ([1].indexOf(this._node.nodeType) === -1) { 
-		JAX.Report.show("warn","JAX.Node.realSize","You can not use this method for this node. Doing nothing.", this._node);
+		JAX.Report.show("warn","JAX.Node.fullSize","You can not use this method for this node. Doing nothing.", this._node);
 		return this;
 	}
 	

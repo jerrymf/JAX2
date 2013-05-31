@@ -21,8 +21,8 @@ JAX.Calendar.prototype.show = function() {
 
 	var pos = JAK.DOM.getPortBoxPosition(this._jax.targetElm.node());
 	
-	var width = this._jax.targetElm.realSize("width");
-	var height = this._jax.targetElm.realSize("height");
+	var width = this._jax.targetElm.fullSize("width");
+	var height = this._jax.targetElm.fullSize("height");
 
 	pos.left += width;
 	pos.top += height;
