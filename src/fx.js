@@ -10,7 +10,11 @@
  */ 
 JAX.FX = JAK.ClassMaker.makeClass({
 	NAME: "JAX.FX",
-	VERSION: "1.0"
+	VERSION: "1.0",
+	DEPEND: [{
+		sClass: JAK.CSSInterpolator,
+		ver: "1.0"
+	}]
 });
 
 JAX.FX._TRANSITION_PROPERTY = "";
