@@ -14,11 +14,8 @@ echo "" >> ../lib/jax.js
 
 cp ../dependencies/jak.js ../lib/jak.js
 cp ../dependencies/interpolator.js ../lib/interpolator.js
+cp ../dependencies/parser.js ../lib/parser.js
 
-cat ../lib/jak.js > ../lib/jax-all.js
-cat ../lib/interpolator.js >> ../lib/jax-all.js
-cat ../lib/jax.js >> ../lib/jax-all.js
-
-java -jar ../bin/compiler.jar --js ../lib/jax-all.js  --js_output_file ../lib/jax-all-minified.js
+java -jar ../bin/compiler.jar --js ../lib/jax.js  --js_output_file ../lib/jax-minified.js
 
 cd ..

@@ -20,9 +20,6 @@ ECHO. >> ".\lib\jax.js"
 
 XCOPY /y ".\dependencies\jak.js" ".\lib\jak.js"
 XCOPY /y ".\dependencies\interpolator.js" ".\lib\interpolator.js"
+XCOPY /y ".\dependencies\parser.js" ".\lib\parser.js"
 
-type ".\lib\jak.js" > ".\lib\jax-all.js"
-type ".\lib\interpolator.js" >> ".\lib\jax-all.js"
-type ".\lib\jax.js" >> ".\lib\jax-all.js"
-
-java -jar ".\bin\compiler.jar" --js ".\lib\jax-all.js"  --js_output_file ".\lib\jax-all-minified.js"
+java -jar ".\bin\compiler.jar" --js ".\lib\jax.js"  --js_output_file ".\lib\jax-minified.js"
