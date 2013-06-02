@@ -797,12 +797,8 @@ JAX.Node.prototype.fullSize = function(sizeType, value) {
 	
 	if (arguments.length === 1) { 
 		var backupStyle = this.css(["display","visibility","position"]);
-		var isFixedPosition = this.computedCss("position").indexOf("fixed") === 0;
-		var isDisplayNone = this.css("display").indexOf("none") === 0;
 
-		if (!isFixedPosition) { this.css({"position":"absolute"}); }
-		if (isDisplayNone) { this.css({"display":""}); }		
-		this.css({"visibility":"hidden"});
+		this.css({"display":"", "visibility":"hidden", "position":"absolute"});
 
 		var size = sizeType == "width" ? this._node.offsetWidth : this._node.offsetHeight;
 		this.css(backupStyle);
@@ -814,13 +810,27 @@ JAX.Node.prototype.fullSize = function(sizeType, value) {
 	return this;
 };
 
-JAX.Node.prototype.contentSize = function(sizeType, value) {
+/** 
+ * @method zjistí nebo nastaví vlastnost width nebo height. V případě, že width nebo height nejsou nijak nastaveny, tak při zjišťování spočítá velikost obsahu na základě vlastnosti box-sizing.
+ * @example
+ * <style> .trida { padding:20px; width:100px; } </style>
+ * var jaxElm = JAX(document.body).addClass("trida");
+ * console.log(jaxElm.size("width")); // vraci 100
+ *
+ * @param {String} sizeType "width" nebo "height"
+ * @param {Number} value hodnota (v px)
+ * @returns {Number | JAX.Node}
+ */
+JAX.Node.prototype.size = function(sizeType, value) {
 	if ([1].indexOf(this._node.nodeType) === -1) { 
 		JAX.Report.show("warn","JAX.Node.fullSize","You can not use this method for this node. Doing nothing.", this._node);
 		return this;
 	}
 	
 	if (arguments.length === 1) { 
+		var size = parseInt(this.computedCss(sizeType), 10);
+		if (isFinite(size)) { return size; }
+
 		var backupStyle = this.css(["display","visibility","position"]);
 		var isFixedPosition = this.computedCss("position").indexOf("fixed") === 0;
 		var isDisplayNone = this.css("display").indexOf("none") === 0;
@@ -829,7 +839,7 @@ JAX.Node.prototype.contentSize = function(sizeType, value) {
 		if (isDisplayNone) { this.css("display",""); }		
 		this.css("visibility","hidden");
 
-		var size = this._getSizeWithBoxSizing(sizeType);
+		size = this._getSizeWithBoxSizing(sizeType);
 		this.css(backupStyle);
 		return size; 
 	}

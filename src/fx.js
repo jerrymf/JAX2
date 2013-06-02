@@ -339,8 +339,7 @@ JAX.FX.prototype._foundCSSValue = function(property) {
 	switch(property) {
 		case "width":
 		case "height":
-			var value = parseInt(this._elm.computedCss(JAX.FX._SUPPORTED_PROPERTIES[property].css));
-			if (!isFinite(value)) { value = this._elm.contentSize(property); }
+			value = this._elm.size(property);
 		break;
 		case "backgroundColor":
 		case "color":
