@@ -1065,9 +1065,7 @@ JAX.Node.prototype.animate = function(property, duration, start, end) {
 
 	var fx = new JAX.FX(this);
 	fx.addProperty(property, duration, start, end);
-	fx.run();
-
-	return fx;
+	return fx.run();
 };
 
 /** 

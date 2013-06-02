@@ -13,7 +13,7 @@ JAX.FX = JAK.ClassMaker.makeClass({
 	VERSION: "1.0",
 	DEPEND: [{
 		sClass: JAK.CSSInterpolator,
-		ver: "1.0"
+		ver: "2.1"
 	}]
 });
 
@@ -103,7 +103,6 @@ JAX.FX.prototype.$constructor = function(elm) {
 	this._properties = [];
 	this._interpolators = [];
 	this._transitionCount = 0;
-	this._callbacks = [];
 	this._running = false;
 	this._transitionSupport = !!JAX.FX._TRANSITION_PROPERTY;
 };
@@ -175,27 +174,6 @@ JAX.FX.prototype.addProperty = function(property, duration, start, end, method) 
 };
 
 /**
- * @method Po doběhnutí celé animace zavolá funkci předanou parametrem. Opakovaným voláním této metody lze přidat více funkcí.
- * @example 
- * var func1 = function() { console.log("func1"); };
- * var func2 = function() { console.log("func1"); };
- * var elm = JAX("#box");
- * var fx = new JAX.FX(elm);
- * fx.addProperty("width", 2, 0, 200);
- * fx.addProperty("height", 3, 0, 100);
- * fx.callWhenDone(func1);
- * fx.callWhenDone(func2);
- * fx.run();
- *
- * @param {function} callback funkce, která se provede po doběhnutí celé animace
- * @returns {JAX.FX}
- */
-JAX.FX.prototype.callWhenDone = function(callback) {
-	this._callbacks.push(callback);
-	return this;
-};
-
-/**
  * @method Spustí animaci
  * @example
  * var fx = new JAX.FX(elm);
@@ -207,9 +185,10 @@ JAX.FX.prototype.callWhenDone = function(callback) {
  */
 JAX.FX.prototype.run = function() {
 	this._running = true;
+	this._promise = new JAK.Promise();
 	if (!this._transitionSupport) { this._initInterpolators(); return this; }
 	this._initTransition();
-	return this;
+	return this._promise;
 };
 
 /**
@@ -276,6 +255,7 @@ JAX.FX.prototype._initInterpolators = function() {
 
 JAX.FX.prototype._stopInterpolators = function() {
 	for (var i=0, len=this._interpolators.length; i<len; i++) { this._endInterpolator(i); }
+	this._promise.reject(this._elm);
 };
 
 JAX.FX.prototype._initTransition = function() {
@@ -314,6 +294,7 @@ JAX.FX.prototype._stopTransition = function() {
 	}
 
 	this._endTransition();
+	this._promise.reject(this._elm);
 };
 
 JAX.FX.prototype._parseCSSValue = function(property, cssValue) {
@@ -361,7 +342,7 @@ JAX.FX.prototype._endInterpolator = function(index) {
 	this._interpolators.splice(index, 1);
 	if (this._interpolators.length) { return; }
 	this._running = false;
-	for (var i=0, len=this._callbacks.length; i<len; i++) { this._callbacks[i](); }
+	this._promise.fulfill(this._elm);
 };
 
 JAX.FX.prototype._endTransition = function() {
@@ -373,6 +354,6 @@ JAX.FX.prototype._endTransition = function() {
 	this._elm.node().style[JAX.FX._TRANSITION_PROPERTY] = "none";
 	this._ecTransition = null;
 	this._running = false;
-	for (var i=0, len=this._callbacks.length; i<len; i++) { this._callbacks[i](); }
+	this._promise.fulfill(this._elm);
 };
 

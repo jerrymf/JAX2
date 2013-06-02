@@ -37,7 +37,7 @@ JAX.Calendar.prototype.show = function() {
 		.appendTo(document.body)
 		.css({top:pos.top+"px", left:pos.left+"px"})
 		.fade("in", 0.5, true)
-		.callWhenDone(this._showingComplete.bind(this));
+		.then(this._showingComplete.bind(this));
 };
 
 JAX.Calendar.prototype.hide = function() {
@@ -49,7 +49,7 @@ JAX.Calendar.prototype.hide = function() {
 	this._pendingAnimation = true;
 	this._jax.container
 		.fade("out", 0.5, true)
-		.callWhenDone(this._hidingComplete.bind(this));
+		.then(this._hidingComplete.bind(this));
 };
 
 JAX.Calendar.prototype._showingComplete = function() {
