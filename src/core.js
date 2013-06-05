@@ -4,8 +4,6 @@
  * @version 2.0
  */
 
-"use strict";
-
 /**
  * @method Najde element, který odpovídá selector a vrátí instanci JAX.Node
  * @example
@@ -74,10 +72,18 @@ JAX.make = function(tagString, attrs, styles, srcDocument) {
 	var styles = styles || {};
 	var srcDocument = srcDocument || document;
 
-	if (!tagString || typeof(tagString) !== "string") { throw new Error("First argument must be string."); }
-	if (typeof(attrs) !== "object") { throw new Error("Second argument must be associative array."); }
-	if (typeof(styles) !== "object") { throw new Error("Third argument must be associative array."); }
-	if (typeof(srcDocument) !== "object" || !srcDocument.nodeType && [9,11].indexOf(srcDocument.nodeType) === -1) { throw new Error("Fourth argument must be document element."); }
+	if (!tagString || typeof(tagString) !== "string") { 
+		throw new Error("First argument must be string."); 
+	}
+	if (typeof(attrs) !== "object") { 
+		throw new Error("Second argument must be associative array."); 
+	}
+	if (typeof(styles) !== "object") { 
+		throw new Error("Third argument must be associative array."); 
+	}
+	if (typeof(srcDocument) !== "object" || !srcDocument.nodeType && [9,11].indexOf(srcDocument.nodeType) === -1) { 
+		throw new Error("Fourth argument must be document element."); 
+	}
 
 	var tagName = tagString.match(/^([a-zA-Z]+[a-zA-Z0-9]*)/g) || [];
 

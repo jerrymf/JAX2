@@ -389,7 +389,7 @@ JAX.Node.prototype.appendTo = function(node) {
 		return this;
 	}
 	
-	throw new Error("For first argument I expected html element, documentFragment or JAX.Node instance");
+	throw new Error("I could not find given element. For first argument I expected html element, documentFragment or JAX.Node instance");
 };
 
 /**
@@ -410,7 +410,7 @@ JAX.Node.prototype.appendBefore = function(node) {
 		return this;
 	}
 	
-	throw new Error("For first argument I expected html element, text node or JAX.Node instance");
+	throw new Error("I could not find given element. For first argument I expected html element, text node or JAX.Node instance");
 };
 
 /**
@@ -437,7 +437,7 @@ JAX.Node.prototype.appendAfter = function(node) {
 		return this;
 	}
 	
-	throw new Error("For first argument I expected html element, text node or JAX.Node instance");
+	throw new Error("I could not find given element. For first argument I expected html element, text node or JAX.Node instance");
 };
 
 /**
