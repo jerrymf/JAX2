@@ -252,6 +252,13 @@ JAX.NodeArray.prototype.listen = function(type, obj, funcMethod, bindData) {
 	return listeners;
 };
 
+JAX.NodeArray.prototype.stopListening = function(type) {
+	for (var i=0, len=this._jaxNodes.length; i<len; i++) {
+		this._jaxNodes[i].stopListening(type);
+	}
+	return this;
+};
+
 /**
  * @method nad každým elementem zavolá funkci a předá jej jako parametr
  * @example 

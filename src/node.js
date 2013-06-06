@@ -1199,7 +1199,7 @@ JAX.Node.prototype.slide = function(type, duration) {
 
 	var func = function() { this.css(backupStyles); }.bind(this);
 
-	return this.animate(property, duration, start, end).callWhenDone(func);
+	return this.animate(property, duration, start, end).then(func);
 };
 
 JAX.Node.prototype._init = function(node) {
