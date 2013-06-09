@@ -14,14 +14,14 @@
  * @returns {JAX.Node|null}
  */
 var JAX = function(selector, srcElement) {
-	if (typeof(selector) === "string") {
+	if (typeof(selector) == "string") {
 		var srcElement = srcElement || document;
 		var foundElm = srcElement.querySelector(selector);
-		var jaxelm = foundElm ? JAX.Node.create(foundElm) : null;
+		var jaxelm = foundElm ? new JAX.Node(foundElm) : null;
 
 		return jaxelm;
-	} else if (typeof(selector) === "object" && selector.nodeType) {
-		return JAX.Node.create(selector);
+	} else if (typeof(selector) == "object" && selector.nodeType) {
+		return new JAX.Node(selector);
 	} else if (selector && selector instanceof JAX.Node) {
 		return selector;
 	}
@@ -39,16 +39,16 @@ var JAX = function(selector, srcElement) {
  * @returns {JAX.NodeArray|null}
  */
 JAX.all = function(selector, srcElement) {
-	if (typeof(selector) === "string") {
+	if (typeof(selector) == "string") {
 		var srcElement = srcElement || document;
 		var foundElms = srcElement.querySelectorAll(selector);
 		var jaxelms = new Array(foundElms.length);
 
-		for (var i=0, len=foundElms.length; i<len; i++) { jaxelms[i] = JAX.Node.create(foundElms[i]); }
+		for (var i=0, len=foundElms.length; i<len; i++) { jaxelms[i] = new JAX.Node(foundElms[i]); }
 
 		return new JAX.NodeArray(jaxelms);
-	} else if (typeof(selector) === "object" && selector.nodeType) {
-		return new JAX.NodeArray(JAX.Node.create(selector));
+	} else if (typeof(selector) == "object" && selector.nodeType) {
+		return new JAX.NodeArray(new JAX.Node(selector));
 	} else if (selector && selector instanceof JAX.Node) {
 		return new JAX.NodeArray(selector);
 	}
@@ -72,22 +72,22 @@ JAX.make = function(tagString, attrs, styles, srcDocument) {
 	var styles = styles || {};
 	var srcDocument = srcDocument || document;
 
-	if (!tagString || typeof(tagString) !== "string") { 
+	if (!tagString || typeof(tagString) != "string") { 
 		throw new Error("First argument must be string."); 
 	}
-	if (typeof(attrs) !== "object") { 
+	if (typeof(attrs) != "object") { 
 		throw new Error("Second argument must be associative array."); 
 	}
-	if (typeof(styles) !== "object") { 
+	if (typeof(styles) != "object") { 
 		throw new Error("Third argument must be associative array."); 
 	}
-	if (typeof(srcDocument) !== "object" || !srcDocument.nodeType && [9,11].indexOf(srcDocument.nodeType) === -1) { 
+	if (typeof(srcDocument) != "object" || !srcDocument.nodeType && [9,11].indexOf(srcDocument.nodeType) == -1) { 
 		throw new Error("Fourth argument must be document element."); 
 	}
 
 	var tagName = tagString.match(/^([a-zA-Z]+[a-zA-Z0-9]*)/g) || [];
 
-	if (tagName.length === 1) {
+	if (tagName.length == 1) {
 		tagString = tagString.substring(tagName[0].length, tagString.length);
 	} else {
 		throw new Error("Tagname must be first in element definition");
@@ -96,10 +96,10 @@ JAX.make = function(tagString, attrs, styles, srcDocument) {
 	var attrType = "";
 	for (var i=0, len=tagString.length; i<len; i++) {
 		var ch = tagString[i];
-		if (ch === "#") { 
+		if (ch == "#") { 
 			attrType = "id"; 
 			attrs["id"] = "";
-		} else if (ch === ".") { 
+		} else if (ch == ".") { 
 			attrType = "className";
 			if (attrs["className"]) { 
 				attrs["className"] += " ";
@@ -115,11 +115,8 @@ JAX.make = function(tagString, attrs, styles, srcDocument) {
 
 	for (var p in attrs) { createdNode[p] = attrs[p]; }
 	for (var p in styles) { createdNode.style[p] = styles[p]; }
-
-	var f = Object.create(JAX.Node.prototype);
-	f._init(createdNode);
 	
-	return f;
+	return new JAX.Node(createdNode);
 };
 
 /**
@@ -132,7 +129,7 @@ JAX.make = function(tagString, attrs, styles, srcDocument) {
  * @returns {JAX.Node}
  */
 JAX.makeText = function(text, srcDocument) {
-	return JAX.Node.create((srcDocument || document).createTextNode(text));
+	return new JAX.Node((srcDocument || document).createTextNode(text));
 };
 
 /**
@@ -146,13 +143,13 @@ JAX.makeText = function(text, srcDocument) {
  * @returns {string}
  */
 JAX.getTypeOf = function(value) {
-	if (typeof(value) === "number") {
+	if (typeof(value) == "number") {
 		return "number";
-	} else if (typeof(value) === "string") {
+	} else if (typeof(value) == "string") {
 		return "string";
-	} else if (typeof(value) === "undefined") {
+	} else if (typeof(value) == "undefined") {
 		return "undefined";
-	} else if (typeof(value) === "function") {
+	} else if (typeof(value) == "function") {
 		return "function";
 	} else if (value === true || value === false) {
 		return "boolean";
@@ -162,9 +159,9 @@ JAX.getTypeOf = function(value) {
 
 	var toStringResult = Object.prototype.toString.call(value);
 
-	if (toStringResult === "[object Array]") {
+	if (toStringResult == "[object Array]") {
 		return "array";	
-	} else if (toStringResult === "[object Date]") {
+	} else if (toStringResult == "[object Date]") {
 		return "date";
 	}
 

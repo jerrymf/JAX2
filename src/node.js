@@ -19,22 +19,9 @@ JAX.Node.COMMENT_NODE = 8;
 JAX.Node.DOCUMENT_NODE = 9;
 JAX.Node.DOCUMENT_FRAGMENT_NODE = 11;
 
-JAX.Node.instances = {};
-JAX.Node.instances[JAX.Node.ELEMENT_NODE] = {};
-JAX.Node.instances[JAX.Node.TEXT_NODE] = {};
-JAX.Node.instances[JAX.Node.COMMENT_NODE] = {};
-JAX.Node.instances[JAX.Node.DOCUMENT_NODE] = {};
-JAX.Node.instances[JAX.Node.DOCUMENT_FRAGMENT_NODE] = {};
-
-JAX.Node._ids = {};
-JAX.Node._ids[JAX.Node.ELEMENT_NODE] = 0;
-JAX.Node._ids[JAX.Node.TEXT_NODE] = 0;
-JAX.Node._ids[JAX.Node.COMMENT_NODE] = 0;
-JAX.Node._ids[JAX.Node.DOCUMENT_NODE] = 0;
-JAX.Node._ids[JAX.Node.DOCUMENT_FRAGMENT_NODE] = 0;
-
+JAX.Node._events = [];
 JAX.Node._MEASUREABLEVALUE_REGEXP = /^(?:-)?\d+(\.\d+)?(%|em|in|cm|mm|ex|pt|pc)?$/i;
-JAX.Node._OPACITY_REGEXP = /alpha\(opacity=['"]?([0-9]+)['"]?\)/i
+JAX.Node._OPACITY_REGEXP = /alpha\(opacity=['"]?([0-9]+)['"]?\)/i;
 JAX.Node._BOX_SIZING = null;
 
 (function() {
@@ -51,66 +38,20 @@ JAX.Node._BOX_SIZING = null;
 	}
 })();
 
-/**
- * @static Tovární metoda. Slouží k vytvoření instance JAX.Node. Používejte, prosím, tuto metodu. Nevolejte JAX.Node s operátorem new.
- * @example
- * var jaxElm = JAX.Node.create(document.body.firstChild);
- *
- * @param {HTMLElm} node DOM uzel
- * @returns {JAX.Node}
- */
-JAX.Node.create = function(node) {
-	if (typeof(node) === "object" && node.nodeType) {
-		var nodeType = node.nodeType;
-
-		if (nodeType in JAX.Node.instances) {
-			switch(nodeType) {
-				case JAX.Node.ELEMENT_NODE:
-					var jaxId = parseInt(node.getAttribute("data-jax-id"),10);
-					if (typeof(jaxId) !== "number") { jaxId = -1; }
-					if (jaxId > -1) {
-						var item = JAX.Node.instances[JAX.Node.ELEMENT_NODE][jaxId];
-						if (item) {
-							if (item.instance.node() == node) { return item.instance; }
-							node.removeAttribute("data-jax-id");
-						}
-					}
-				break;
-				default:
-					var index = -1;
-					var instances = JAX.Node.instances[nodeType];
-					for (var i in instances) { 
-						if (node === instances[i].node) { index = i; break; }
-					}
-					if (index > -1) { return JAX.Node.instances[nodeType][index].instance; }
-			}
-		}
-
-		var f = Object.create(JAX.Node.prototype);
-		f._init(node);
-		return f;
-	}
-	
-	throw new Error("First argument must be html element");
-};
-
-JAX.Node.prototype.$constructor = function() {
-	throw new Error("You can not call this class with operator new. Use JAX.Node.create factory method instead of it");
+JAX.Node.prototype.$constructor = function(node) {
+	this._node = node;
+	this.jaxNodeType = node.nodeType;
 };
 
 /**
- * @method destructor - odvěsí všechny události, odebere uzel z DOMu, a odstraní všechny reference na něj z JAXu. Voláme, pokud víme, že uzel už se do DOMu nikdy více nepřipne.
+ * @method destructor - odvěsí všechny události a odstraní všechny reference na něj z JAXu. Voláme, pokud víme, že uzel už se do DOMu nikdy více nepřipne.
  * @example
  * JAX("#nejakeId").$destructor();
  */
 JAX.Node.prototype.$destructor = function() {
-	if ([1,9].indexOf(this._node.nodeType) !== -1) { this.stopListening(); }
-	if ([1,3,8].indexOf(this._node.nodeType) !== -1) { this.remove(); }
-
-	if (this._node.nodeType in JAX.Node.instances) { delete JAX.Node.instances[this._node.nodeType][this._jaxId]; }
+	if ([1,9].indexOf(this._node.nodeType) != -1) { this.stopListening(); }
 
 	this._node = null;
-	this._storage = null;
 	this._jaxId = -1;
 };
 
@@ -150,24 +91,29 @@ JAX.Node.prototype.findAll = function(selector) {
 };
 
 /**
- * @method přídá css třídu k elementu, lze zadat i více tříd oddělených mezerou a nebo pole tříd
+ * @method přídá css třídu k elementu, lze zadat i více tříd oddělených mezerou
  * @example
  * JAX("#nejakeId").addClass("trida"); // piseme bez tecky
  *
- * @param {String | Array} className jméno třídy nebo jména tříd oddělená mezerou | pole se jmény tříd
+ * @param {String} className jméno třídy nebo jména tříd oddělená mezerou
  * @returns {JAX.Node}
  */
 JAX.Node.prototype.addClass = function(classNames) {
-	if (this._node.nodeType !== 1) {
+	if (this._node.nodeType != 1) {
 		JAX.Report.show("warn","JAX.Node.addClass","You can not use this method for this node. Doing nothing.", this._node);
 		return this; 
 	}
 	
-	if (!(classNames instanceof Array)) { classNames = [].concat(classNames); }
+	if (typeof(classNames) != "string") { 
+		classNames += "";
+		JAX.Report.show("error","JAX.Node.addClass","Given arguments can be string, array of strings. Trying convert to string: " + classNames, this._node);
+	}
+
+	var cNames = classNames.split(" ");
 	
-	for (var i=0, len=classNames.length; i<len; i++) {
-		var cName = classNames[i];
-		if (typeof(cName) !== "string") { 
+	for (var i=0, len=cNames.length; i<len; i++) {
+		var cName = cNames[i];
+		if (typeof(cName) != "string") { 
 			cName += "";
 			JAX.Report.show("error","JAX.Node.addClass","Given arguments can be string or array of strings. Trying convert to string: " + cName, this._node);
 		}
@@ -178,27 +124,28 @@ JAX.Node.prototype.addClass = function(classNames) {
 };
 
 /**
- * @method odebere css třídu od elementu, lze zadat i více tříd oddělených mezerou a nebo pole tříd
+ * @method odebere css třídu od elementu, lze zadat i více tříd oddělených mezerou
  * @example
  * JAX("#nejakeId").removeClass("trida"); // piseme bez tecky
  *
- * @param {String | Array} className jméno třídy nebo jména tříd oddělená mezerou | pole se jmény tříd
+ * @param {String} className jméno třídy nebo jména tříd oddělená mezerou
  * @returns {JAX.Node}
  */
 JAX.Node.prototype.removeClass = function(classNames) {
-	if (this._node.nodeType !== 1) {
+	if (this._node.nodeType != 1) {
 		JAX.Report.show("warn","JAX.Node.removeClass","You can not use this method for this node. Doing nothing.", this._node);
 		return this;
 	}
 	
-	if (!(classNames instanceof Array)) { classNames = [].concat(classNames); }
+	if (typeof(classNames) != "string") {
+		classNames += "";
+		JAX.Report.show("error","JAX.Node.removeClass","Given arguments can be string, array of strings. Trying convert to string: " + classNames, this._node);
+	}
+
+	var cNames = classNames.split(" ");
 	
-	for (var i=0, len=classNames.length; i<len; i++) {
-		var cName = classNames[i];
-		if (typeof(cName) !== "string") { 
-			cName += "";
-			JAX.Report.show("error","JAX.Node.removeClass","Given arguments can be string, array of strings. Trying convert to string: " + cName, this._node);
-		}
+	for (var i=0, len=cNames.length; i<len; i++) {
+		var cName = cNames[i];
 		JAK.DOM.removeClass(this._node, cName);
 	}
 	
@@ -214,12 +161,12 @@ JAX.Node.prototype.removeClass = function(classNames) {
  * @returns {Boolean}
  */
 JAX.Node.prototype.hasClass = function(className) {
-	if (this._node.nodeType !== 1) { 
+	if (this._node.nodeType != 1) { 
 		JAX.Report.show("warn","JAX.Node.hasClass","You can not use this method for this node. Doing nothing.", this._node);
 		return this;
 	}
 
-	if (typeof(className) !== "string") {  
+	if (typeof(className) != "string") {  
 		className += "";
 		JAX.Report.show("error","JAX.Node.hasClass","For first argument I expected string. Trying convert to string: " + className, this._node);
 	}
@@ -228,7 +175,7 @@ JAX.Node.prototype.hasClass = function(className) {
 
 	while(names.length) {
 		var name = names.shift();
-		if (this._node.className.indexOf(name) === -1) { return false; }
+		if (this._node.className.indexOf(name) == -1) { return false; }
 	}
 
 	return true;
@@ -244,7 +191,7 @@ JAX.Node.prototype.hasClass = function(className) {
  * @returns {JAX.Node | String}
  */
 JAX.Node.prototype.id = function(id) {
-	if (this._node.nodeType !== 1) { 
+	if (this._node.nodeType != 1) { 
 		JAX.Report.show("warn","JAX.Node.id","You can not use this method for this node. Doing nothing.", this._node);
 		return this;
 	}
@@ -253,7 +200,7 @@ JAX.Node.prototype.id = function(id) {
 		return this.attr("id"); 
 	}
 
-	if (typeof(id) !== "string") {
+	if (typeof(id) != "string") {
 		id += "";
 		JAX.Report.show("warn","JAX.Node.id","For first argument I expected string. Trying convert to string: " + id, this._node);
 	}
@@ -272,7 +219,7 @@ JAX.Node.prototype.id = function(id) {
  * @returns {JAX.Node | String}
  */
 JAX.Node.prototype.html = function(innerHTML) {
-	if (this._node.nodeType !== 1) {
+	if (this._node.nodeType != 1) {
 		JAX.Report.show("warn","JAX.Node.html","You can not use this method for this node. Doing nothing.", this._node);
 		return this;
 	}
@@ -281,9 +228,9 @@ JAX.Node.prototype.html = function(innerHTML) {
 		return this._node.innerHTML; 
 	}
 
-	if (typeof(innerHTML) !== "string" && typeof(innerHTML) !== "number") {
+	if (typeof(innerHTML) != "string" && typeof(innerHTML) != "number") {
 		innerHTML += "";
-		JAX.Report.show("warn","JAX.Node.html","For first argument I expected string or number. Trying convert to string: " + innerHTML, this._node);
+		JAX.Report.show("error","JAX.Node.html","For first argument I expected string or number. Trying convert to string: " + innerHTML, this._node);
 	}
 
 	this._node.innerHTML = innerHTML + "";
@@ -300,7 +247,7 @@ JAX.Node.prototype.html = function(innerHTML) {
  * @returns {JAX.Node | String}
  */
 JAX.Node.prototype.text = function(text) {
-	if ([1,3,8].indexOf(this._node.nodeType) === -1) {
+	if ([1,3,8].indexOf(this._node.nodeType) == -1) {
 		JAX.Report.show("warn","JAX.Node.text","You can not use this method for this node. Doing nothing.", this._node);
 		return this;
 	}
@@ -357,10 +304,10 @@ JAX.Node.prototype.add = function(nodes) {
  * @returns {JAX.Node}
  */
 JAX.Node.prototype.addBefore = function(node, nodeBefore) {
-	if (node && typeof(node) !== "object" || (!node.nodeType && !(node instanceof JAX.Node))) { 
+	if (node && typeof(node) != "object" || (!node.nodeType && !(node instanceof JAX.Node))) { 
 		throw new Error("For first argument I expected html element, text node, documentFragment or JAX.Node instance"); 
 	}
-	if (nodeBefore && typeof(nodeBefore) !== "object" || (!nodeBefore.nodeType && !(nodeBefore instanceof JAX.Node))) { 
+	if (nodeBefore && typeof(nodeBefore) != "object" || (!nodeBefore.nodeType && !(nodeBefore instanceof JAX.Node))) { 
 		throw new Error("For second argument I expected html element, text node or JAX.Node instance"); 
 	}
 
@@ -396,12 +343,12 @@ JAX.Node.prototype.appendTo = function(node) {
  * @method připne (přesune) element před jiný element
  * @example
  * document.body.innerHTML = "<span>Ahoj svete!</span>";
- * var jaxElm = JAX.make("span").appendBefore(document.body.lastChild); // pripne span do body pred posledni prvek v body
+ * var jaxElm = JAX.make("span").before(document.body.lastChild); // pripne span do body pred posledni prvek v body
  *
  * @param {Node | JAX.Node} node DOM uzel | instance JAX.Node
  * @returns {JAX.Node}
  */
-JAX.Node.prototype.appendBefore = function(node) {
+JAX.Node.prototype.before = function(node) {
 	var node = JAX(node);
 
 	if (node) {
@@ -417,12 +364,12 @@ JAX.Node.prototype.appendBefore = function(node) {
  * @method připne (přesune) element za jiný element
  * @example
  * document.body.innerHTML = "<span>Ahoj svete!</span>";
- * var jaxElm = JAX.make("span").appendAfter(document.body.lastChild); // pripne span do body za posledni posledni prvek v body
+ * var jaxElm = JAX.make("span").after(document.body.lastChild); // pripne span do body za posledni posledni prvek v body
  *
  * @param {Node | JAX.Node} node DOM uzel | instance JAX.Node
  * @returns {JAX.Node}
  */
-JAX.Node.prototype.appendAfter = function(node) {
+JAX.Node.prototype.after = function(node) {
 	var node = JAX(node);
 
 	if (node) {
@@ -454,7 +401,7 @@ JAX.Node.prototype.replaceWith = function(node) {
 
 	if (node) { 
 		var node = node.jaxNodeType ? node.node() : node;
-		this.appendBefore(node);
+		this.before(node);
 		node.parentNode.removeChild(node);
 		return this;
 	}
@@ -471,7 +418,7 @@ JAX.Node.prototype.replaceWith = function(node) {
  * @returns {JAX.Node}
  */
 JAX.Node.prototype.remove = function() {
-	if ([9,11].indexOf(this._node.nodeType) !== -1) { 
+	if ([9,11].indexOf(this._node.nodeType) != -1) { 
 		JAX.Report.show("warn","JAX.Node.remove","You can not use this method for this node. Doing nothing.", this._node);
 		return this;
 	}
@@ -491,7 +438,7 @@ JAX.Node.prototype.remove = function() {
  * @returns {JAX.Node}
  */
 JAX.Node.prototype.clone = function(withContent) {
-	if (this._node.nodeType !== 1) { 
+	if (this._node.nodeType != 1) { 
 		JAX.Report.show("warn","JAX.Node.clone","You can not use this method for this node. Doing nothing.", this._node);
 		return this;
 	}
@@ -508,7 +455,7 @@ JAX.Node.prototype.clone = function(withContent) {
 		for (var i=0, len=nodeList.length; i<len; i++) { nodeList[i].removeAttribute("data-jax-id"); }
 	}
 
-	return JAX.Node.create(clone);
+	return new JAX.Node(clone);
 };
 
 /**
@@ -525,7 +472,7 @@ JAX.Node.prototype.clone = function(withContent) {
  * @returns {String} Event ID
  */
 JAX.Node.prototype.listen = function(type, obj, funcMethod, bindData) {
-	if ([1,9].indexOf(this._node.nodeType) === -1) { 
+	if ([1,9].indexOf(this._node.nodeType) == -1) { 
 		JAX.Report.show("warn","JAX.Node.listen","You can not use this method for this node. Doing nothing.", this._node);
 		return this;
 	}
@@ -535,31 +482,52 @@ JAX.Node.prototype.listen = function(type, obj, funcMethod, bindData) {
 		obj = window;
 	}
 
-	if (typeof(type) !== "string") { 
+	if (typeof(type) != "string") { 
 		type += "";
 		JAX.Report.show("error","JAX.Node.listen","For first argument I expected string. Trying convert to string: " + type, this._node);
 	}
 
-	if (typeof(funcMethod) !== "string" && typeof(funcMethod) !== "function") { 
+	if (typeof(funcMethod) != "string" && typeof(funcMethod) != "function") { 
 		throw new Error("For second argument I expected string or function"); 
 	}
 
-	if (typeof(obj) !== "object") { 
+	if (typeof(obj) != "object") { 
 		throw new Error("For third argument I expected referred object"); 
 	}
 
-	if (typeof(funcMethod) === "string") {
+	if (typeof(funcMethod) == "string") {
 		var funcMethod = obj[funcMethod];
 		if (!funcMethod) { throw new Error("Given method in second argument was not found in referred object given in third argument"); } 
 		funcMethod = funcMethod.bind(obj);
 	}
 
-	var f = function(e, node) { funcMethod(new JAX.Event(e), JAX(node), bindData); };
+	var f = function(e) { 
+		funcMethod(new JAX.Event(e), JAX(e.currentTarget), bindData); 
+	};
 	var listenerId = JAK.Events.addListener(this._node, type, f);
-	var evtListeners = this._storage.events[type] || [];
-	var objListener = new JAX.Listener(this, listenerId);
-	evtListeners.push(objListener);
-	this._storage.events[type] = evtListeners;
+	var objListener = new JAX.Listener(this, listenerId, type, f);
+	var allNodes = JAX.Node._events;
+	var nodeIndex = -1;
+
+	for (var i=0, len=allNodes.length; i<len; i++) {
+		if (allNodes[i].node == this._node) { nodeIndex = i; break; }
+	}
+
+	if (nodeIndex == -1) {
+		var nodeInfo = {
+			node: this._node,
+			events: {}
+		};
+		allNodes.push(nodeInfo);
+	} else {
+		var nodeInfo = allNodes[nodeIndex];
+	}
+
+	if (nodeInfo.events[type]) {
+		nodeInfo.events[type].push(objListener);	
+	} else {
+		nodeInfo.events[type] = [objListener];
+	}
 
 	return objListener;
 };
@@ -575,38 +543,43 @@ JAX.Node.prototype.listen = function(type, obj, funcMethod, bindData) {
  * @returns {JAX.Node}
  */
 JAX.Node.prototype.stopListening = function(listener) {
-	if ([1,9].indexOf(this._node.nodeType) === -1) { 
+	if ([1,9].indexOf(this._node.nodeType) == -1) { 
 		JAX.Report.show("warn","JAX.Node.stopListening","You can not use this method for this node. Doing nothing.", this._node);
 		return this;
 	}
 
+	var allNodes = JAX.Node._events;
+	var nodeIndex = -1;
+
+	for (var i=0, len=allNodes.length; i<len; i++) {
+		if (allNodes[i].node == this._node) { nodeIndex = i; break; }
+	}
+
+	if (nodeIndex == -1) { return this; }
+	var nodeInfo = allNodes[nodeIndex];
+
 	if (!arguments.length) {
-		var events = this._storage.events;
+		var events = nodeInfo.events;
 		for (var p in events) { this._destroyEvents(events[p]); }
-		this._storage.events = {};
+		allNodes.splice(nodeIndex, 1);
 		return this;
 	}
 
 	if (typeof(listener) == "string") {
-		var eventListeners = this._storage.events[listener]; 
-		if (eventListeners) { 
-			this._destroyEvents(eventListeners);
-			this._storage.events[listener] = [];
-			return this;
-		}
+		var eventListeners = nodeInfo.events[listener];
+		this._destroyEvents(eventListeners);
+		delete allNodes[nodeIndex].events[listener];
+		return this;
 	}
 
 	if (listener instanceof JAX.Listener) {
-		for (var p in this._storage.events) {
-			var eventListeners = this._storage.events[p];
-			var index = eventListeners.indexOf(listener);
-			if (index > -1) {
-				this._destroyEvents([eventListeners[index]]);
-				eventListeners.splice(index, 1);
-				if (!eventListeners.length) { delete this._storage.events[p]; }
-				return this;
-			}
+		var eventListeners = nodeInfo.events[listener.type()];
+		var listenerIndex = eventListeners.indexOf(listener);
+		if (listenerIndex > -1) {
+			this._destroyEvents([eventListeners[listenerIndex]]);
+			eventListeners.splice(listenerIndex, 1);
 		}
+		return this;
 	}
 
 	JAX.Report.show("error","JAX.Node.stopListening","For first argument I expected JAX.Listener instance , string with event type or you can call it without arguments.");
@@ -628,14 +601,11 @@ JAX.Node.prototype.stopListening = function(listener) {
  * @returns {String | Object | JAX.Node}
  */
 JAX.Node.prototype.prop = function(property, value) {
-	if (typeof(property) === "string") { 
-		if (arguments.length === 1) { 
+	if (typeof(property) == "string") { 
+		if (arguments.length == 1) { 
 			return this._node[property]; 
 		}
 		this._node[property] = value;
-		if (arguments.length > 2) { 
-			JAX.Report.warn("warn","JAX.Node.attr","Too much arguments.", this._node);
-		}
 		return this;
 	} else if (property instanceof Array) {
 		var props = {};
@@ -667,19 +637,16 @@ JAX.Node.prototype.prop = function(property, value) {
  * @returns {String | Object | JAX.Node}
  */
 JAX.Node.prototype.attr = function(property, value) {
-	if (this._node.nodeType !== 1) { 
+	if (this._node.nodeType != 1) { 
 		JAX.Report.show("warn","JAX.Node.attr","You can not use this method for this node. Doing nothing.", this._node);
 		return this;
 	}
 
-	if (typeof(property) === "string") { 
-		if (arguments.length === 1) { 
+	if (typeof(property) == "string") { 
+		if (arguments.length == 1) { 
 			return this._node.getAttribute(property); 
 		}
 		this._node.setAttribute(property, value + "");
-		if (arguments.length > 2) { 
-			JAX.Report.warn("warn","JAX.Node.attr","Too much arguments.", this._node);
-		}
 		return this;
 	} else if (property instanceof Array) {
 		var attrs = {};
@@ -711,25 +678,22 @@ JAX.Node.prototype.attr = function(property, value) {
  * @returns {String | Object | JAX.Node}
  */
 JAX.Node.prototype.css = function(property, value) {
-	if (this._node.nodeType !== 1) { 
+	if (this._node.nodeType != 1) { 
 		JAX.Report.show("warn","JAX.Node.css","You can not use this method for this node. Doing nothing.", this._node);
 		return this;
 	}
 
-	if (typeof(property) === "string") {
-		if (arguments.length === 1) { 
-			return property === "opacity" ? this._getOpacity() : this._node.style[property]; 
+	if (typeof(property) == "string") {
+		if (arguments.length == 1) { 
+			return property == "opacity" ? this._getOpacity() : this._node.style[property]; 
 		}
-		this._node.style[property] = value; 
-		if (arguments.length > 2) { 
-			JAX.Report.warn("warn","JAX.Node.css","Too much arguments.", this._node);
-		}
+		this._node.style[property] = value;
 		return this;
 	} else if (property instanceof Array) {
 		var css = {};
 		for (var i=0, len=property.length; i<len; i++) {
 			var p = property[i];
-			if (p === "opacity") { css[p] = this._getOpacity(); continue; }
+			if (p == "opacity") { css[p] = this._getOpacity(); continue; }
 			css[p] = this._node.style[p];
 		}
 		return css;
@@ -737,7 +701,7 @@ JAX.Node.prototype.css = function(property, value) {
 
 	for (var p in property) {
 		var value = property[p];
-		if (p === "opacity") { this._setOpacity(value); continue; }
+		if (p == "opacity") { this._setOpacity(value); continue; }
 		this._node.style[p] = value;
 	}
 
@@ -757,12 +721,12 @@ JAX.Node.prototype.css = function(property, value) {
  * @returns {String | Object | JAX.Node}
  */
 JAX.Node.prototype.computedCss = function(properties) {
-	if (this._node.nodeType !== 1) { 
+	if (this._node.nodeType != 1) { 
 		JAX.Report.show("warn","JAX.Node.computedCss","You can not use this method for this node. Doing nothing.", this._node);
 		return this;
 	}
 
-	if (typeof(properties) === "string") {
+	if (typeof(properties) == "string") {
 		var value = JAK.DOM.getStyle(this._node, properties);
 		if (this._node.runtimeStyle && !this._node.addEventListener && JAX.Node._MEASUREABLEVALUE_REGEXP.test(value)) { value = this._inPixels(value); }
 		return value;
@@ -790,12 +754,12 @@ JAX.Node.prototype.computedCss = function(properties) {
  * @returns {Number | JAX.Node}
  */
 JAX.Node.prototype.fullSize = function(sizeType, value) {
-	if ([1].indexOf(this._node.nodeType) === -1) { 
+	if ([1].indexOf(this._node.nodeType) == -1) { 
 		JAX.Report.show("warn","JAX.Node.fullSize","You can not use this method for this node. Doing nothing.", this._node);
 		return this;
 	}
 	
-	if (arguments.length === 1) { 
+	if (arguments.length == 1) { 
 		var backupStyle = this.css(["display","visibility","position"]);
 
 		this.css({"display":"", "visibility":"hidden", "position":"absolute"});
@@ -822,18 +786,18 @@ JAX.Node.prototype.fullSize = function(sizeType, value) {
  * @returns {Number | JAX.Node}
  */
 JAX.Node.prototype.size = function(sizeType, value) {
-	if ([1].indexOf(this._node.nodeType) === -1) { 
+	if ([1].indexOf(this._node.nodeType) == -1) { 
 		JAX.Report.show("warn","JAX.Node.fullSize","You can not use this method for this node. Doing nothing.", this._node);
 		return this;
 	}
 	
-	if (arguments.length === 1) { 
+	if (arguments.length == 1) { 
 		var size = parseInt(this.computedCss(sizeType), 10);
 		if (isFinite(size)) { return size; }
 
 		var backupStyle = this.css(["display","visibility","position"]);
-		var isFixedPosition = this.computedCss("position").indexOf("fixed") === 0;
-		var isDisplayNone = this.css("display").indexOf("none") === 0;
+		var isFixedPosition = this.computedCss("position").indexOf("fixed") == 0;
+		var isDisplayNone = this.css("display").indexOf("none") == 0;
 
 		if (!isFixedPosition) { this.css("position","absolute"); }
 		if (isDisplayNone) { this.css("display",""); }		
@@ -858,7 +822,7 @@ JAX.Node.prototype.size = function(sizeType, value) {
  * @returns {JAX.Node}
  */
 JAX.Node.prototype.parent = function() {
-	if (this._node.parentNode) { return JAX.Node.create(this._node.parentNode); }
+	if (this._node.parentNode) { return new JAX.Node(this._node.parentNode); }
 	return null;
 };
 
@@ -890,42 +854,73 @@ JAX.Node.prototype.previous = function() {
  * @method vrací instanci JAX.NodeArray, která obsahuje všechny přímé potomky uzlu
  * @example
  * var body = JAX("body").html("<span>Ahoj svete!</span><em>Takze dobry vecer!</em>");
- * console.log(body.childs().length);
+ * console.log(body.children().length);
  *
  * @returns {JAX.NodeArray}
  */
-JAX.Node.prototype.childs = function() {
-	if (!this._node.childNodes) { return []; }
-	var nodes = [];
-	for (var i=0, len=this._node.childNodes.length; i<len; i++) {
-		var childNode = this._node.childNodes[i];
-		nodes.push(JAX(childNode));
+JAX.Node.prototype.children = function(index) {
+	if (!this._node.childNodes) { return null; }
+
+	if (!arguments.length) {
+		var nodes = [];
+		for (var i=0, len=this._node.childNodes.length; i<len; i++) {
+			nodes.push(JAX(this._node.childNodes[i]));
+		}
+		return new JAX.NodeArray(nodes);
 	}
-	return new JAX.NodeArray(nodes);
+
+	var child = this._node.childNodes[index];
+	if (child) {
+		return new JAX.Node(child);
+	}
+
+	return null;
 };
 
 /** 
- * @method vrací první uzel (potomka) nebo null, pokud takový není
+ * @method vrací první html element (potomka) nebo null, pokud takový není
  * @example
  * var body = JAX("body").html("<span>Ahoj svete!</span><em>Takze dobry vecer!</em>");
- * console.log(JAX("body span").first().jaxNodeType == JAX.Node.TEXT_NODE);
+ * console.log(JAX("body").first().prop("tagName") == "span");
  *
  * @returns {JAX.Node | null}
  */
 JAX.Node.prototype.first = function() {
-	return this._node.firstChild ? JAX(this._node.firstChild) : null;
+	if ("firstElementChild" in this._node) {
+		return this._node.firstElementChild ? new JAX.Node(this._node.firstElementChild) : null;
+	}
+
+	if (!this._node.childNodes || !this._node.childNodes.length) { return null; }
+	
+	for (var i=0, len=this._node.childNodes.length; i<len; i++) {
+		var childNode = this._node.childNodes[i];
+		if (childNode.nodeType == 1) { return new JAX.Node(childNode); }
+	}
+
+	return null;
 };
 
 /** 
  * @method vrací poslední uzel (potomka) nebo null, pokud takový není
  * @example
- * var body = JAX("body").html("<span>Ahoj svete!</span><em>Takze dobry vecer!</em>");
- * console.log(JAX("body span").first() == JAX("body span").last());
+ * var body = JAX("body").html("<span>Ahoj svete!</span>");
+ * console.log(JAX("body span").last().node() == JAX("body span").first().node();
  *
  * @returns {JAX.Node | null}
  */
 JAX.Node.prototype.last = function() {
-	return this._node.lastChild ? JAX(this._node.lastChild) : null;
+	if ("lastElementChild" in this._node) {
+		return this._node.lastElementChild ? new JAX.Node(this._node.lastElementChild) : null;
+	}
+
+	if (!this._node.childNodes || !this._node.childNodes.length) { return null; }
+	
+	for (var i=this._node.childNodes.length - 1; i>-1; i--) {
+		var childNode = this._node.childNodes[i];
+		if (childNode.nodeType == 1) { return new JAX.Node(childNode); }
+	}
+
+	return null;
 };
 
 /** 
@@ -937,7 +932,7 @@ JAX.Node.prototype.last = function() {
  * @returns {JAX.Node}
  */
 JAX.Node.prototype.clear = function() {
-	if ([1,3,11].indexOf(this._node.nodeType) === -1) { 
+	if ([1,3,11].indexOf(this._node.nodeType) == -1) { 
 		JAX.Report.show("warn","JAX.Node.clear","You can not use this method for this node. Doing nothing.", this._node);
 		return this;
 	}
@@ -964,10 +959,10 @@ JAX.Node.prototype.clear = function() {
 JAX.Node.prototype.eq = function(node) {
 	if (!node) { return false; }
 
-	if (typeof(node) === "object" && (node.nodeType || node instanceof JAX.Node)) {
+	if (typeof(node) == "object" && (node.nodeType || node instanceof JAX.Node)) {
 		var elm = node.jaxNodeType ? node.node() : node;
 		return elm == this._node;
-	} else if (typeof(node) === "string") {
+	} else if (typeof(node) == "string") {
 		if (/^[a-zA-Z0-9]+$/g.test(node)) { return !!(this._node.tagName && this._node.tagName.toLowerCase() == node); }
 		return !!this.parent().findAll(node).filterItems(
 			function(jaxElm) { return jaxElm.eq(this._node); }.bind(this)
@@ -989,19 +984,19 @@ JAX.Node.prototype.eq = function(node) {
 JAX.Node.prototype.contains = function(node) {
 	if (!node) { return false; }
 
-	if (this._node.nodeType !== 1) {
+	if (this._node.nodeType != 1) {
 		JAX.Report.show("warn","JAX.Node.contains","You can not use this method for this node. Doing nothing.", this._node);
 		return false;
 	}
 
-	if (typeof(node) === "object" && (node.nodeType || node instanceof JAX.Node)) {
+	if (typeof(node) == "object" && (node.nodeType || node instanceof JAX.Node)) {
 		var elm = node.jaxNodeType ? node.node().parentNode : node.parentNode;
 		while(elm) {
-			if (elm === this._node) { return true; }
+			if (elm == this._node) { return true; }
 			elm = elm.parentNode;
 		}
 		return false;
-	} else if (typeof(node) === "string") {
+	} else if (typeof(node) == "string") {
 		return !!this.find(node);
 	}
 	
@@ -1020,15 +1015,15 @@ JAX.Node.prototype.contains = function(node) {
 JAX.Node.prototype.isIn = function(node) {
 	if (!node) { return false; }
 
-	if ([1,3,8].indexOf(this._node.nodeType) === -1) {
+	if ([1,3,8].indexOf(this._node.nodeType) == -1) {
 		JAX.Report.show("warn","JAX.Node.contains","You can not use this method for this node. Doing nothing.", this._node);
 		return false;
 	}
 
-	if (typeof(node) === "object" && (node.nodeType || node instanceof JAX.Node)) {
-		var elm = node.jaxNodeType ? node : JAX.Node.create(node);
+	if (typeof(node) == "object" && (node.nodeType || node instanceof JAX.Node)) {
+		var elm = node.jaxNodeType ? node : new JAX.Node(node);
 		return elm.contains(this);
-	} else if (typeof(node) === "string") {
+	} else if (typeof(node) == "string") {
 		if (/^[a-zA-Z0-9]+$/g.test(node)) { 
 			var parent = this._node;
 			node = node.toLowerCase();
@@ -1046,14 +1041,14 @@ JAX.Node.prototype.isIn = function(node) {
 };
 
 JAX.Node.prototype.animate = function(property, duration, start, end) {
-	if (this._node.nodeType !== 1) {
+	if (this._node.nodeType != 1) {
 		JAX.Report.show("warn","JAX.Node.animate","You can not use this method for this node. Doing nothing.", this._node);
 		return this;
 	}
 
 	var duration = parseFloat(duration) || 0;
 
-	if (typeof(property) !== "string") {
+	if (typeof(property) != "string") {
 		type += "";
 		JAX.Report.show("error","JAX.Node.animate","For first argument I expected string. Trying convert to string: " + type, this._node); 
 	}
@@ -1079,12 +1074,12 @@ JAX.Node.prototype.animate = function(property, duration, start, end) {
  * @returns {JAX.FX}
  */
 JAX.Node.prototype.fade = function(type, duration) {
-	if (this._node.nodeType !== 1) {
+	if (this._node.nodeType != 1) {
 		JAX.Report.show("warn","JAX.Node.fade","You can not use this method for this node. Doing nothing.", this._node);
 		return this;
 	}
 
-	if (typeof(type) !== "string") {
+	if (typeof(type) != "string") {
 		type += "";
 		JAX.Report.show("error","JAX.Node.fade","For first argument I expected string. Trying convert to string: " + type, this._node); 
 	}
@@ -1119,7 +1114,7 @@ JAX.Node.prototype.fade = function(type, duration) {
  * @returns {JAX.FX}
  */
 JAX.Node.prototype.fadeTo = function(opacityValue, duration) {
-	if (this._node.nodeType !== 1) {
+	if (this._node.nodeType != 1) {
 		JAX.Report.show("warn","JAX.Node.fadeTo","You can not use this method for this node. Doing nothing.", this._node);
 		return this;
 	}
@@ -1150,14 +1145,14 @@ JAX.Node.prototype.fadeTo = function(opacityValue, duration) {
  * @returns {JAX.FX}
  */
 JAX.Node.prototype.slide = function(type, duration) {
-	if (this._node.nodeType !== 1) {
+	if (this._node.nodeType != 1) {
 		JAX.Report.show("warn","JAX.Node.slide","You can not use this method for this node. Doing nothing.", this._node);
 		return this;
 	}
 
 	var duration = parseFloat(duration) || 0;
 
-	if (typeof(type) !== "string") {
+	if (typeof(type) != "string") {
 		type += "";
 		JAX.Report.show("error","JAX.Node.slide","For first argument I expected string. Trying convert to string: " + type, this._node);
 	}
@@ -1202,65 +1197,6 @@ JAX.Node.prototype.slide = function(type, duration) {
 	return this.animate(property, duration, start, end).then(func);
 };
 
-JAX.Node.prototype._init = function(node) {
-	this._node = node;
-	this.jaxNodeType = this._node.nodeType;
-
-	/* set jax id for new (old) node */
-	var oldJaxId = -1;
-	if (node.getAttribute) { 
-		var oldJaxId = parseInt(node.getAttribute("data-jax-id"),10);
-		if (typeof(oldJaxId) !== "number") { oldJaxId = -1; }
-	}
-
-	if (oldJaxId > -1) {
-		this._jaxId = oldJaxId;
-		this._storage = JAX.Node.instances[JAX.Node.ELEMENT_NODE][this._jaxId];
-		this._storage.instance = this;
-		return;
-	}
-
-	if (this._node.nodeType in JAX.Node.instances) {
-		switch(this._node.nodeType) {
-			case JAX.Node.ELEMENT_NODE:
-				this._jaxId = JAX.Node._ids[JAX.Node.ELEMENT_NODE]++;
-				this._node.setAttribute("data-jax-id", this._jaxId);
-
-				var storage = {
-					instance: this,
-					events: {}
-				};
-
-				JAX.Node.instances[JAX.Node.ELEMENT_NODE][this._jaxId] = storage;
-				this._storage = storage;
-			break;
-			case JAX.Node.TEXT_NODE:
-			case JAX.Node.COMMENT_NODE:
-			case JAX.Node.DOCUMENT_FRAGMENT_NODE:
-				var nodeType = this._node.nodeType;
-				this._jaxId = JAX.Node._ids[nodeType]++;
-
-				var storage = { instance: this, node: node };
-
-				JAX.Node.instances[nodeType][this._jaxId] = storage;
-				this._storage = storage;
-			break;
-			case JAX.Node.DOCUMENT_NODE:
-				this._jaxId = JAX.Node._ids[JAX.Node.DOCUMENT_NODE]++;
-
-				var storage = { 
-					instance: this,
-					events: {},
-					node: node
-				};
-
-				JAX.Node.instances[JAX.Node.DOCUMENT_NODE][this._jaxId] = storage;
-				this._storage = storage;
-			break;
-		}
-	}
-};
-
 JAX.Node.prototype._inPixels = function(value) {
 	var style = this._node.style.left;
 	var rStyle = this._node.runtimeStyle.left; 
@@ -1276,7 +1212,7 @@ JAX.Node.prototype._inPixels = function(value) {
 JAX.Node.prototype._setOpacity = function(value) {
 	var property = "";
 
-	if (JAK.Browser.client === "ie" && JAK.Browser.version < 9) { 
+	if (JAK.Browser.client == "ie" && JAK.Browser.version < 9) { 
 		property = "filter";
 		value = Math.round(100*value);
 		value = "progid:DXImageTransform.Microsoft.Alpha(opacity=" + value + ");";
@@ -1288,7 +1224,7 @@ JAX.Node.prototype._setOpacity = function(value) {
 };
 
 JAX.Node.prototype._getOpacity = function() {
-	if (JAK.Browser.client === "ie" && JAK.Browser.version < 9) {
+	if (JAK.Browser.client == "ie" && JAK.Browser.version < 9) {
 		var value = "";
 		this._node.style.filter.replace(JAX.NODE.OPACITY_REGEXP, function(match1, match2) {
 			value = match2;
@@ -1310,16 +1246,16 @@ JAX.Node.prototype._getSizeWithBoxSizing = function(sizeType, value) {
 		borderPropertyX = "border-" + (sizeType == "width" ? "left" : "top"),
 		borderPropertyY = "border-" + (sizeType == "width" ? "right" : "bottom");
 
-	if (arguments.length === 1) {
+	if (arguments.length == 1) {
 		var value = (sizeType == "width" ? this._node.offsetWidth : this._node.offsetHeight);
 	}
 
-	if (!boxSizing || boxSizing === "content-box") {
+	if (!boxSizing || boxSizing == "content-box") {
 		paddingX = parseFloat(this.computedCss(paddingPropertyX));
 		paddingY = parseFloat(this.computedCss(paddingPropertyY));
 	}
 	
-	if (boxSizing !== "border-box") {
+	if (boxSizing != "border-box") {
 		borderX = parseFloat(this.computedCss(borderPropertyX));
 		borderY = parseFloat(this.computedCss(borderPropertyY));
 	}

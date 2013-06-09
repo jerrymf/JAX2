@@ -36,7 +36,7 @@ JAX.Event.prototype.event = function() {
  *
  * @returns {JAX.Event}
  */
-JAX.Event.prototype.cancel = function() {
+JAX.Event.prototype.prevent= function() {
 	JAK.Events.cancelDef(this._e);
 	return this;
 };
@@ -58,6 +58,15 @@ JAX.Event.prototype.stop = function() {
  */
 JAX.Event.prototype.target = function() {
 	return JAX(JAK.Events.getTarget(this._e));
+};
+
+/**
+ * @method vrací element, na který byla událost zavěšena
+ *
+ * @returns {JAX.Node}
+ */
+JAX.Event.prototype.currentTarget = function() {
+	return JAX(this._e.currentTarget);
 };
 
 /**

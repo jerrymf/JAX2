@@ -99,7 +99,7 @@ JAX.FX._SUPPORTED_METHODS = [
  * @param {HTMLElm} elm html element, který se má animovat
  */
 JAX.FX.prototype.$constructor = function(elm) {
-	this._elm = elm instanceof JAX.Node ? elm : JAX.Node.create(elm);
+	this._elm = elm instanceof JAX.Node ? elm : new JAX.Node(elm);
 	this._properties = [];
 	this._interpolators = [];
 	this._transitionCount = 0;
@@ -140,7 +140,7 @@ JAX.FX.prototype.addProperty = function(property, duration, start, end, method) 
 	if (end && typeof(end) != "string" && (typeof(end) != "number" || !isFinite(end))) { 
 		throw new Error("For fourth argument I expected string or number"); 
 	}
-	if (start === null && end === null) {
+	if (start == null && end == null) {
 		throw new Error("At least one of start and end values must be defined."); 	
 	}
 	if (typeof(method) != "string") { 
@@ -244,7 +244,7 @@ JAX.FX.prototype._initInterpolators = function() {
 		});
 		
 		this._interpolators.push(interpolator);
-		if (["backgroundColor", "color"].indexOf(property.property) !== -1) {
+		if (["backgroundColor", "color"].indexOf(property.property) != -1) {
 			interpolator.addColorProperty(property.property, property.cssStart.value, property.cssEnd.value);
 		} else {
 			interpolator.addProperty(property.property, property.cssStart.value, property.cssEnd.value, property.cssStart.unit);

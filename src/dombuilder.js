@@ -21,7 +21,7 @@ JAX.DOMBuilder = JAK.ClassMaker.makeClass({
  */
 JAX.DOMBuilder.prototype.$constructor = function(doc) {
 	this._doc = doc || document;
-	this._jax = { container: JAX.Node.create(document.createDocumentFragment()) };
+	this._jax = { container: new JAX.Node(document.createDocumentFragment()) };
 	this._pointerJaxNode = null;
 	this._stack = [];
 };
@@ -41,7 +41,7 @@ JAX.DOMBuilder.prototype.$constructor = function(doc) {
  * @returns {JAX.Node}
  */
 JAX.DOMBuilder.prototype.open = function(element, attributes, styles) {
-	if (typeof(element) === "string" || (typeof(element) === "object" && element.nodeType)) {
+	if (typeof(element) == "string" || (typeof(element) == "object" && element.nodeType)) {
 		this._stack.push(this._pointerJaxNode);
 		this._pointerJaxNode = this.add(element, attributes, styles);
 		return this._pointerJaxNode;
@@ -66,15 +66,15 @@ JAX.DOMBuilder.prototype.open = function(element, attributes, styles) {
 JAX.DOMBuilder.prototype.add = function(node, attributes, styles) {
 	var jaxNode = node;
 
-	if (typeof(node) === "string") {
+	if (typeof(node) == "string") {
 		jaxNode = JAX.make(node, attributes, styles);
-	} else if (typeof(node) === "object" && node.nodeType) {
+	} else if (typeof(node) == "object" && node.nodeType) {
 		jaxNode = JAX(node);
 		if (attributes) { jaxNode.attr(attributes); }
 		if (styles) { jaxNode.style(styles); }
 	}
 
-	if (!(jaxNode instanceof JAX.Node) || jaxNode.jaxNodeType === 9) {
+	if (!(jaxNode instanceof JAX.Node) || jaxNode.jaxNodeType == 9) {
 		throw new Error("First argument must be string with JAX.make compatible definition, node or instance of JAX.Node");
 	}
 
@@ -103,7 +103,7 @@ JAX.DOMBuilder.prototype.add = function(node, attributes, styles) {
  * @returns {JAX.Node}
  */
 JAX.DOMBuilder.prototype.addText = function(txt) {
-	if (typeof(txt) === "string") {
+	if (typeof(txt) == "string") {
 		var jaxNode = JAX.makeText(txt);
 
 		if (this._pointerJaxNode) {
@@ -155,9 +155,9 @@ JAX.DOMBuilder.prototype.close = function() {
 JAX.DOMBuilder.prototype.appendTo = function(node) {
 	var jaxNode = null;
 
-	if ((typeof(node) === "object" && node.nodeType) || typeof(node) === "string") {
+	if ((typeof(node) == "object" && node.nodeType) || typeof(node) == "string") {
 		var jaxNode = JAX(node);
-	} else if (node instanceof JAX.Node && node.jaxNodeType === 1) {
+	} else if (node instanceof JAX.Node && node.jaxNodeType == 1) {
 		var jaxNode = node;
 	}
 

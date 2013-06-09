@@ -13,8 +13,10 @@ JAX.Listener = JAK.ClassMaker.makeClass({
 	VERSION: "1.0"
 });
 
-JAX.Listener.prototype.$constructor = function(jaxElm, id) {
+JAX.Listener.prototype.$constructor = function(jaxElm, id, type, method) {
 	this._jaxElm = jaxElm;
+	this._type = type;
+	this._method = method;
 	this._id = id;
 };
 
@@ -30,4 +32,8 @@ JAX.Listener.prototype.node = function() {
 
 JAX.Listener.prototype.id = function() {
 	return this._id;
+};
+
+JAX.Listener.prototype.type = function() {
+	return this._type;
 };
