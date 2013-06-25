@@ -365,8 +365,8 @@ JAX.FX.prototype._endTransition = function() {
 	this._running = false;
 };
 
-JAX.FX.prototype._processPromise = function(fullfilled) {
-	if (fullfilled) { this._promise.fulfill(this._elm); return; }
+JAX.FX.prototype._processPromise = function(fulfilled) {
+	if (fulfilled) { this._promise.fulfill(this._elm); return; }
 	this._promise.reject(this._elm);
 };
 
