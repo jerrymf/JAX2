@@ -272,6 +272,8 @@ JAX.FX.prototype._initTransition = function() {
 		this._transitionCount++;
 	}
 
+	node.offsetHeight;
+
 	setTimeout(function() {
 		node.style[tp] = tps.join(",");
 		this._ecTransition = this._elm.listen(te, this, "_finishTransitionAnimation");
@@ -360,7 +362,7 @@ JAX.FX.prototype._endTransition = function() {
 
 	var te = JAX.FX._TRANSITION_EVENT;
 	this._elm.stopListening(this._ecTransition);
-	this._elm.node().style[JAX.FX._TRANSITION_PROPERTY] = "none";
+	this._elm.node().style[JAX.FX._TRANSITION_PROPERTY] = "";
 	this._ecTransition = null;
 	this._running = false;
 };
