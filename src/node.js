@@ -10,7 +10,7 @@
  */
 JAX.Node = JAK.ClassMaker.makeClass({
 	NAME: "JAX.Node",
-	VERSION: "1.0"
+	VERSION: "1.01"
 });
 
 JAX.Node.ELEMENT_NODE = 1;
