@@ -523,7 +523,7 @@ JAX.Node.prototype.listen = function(type, obj, funcMethod, bindData) {
 	}
 
 	var f = function(e) { 
-		funcMethod(new JAX.Event(e), JAX(e.currentTarget), bindData); 
+		funcMethod(new JAX.Event(e), bindData); 
 	};
 	var listenerId = JAK.Events.addListener(this._node, type, f);
 	var objListener = new JAX.Listener(this, listenerId, type, f);
