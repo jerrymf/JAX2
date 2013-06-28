@@ -104,6 +104,22 @@ JAX.NodeArray.prototype.haveClass = function(className) {
 };
 
 /**
+ * @method pokud element classu má, tak i odebere, jinak ji přidá
+ * @example
+ * JAX("body").html("<span></span><span></span>");
+ * JAX.all("body *").toggleClass("trida");
+ *
+ * @param {String} className jméno třídy nebo jména tříd oddělená mezerou
+ * @returns {JAX.NodeArray}
+ */
+JAX.NodeArray.prototype.toggleClass = function(className) {
+	for (var i=0, len=this._jaxNodes.length; i<len; i++) { 
+		this._jaxNodes[i].toggleClass(className);
+	}
+	return this;	
+};
+
+/**
  * @method odebere všem prvkům, které si drží, určitou classu
  * @example
  * document.body.innerHTML = "<span>1</span><span>2</span><div id='cisla'></div>";

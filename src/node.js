@@ -182,6 +182,24 @@ JAX.Node.prototype.hasClass = function(className) {
 };
 
 /**
+ * @method pokud element classu má, tak i odebere, jinak ji přidá
+ * @example
+ * JAX("body").toggleClass("trida");
+ *
+ * @param {String} className jméno třídy nebo jména tříd oddělená mezerou
+ * @returns {JAX.Node}
+ */
+JAX.Node.prototype.toggleClass = function(className) {
+	if (this.hasClass(className)) {
+		this.removeClass(className);
+	} else {
+		this.addClass(className);
+	}
+
+	return this;
+};
+
+/**
  * @method nastavuje nebo vrací atribut id elementu
  * @example
  * var jaxElm = JAX(document.body).id("mojeId"); 
