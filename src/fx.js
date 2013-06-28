@@ -1,7 +1,7 @@
 /**
  * @fileOverview fx.js - JAX - JAk eXtended
  * @author <a href="mailto:jerrymf@gmail.com">Marek Fojtl</a>
- * @version 1.01
+ * @version 1.02
  */
 
 /**
@@ -10,7 +10,7 @@
  */ 
 JAX.FX = JAK.ClassMaker.makeClass({
 	NAME: "JAX.FX",
-	VERSION: "1.01",
+	VERSION: "1.02",
 	DEPEND: [{
 		sClass: JAK.CSSInterpolator,
 		ver: "2.1"

@@ -1,7 +1,7 @@
 /**
  * @fileOverview nodearray.js - JAX - JAk eXtended
  * @author <a href="mailto:jerrymf@gmail.com">Marek Fojtl</a>
- * @version 1.01
+ * @version 1.02
  */
 
 /**
@@ -10,7 +10,7 @@
  */
 JAX.NodeArray = JAK.ClassMaker.makeClass({
 	NAME: "JAX.NodeArray",
-	VERSION: "1.01"
+	VERSION: "1.02"
 });
 
 /**
@@ -362,6 +362,16 @@ JAX.NodeArray.prototype.unshiftItem = function(node) {
 	return this;
 };
 
+JAX.NodeArray.prototype.animate = function(type, duration, start, end) {
+	var count = this._jaxNodes.length;
+	var promises = new Array(count);
+
+	for (var i=0, len=this._jaxNodes.length; i<len; i++) {
+		promises[i] = this._jaxNodes[i].animate(type, duration, start, end);
+	}
+	return JAK.Promise.when(promises);
+};
+
 /** 
  * @method animuje průhlednost dle typu
  * @example
@@ -369,7 +379,7 @@ JAX.NodeArray.prototype.unshiftItem = function(node) {
  * JAX.all("body div").fade("out", 2);
  *
  * @param {String} type typ "in" nebo "out"
- * @param {Number} duration délka animace v sec
+ * @param {Number | String} duration délka animace - lze zadat i jednotky s nebo ms
  * @returns {JAK.Promise}
  */
 JAX.NodeArray.prototype.fade = function(type, duration) {
@@ -389,7 +399,7 @@ JAX.NodeArray.prototype.fade = function(type, duration) {
  * JAX.all("body div").fadeTo(0.5, 2);
  *
  * @param {Number} opacityValue do jaké hodnoty od 0 do 1 se má průhlednost animovat
- * @param {Number} duration délka animace v sec
+ * @param {Number | String} duration délka animace - lze zadat i jednotky s nebo ms
  * @returns {JAK.Promise}
  */
 JAX.NodeArray.prototype.fadeTo = function(opacityValue, duration) {
@@ -409,7 +419,7 @@ JAX.NodeArray.prototype.fadeTo = function(opacityValue, duration) {
  * JAX.all("body div").slide("down", 1);
  *
  * @param {String} type udává typu efektu - "down", "up", "left" nebo "right"
- * @param {Number} duration délka animace v sec
+ * @param {Number | String} duration délka animace - lze zadat i jednotky s nebo ms
  * @returns {JAK.Promise}
  */
 JAX.NodeArray.prototype.slide = function(type, duration) {
