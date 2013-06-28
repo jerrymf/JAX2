@@ -117,21 +117,22 @@ JAX.FX.prototype.$constructor = function(elm) {
  * fx.addProperty("height", 3, 0, 100);
  * fx.run();
  *
- * @param {string} property css vlastnost, která se má animovat
- * @param {number} duration délka v sekundách, lze zadat i desetinné číslo, např. 1.2
- * @param {string} start počáteční hodnota - je dobré k ní uvést vždy i jednotky, pokud jde o číselnou hodnotu, jako výchozí se používají px
- * @param {string} end koncová hodnota - je dobré k ní uvést vždy i jednotky, pokud jde o číselnou hodnotu, jako výchozí se používají px
- * @param {string} method css transformační metoda (ease, linear, ease-in, ease-out, ... ) více na <a href="http://www.w3.org/TR/2009/WD-css3-transitions-20090320/#transition-timing-function_tag">webu W3C</a>, pozn.: pokud prohlížeč neumí transitions, je použito js řešení a metoda je vždy LINEAR
+ * @param {String} property css vlastnost, která se má animovat
+ * @param {Number | String} duration délka animace - lze zadat i jednotky s nebo ms
+ * @param {String} start počáteční hodnota - je dobré k ní uvést vždy i jednotky, pokud jde o číselnou hodnotu, jako výchozí se používají px
+ * @param {String} end koncová hodnota - je dobré k ní uvést vždy i jednotky, pokud jde o číselnou hodnotu, jako výchozí se používají px
+ * @param {String} method css transformační metoda (ease, linear, ease-in, ease-out, ... ) více na <a href="http://www.w3.org/TR/2009/WD-css3-transitions-20090320/#transition-timing-function_tag">webu W3C</a>, pozn.: pokud prohlížeč neumí transitions, je použito js řešení a metoda je vždy LINEAR
  * @returns {JAX.FX}
  */
 JAX.FX.prototype.addProperty = function(property, duration, start, end, method) {
-	var duration = parseInt(duration);
+	var durationValue = this._parseValue(duration);
+	var durationUnit = this._parseUnit(duration) || "ms";
 	var method = this._transitionSupport ? (method || "linear") : "LINEAR";
 	
 	if (typeof(property) != "string") { 
 		throw new Error("For first argument I expected string"); 
 	}
-	if (!isFinite(duration) || duration < 0) { 
+	if (!isFinite(durationValue) || durationValue < 0) { 
 		throw new Error("For second argument I expected positive number"); 
 	}
 	if (start && typeof(start) != "string" && (typeof(start) != "number" || !isFinite(start))) { 
@@ -166,7 +167,8 @@ JAX.FX.prototype.addProperty = function(property, duration, start, end, method) 
 		property: property,
 		cssStart: cssStart,
 		cssEnd: cssEnd,
-		duration: (duration || 1),
+		duration: (durationValue || 1),
+		durationUnit: durationUnit,
 		method: method
 	});
 
@@ -237,8 +239,9 @@ JAX.FX.prototype._checkSupportedMethod = function(method) {
 JAX.FX.prototype._initInterpolators = function() {
 	for(var i=0, len=this._properties.length; i<len; i++) {
 		var property = this._properties[i];
+		var duration = property.durationUnit == "ms" ? property.duration * 1000 : property.duration;
 
-		var interpolator = new JAK.CSSInterpolator(this._elm.node(), property.duration * 1000, { 
+		var interpolator = new JAK.CSSInterpolator(this._elm.node(), duration, { 
 			"interpolation": property.method, 
 			"endCallback": this._finishInterpolatorAnimation.bind(this, i) 
 		});
@@ -268,7 +271,7 @@ JAX.FX.prototype._initTransition = function() {
 	for (var i=0, len=this._properties.length; i<len; i++) {
 		var property = this._properties[i];
 		style[property.property] = property.cssStart.value + property.cssStart.unit;
-		tps.push(JAX.FX._SUPPORTED_PROPERTIES[property.property].css + " " + property.duration + "s " + property.method);
+		tps.push(JAX.FX._SUPPORTED_PROPERTIES[property.property].css + " " + property.duration + property.durationUnit + " " + property.method);
 		this._transitionCount++;
 	}
 
@@ -305,15 +308,23 @@ JAX.FX.prototype._parseCSSValue = function(property, cssValue) {
 	if (property == "backgroundColor" || property == "color") {
 		var value = cssValue;
 	} else {
-		var value = parseFloat(cssValue);
-		var foundUnit = (cssValue+"").replace(value, "");
-		if (foundUnit) { unit = foundUnit; }
+		var value = this._parseValue(cssValue);
+		var unit = this._parseUnit(cssValue) || unit;
 	}
 
 	return { 
 		value: value, 
 		unit: unit 
 	};
+};
+
+JAX.FX.prototype._parseValue = function(value) {
+	return parseFloat(value);
+};
+
+JAX.FX.prototype._parseUnit = function(value) {
+	var val = parseFloat(value);
+	return (value+"").replace(val, "");
 };
 
 JAX.FX.prototype._foundCSSValue = function(property) {

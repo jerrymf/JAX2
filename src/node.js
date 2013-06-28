@@ -1067,16 +1067,9 @@ JAX.Node.prototype.animate = function(property, duration, start, end) {
 		return this;
 	}
 
-	var duration = parseFloat(duration) || 0;
-
 	if (typeof(property) != "string") {
 		type += "";
 		JAX.Report.show("error","JAX.Node.animate","For first argument I expected string. Trying convert to string: " + type, this._node); 
-	}
-
-	if (duration < 0) { 
-		duration = 0;
-		JAX.Report.show("error","JAX.Node.animate","For second argument I expected positive number, but I got negative. I set zero value.", this._node); 
 	}
 
 	var fx = new JAX.FX(this);
@@ -1091,7 +1084,7 @@ JAX.Node.prototype.animate = function(property, duration, start, end) {
  * JAX("body div").fade("out", 2);
  *
  * @param {String} type typ "in" nebo "out"
- * @param {Number} duration délka animace v sec
+ * @param {Number | String} duration délka animace - lze zadat i jednotky s nebo ms
  * @returns {JAX.FX}
  */
 JAX.Node.prototype.fade = function(type, duration) {
@@ -1103,12 +1096,6 @@ JAX.Node.prototype.fade = function(type, duration) {
 	if (typeof(type) != "string") {
 		type += "";
 		JAX.Report.show("error","JAX.Node.fade","For first argument I expected string. Trying convert to string: " + type, this._node); 
-	}
-
-	var duration = parseFloat(duration) || 0;
-	if (duration < 0) { 
-		duration = 0;
-		JAX.Report.show("error","JAX.Node.fade","For second argument I expected positive number, but I got negative. I set zero value.", this._node); 
 	}
 
 	switch(type) {
@@ -1131,7 +1118,7 @@ JAX.Node.prototype.fade = function(type, duration) {
  * JAX("body div").fadeTo(0.5, 2);
  *
  * @param {Number} opacityValue do jaké hodnoty od 0 do 1 se má průhlednost animovat
- * @param {Number} duration délka animace v sec
+ * @param {Number | String} duration délka animace - lze zadat i jednotky s nebo ms
  * @returns {JAX.FX}
  */
 JAX.Node.prototype.fadeTo = function(opacityValue, duration) {
@@ -1141,15 +1128,10 @@ JAX.Node.prototype.fadeTo = function(opacityValue, duration) {
 	}
 	
 	var opacityValue = parseFloat(opacityValue) || 0;
-	var duration = parseFloat(duration) || 0;
 
 	if (opacityValue<0) {
 		opacityValue = 0;
 		JAX.Report.show("error","JAX.Node.fadeTo","For first argument I expected positive number, but I got negative. I set zero value.", this._node); 
-	}
-	if (duration<0) { 
-		duration = 0;
-		JAX.Report.show("error","JAX.Node.fadeTo","For second argument I expected positive number, but I got negative. I set zero value.", this._node); 
 	}
 
 	return this.animate("opacity", duration, null, opacityValue);
@@ -1162,7 +1144,7 @@ JAX.Node.prototype.fadeTo = function(opacityValue, duration) {
  * JAX("body div").slide("down", 1);
  *
  * @param {String} type udává typu efektu - "down", "up", "left" nebo "right"
- * @param {Number} duration délka animace v sec
+ * @param {Number | String} duration délka animace - lze zadat i jednotky s nebo ms
  * @returns {JAX.FX}
  */
 JAX.Node.prototype.slide = function(type, duration) {
@@ -1171,15 +1153,9 @@ JAX.Node.prototype.slide = function(type, duration) {
 		return this;
 	}
 
-	var duration = parseFloat(duration) || 0;
-
 	if (typeof(type) != "string") {
 		type += "";
 		JAX.Report.show("error","JAX.Node.slide","For first argument I expected string. Trying convert to string: " + type, this._node);
-	}
-	if (duration<0) {
-		duration = 0;
-		JAX.Report.show("error","JAX.Node.slide","For second argument I expected positive number, but I got negative. I set zero value.", this._node); 
 	}
 
 	var backupStyles = {};
