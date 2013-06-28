@@ -1,0 +1,21 @@
+--------------------------------------
+Changelog
+--------------------------------------
+Legend: [+] - added, [*] - fixed or changed, [-] removed
+
+Version 2.03
+	+ added JAX.Node.toggleClass
+
+Version 2.02
+	* fixes in animation for FF
+	+ added possibility to use html string as argument for JAX.Node.add method
+
+Version 2.01
+	* fixes in fx (working with promise)
+
+Version 2.0
+	+ stable version
+	+ contains tools for getting, manipulating and creating of elements and its arrays
+	+ provides fx tools (css3 transitions and js fallback)
+	+ better event registering and unregistering
+	+ lib architecture changed
