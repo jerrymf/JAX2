@@ -1,7 +1,7 @@
 /**
  * @fileOverview nodearray.js - JAX - JAk eXtended
  * @author <a href="mailto:jerrymf@gmail.com">Marek Fojtl</a>
- * @version 1.0
+ * @version 1.01
  */
 
 /**
@@ -10,7 +10,7 @@
  */
 JAX.NodeArray = JAK.ClassMaker.makeClass({
 	NAME: "JAX.NodeArray",
-	VERSION: "1.0"
+	VERSION: "1.01"
 });
 
 /**
