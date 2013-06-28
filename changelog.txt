@@ -5,6 +5,7 @@ Legend: [+] - added, [*] - fixed or changed, [-] removed
 
 Version 2.03
 	+ added JAX.Node.toggleClass
+	* internal: JAX.Node.addClass, JAX.Node.removeClass, JAX.Node.hasClass is using element.classList
 
 Version 2.02
 	* fixes in animation for FF

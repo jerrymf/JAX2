@@ -113,11 +113,7 @@ JAX.Node.prototype.addClass = function(classNames) {
 	
 	for (var i=0, len=cNames.length; i<len; i++) {
 		var cName = cNames[i];
-		if (typeof(cName) != "string") { 
-			cName += "";
-			JAX.Report.show("error","JAX.Node.addClass","Given arguments can be string or array of strings. Trying convert to string: " + cName, this._node);
-		}
-		JAK.DOM.addClass(this._node, cName);
+		this._node.classList.add(cName);
 	}
 	
 	return this;
@@ -146,7 +142,7 @@ JAX.Node.prototype.removeClass = function(classNames) {
 	
 	for (var i=0, len=cNames.length; i<len; i++) {
 		var cName = cNames[i];
-		JAK.DOM.removeClass(this._node, cName);
+		this._node.classList.remove(cName);
 	}
 	
 	return this;
@@ -171,11 +167,12 @@ JAX.Node.prototype.hasClass = function(className) {
 		JAX.Report.show("error","JAX.Node.hasClass","For first argument I expected string. Trying convert to string: " + className, this._node);
 	}
 
+	if (className == "")  { return false; }
 	var names = className.split(" ");
 
 	while(names.length) {
 		var name = names.shift();
-		if (this._node.className.indexOf(name) == -1) { return false; }
+		if (!this._node.classList.contains(name)) { return false; }
 	}
 
 	return true;
