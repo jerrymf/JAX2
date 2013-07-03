@@ -10,7 +10,7 @@
  */
 JAX.Node = JAK.ClassMaker.makeClass({
 	NAME: "JAX.Node",
-	VERSION: "1.03"
+	VERSION: "1.04"
 });
 
 JAX.Node.ELEMENT_NODE = 1;
@@ -1190,8 +1190,10 @@ JAX.Node.prototype.slide = function(type, duration) {
 	this.css("overflow", "hidden");
 
 	var func = function() { this.css(backupStyles); }.bind(this);
+	var promise = this.animate(property, duration, start, end);
+	promise.then(func);
 
-	return this.animate(property, duration, start, end).then(func);
+	return promise;
 };
 
 JAX.Node.prototype._inPixels = function(value) {
