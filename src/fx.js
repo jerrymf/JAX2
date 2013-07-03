@@ -10,7 +10,7 @@
  */ 
 JAX.FX = JAK.ClassMaker.makeClass({
 	NAME: "JAX.FX",
-	VERSION: "1.02",
+	VERSION: "1.03",
 	DEPEND: [{
 		sClass: JAK.CSSInterpolator,
 		ver: "2.1"
@@ -167,7 +167,7 @@ JAX.FX.prototype.addProperty = function(property, duration, start, end, method) 
 		property: property,
 		cssStart: cssStart,
 		cssEnd: cssEnd,
-		duration: (durationValue || 1),
+		duration: (durationValue || 1000),
 		durationUnit: durationUnit,
 		method: method
 	});
@@ -239,7 +239,7 @@ JAX.FX.prototype._checkSupportedMethod = function(method) {
 JAX.FX.prototype._initInterpolators = function() {
 	for(var i=0, len=this._properties.length; i<len; i++) {
 		var property = this._properties[i];
-		var duration = property.durationUnit == "ms" ? property.duration * 1000 : property.duration;
+		var duration = property.durationUnit == "ms" ? property.duration : property.duration * 1000;
 
 		var interpolator = new JAK.CSSInterpolator(this._elm.node(), duration, { 
 			"interpolation": property.method, 
@@ -362,8 +362,13 @@ JAX.FX.prototype._finishInterpolatorAnimation = function(index) {
 
 JAX.FX.prototype._endInterpolator = function(index) {
 	this._interpolators[index].stop();
-	this._interpolators.splice(index, 1);
-	if (this._interpolators.length) { return; }
+	this._interpolators[index] = null;
+
+	for (var i=0, len=this._interpolators.length; i<len; i++) {
+		if (this._interpolators[i]) { return; }
+	}
+
+	this._interpolators = [];
 	this._running = false;
 };
 
