@@ -179,7 +179,7 @@ JAX.Node.prototype.hasClass = function(className) {
 };
 
 /**
- * @method pokud element classu má, tak i odebere, jinak ji přidá
+ * @method pokud element classu má, tak i odebere, jinak ji přidá. Lze operovat jen s jednou classou.
  * @example
  * JAX("body").toggleClass("trida");
  *
@@ -187,12 +187,18 @@ JAX.Node.prototype.hasClass = function(className) {
  * @returns {JAX.Node}
  */
 JAX.Node.prototype.toggleClass = function(className) {
-	if (this.hasClass(className)) {
-		this.removeClass(className);
-	} else {
-		this.addClass(className);
+	if (this._node.nodeType != 1) {
+		JAX.Report.show("warn","JAX.Node.toggleClass","You can not use this method for this node. Doing nothing.", this._node);
+		return this;
+	}
+	
+	if (typeof(className) != "string") {
+		className += "";
+		JAX.Report.show("error","JAX.Node.toggleClass","Given arguments can be string. Trying convert to string: " + classNames, this._node);
 	}
 
+	this._node.classList.toggle(className);
+	
 	return this;
 };
 

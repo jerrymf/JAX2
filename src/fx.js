@@ -275,7 +275,7 @@ JAX.FX.prototype._initTransition = function() {
 		this._transitionCount++;
 	}
 
-	node.offsetHeight;
+	var render = node.offsetHeight; /* trick pro prerenderovani */
 
 	setTimeout(function() {
 		node.style[tp] = tps.join(",");
