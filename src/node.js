@@ -297,7 +297,8 @@ JAX.Node.prototype.add = function(nodes) {
 	} else if (typeof(nodes) == "string") {
 		var div = document.createElement("div");
 		div.innerHTML = nodes;
-		nodes = div.childNodes || [];
+		nodes = [];
+		for (var i=0, len=div.childNodes.length; i<len; i++) { nodes = div.childNodes[i]; }
 	} else if (!(nodes instanceof Array)) { 
 		nodes = [].concat(nodes); 
 	} 

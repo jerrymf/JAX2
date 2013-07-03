@@ -5,6 +5,7 @@ Legend: [+] - added, [*] - fixed or changed, [-] removed
 
 Version 2.04
 	* fix slide method in JAX.Node - returning right promise now
+	* fix in JAX.Node.add method in using html string as argument
 	
 Version 2.03
 	+ added JAX.Node.toggleClass
