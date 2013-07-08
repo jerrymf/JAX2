@@ -1,7 +1,7 @@
 /**
  * @fileOverview node.js - JAX - JAk eXtended
  * @author <a href="mailto:jerrymf@gmail.com">Marek Fojtl</a>
- * @version 1.03
+ * @version 1.05
  */
 
 /**
@@ -10,7 +10,7 @@
  */
 JAX.Node = JAK.ClassMaker.makeClass({
 	NAME: "JAX.Node",
-	VERSION: "1.04"
+	VERSION: "1.05"
 });
 
 JAX.Node.ELEMENT_NODE = 1;

@@ -3,6 +3,9 @@ Changelog
 --------------------------------------
 Legend: [+] - added, [*] - fixed or changed, [-] removed
 
+Version 2.06
+	* fix in events for IE8 (Event.currentTarget)
+
 Version 2.05
 	* fix in fx - bad recount for IE9, IE8 - interpolator
 	* internal: JAX.Node.toggleClass is using classList
