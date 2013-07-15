@@ -1,7 +1,7 @@
 /**
  * @fileOverview core.js - JAX - JAk eXtended
  * @author <a href="mailto:jerrymf@gmail.com">Marek Fojtl</a>
- * @version 2.06
+ * @version 2.07
  */
 
 /**
@@ -11,13 +11,13 @@
  *
  * @param {String|Node|JAX.Node} selector Řetězec splňující pravidla css3 (pro IE8 css2.1) selectoru, node nebo instance JAX.Node
  * @param {Node} [srcElement=window.document] node ve kterém se má hledat
- * @returns {JAX.Node|null}
+ * @returns {JAX.Node}
  */
 var JAX = function(selector, srcElement) {
 	if (typeof(selector) == "string") {
 		var srcElement = srcElement || document;
 		var foundElm = srcElement.querySelector(selector);
-		var jaxelm = foundElm ? new JAX.Node(foundElm) : null;
+		var jaxelm = new JAX.Node(foundElm);
 
 		return jaxelm;
 	} else if (typeof(selector) == "object" && selector.nodeType) {
@@ -26,7 +26,7 @@ var JAX = function(selector, srcElement) {
 		return selector;
 	}
 
-	return null;
+	return new JAX.Node(null);
 };
 
 /**
@@ -36,7 +36,7 @@ var JAX = function(selector, srcElement) {
  *
  * @param {String|Node|JAX.Node} selector řetězec splňující pravidla css3 (pro IE8 css2.1) selectoru, node nebo instance JAX.Node
  * @param {Node} [srcElement=window.document] node ve kterém se má hledat
- * @returns {JAX.NodeArray|null}
+ * @returns {JAX.NodeArray}
  */
 JAX.all = function(selector, srcElement) {
 	if (typeof(selector) == "string") {
@@ -53,7 +53,7 @@ JAX.all = function(selector, srcElement) {
 		return new JAX.NodeArray(selector);
 	}
 	
-	return null;
+	return JAX.NodeArray(new JAX.Node(null));
 };
 
 /**

@@ -10,7 +10,7 @@
  */ 
 JAX.FX = JAK.ClassMaker.makeClass({
 	NAME: "JAX.FX",
-	VERSION: "1.03",
+	VERSION: "1.04",
 	DEPEND: [{
 		sClass: JAK.CSSInterpolator,
 		ver: "2.1"
@@ -99,7 +99,12 @@ JAX.FX._SUPPORTED_METHODS = [
  * @param {HTMLElm} elm html element, který se má animovat
  */
 JAX.FX.prototype.$constructor = function(elm) {
-	this._elm = elm instanceof JAX.Node ? elm : new JAX.Node(elm);
+	this._elm = JAX(elm);
+
+	if (!this._elm.node()) { 
+		throw new Error("I can not continue because I got null node. Check your code. please."); 
+	}
+
 	this._properties = [];
 	this._interpolators = [];
 	this._transitionCount = 0;

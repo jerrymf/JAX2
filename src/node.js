@@ -10,7 +10,7 @@
  */
 JAX.Node = JAK.ClassMaker.makeClass({
 	NAME: "JAX.Node",
-	VERSION: "1.05"
+	VERSION: "1.06"
 });
 
 JAX.Node.ELEMENT_NODE = 1;
@@ -40,7 +40,7 @@ JAX.Node._BOX_SIZING = null;
 
 JAX.Node.prototype.$constructor = function(node) {
 	this._node = node;
-	this.jaxNodeType = node.nodeType;
+	this.jaxNodeType = node && node.nodeType ? node.nodeType : -1;
 };
 
 /**
@@ -49,7 +49,7 @@ JAX.Node.prototype.$constructor = function(node) {
  * JAX("#nejakeId").$destructor();
  */
 JAX.Node.prototype.$destructor = function() {
-	if ([1,9].indexOf(this._node.nodeType) != -1) { this.stopListening(); }
+	if ([1,9].indexOf(this.jaxNodeType) != -1) { this.stopListening(); }
 
 	this._node = null;
 	this._jaxId = -1;
@@ -75,6 +75,8 @@ JAX.Node.prototype.node = function() {
  * @returns {JAX.Node}
  */
 JAX.Node.prototype.find = function(selector) {
+	this._checkNodeType([], "JAX.Node.find");
+
 	return JAX(selector, this._node);
 };
 
@@ -87,6 +89,8 @@ JAX.Node.prototype.find = function(selector) {
  * @returns {JAX.NodeArray}
  */
 JAX.Node.prototype.findAll = function(selector) {
+	this._checkNodeType([], "JAX.Node.findAll");
+
 	return JAX.all(selector, this._node);
 };
 
@@ -99,10 +103,7 @@ JAX.Node.prototype.findAll = function(selector) {
  * @returns {JAX.Node}
  */
 JAX.Node.prototype.addClass = function(classNames) {
-	if (this._node.nodeType != 1) {
-		JAX.Report.show("warn","JAX.Node.addClass","You can not use this method for this node. Doing nothing.", this._node);
-		return this; 
-	}
+	if (!this._checkNodeType([1], "JAX.Node.addClass")) { return this; }
 	
 	if (typeof(classNames) != "string") { 
 		classNames += "";
@@ -128,10 +129,7 @@ JAX.Node.prototype.addClass = function(classNames) {
  * @returns {JAX.Node}
  */
 JAX.Node.prototype.removeClass = function(classNames) {
-	if (this._node.nodeType != 1) {
-		JAX.Report.show("warn","JAX.Node.removeClass","You can not use this method for this node. Doing nothing.", this._node);
-		return this;
-	}
+	if (!this._checkNodeType([1], "JAX.Node.removeClass")) { return this; }
 	
 	if (typeof(classNames) != "string") {
 		classNames += "";
@@ -157,10 +155,7 @@ JAX.Node.prototype.removeClass = function(classNames) {
  * @returns {Boolean}
  */
 JAX.Node.prototype.hasClass = function(className) {
-	if (this._node.nodeType != 1) { 
-		JAX.Report.show("warn","JAX.Node.hasClass","You can not use this method for this node. Doing nothing.", this._node);
-		return this;
-	}
+	if (!this._checkNodeType([1], "JAX.Node.removeClass")) { return false; }
 
 	if (typeof(className) != "string") {  
 		className += "";
@@ -187,10 +182,7 @@ JAX.Node.prototype.hasClass = function(className) {
  * @returns {JAX.Node}
  */
 JAX.Node.prototype.toggleClass = function(className) {
-	if (this._node.nodeType != 1) {
-		JAX.Report.show("warn","JAX.Node.toggleClass","You can not use this method for this node. Doing nothing.", this._node);
-		return this;
-	}
+	if (!this._checkNodeType([1], "JAX.Node.toggleClass")) { return this; }
 	
 	if (typeof(className) != "string") {
 		className += "";
@@ -212,10 +204,7 @@ JAX.Node.prototype.toggleClass = function(className) {
  * @returns {JAX.Node | String}
  */
 JAX.Node.prototype.id = function(id) {
-	if (this._node.nodeType != 1) { 
-		JAX.Report.show("warn","JAX.Node.id","You can not use this method for this node. Doing nothing.", this._node);
-		return this;
-	}
+	if (!this._checkNodeType([1], "JAX.Node.id")) { return !arguments.length ? "" : this; }
 
 	if (!arguments.length) { 
 		return this.attr("id"); 
@@ -240,10 +229,7 @@ JAX.Node.prototype.id = function(id) {
  * @returns {JAX.Node | String}
  */
 JAX.Node.prototype.html = function(innerHTML) {
-	if (this._node.nodeType != 1) {
-		JAX.Report.show("warn","JAX.Node.html","You can not use this method for this node. Doing nothing.", this._node);
-		return this;
-	}
+	if (!this._checkNodeType([1], "JAX.Node.html")) { return !arguments.length ? "" : this; }
 
 	if (!arguments.length) { 
 		return this._node.innerHTML; 
@@ -268,10 +254,7 @@ JAX.Node.prototype.html = function(innerHTML) {
  * @returns {JAX.Node | String}
  */
 JAX.Node.prototype.text = function(text) {
-	if ([1,3,8].indexOf(this._node.nodeType) == -1) {
-		JAX.Report.show("warn","JAX.Node.text","You can not use this method for this node. Doing nothing.", this._node);
-		return this;
-	}
+	if (!this._checkNodeType([1,3,8], "JAX.Node.text")) { return !arguments.length ? "" : this; }
 
 	if (!arguments.length) { 
 		if ("innerHTML" in this._node) { return this._getText(this._node); }
@@ -298,6 +281,8 @@ JAX.Node.prototype.text = function(text) {
  * @returns {JAX.Node}
  */
 JAX.Node.prototype.add = function(nodes) {
+	if (!this._checkNodeType([1], "JAX.Node.add")) { return this; }
+
 	if (nodes instanceof JAX.NodeArray) {
 		nodes = nodes.items();
 	} else if (typeof(nodes) == "string") {
@@ -333,6 +318,8 @@ JAX.Node.prototype.add = function(nodes) {
  * @returns {JAX.Node}
  */
 JAX.Node.prototype.addBefore = function(node, nodeBefore) {
+	if (!this._checkNodeType([1], "JAX.Node.addBefore")) { return this; }
+
 	if (node && typeof(node) != "object" || (!node.nodeType && !(node instanceof JAX.Node))) { 
 		throw new Error("For first argument I expected html element, text node, documentFragment or JAX.Node instance"); 
 	}
@@ -357,9 +344,11 @@ JAX.Node.prototype.addBefore = function(node, nodeBefore) {
  * @returns {JAX.Node}
  */
 JAX.Node.prototype.appendTo = function(node) {
+	if (!this._checkNodeType([1,3,8,11], "JAX.Node.appendTo")) { return this; }
+
 	var node = JAX(node);
 
-	if (node) { 
+	if (node.node()) { 
 		var node = node.jaxNodeType ? node.node() : node;
 		node.appendChild(this._node);
 		return this;
@@ -378,9 +367,11 @@ JAX.Node.prototype.appendTo = function(node) {
  * @returns {JAX.Node}
  */
 JAX.Node.prototype.before = function(node) {
+	if (!this._checkNodeType([1,3,8,11], "JAX.Node.before")) { return this; }
+
 	var node = JAX(node);
 
-	if (node) {
+	if (node.node()) {
 		var node = node.jaxNodeType ? node.node() : node;
 		node.parentNode.insertBefore(this._node, node);
 		return this;
@@ -399,9 +390,11 @@ JAX.Node.prototype.before = function(node) {
  * @returns {JAX.Node}
  */
 JAX.Node.prototype.after = function(node) {
+	if (!this._checkNodeType([1,3,8,11], "JAX.Node.after")) { return this; }
+
 	var node = JAX(node);
 
-	if (node) {
+	if (node.node()) {
 		var node = node.jaxNodeType ? node.node() : node;
 
 		if (node.nextSibling) {
@@ -426,9 +419,11 @@ JAX.Node.prototype.after = function(node) {
  * @returns {JAX.Node}
  */
 JAX.Node.prototype.replaceWith = function(node) {
+	if (!this._checkNodeType([1,3,8], "JAX.Node.replaceWith")) { return this; }
+
 	var node = JAX(node);
 
-	if (node) { 
+	if (node.node()) { 
 		var node = node.jaxNodeType ? node.node() : node;
 		this.before(node);
 		node.parentNode.removeChild(node);
@@ -447,10 +442,7 @@ JAX.Node.prototype.replaceWith = function(node) {
  * @returns {JAX.Node}
  */
 JAX.Node.prototype.remove = function() {
-	if ([9,11].indexOf(this._node.nodeType) != -1) { 
-		JAX.Report.show("warn","JAX.Node.remove","You can not use this method for this node. Doing nothing.", this._node);
-		return this;
-	}
+	if (!this._checkNodeType([1,3,8], "JAX.Node.remove")) { return this; }
 	
 	this._node.parentNode.removeChild(this._node);
 
@@ -467,10 +459,7 @@ JAX.Node.prototype.remove = function() {
  * @returns {JAX.Node}
  */
 JAX.Node.prototype.clone = function(withContent) {
-	if (this._node.nodeType != 1) { 
-		JAX.Report.show("warn","JAX.Node.clone","You can not use this method for this node. Doing nothing.", this._node);
-		return this;
-	}
+	if (!this._checkNodeType([1,3,8], "JAX.Node.clone")) { return this; }
 
 	var withContent = !!withContent;
 	var clone = this._node.cloneNode(withContent);
@@ -501,10 +490,7 @@ JAX.Node.prototype.clone = function(withContent) {
  * @returns {String} Event ID
  */
 JAX.Node.prototype.listen = function(type, obj, funcMethod, bindData) {
-	if ([1,9].indexOf(this._node.nodeType) == -1) { 
-		JAX.Report.show("warn","JAX.Node.listen","You can not use this method for this node. Doing nothing.", this._node);
-		return this;
-	}
+	if (!this._checkNodeType([1,9], "JAX.Node.listen")) { return null; }
 	
 	if (!funcMethod) {
 		var funcMethod = obj;
@@ -573,10 +559,7 @@ JAX.Node.prototype.listen = function(type, obj, funcMethod, bindData) {
  * @returns {JAX.Node}
  */
 JAX.Node.prototype.stopListening = function(listener) {
-	if ([1,9].indexOf(this._node.nodeType) == -1) { 
-		JAX.Report.show("warn","JAX.Node.stopListening","You can not use this method for this node. Doing nothing.", this._node);
-		return this;
-	}
+	if (!this._checkNodeType([1,9], "JAX.Node.stopListening")) { return this; }
 
 	var allNodes = JAX.Node._events;
 	var nodeIndex = -1;
@@ -631,6 +614,12 @@ JAX.Node.prototype.stopListening = function(listener) {
  * @returns {String | Object | JAX.Node}
  */
 JAX.Node.prototype.prop = function(property, value) {
+	if (!this._checkNodeType([], "JAX.Node.prop")) { 
+		if (typeof(property) == "string") { return ""; }
+		if (property instanceof Array) { return {}; }
+		return this; 
+	}
+
 	if (typeof(property) == "string") { 
 		if (arguments.length == 1) { 
 			return this._node[property]; 
@@ -667,9 +656,10 @@ JAX.Node.prototype.prop = function(property, value) {
  * @returns {String | Object | JAX.Node}
  */
 JAX.Node.prototype.attr = function(property, value) {
-	if (this._node.nodeType != 1) { 
-		JAX.Report.show("warn","JAX.Node.attr","You can not use this method for this node. Doing nothing.", this._node);
-		return this;
+	if (!this._checkNodeType([1,9], "JAX.Node.attr")) { 
+		if (typeof(property) == "string") { return ""; }
+		if (property instanceof Array) { return {}; }
+		return this;  
 	}
 
 	if (typeof(property) == "string") { 
@@ -708,9 +698,10 @@ JAX.Node.prototype.attr = function(property, value) {
  * @returns {String | Object | JAX.Node}
  */
 JAX.Node.prototype.css = function(property, value) {
-	if (this._node.nodeType != 1) { 
-		JAX.Report.show("warn","JAX.Node.css","You can not use this method for this node. Doing nothing.", this._node);
-		return this;
+	if (!this._checkNodeType([1], "JAX.Node.css")) { 
+		if (typeof(property) == "string") { return ""; }
+		if (property instanceof Array) { return {}; }
+		return this;  
 	}
 
 	if (typeof(property) == "string") {
@@ -751,10 +742,7 @@ JAX.Node.prototype.css = function(property, value) {
  * @returns {String | Object | JAX.Node}
  */
 JAX.Node.prototype.computedCss = function(properties) {
-	if (this._node.nodeType != 1) { 
-		JAX.Report.show("warn","JAX.Node.computedCss","You can not use this method for this node. Doing nothing.", this._node);
-		return this;
-	}
+	if (!this._checkNodeType([1], "JAX.Node.computedCss")) { return typeof(properties) ? "" : {}; }
 
 	if (typeof(properties) == "string") {
 		var value = JAK.DOM.getStyle(this._node, properties);
@@ -784,10 +772,7 @@ JAX.Node.prototype.computedCss = function(properties) {
  * @returns {Number | JAX.Node}
  */
 JAX.Node.prototype.fullSize = function(sizeType, value) {
-	if ([1].indexOf(this._node.nodeType) == -1) { 
-		JAX.Report.show("warn","JAX.Node.fullSize","You can not use this method for this node. Doing nothing.", this._node);
-		return this;
-	}
+	if (!this._checkNodeType([1], "JAX.Node.fullSize")) { return arguments.length == 1 ? 0 : this; }
 	
 	if (arguments.length == 1) { 
 		var backupStyle = this.css(["display","visibility","position"]);
@@ -816,10 +801,7 @@ JAX.Node.prototype.fullSize = function(sizeType, value) {
  * @returns {Number | JAX.Node}
  */
 JAX.Node.prototype.size = function(sizeType, value) {
-	if ([1].indexOf(this._node.nodeType) == -1) { 
-		JAX.Report.show("warn","JAX.Node.fullSize","You can not use this method for this node. Doing nothing.", this._node);
-		return this;
-	}
+	if (!this._checkNodeType([1], "JAX.Node.size")) { return arguments.length == 1 ? 0 : this; }
 	
 	if (arguments.length == 1) { 
 		var size = parseInt(this.computedCss(sizeType), 10);
@@ -849,9 +831,10 @@ JAX.Node.prototype.size = function(sizeType, value) {
  * var body = JAX("body").html("<span>Ahoj svete!</span>");
  * console.log(JAX("body span").parent() == body);
  *
- * @returns {JAX.Node}
+ * @returns {JAX.Node | null}
  */
 JAX.Node.prototype.parent = function() {
+	if (!this._checkNodeType([1,3,8], "JAX.Node.parent")) { return null; }
 	if (this._node.parentNode) { return new JAX.Node(this._node.parentNode); }
 	return null;
 };
@@ -865,6 +848,7 @@ JAX.Node.prototype.parent = function() {
  * @returns {JAX.Node | null}
  */
 JAX.Node.prototype.next = function() {
+	if (!this._checkNodeType([1,3,8], "JAX.Node.next")) { return null; }
 	return this._node.nextSibling ? JAX(this._node.nextSibling) : null;
 };
 
@@ -877,6 +861,7 @@ JAX.Node.prototype.next = function() {
  * @returns {JAX.Node | null}
  */
 JAX.Node.prototype.previous = function() {
+	if (!this._checkNodeType([1,3,8], "JAX.Node.previous")) { return null; }
 	return this._node.previousSibling ? JAX(this._node.previousSibling) : null;
 };
 
@@ -889,7 +874,7 @@ JAX.Node.prototype.previous = function() {
  * @returns {JAX.NodeArray}
  */
 JAX.Node.prototype.children = function(index) {
-	if (!this._node.childNodes) { return null; }
+	this._checkNodeType([1,11], "JAX.Node.children");
 
 	if (!arguments.length) {
 		var nodes = [];
@@ -916,6 +901,8 @@ JAX.Node.prototype.children = function(index) {
  * @returns {JAX.Node | null}
  */
 JAX.Node.prototype.first = function() {
+	if (!this._checkNodeType([1], "JAX.Node.first") || !this._node.childNodes) { return null; }
+
 	if ("firstElementChild" in this._node) {
 		return this._node.firstElementChild ? new JAX.Node(this._node.firstElementChild) : null;
 	}
@@ -939,6 +926,8 @@ JAX.Node.prototype.first = function() {
  * @returns {JAX.Node | null}
  */
 JAX.Node.prototype.last = function() {
+	if (!this._checkNodeType([1], "JAX.Node.last") || !this._node.childNodes) { return null; }
+
 	if ("lastElementChild" in this._node) {
 		return this._node.lastElementChild ? new JAX.Node(this._node.lastElementChild) : null;
 	}
@@ -962,10 +951,7 @@ JAX.Node.prototype.last = function() {
  * @returns {JAX.Node}
  */
 JAX.Node.prototype.clear = function() {
-	if ([1,3,11].indexOf(this._node.nodeType) == -1) { 
-		JAX.Report.show("warn","JAX.Node.clear","You can not use this method for this node. Doing nothing.", this._node);
-		return this;
-	}
+	if (!this._checkNodeType([1,11], "JAX.Node.clear")) { return this; }
 
 	if (this._node.nodeType == 3) {
 		this._node.nodeValue = "";
@@ -987,7 +973,7 @@ JAX.Node.prototype.clear = function() {
  * @returns {Boolean}
  */
 JAX.Node.prototype.eq = function(node) {
-	if (!node) { return false; }
+	if (!this._checkNodeType([], "JAX.Node.eq") || !node) { return false; }
 
 	if (typeof(node) == "object" && (node.nodeType || node instanceof JAX.Node)) {
 		var elm = node.jaxNodeType ? node.node() : node;
@@ -1012,7 +998,7 @@ JAX.Node.prototype.eq = function(node) {
  * @returns {Boolean}
  */
 JAX.Node.prototype.contains = function(node) {
-	if (!node) { return false; }
+	if (!this._checkNodeType([1,3,8], "JAX.Node.contains") || !node) { return false; }
 
 	if (this._node.nodeType != 1) {
 		JAX.Report.show("warn","JAX.Node.contains","You can not use this method for this node. Doing nothing.", this._node);
@@ -1043,7 +1029,7 @@ JAX.Node.prototype.contains = function(node) {
  * @returns {Boolean}
  */
 JAX.Node.prototype.isIn = function(node) {
-	if (!node) { return false; }
+	if (!this._checkNodeType([1], "JAX.Node.isIn") || !node) { return false; }
 
 	if ([1,3,8].indexOf(this._node.nodeType) == -1) {
 		JAX.Report.show("warn","JAX.Node.contains","You can not use this method for this node. Doing nothing.", this._node);
@@ -1071,10 +1057,7 @@ JAX.Node.prototype.isIn = function(node) {
 };
 
 JAX.Node.prototype.animate = function(property, duration, start, end) {
-	if (this._node.nodeType != 1) {
-		JAX.Report.show("warn","JAX.Node.animate","You can not use this method for this node. Doing nothing.", this._node);
-		return this;
-	}
+	if (!this._checkNodeType([1], "JAX.Node.animate")) { return null; }
 
 	if (typeof(property) != "string") {
 		type += "";
@@ -1097,10 +1080,7 @@ JAX.Node.prototype.animate = function(property, duration, start, end) {
  * @returns {JAX.FX}
  */
 JAX.Node.prototype.fade = function(type, duration) {
-	if (this._node.nodeType != 1) {
-		JAX.Report.show("warn","JAX.Node.fade","You can not use this method for this node. Doing nothing.", this._node);
-		return this;
-	}
+	if (!this._checkNodeType([1], "JAX.Node.fade")) { return null; }
 
 	if (typeof(type) != "string") {
 		type += "";
@@ -1116,7 +1096,7 @@ JAX.Node.prototype.fade = function(type, duration) {
 		break;
 		default:
 			JAX.Report.show("warn","JAX.Node.fade","I got unsupported type '" + type + "'.", this._node);
-			return this;
+			return null;
 	}
 };
 
@@ -1131,10 +1111,7 @@ JAX.Node.prototype.fade = function(type, duration) {
  * @returns {JAX.FX}
  */
 JAX.Node.prototype.fadeTo = function(opacityValue, duration) {
-	if (this._node.nodeType != 1) {
-		JAX.Report.show("warn","JAX.Node.fadeTo","You can not use this method for this node. Doing nothing.", this._node);
-		return this;
-	}
+	if (!this._checkNodeType([1], "JAX.Node.fadeTo")) { return null; }
 	
 	var opacityValue = parseFloat(opacityValue) || 0;
 
@@ -1157,10 +1134,7 @@ JAX.Node.prototype.fadeTo = function(opacityValue, duration) {
  * @returns {JAX.FX}
  */
 JAX.Node.prototype.slide = function(type, duration) {
-	if (this._node.nodeType != 1) {
-		JAX.Report.show("warn","JAX.Node.slide","You can not use this method for this node. Doing nothing.", this._node);
-		return this;
-	}
+	if (!this._checkNodeType([1], "JAX.Node.slide")) { return null; }
 
 	if (typeof(type) != "string") {
 		type += "";
@@ -1295,3 +1269,16 @@ JAX.Node.prototype._destroyEvents = function(eventListeners) {
 	}
 };
 
+JAX.Node.prototype._checkNodeType = function(allowedNodeTypes, method) {
+	if (this.jaxNodeType == -1) { 
+		JAX.Report.show("warn", method, "I have null node. Be careful what you do.");
+		return false;
+	}
+
+	if (allowedNodeTypes.length && allowedNodeTypes.indexOf(this.jaxNodeType) == -1) {
+		JAX.Report.show("warn", method, "You can not use this method for this node. Doing nothing.", this._node);
+		return false;
+	}
+
+	return true;
+};

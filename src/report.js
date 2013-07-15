@@ -11,5 +11,6 @@ JAX.Report.show = function(type, func, msg, node) {
 		if (node) { console.log("Node: ", node); }
 		return;
 	}
+	
 	throw new Error("Bad console type: " + type); 
 };
