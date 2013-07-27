@@ -3,6 +3,9 @@ Changelog
 --------------------------------------
 Legend: [+] - added, [*] - fixed or changed, [-] removed
 
+Version 2.08
+	* Added JAX.Node.exists for checking if node has been found
+
 Version 2.07
 	* If JAX gets null node he will not crash. It warns.
 
