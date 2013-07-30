@@ -1,7 +1,7 @@
 /**
  * @fileOverview core.js - JAX - JAk eXtended
  * @author <a href="mailto:jerrymf@gmail.com">Marek Fojtl</a>
- * @version 2.07
+ * @version 2.08
  */
 
 /**
@@ -20,9 +20,9 @@ var JAX = function(selector, srcElement) {
 		var jaxelm = new JAX.Node(foundElm);
 
 		return jaxelm;
-	} else if (typeof(selector) == "object" && selector.nodeType) {
+	} else if (selector && typeof(selector) == "object" && selector.nodeType) {
 		return new JAX.Node(selector);
-	} else if (selector && selector instanceof JAX.Node) {
+	} else if (selector instanceof JAX.Node) {
 		return selector;
 	}
 
@@ -47,7 +47,7 @@ JAX.all = function(selector, srcElement) {
 		for (var i=0, len=foundElms.length; i<len; i++) { jaxelms[i] = new JAX.Node(foundElms[i]); }
 
 		return new JAX.NodeArray(jaxelms);
-	} else if (typeof(selector) == "object" && selector.nodeType) {
+	} else if (selector && typeof(selector) == "object" && selector.nodeType) {
 		return new JAX.NodeArray(new JAX.Node(selector));
 	} else if (selector && selector instanceof JAX.Node) {
 		return new JAX.NodeArray(selector);
