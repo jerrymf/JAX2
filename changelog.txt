@@ -3,6 +3,9 @@ Changelog
 --------------------------------------
 Legend: [+] - added, [*] - fixed or changed, [-] removed
 
+Version 2.09
+	* Fix for searching in context, where argument is instance of JAX.Node
+
 Version 2.08
 	* Quick fix in case of null object
 	* Added JAX.Node.exists for checking if node has been found
