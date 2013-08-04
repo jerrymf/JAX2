@@ -1,7 +1,7 @@
 /**
  * @fileOverview fx.js - JAX - JAk eXtended
  * @author <a href="mailto:jerrymf@gmail.com">Marek Fojtl</a>
- * @version 1.02
+ * @version 1.05
  */
 
 /**
@@ -10,7 +10,7 @@
  */ 
 JAX.FX = JAK.ClassMaker.makeClass({
 	NAME: "JAX.FX",
-	VERSION: "1.04",
+	VERSION: "1.05",
 	DEPEND: [{
 		sClass: JAK.CSSInterpolator,
 		ver: "2.1"
@@ -105,7 +105,10 @@ JAX.FX.prototype.$constructor = function(elm) {
 		throw new Error("I can not continue because I got null node. Check your code. please."); 
 	}
 
-	this._properties = [];
+	this._settings = [];
+	this._reversed = false;
+	this._durationPassed = 0;
+	this._durationIntervalChecker = null;
 	this._interpolators = [];
 	this._transitionCount = 0;
 	this._running = false;
@@ -122,7 +125,7 @@ JAX.FX.prototype.$constructor = function(elm) {
  * fx.addProperty("height", 3, 0, 100);
  * fx.run();
  *
- * @param {String} property css vlastnost, která se má animovat
+ * @param {String} setting css vlastnost, která se má animovat
  * @param {Number | String} duration délka animace - lze zadat i jednotky s nebo ms
  * @param {String} start počáteční hodnota - je dobré k ní uvést vždy i jednotky, pokud jde o číselnou hodnotu, jako výchozí se používají px
  * @param {String} end koncová hodnota - je dobré k ní uvést vždy i jednotky, pokud jde o číselnou hodnotu, jako výchozí se používají px
@@ -159,7 +162,7 @@ JAX.FX.prototype.addProperty = function(property, duration, start, end, method) 
 	if (end || (typeof(end) == "number" && isFinite(end))) {
 		var cssEnd = this._parseCSSValue(property, end);
 	} else {
-		var cssEnd = this._foundCSSValue(property);;
+		var cssEnd = this._foundCSSValue(property);
 	}
 
 	if (start || (typeof(start) == "number" && isFinite(start))) { 
@@ -168,12 +171,12 @@ JAX.FX.prototype.addProperty = function(property, duration, start, end, method) 
 		var cssStart = this._foundCSSValue(property);
 	}
 
-	this._properties.push({
+	this._settings.push({
 		property: property,
 		cssStart: cssStart,
 		cssEnd: cssEnd,
-		duration: (durationValue || 1000),
-		durationUnit: durationUnit,
+		duration: durationUnit == "ms" ? durationValue : durationValue * 1000,
+		durationUnit: "ms",
 		method: method
 	});
 
@@ -188,13 +191,82 @@ JAX.FX.prototype.addProperty = function(property, duration, start, end, method) 
  * fx.addProperty("height", 3, 0, 100);
  * fx.run();
  *
- * @eturns {JAX.FX}
+ * @returns {JAK.Promise}
  */
 JAX.FX.prototype.run = function() {
+	if (this.isRunning()) { this.stop(); }
+
 	this._running = true;
 	this._promise = new JAK.Promise();
-	if (!this._transitionSupport) { this._initInterpolators(); return this._promise; }
-	this._initTransition();
+
+	if (!this._transitionSupport) { 
+		this._initInterpolators(this._settings); 
+	} else {
+		this._initTransition(this._settings);
+	}
+
+	this._durationPassed = 0;
+	this._durationIntervalChecker = setInterval(function() { this._durationPassed += 100; }.bind(this), 100);
+
+	return this._promise;
+};
+
+/**
+ * @method Spustí animaci "pozpátku", tedy provede zpětný chod.
+ * @example
+ * var fx = new JAX.FX(elm);
+ * fx.addProperty("width", 10000, 0, 200);
+ * fx.addProperty("height", 10000, 0, 100);
+ * fx.run();
+ * setTimeout(function() { fx.reverse(); }, 5000); // po peti sekundach se zpusti zpetny chod
+ *
+ * @returns {JAK.Promise}
+ */
+JAX.FX.prototype.reverse = function() {
+	if (this.isRunning()) { this.stop(); }
+
+	this._reversed = !this._reversed;
+	var reversedSettings = [];
+
+	for (var i=0, len=this._settings.length; i<len; i++) {
+		var setting = this._settings[i];
+		var property = setting.property;
+		var method = setting.method;
+		var durationUnit = setting.durationUnit;
+		var durationValue = this._durationPassed;
+
+		if (this._reversed) {
+			var cssEnd = setting.cssStart;
+			var cssStart = this._parseCSSValue(property, this._elm.computedCss(JAX.FX._SUPPORTED_PROPERTIES[property].css));
+		} else {
+			var cssEnd = setting.cssEnd;
+			var cssStart = this._parseCSSValue(property, this._elm.computedCss(JAX.FX._SUPPORTED_PROPERTIES[property].css));
+		}
+
+		var reversedSetting = {
+			property: property,
+			cssStart: cssStart,
+			cssEnd: cssEnd,
+			duration: durationValue,
+			durationUnit: durationUnit,
+			method: method
+		};
+
+		reversedSettings.push(reversedSetting);
+	}
+
+	this._running = true;
+	this._promise = new JAK.Promise();
+
+	if (!this._transitionSupport) { 
+		this._initInterpolators(reversedSettings); 
+	} else {
+		this._initTransition(reversedSettings);
+	}
+
+	this._durationPassed = 0;
+	this._durationIntervalChecker = setInterval(function() { this._durationPassed += 100; }.bind(this), 100);
+
 	return this._promise;
 };
 
@@ -223,10 +295,10 @@ JAX.FX.prototype._checkSupportedProperty = function(property) {
 		var properties = [];
 
 		for (var p in JAX.FX._SUPPORTED_PROPERTIES) { 
-			properties.concat(JAX.FX._SUPPORTED_PROPERTIES[p]); 
+			properties.push(JAX.FX._SUPPORTED_PROPERTIES[p]); 
 		}
 
-		throw new Error("First argument must be supported property: " + properties.join(", ")); 
+		throw new Error("First argument must be supported setting: " + properties.join(", ")); 
 	}
 };
 
@@ -241,21 +313,21 @@ JAX.FX.prototype._checkSupportedMethod = function(method) {
 	throw new Error("Fifth argument must be supported method: " + methods.join(", ")); 
 }
 
-JAX.FX.prototype._initInterpolators = function() {
-	for(var i=0, len=this._properties.length; i<len; i++) {
-		var property = this._properties[i];
-		var duration = property.durationUnit == "ms" ? property.duration : property.duration * 1000;
+JAX.FX.prototype._initInterpolators = function(settings) {
+	for(var i=0, len=settings.length; i<len; i++) {
+		var setting = settings[i];
+		var duration = setting.duration;
 
 		var interpolator = new JAK.CSSInterpolator(this._elm.node(), duration, { 
-			"interpolation": property.method, 
+			"interpolation": setting.method, 
 			"endCallback": this._finishInterpolatorAnimation.bind(this, i) 
 		});
 		
 		this._interpolators.push(interpolator);
-		if (["backgroundColor", "color"].indexOf(property.property) != -1) {
-			interpolator.addColorProperty(property.property, property.cssStart.value, property.cssEnd.value);
+		if (["backgroundColor", "color"].indexOf(setting.property) != -1) {
+			interpolator.addColorProperty(setting.property, setting.cssStart.value, setting.cssEnd.value);
 		} else {
-			interpolator.addProperty(property.property, property.cssStart.value, property.cssEnd.value, property.cssStart.unit);
+			interpolator.addProperty(setting.property, setting.cssStart.value, setting.cssEnd.value, setting.cssStart.unit);
 		}
 		interpolator.start();
 	}
@@ -266,17 +338,20 @@ JAX.FX.prototype._stopInterpolators = function() {
 	this._promise.reject(this._elm);
 };
 
-JAX.FX.prototype._initTransition = function() {
+JAX.FX.prototype._initTransition = function(settings) {
 	var tp = JAX.FX._TRANSITION_PROPERTY;
 	var te = JAX.FX._TRANSITION_EVENT;
 	var tps = [];
 	var node = this._elm.node();
 	var style = node.style;
 
-	for (var i=0, len=this._properties.length; i<len; i++) {
-		var property = this._properties[i];
-		style[property.property] = property.cssStart.value + property.cssStart.unit;
-		tps.push(JAX.FX._SUPPORTED_PROPERTIES[property.property].css + " " + property.duration + property.durationUnit + " " + property.method);
+	for (var i=0, len=settings.length; i<len; i++) {
+		var setting = settings[i];
+		var cssStartValue = setting.cssStart.value + setting.cssStart.unit;
+		var transitionParam = JAX.FX._SUPPORTED_PROPERTIES[setting.property].css + " " + setting.duration + setting.durationUnit + " " + setting.method;
+
+		style[setting.property] = cssStartValue;
+		tps.push(transitionParam);
 		this._transitionCount++;
 	}
 
@@ -286,9 +361,9 @@ JAX.FX.prototype._initTransition = function() {
 		node.style[tp] = tps.join(",");
 		this._ecTransition = this._elm.listen(te, this, "_finishTransitionAnimation");
 
-		for (var i=0, len=this._properties.length; i<len; i++) {
-			var property = this._properties[i];
-			style[property.property] = property.cssEnd.value + property.cssStart.unit;
+		for (var i=0, len=settings.length; i<len; i++) {
+			var setting = settings[i];
+			style[setting.property] = setting.cssEnd.value + setting.cssStart.unit;
 		}
 	}.bind(this), 0);
 };
@@ -297,14 +372,14 @@ JAX.FX.prototype._stopTransition = function() {
 	var node = this._elm.node();
 	var style = this._elm.node().style;
 
-	for(var i=0, len=this._properties.length; i<len; i++) {
-		var property = this._properties[i].property;
+	for(var i=0, len=this._settings.length; i<len; i++) {
+		var property = this._settings[i].property;
 		var value = window.getComputedStyle(node).getPropertyValue(JAX.FX._SUPPORTED_PROPERTIES[property].css);
 		style[property] = value;
 	}
 
-	this._endTransition();
-	this._processPromise();
+	while(this._transitionCount) { this._endTransition(); }
+	this._finishAnimation();
 };
 
 JAX.FX.prototype._parseCSSValue = function(property, cssValue) {
@@ -332,20 +407,20 @@ JAX.FX.prototype._parseUnit = function(value) {
 	return (value+"").replace(val, "");
 };
 
-JAX.FX.prototype._foundCSSValue = function(property) {
-	var unit = JAX.FX._SUPPORTED_PROPERTIES[property].defaultUnit;
+JAX.FX.prototype._foundCSSValue = function(setting) {
+	var unit = JAX.FX._SUPPORTED_PROPERTIES[setting].defaultUnit;
 
-	switch(property) {
+	switch(setting) {
 		case "width":
 		case "height":
-			value = this._elm.size(property);
+			value = this._elm.size(setting);
 		break;
 		case "backgroundColor":
 		case "color":
-			var value = this._elm.computedCss(JAX.FX._SUPPORTED_PROPERTIES[property].css);
+			var value = this._elm.computedCss(JAX.FX._SUPPORTED_PROPERTIES[setting].css);
 		break;
 		default:
-			var cssValue = this._elm.computedCss(JAX.FX._SUPPORTED_PROPERTIES[property].css);
+			var cssValue = this._elm.computedCss(JAX.FX._SUPPORTED_PROPERTIES[setting].css);
 			var value = parseFloat(cssValue);
 	}
 
@@ -357,12 +432,12 @@ JAX.FX.prototype._foundCSSValue = function(property) {
 
 JAX.FX.prototype._finishTransitionAnimation = function() {
 	this._endTransition();
-	this._processPromise(true);
+	this._finishAnimation(true);
 };
 
 JAX.FX.prototype._finishInterpolatorAnimation = function(index) {
 	this._endInterpolator(index);
-	this._processPromise(true);
+	this._finishAnimation(true);
 };
 
 JAX.FX.prototype._endInterpolator = function(index) {
@@ -388,7 +463,8 @@ JAX.FX.prototype._endTransition = function() {
 	this._running = false;
 };
 
-JAX.FX.prototype._processPromise = function(fulfilled) {
+JAX.FX.prototype._finishAnimation = function(fulfilled) {
+	clearInterval(this._durationIntervalChecker);
 	if (fulfilled) { this._promise.fulfill(this._elm); return; }
 	this._promise.reject(this._elm);
 };

@@ -1,7 +1,7 @@
 /**
  * @fileOverview core.js - JAX - JAk eXtended
  * @author <a href="mailto:jerrymf@gmail.com">Marek Fojtl</a>
- * @version 2.09
+ * @version 2.10
  */
 
 /**

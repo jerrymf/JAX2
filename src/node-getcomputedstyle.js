@@ -1,5 +1,12 @@
-/* JAXovsky polyfill pro window.getComputedStyle */
+/**
+ * @fileOverview node-getcomputedstyle.js - JAX - JAk eXtended
+ * @author <a href="mailto:jerrymf@gmail.com">Marek Fojtl</a>
+ * @version 0.1
+ */
 
+/**
+ * JAXovský polyfill pro window.getComputedStyle do IE8
+ */
 (function() {
 	if (!window.getComputedStyle) {
 
@@ -11,13 +18,26 @@
 ﻿		 ﻿ return property.replace(/([A-Z])/g, function(match, letter) { return "-" + letter.toLowerCase(); });
 		};
 
-		function getBaseFontSize(element, style) {
+		function getBaseFontSize(element) {
+			var style = element.currentStyle;
 			var cssValue = style["fontSize"];
 			var size = parseFloat(cssValue);
 			var suffix = cssValue.split(/\d/)[0];
 			var isProportional = /%|em/.test(suffix);
+			var isPt = /pt/.test(suffix);
+			var isIn = /in/.test(suffix);
 
-			if (isProportional && element.parentElement && element.parentElement != element.ownerDocument) { size = getBaseFontSize(element.parentElement, element.parentElement.currentStyle); }
+			if (isProportional && element.parentElement) { 
+				size = element.parentElement != element.ownerDocument ? getBaseFontSize(element.parentElement) : 16; 
+			}
+
+			if (isPt) {
+				size = size * 96 / 72;
+			}
+
+			if (isIn) {
+				size = size * 96;
+			}
 
 			return size;
 		};
@@ -38,10 +58,10 @@
 			var suffix = value.split(/\d/)[0];
 			var rootSize = 0;
 
-			if (property == "left" || property == "top") {
-				rootSize = getFirstNonStaticElementSize(element, property == "left" ? "clientWidth" : "clientHeight"); 
+			if (["left", "right", "top", "bottom"].indexOf(property) != -1) {
+				rootSize = getFirstNonStaticElementSize(element, property == "left" || property == "right" ? "clientWidth" : "clientHeight"); 
 			} else {
-				rootSize = property == 'fontSize' ? fontSize : /width/i.test(property) ? element.clientWidth : element.clientHeight;
+				rootSize = property == "fontSize" ? fontSize : /width/i.test(property) ? element.clientWidth : element.clientHeight;
 			}
 
 			switch (suffix) {
@@ -61,32 +81,31 @@
 
 		function setShortStyleProperty(style, property) {
 			var
-			borderSuffix = property == 'border' ? 'Width' : '',
-			t = property + 'Top' + borderSuffix,
-			r = property + 'Right' + borderSuffix,
-			b = property + 'Bottom' + borderSuffix,
-			l = property + 'Left' + borderSuffix;
+			borderSuffix = property == "border" ? "Width" : "",
+			t = property + "Top" + borderSuffix,
+			r = property + "Right" + borderSuffix,
+			b = property + "Bottom" + borderSuffix,
+			l = property + "Left" + borderSuffix;
 
 			style[property] = (style[t] == style[r] == style[b] == style[l] ? [style[t]]
 			: style[t] == style[b] && style[l] == style[r] ? [style[t], style[r]]
 			: style[l] == style[r] ? [style[t], style[r], style[b]]
-			: [style[t], style[r], style[b], style[l]]).join(' ');
+			: [style[t], style[r], style[b], style[l]]).join(" ");
 		};
 
 		function CSSStyleDeclaration(element) {
-			var
-			currentStyle = element.currentStyle,
-			fontSize = getBaseFontSize(element, currentStyle);
-			index = 0;
+			var currentStyle = element.currentStyle;
+			var fontSize = getBaseFontSize(element);
+			var index = 0;
 
 			for (property in currentStyle) {
 				this[index] = denormalize(property);
 				if (/width|height|margin.|padding.|border.+W|^fontSize$/.test(property) && currentStyle[property] != "auto") {
-					this[property] = getPixelSize(element, currentStyle, property, fontSize) + 'px';
+					this[property] = getPixelSize(element, currentStyle, property, fontSize) + "px";
 				} else if (property == "styleFloat") {
-					this['float'] = currentStyle[property];
-				} else if ((property == "left" || property == "top") && ["absolute","relative","fixed"].indexOf(currentStyle["position"]) != -1 && currentStyle[property] != "auto") {
-					this[property] = getPixelSize(element, currentStyle, property, fontSize) + 'px';
+					this["float"] = currentStyle[property];
+				} else if (["left","right","top","bottom"].indexOf(property) != -1 && ["absolute","relative","fixed"].indexOf(currentStyle["position"]) != -1 && currentStyle[property] != "auto") {
+					this[property] = getPixelSize(element, currentStyle, property, fontSize) + "px";
 				} else {
 					this[property] = currentStyle[property];
 				}
@@ -95,9 +114,9 @@
 
 			this.length = index + 1;
 
-			setShortStyleProperty(this, 'margin');
-			setShortStyleProperty(this, 'padding');
-			setShortStyleProperty(this, 'border');
+			setShortStyleProperty(this, "margin");
+			setShortStyleProperty(this, "padding");
+			setShortStyleProperty(this, "border");
 		};
 
 		CSSStyleDeclaration.prototype.getPropertyPriority =  function () {
