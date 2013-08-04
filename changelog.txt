@@ -7,6 +7,7 @@ Version 2.10
 	* Processing null node inside JAX.Node
 	* JAX.Node.computedCss now uses JAX polyfill for getComputedStyle in IE8 - experimental, but works for common css properties
 	+ JAX.FX.reverse - animation runs reversed
+	+ JAX.Node.insertFirstTo - method insert node to container at before all childs. If there is no child it will be appended.
 
 Version 2.09
 	* Fix for searching in context, when argument is instance of JAX.Node
