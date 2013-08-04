@@ -20,17 +20,17 @@ JAX.NodeArray = JAK.ClassMaker.makeClass({
  * var all = new JAX.NodeArray(document.getElementsByTagName("*")); // slozitejsi alternativa
  * var all = JAX.all("*"); // pouziti JAX.all je lepsi varianta, jak ziskat pole prvku!
  *
- * @param {Node[] | JAX.Node[]} nodes pole uzlů | pole instancí JAX.Node
+ * @param {Node | Node[] | JAX.Node[]} nodes pole uzlů | pole instancí JAX.Node
  */
 JAX.NodeArray.prototype.$constructor = function(nodes) {
-	var nodes = [].concat(nodes);
+	var nodes = nodes ? [].concat(nodes) : [];
 	var len = nodes.length;
-	this._jaxNodes = new Array(len);
+	this._jaxNodes = [];
 
 	for (var i=0; i<len; i++) { 
 		var node = nodes[i];
-		if (typeof(node) == "object" && node.nodeType) { this._jaxNodes[i] = JAX(node); continue; }
-		if (node instanceof JAX.Node) { this._jaxNodes[i] = node; continue; }
+		if (typeof(node) == "object" && node.nodeType) { this._jaxNodes.push(new JAX.Node(node)); continue; }
+		if (node instanceof JAX.Node && node.exists()) { this._jaxNodes.push(node); continue; }
 
 		throw new Error("First argument must be array of JAX.Node instances or html nodes");
 	}

@@ -15,8 +15,14 @@
  */
 var JAX = function(selector, srcElement) {
 	if (typeof(selector) == "string") {
-		var srcElement = srcElement && srcElement.jaxNodeType ? srcElement.node() : srcElement;
-			srcElement = srcElement || document;
+		if (arguments.length == 1) { 
+			var srcElement = document; 
+		} else if (arguments.length > 1 && srcElement) {
+			var srcElement = srcElement.jaxNodeType ? srcElement.node() : srcElement;
+		} else {
+			return new JAX.Node(null);
+		}
+
 		var foundElm = srcElement.querySelector(selector);
 		var jaxelm = new JAX.Node(foundElm);
 
@@ -41,8 +47,14 @@ var JAX = function(selector, srcElement) {
  */
 JAX.all = function(selector, srcElement) {
 	if (typeof(selector) == "string") {
-		var srcElement = srcElement && srcElement.jaxNodeType ? srcElement.node() : srcElement;
-			srcElement = srcElement || document;
+		if (arguments.length == 1) { 
+			var srcElement = document; 
+		} else if (arguments.length > 1 && srcElement) {
+			var srcElement = srcElement.jaxNodeType ? srcElement.node() : srcElement;
+		} else {
+			return new JAX.NodeArray(null);
+		}
+
 		var foundElms = srcElement.querySelectorAll(selector);
 		var jaxelms = new Array(foundElms.length);
 
@@ -55,7 +67,7 @@ JAX.all = function(selector, srcElement) {
 		return new JAX.NodeArray(selector);
 	}
 	
-	return JAX.NodeArray(new JAX.Node(null));
+	return JAX.NodeArray(null);
 };
 
 /**

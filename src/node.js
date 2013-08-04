@@ -20,7 +20,6 @@ JAX.Node.DOCUMENT_NODE = 9;
 JAX.Node.DOCUMENT_FRAGMENT_NODE = 11;
 
 JAX.Node._events = [];
-JAX.Node._MEASUREABLEVALUE_REGEXP = /^(?:-)?\d+(\.\d+)?(%|em|in|cm|mm|ex|pt|pc)?$/i;
 JAX.Node._OPACITY_REGEXP = /alpha\(opacity=['"]?([0-9]+)['"]?\)/i;
 JAX.Node._BOX_SIZING = null;
 
@@ -269,7 +268,7 @@ JAX.Node.prototype.text = function(text) {
 
 	if (!arguments.length) { 
 		if ("innerHTML" in this._node) { return this._getText(this._node); }
-		return this._nodeValue;
+		return this._node.nodeValue;
 	}
 
 	if ("innerHTML" in this._node) { 
@@ -331,10 +330,10 @@ JAX.Node.prototype.add = function(nodes) {
 JAX.Node.prototype.addBefore = function(node, nodeBefore) {
 	if (!this._checkNodeType([1], "JAX.Node.addBefore")) { return this; }
 
-	if (node && typeof(node) != "object" || (!node.nodeType && !(node instanceof JAX.Node))) { 
+	if (!node || typeof(node) != "object" || (!node.nodeType && !(node instanceof JAX.Node))) { 
 		throw new Error("For first argument I expected html element, text node, documentFragment or JAX.Node instance"); 
 	}
-	if (nodeBefore && typeof(nodeBefore) != "object" || (!nodeBefore.nodeType && !(nodeBefore instanceof JAX.Node))) { 
+	if (!nodeBefore || typeof(nodeBefore) != "object" || (!nodeBefore.nodeType && !(nodeBefore instanceof JAX.Node))) { 
 		throw new Error("For second argument I expected html element, text node or JAX.Node instance"); 
 	}
 
@@ -351,7 +350,7 @@ JAX.Node.prototype.addBefore = function(node, nodeBefore) {
  * document.body.innerHTML = "<span>Ahoj svete!</span>";
  * var jaxElm = JAX.make("span").appendTo(document.body); // pripne span do body
  *
- * @param {Node | JAX.Node} node DOM uzel | instance JAX.Node
+ * @param {Node | JAX.Node | String} node DOM uzel | instance JAX.Node | CSS 3 (CSS 2.1 selector pro IE8)
  * @returns {JAX.Node}
  */
 JAX.Node.prototype.appendTo = function(node) {
@@ -359,7 +358,7 @@ JAX.Node.prototype.appendTo = function(node) {
 
 	var node = JAX(node);
 
-	if (node.node()) { 
+	if (node.exists()) { 
 		var node = node.jaxNodeType ? node.node() : node;
 		node.appendChild(this._node);
 		return this;
@@ -382,8 +381,8 @@ JAX.Node.prototype.before = function(node) {
 
 	var node = JAX(node);
 
-	if (node.node()) {
-		var node = node.jaxNodeType ? node.node() : node;
+	if (node.exists()) {
+		var node = node.node();
 		node.parentNode.insertBefore(this._node, node);
 		return this;
 	}
@@ -405,8 +404,8 @@ JAX.Node.prototype.after = function(node) {
 
 	var node = JAX(node);
 
-	if (node.node()) {
-		var node = node.jaxNodeType ? node.node() : node;
+	if (node.exists()) {
+		var node = node.node();
 
 		if (node.nextSibling) {
 			node.parentNode.insertBefore(this._node, node.nextSibling);
@@ -421,6 +420,36 @@ JAX.Node.prototype.after = function(node) {
 };
 
 /**
+ * @method připne (přesune) element za jiný element
+ * @example
+ * document.body.innerHTML = "<span>Ahoj svete!</span>";
+ * var jaxElm = JAX.make("span").after(document.body.lastChild); // pripne span do body za posledni posledni prvek v body
+ *
+ * @param {Node | JAX.Node} node DOM uzel | instance JAX.Node
+ * @returns {JAX.Node}
+ */
+JAX.Node.prototype.insertFirstTo = function(node) {
+	if (!this._checkNodeType([1,11], "JAX.Node.firstTo")) { return this; }
+
+	var node = JAX(node);
+
+	if (node.exists()) {
+		var node = node.node();
+
+		if (node.childNodes && node.firstChild) {
+			node.insertBefore(this._node, node.firstChild);
+		} else if (node.childNodes) {
+			node.appendChild(this._node);
+		} else {
+			throw new Error("Given element can not have child nodes.");		
+		}
+		
+		return this;
+	}
+	
+	throw new Error("I could not find given element. For first argument I expected html element, text node or JAX.Node instance");
+};
+/**
  * @method odstraní zadaný element z DOMu a nahradí ho za sebe
  * @example
  * document.body.innerHTML = "<span>Ahoj svete!</span>";
@@ -434,8 +463,8 @@ JAX.Node.prototype.replaceWith = function(node) {
 
 	var node = JAX(node);
 
-	if (node.node()) { 
-		var node = node.jaxNodeType ? node.node() : node;
+	if (node.exists()) { 
+		var node = node.node();
 		this.before(node);
 		node.parentNode.removeChild(node);
 		return this;
@@ -470,19 +499,9 @@ JAX.Node.prototype.remove = function() {
  * @returns {JAX.Node}
  */
 JAX.Node.prototype.clone = function(withContent) {
-	if (!this._checkNodeType([1,3,8], "JAX.Node.clone")) { return this; }
+	if (!this._checkNodeType([1,3,8], "JAX.Node.clone")) { return JAX.Node(null); }
 
-	var withContent = !!withContent;
-	var clone = this._node.cloneNode(withContent);
-
-	if (clone.removeAttribute) {
-		clone.removeAttribute("data-jax-id");
-	}
-
-	if (clone.querySelectorAll) {
-		var nodeList = clone.querySelectorAll("*[data-jax-id]");
-		for (var i=0, len=nodeList.length; i<len; i++) { nodeList[i].removeAttribute("data-jax-id"); }
-	}
+	var clone = this._node.cloneNode(!!withContent);
 
 	return new JAX.Node(clone);
 };
@@ -756,16 +775,14 @@ JAX.Node.prototype.computedCss = function(properties) {
 	if (!this._checkNodeType([1], "JAX.Node.computedCss")) { return typeof(properties) ? "" : {}; }
 
 	if (typeof(properties) == "string") {
-		var value = JAK.DOM.getStyle(this._node, properties);
-		if (this._node.runtimeStyle && !this._node.addEventListener && JAX.Node._MEASUREABLEVALUE_REGEXP.test(value)) { value = this._inPixels(value); }
+		var value = JAX.Node.getComputedStyle(this._node).getPropertyValue(properties);
 		return value;
 	}
 
 	var css = {};
 	for (var i=0, len=properties.length; i<len; i++) {
 		var p = properties[i];
-		var value = JAK.DOM.getStyle(this._node, p);
-		if (this._node.runtimeStyle && !this._node.addEventListener && JAX.Node._MEASUREABLEVALUE_REGEXP.test(value)) { value = this._inPixels(value); }
+		var value = JAX.Node.getComputedStyle(this._node).getPropertyValue(p);
 		css[p] = value;
 	}
 	return css;
@@ -785,13 +802,11 @@ JAX.Node.prototype.computedCss = function(properties) {
 JAX.Node.prototype.fullSize = function(sizeType, value) {
 	if (!this._checkNodeType([1], "JAX.Node.fullSize")) { return arguments.length == 1 ? 0 : this; }
 	
-	if (arguments.length == 1) { 
-		var backupStyle = this.css(["display","visibility","position"]);
-
-		this.css({"display":"", "visibility":"hidden", "position":"absolute"});
-
+	if (arguments.length == 1) {
+		var backupDisplay = this.css("display"); 
+		
 		var size = sizeType == "width" ? this._node.offsetWidth : this._node.offsetHeight;
-		this.css(backupStyle);
+		this.css("display", backupDisplay);
 		return size; 
 	}
 
@@ -818,16 +833,11 @@ JAX.Node.prototype.size = function(sizeType, value) {
 		var size = parseInt(this.computedCss(sizeType), 10);
 		if (isFinite(size)) { return size; }
 
-		var backupStyle = this.css(["display","visibility","position"]);
-		var isFixedPosition = this.computedCss("position").indexOf("fixed") == 0;
-		var isDisplayNone = this.css("display").indexOf("none") == 0;
-
-		if (!isFixedPosition) { this.css("position","absolute"); }
-		if (isDisplayNone) { this.css("display",""); }		
-		this.css("visibility","hidden");
+		var backupDisplay = this.css("display");
+		if (backupDisplay.indexOf("none") == 0) { this.css("display",""); }
 
 		size = this._getSizeWithBoxSizing(sizeType);
-		this.css(backupStyle);
+		this.css("display", backupDisplay);
 		return size; 
 	}
 
@@ -845,9 +855,9 @@ JAX.Node.prototype.size = function(sizeType, value) {
  * @returns {JAX.Node | null}
  */
 JAX.Node.prototype.parent = function() {
-	if (!this._checkNodeType([1,3,8], "JAX.Node.parent")) { return null; }
+	if (!this._checkNodeType([1,3,8], "JAX.Node.parent")) { return new JAX.Node(null); }
 	if (this._node.parentNode) { return new JAX.Node(this._node.parentNode); }
-	return null;
+	return new JAX.Node(null);
 };
 
 /** 
@@ -859,8 +869,8 @@ JAX.Node.prototype.parent = function() {
  * @returns {JAX.Node | null}
  */
 JAX.Node.prototype.next = function() {
-	if (!this._checkNodeType([1,3,8], "JAX.Node.next")) { return null; }
-	return this._node.nextSibling ? JAX(this._node.nextSibling) : null;
+	if (!this._checkNodeType([1,3,8], "JAX.Node.next")) { return new JAX.Node(null); }
+	return this._node.nextSibling ? JAX(this._node.nextSibling) :  new JAX.Node(null);
 };
 
 /** 
@@ -872,8 +882,8 @@ JAX.Node.prototype.next = function() {
  * @returns {JAX.Node | null}
  */
 JAX.Node.prototype.previous = function() {
-	if (!this._checkNodeType([1,3,8], "JAX.Node.previous")) { return null; }
-	return this._node.previousSibling ? JAX(this._node.previousSibling) : null;
+	if (!this._checkNodeType([1,3,8], "JAX.Node.previous")) { return new JAX.Node(null); }
+	return this._node.previousSibling ? JAX(this._node.previousSibling) : new JAX.Node(null);
 };
 
 /** 
@@ -882,7 +892,7 @@ JAX.Node.prototype.previous = function() {
  * var body = JAX("body").html("<span>Ahoj svete!</span><em>Takze dobry vecer!</em>");
  * console.log(body.children().length);
  *
- * @returns {JAX.NodeArray}
+ * @returns {JAX.NodeArray | null}
  */
 JAX.Node.prototype.children = function(index) {
 	this._checkNodeType([1,11], "JAX.Node.children");
@@ -900,7 +910,7 @@ JAX.Node.prototype.children = function(index) {
 		return new JAX.Node(child);
 	}
 
-	return null;
+	return new JAX.NodeArray(null);
 };
 
 /** 
@@ -912,20 +922,20 @@ JAX.Node.prototype.children = function(index) {
  * @returns {JAX.Node | null}
  */
 JAX.Node.prototype.first = function() {
-	if (!this._checkNodeType([1], "JAX.Node.first") || !this._node.childNodes) { return null; }
+	if (!this._checkNodeType([1], "JAX.Node.first") || !this._node.childNodes) {  return new JAX.Node(null); }
 
 	if ("firstElementChild" in this._node) {
-		return this._node.firstElementChild ? new JAX.Node(this._node.firstElementChild) : null;
+		return this._node.firstElementChild ? new JAX.Node(this._node.firstElementChild) : new JAX.Node(null);
 	}
 
-	if (!this._node.childNodes || !this._node.childNodes.length) { return null; }
+	if (!this._node.childNodes || !this._node.childNodes.length) { return new JAX.Node(null); }
 	
 	for (var i=0, len=this._node.childNodes.length; i<len; i++) {
 		var childNode = this._node.childNodes[i];
 		if (childNode.nodeType == 1) { return new JAX.Node(childNode); }
 	}
 
-	return null;
+	return new JAX.Node(null);
 };
 
 /** 
@@ -937,20 +947,20 @@ JAX.Node.prototype.first = function() {
  * @returns {JAX.Node | null}
  */
 JAX.Node.prototype.last = function() {
-	if (!this._checkNodeType([1], "JAX.Node.last") || !this._node.childNodes) { return null; }
+	if (!this._checkNodeType([1], "JAX.Node.last") || !this._node.childNodes) { return new JAX.Node(null); }
 
 	if ("lastElementChild" in this._node) {
-		return this._node.lastElementChild ? new JAX.Node(this._node.lastElementChild) : null;
+		return this._node.lastElementChild ? new JAX.Node(this._node.lastElementChild) : new JAX.Node(null);
 	}
 
-	if (!this._node.childNodes || !this._node.childNodes.length) { return null; }
+	if (!this._node.childNodes || !this._node.childNodes.length) { return new JAX.Node(null); }
 	
 	for (var i=this._node.childNodes.length - 1; i>-1; i--) {
 		var childNode = this._node.childNodes[i];
 		if (childNode.nodeType == 1) { return new JAX.Node(childNode); }
 	}
 
-	return null;
+	return new JAX.Node(null);
 };
 
 /** 
@@ -962,9 +972,9 @@ JAX.Node.prototype.last = function() {
  * @returns {JAX.Node}
  */
 JAX.Node.prototype.clear = function() {
-	if (!this._checkNodeType([1,11], "JAX.Node.clear")) { return this; }
+	if (!this._checkNodeType([1,3,8,11], "JAX.Node.clear")) { return this; }
 
-	if (this._node.nodeType == 3) {
+	if (this._node.nodeType == 3 || this._node.nodeType == 8) {
 		this._node.nodeValue = "";
 		return this;
 	}
@@ -1190,18 +1200,6 @@ JAX.Node.prototype.slide = function(type, duration) {
 	return promise;
 };
 
-JAX.Node.prototype._inPixels = function(value) {
-	var style = this._node.style.left;
-	var rStyle = this._node.runtimeStyle.left; 
-    this._node.runtimeStyle.left = this._node.currentStyle.left;
-    this._node.style.left = value || 0;  
-    value = this._node.style.pixelLeft;
-    this._node.style.left = style;
-    this._node.runtimeStyle.left = rStyle;
-      
-    return value;
-};
-
 JAX.Node.prototype._setOpacity = function(value) {
 	var property = "";
 
@@ -1253,10 +1251,10 @@ JAX.Node.prototype._getSizeWithBoxSizing = function(sizeType, value) {
 		borderY = parseFloat(this.computedCss(borderPropertyY));
 	}
 	
-	if (paddingX && isFinite(paddingX)) { value =- paddingX; }
-	if (paddingY && isFinite(paddingY)) { value =- paddingY; }
-	if (borderX && isFinite(borderX)) { value =- borderX; }
-	if (borderY && isFinite(borderY)) { value =- borderY; }
+	if (paddingX && isFinite(paddingX)) { value -= paddingX; }
+	if (paddingY && isFinite(paddingY)) { value -= paddingY; }
+	if (borderX && isFinite(borderX)) { value -= borderX; }
+	if (borderY && isFinite(borderY)) { value -= borderY; }
 
 	return value;
 };
@@ -1268,7 +1266,8 @@ JAX.Node.prototype._getText = function(node) {
 		var tagName = child.tagName ? child.tagName.toLowerCase() : "";
 		if (child.childNodes && child.childNodes.length) { text += this._getText(child); continue; }
 		if (tagName == "br") { text += "\n"; continue; }
-		if (child.nodeValue) { text += child.nodeValue; }
+		if (child.nodeValue) { text += child.nodeValue; continue; }
+		text += " ";
 	}
 	return text;
 };
@@ -1282,7 +1281,7 @@ JAX.Node.prototype._destroyEvents = function(eventListeners) {
 
 JAX.Node.prototype._checkNodeType = function(allowedNodeTypes, method) {
 	if (this.jaxNodeType == -1) { 
-		JAX.Report.show("warn", method, "I have null node. Be careful what you do.");
+		JAX.Report.show("error", method, "I have null node. Be careful what you do. Try to use JAX.Node.exists method for checking if element is found.");
 		return false;
 	}
 
