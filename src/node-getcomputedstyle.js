@@ -19,14 +19,16 @@
 		};
 
 		function getBaseFontSize(element) {
+			if (!element) { return 16; }
+
 			var style = element.currentStyle;
 			var cssValue = style["fontSize"];
 			var size = parseFloat(cssValue);
 			var suffix = cssValue.split(/\d/)[0];
 			var isProportional = /%|em/.test(suffix);
 
-			if (isProportional && element.parentElement) { 
-				size = element.parentElement != element.ownerDocument ? getBaseFontSize(element.parentElement) : 16; 
+			if (isProportional) { 
+				return getBaseFontSize(element.parentElement); 
 			}
 
 			return getRecountedPixelSize(size, suffix);
@@ -46,13 +48,19 @@
 			var value = style[property];
 			var size = parseFloat(value);
 			var suffix = value.split(/\d/)[0];
-			var rootSize = 0;
 
 			if (property == "fontSize") {
-				rootSize = fontSize;
+				var rootSize = fontSize;
+			} else if (element.parentElement != element.ownerDocument) {
+				var parentElement = element.parentElement;
+				/* dirty trick, how to find out width of parent element */
+				var temp = document.createElement("jaxtemp");
+					temp.style.display = "block";
+					parentElement.appendChild(temp);
+				var rootSize = temp.offsetWidth;
+					parentElement.removeChild(temp);
 			} else {
-				var parentElement = element.parentElement != element.ownerDocument ? element.parentElement : element.ownerDocument.documentElement;
-				rootSize = parentElement.clientWidth;
+				var rootSize = element.parentElement.documentElement.clientWidth;
 			}
 
 			return getRecountedPixelSize(size, suffix, rootSize, fontSize);
@@ -69,7 +77,7 @@
 			return getRecountedPixelSize(size, suffix, rootSize, fontSize);
 		};
 
-		function setPixelSizeWH(property, style, fontSize, offsetLength) {
+		function getPixelSizeWH(property, style, fontSize, offsetLength) {
 			var boxSizing = style.boxSizing,
 				paddingX = 0,
 				paddingY = 0,
@@ -96,7 +104,7 @@
 			if (borderX && isFinite(borderX)) { value -= borderX; }
 			if (borderY && isFinite(borderY)) { value -= borderY; }
 
-			style[property] = value + "px";
+			return value;
 		};
 
 		function getRecountedPixelSize(size, suffix, rootSize, fontSize) {
@@ -139,10 +147,10 @@
 				index++;
 			}
 
-			this.length = index + 1;
+			this.length = index;
 
-			setPixelSizeWH("width", this, fontSize, element.offsetWidth);
-			setPixelSizeWH("height", this, fontSize, element.offsetHeight);
+			this["width"] = getPixelSizeWH("width", this, fontSize, element.offsetWidth);
+			this["height"] = getPixelSizeWH("height", this, fontSize, element.offsetHeight);
 		};
 
 		CSSStyleDeclaration.prototype.getPropertyPriority =  function () {
