@@ -48,7 +48,12 @@
 			var suffix = value.split(/\d/)[0];
 			var rootSize = 0;
 
-			rootSize = property == "fontSize" ? fontSize : /width/i.test(property) ? element.clientWidth : element.clientHeight;
+			if (property == "fontSize") {
+				rootSize = fontSize;
+			} else {
+				var parentElement = element.parentElement != element.ownerDocument ? element.parentElement : element.ownerDocument.documentElement;
+				rootSize = parentElement.clientWidth;
+			}
 
 			return getRecountedPixelSize(size, suffix, rootSize, fontSize);
 		};
