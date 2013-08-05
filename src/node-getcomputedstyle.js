@@ -24,22 +24,12 @@
 			var size = parseFloat(cssValue);
 			var suffix = cssValue.split(/\d/)[0];
 			var isProportional = /%|em/.test(suffix);
-			var isPt = /pt/.test(suffix);
-			var isIn = /in/.test(suffix);
 
 			if (isProportional && element.parentElement) { 
 				size = element.parentElement != element.ownerDocument ? getBaseFontSize(element.parentElement) : 16; 
 			}
 
-			if (isPt) {
-				size = size * 96 / 72;
-			}
-
-			if (isIn) {
-				size = size * 96;
-			}
-
-			return size;
+			return getRecountedPixelSize(size, suffix);
 		};
 
 		function getFirstNonStaticElementSize(element, property) {
@@ -58,12 +48,53 @@
 			var suffix = value.split(/\d/)[0];
 			var rootSize = 0;
 
-			if (["left", "right", "top", "bottom"].indexOf(property) != -1) {
-				rootSize = getFirstNonStaticElementSize(element, property == "left" || property == "right" ? "clientWidth" : "clientHeight"); 
-			} else {
-				rootSize = property == "fontSize" ? fontSize : /width/i.test(property) ? element.clientWidth : element.clientHeight;
-			}
+			rootSize = property == "fontSize" ? fontSize : /width/i.test(property) ? element.clientWidth : element.clientHeight;
 
+			return getRecountedPixelSize(size, suffix, rootSize, fontSize);
+		};
+
+		function getPixelPosition(element, style, property, fontSize) {
+			var value = style[property];
+			var size = parseFloat(value);
+			var suffix = value.split(/\d/)[0];
+			var rootSize = 0;
+
+			rootSize = getFirstNonStaticElementSize(element, property == "left" || property == "right" ? "clientWidth" : "clientHeight"); 
+
+			return getRecountedPixelSize(size, suffix, rootSize, fontSize);
+		};
+
+		function setPixelSizeWH(property, style, fontSize, offsetLength) {
+			var boxSizing = style.boxSizing,
+				paddingX = 0,
+				paddingY = 0,
+				borderX = 0,
+				borderY = 0,
+				paddingPropertyX = "padding" + (property == "width" ? "Left" : "Top"),
+				paddingPropertyY = "padding" + (property == "width" ? "Right" : "Bottom"),
+				borderPropertyX = "border" + (property == "width" ? "LeftWidth" : "Top"),
+				borderPropertyY = "border" + (property == "width" ? "RightWidth" : "Bottom"),
+				value = offsetLength;
+
+			if (!boxSizing || boxSizing == "content-box") {
+				paddingX = parseFloat(style[paddingPropertyX]);
+				paddingY = parseFloat(style[paddingPropertyY]);
+			}
+			
+			if (boxSizing != "border-box") {
+				borderX = parseFloat(style[borderPropertyX]);
+				borderY = parseFloat(style[borderPropertyY]);
+			}
+			
+			if (paddingX && isFinite(paddingX)) { value -= paddingX; }
+			if (paddingY && isFinite(paddingY)) { value -= paddingY; }
+			if (borderX && isFinite(borderX)) { value -= borderX; }
+			if (borderY && isFinite(borderY)) { value -= borderY; }
+
+			style[property] = value + "px";
+		};
+
+		function getRecountedPixelSize(size, suffix, rootSize, fontSize) {
 			switch (suffix) {
 				case "em":
 					return size * fontSize;
@@ -71,26 +102,17 @@
 					return size * 96;
 				case "pt":
 					return size * 96 / 72;
+				case "pc":
+					return size * 12 * 96 / 72;
+				case "cm":
+					return size * 0.3937 * 96;
+				case "mm":
+					return size * 0.3937 * 96 / 10;
 				case "%":
-					return Math.round(size / 100 * rootSize);
+					return size / 100 * rootSize;
 				default:
 					return size;
 			}
-
-		};
-
-		function setShortStyleProperty(style, property) {
-			var
-			borderSuffix = property == "border" ? "Width" : "",
-			t = property + "Top" + borderSuffix,
-			r = property + "Right" + borderSuffix,
-			b = property + "Bottom" + borderSuffix,
-			l = property + "Left" + borderSuffix;
-
-			style[property] = (style[t] == style[r] == style[b] == style[l] ? [style[t]]
-			: style[t] == style[b] && style[l] == style[r] ? [style[t], style[r]]
-			: style[l] == style[r] ? [style[t], style[r], style[b]]
-			: [style[t], style[r], style[b], style[l]]).join(" ");
 		};
 
 		function CSSStyleDeclaration(element) {
@@ -100,12 +122,12 @@
 
 			for (property in currentStyle) {
 				this[index] = denormalize(property);
-				if (/width|height|margin.|padding.|border.+W|^fontSize$/.test(property) && currentStyle[property] != "auto") {
+				if (/margin.|padding.|border.+W|^fontSize$/.test(property) && currentStyle[property] != "auto") {
 					this[property] = getPixelSize(element, currentStyle, property, fontSize) + "px";
 				} else if (property == "styleFloat") {
 					this["float"] = currentStyle[property];
 				} else if (["left","right","top","bottom"].indexOf(property) != -1 && ["absolute","relative","fixed"].indexOf(currentStyle["position"]) != -1 && currentStyle[property] != "auto") {
-					this[property] = getPixelSize(element, currentStyle, property, fontSize) + "px";
+					this[property] = getPixelPosition(element, currentStyle, property, fontSize) + "px";
 				} else {
 					this[property] = currentStyle[property];
 				}
@@ -114,33 +136,32 @@
 
 			this.length = index + 1;
 
-			setShortStyleProperty(this, "margin");
-			setShortStyleProperty(this, "padding");
-			setShortStyleProperty(this, "border");
+			setPixelSizeWH("width", this, fontSize, element.offsetWidth);
+			setPixelSizeWH("height", this, fontSize, element.offsetHeight);
 		};
 
 		CSSStyleDeclaration.prototype.getPropertyPriority =  function () {
-
+			throw new Error('NotSupportedError: DOM Exception 9');
 		};
 
-		CSSStyleDeclaration.prototype.getPropertyValue = function (prop) {
+		CSSStyleDeclaration.prototype.getPropertyValue = function(prop) {
 			return this[normalize(prop)] || "";
 		};
 
-		CSSStyleDeclaration.prototype.item = function (index) {
+		CSSStyleDeclaration.prototype.item = function(index) {
 			return this[index];
 		};
 
 		CSSStyleDeclaration.prototype.removeProperty =  function () {
-
+			throw new Error('NoModificationAllowedError: DOM Exception 7');
 		};
 
 		CSSStyleDeclaration.prototype.setProperty =  function () {
-
+			throw new Error('NoModificationAllowedError: DOM Exception 7');
 		};
 
 		CSSStyleDeclaration.prototype.getPropertyCSSValue =  function () {
-
+			throw new Error('NotSupportedError: DOM Exception 9');
 		};
 
 		JAX.Node.getComputedStyle = function(element) {
