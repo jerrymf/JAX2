@@ -149,8 +149,8 @@
 
 			this.length = index;
 
-			this["width"] = getPixelSizeWH("width", this, fontSize, element.offsetWidth);
-			this["height"] = getPixelSizeWH("height", this, fontSize, element.offsetHeight);
+			this["width"] = currentStyle["width"].indexOf("px") != -1 ? currentStyle["width"] : getPixelSizeWH("width", this, fontSize, element.offsetWidth) + "px";
+			this["height"] = currentStyle["height"].indexOf("px") != -1 ? currentStyle["height"] : getPixelSizeWH("height", this, fontSize, element.offsetHeight) + "px";
 		};
 
 		CSSStyleDeclaration.prototype.getPropertyPriority =  function () {
