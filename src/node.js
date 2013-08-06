@@ -1,7 +1,7 @@
 /**
  * @fileOverview node.js - JAX - JAk eXtended
  * @author <a href="mailto:jerrymf@gmail.com">Marek Fojtl</a>
- * @version 1.08
+ * @version 1.09
  */
 
 /**
@@ -10,7 +10,7 @@
  */
 JAX.Node = JAK.ClassMaker.makeClass({
 	NAME: "JAX.Node",
-	VERSION: "1.08"
+	VERSION: "1.09"
 });
 
 JAX.Node.ELEMENT_NODE = 1;
@@ -39,7 +39,7 @@ JAX.Node._BOX_SIZING = null;
 
 JAX.Node.prototype.$constructor = function(node) {
 	this._node = node;
-	this.jaxNodeType = node && node.nodeType ? node.nodeType : -1;
+	this.jaxNodeType = node.nodeType;
 };
 
 /**
@@ -51,7 +51,6 @@ JAX.Node.prototype.$destructor = function() {
 	if ([1,9].indexOf(this.jaxNodeType) != -1) { this.stopListening(); }
 
 	this._node = null;
-	this._jaxId = -1;
 };
 
 /**
@@ -85,7 +84,7 @@ JAX.Node.prototype.exists = function() {
  * @returns {JAX.Node}
  */
 JAX.Node.prototype.find = function(selector) {
-	this._checkNodeType([], "JAX.Node.find");
+	if (!this._checkNodeType([1,9,11], "JAX.Node.find")) { return new JAX.Node.Null(); }
 
 	return JAX(selector, this._node);
 };
@@ -99,7 +98,7 @@ JAX.Node.prototype.find = function(selector) {
  * @returns {JAX.NodeArray}
  */
 JAX.Node.prototype.findAll = function(selector) {
-	this._checkNodeType([], "JAX.Node.findAll");
+	if (!this._checkNodeType([1,9,11], "JAX.Node.findAll")) { return new JAX.NodeArray([]); }
 
 	return JAX.all(selector, this._node);
 };
@@ -520,7 +519,7 @@ JAX.Node.prototype.clone = function(withContent) {
  * @returns {String} Event ID
  */
 JAX.Node.prototype.listen = function(type, obj, funcMethod, bindData) {
-	if (!this._checkNodeType([1,9], "JAX.Node.listen")) { return null; }
+	if (!this._checkNodeType([1,9], "JAX.Node.listen")) { return new JAX.Listener(this, null, type, f); }
 	
 	if (!funcMethod) {
 		var funcMethod = obj;
@@ -648,12 +647,6 @@ JAX.Node.prototype.stopListening = function(listener) {
  * @returns {String | Object | JAX.Node}
  */
 JAX.Node.prototype.prop = function(property, value) {
-	if (!this._checkNodeType([], "JAX.Node.prop")) { 
-		if (typeof(property) == "string") { return ""; }
-		if (property instanceof Array) { return {}; }
-		return this; 
-	}
-
 	if (typeof(property) == "string") { 
 		if (arguments.length == 1) { 
 			return this._node[property]; 
@@ -859,9 +852,9 @@ JAX.Node.prototype.size = function(sizeType, value) {
  * @returns {JAX.Node | null}
  */
 JAX.Node.prototype.parent = function() {
-	if (!this._checkNodeType([1,3,8], "JAX.Node.parent")) { return new JAX.Node(null); }
+	if (!this._checkNodeType([1,3,8], "JAX.Node.parent")) { return new JAX.Node.Null(); }
 	if (this._node.parentNode) { return new JAX.Node(this._node.parentNode); }
-	return new JAX.Node(null);
+	return new JAX.Node.Null();
 };
 
 /** 
@@ -873,8 +866,8 @@ JAX.Node.prototype.parent = function() {
  * @returns {JAX.Node | null}
  */
 JAX.Node.prototype.next = function() {
-	if (!this._checkNodeType([1,3,8], "JAX.Node.next")) { return new JAX.Node(null); }
-	return this._node.nextSibling ? JAX(this._node.nextSibling) :  new JAX.Node(null);
+	if (!this._checkNodeType([1,3,8], "JAX.Node.next")) { return new JAX.Node.Null(); }
+	return this._node.nextSibling ? JAX(this._node.nextSibling) :  new JAX.Node.Null();
 };
 
 /** 
@@ -886,8 +879,8 @@ JAX.Node.prototype.next = function() {
  * @returns {JAX.Node | null}
  */
 JAX.Node.prototype.previous = function() {
-	if (!this._checkNodeType([1,3,8], "JAX.Node.previous")) { return new JAX.Node(null); }
-	return this._node.previousSibling ? JAX(this._node.previousSibling) : new JAX.Node(null);
+	if (!this._checkNodeType([1,3,8], "JAX.Node.previous")) { return new JAX.Node.Null(); }
+	return this._node.previousSibling ? JAX(this._node.previousSibling) : new JAX.Node.Null();
 };
 
 /** 
@@ -899,7 +892,7 @@ JAX.Node.prototype.previous = function() {
  * @returns {JAX.NodeArray | null}
  */
 JAX.Node.prototype.children = function(index) {
-	this._checkNodeType([1,11], "JAX.Node.children");
+	if (!this._checkNodeType([1,11], "JAX.Node.children")) { return arguments.length ? new JAX.Node(null) : new JAX.NodeArray([]); }
 
 	if (!arguments.length) {
 		var nodes = [];
@@ -914,7 +907,7 @@ JAX.Node.prototype.children = function(index) {
 		return new JAX.Node(child);
 	}
 
-	return new JAX.NodeArray(null);
+	return new JAX.Node.Null();
 };
 
 /** 
@@ -926,20 +919,20 @@ JAX.Node.prototype.children = function(index) {
  * @returns {JAX.Node | null}
  */
 JAX.Node.prototype.first = function() {
-	if (!this._checkNodeType([1], "JAX.Node.first") || !this._node.childNodes) {  return new JAX.Node(null); }
+	if (!this._checkNodeType([1], "JAX.Node.first") || !this._node.childNodes) {  return new JAX.Node.Null(); }
 
 	if ("firstElementChild" in this._node) {
-		return this._node.firstElementChild ? new JAX.Node(this._node.firstElementChild) : new JAX.Node(null);
+		return this._node.firstElementChild ? new JAX.Node(this._node.firstElementChild) : new JAX.Node.Null();
 	}
 
-	if (!this._node.childNodes || !this._node.childNodes.length) { return new JAX.Node(null); }
+	if (!this._node.childNodes || !this._node.childNodes.length) { return new JAX.Node.Null(); }
 	
 	for (var i=0, len=this._node.childNodes.length; i<len; i++) {
 		var childNode = this._node.childNodes[i];
 		if (childNode.nodeType == 1) { return new JAX.Node(childNode); }
 	}
 
-	return new JAX.Node(null);
+	return new JAX.Node.Null();
 };
 
 /** 
@@ -951,20 +944,20 @@ JAX.Node.prototype.first = function() {
  * @returns {JAX.Node | null}
  */
 JAX.Node.prototype.last = function() {
-	if (!this._checkNodeType([1], "JAX.Node.last") || !this._node.childNodes) { return new JAX.Node(null); }
+	if (!this._checkNodeType([1], "JAX.Node.last") || !this._node.childNodes) { return new JAX.Node.Null(); }
 
 	if ("lastElementChild" in this._node) {
-		return this._node.lastElementChild ? new JAX.Node(this._node.lastElementChild) : new JAX.Node(null);
+		return this._node.lastElementChild ? new JAX.Node(this._node.lastElementChild) : new JAX.Node.Null();
 	}
 
-	if (!this._node.childNodes || !this._node.childNodes.length) { return new JAX.Node(null); }
+	if (!this._node.childNodes || !this._node.childNodes.length) { return new JAX.Node.Null(); }
 	
 	for (var i=this._node.childNodes.length - 1; i>-1; i--) {
 		var childNode = this._node.childNodes[i];
 		if (childNode.nodeType == 1) { return new JAX.Node(childNode); }
 	}
 
-	return new JAX.Node(null);
+	return new JAX.Node.Null();
 };
 
 /** 
@@ -998,7 +991,7 @@ JAX.Node.prototype.clear = function() {
  * @returns {Boolean}
  */
 JAX.Node.prototype.eq = function(node) {
-	if (!this._checkNodeType([], "JAX.Node.eq") || !node) { return false; }
+	if (!node) { return false; }
 
 	if (typeof(node) == "object" && (node.nodeType || node instanceof JAX.Node)) {
 		var elm = node.jaxNodeType ? node.node() : node;
@@ -1082,7 +1075,7 @@ JAX.Node.prototype.isIn = function(node) {
 };
 
 JAX.Node.prototype.animate = function(property, duration, start, end) {
-	if (!this._checkNodeType([1], "JAX.Node.animate")) { return null; }
+	if (!this._checkNodeType([1], "JAX.Node.animate")) { return new JAK.Promise().reject(this._node); }
 
 	if (typeof(property) != "string") {
 		type += "";
@@ -1105,7 +1098,7 @@ JAX.Node.prototype.animate = function(property, duration, start, end) {
  * @returns {JAX.FX}
  */
 JAX.Node.prototype.fade = function(type, duration) {
-	if (!this._checkNodeType([1], "JAX.Node.fade")) { return null; }
+	if (!this._checkNodeType([1], "JAX.Node.fade")) { return new JAK.Promise().reject(this._node); }
 
 	if (typeof(type) != "string") {
 		type += "";
@@ -1121,7 +1114,7 @@ JAX.Node.prototype.fade = function(type, duration) {
 		break;
 		default:
 			JAX.Report.show("warn","JAX.Node.fade","I got unsupported type '" + type + "'.", this._node);
-			return null;
+			return new JAK.Promise().reject(this._node);
 	}
 };
 
@@ -1136,7 +1129,7 @@ JAX.Node.prototype.fade = function(type, duration) {
  * @returns {JAX.FX}
  */
 JAX.Node.prototype.fadeTo = function(opacityValue, duration) {
-	if (!this._checkNodeType([1], "JAX.Node.fadeTo")) { return null; }
+	if (!this._checkNodeType([1], "JAX.Node.fadeTo")) { return new JAK.Promise().reject(this._node); }
 	
 	var opacityValue = parseFloat(opacityValue) || 0;
 
@@ -1159,7 +1152,7 @@ JAX.Node.prototype.fadeTo = function(opacityValue, duration) {
  * @returns {JAX.FX}
  */
 JAX.Node.prototype.slide = function(type, duration) {
-	if (!this._checkNodeType([1], "JAX.Node.slide")) { return null; }
+	if (!this._checkNodeType([1], "JAX.Node.slide")) { return new JAK.Promise().reject(this._node); }
 
 	if (typeof(type) != "string") {
 		type += "";
@@ -1284,13 +1277,8 @@ JAX.Node.prototype._destroyEvents = function(eventListeners) {
 };
 
 JAX.Node.prototype._checkNodeType = function(allowedNodeTypes, method) {
-	if (this.jaxNodeType == -1) { 
-		JAX.Report.show("error", method, "I have null node. Be careful what you do. Try to use JAX.Node.exists method for checking if element is found.");
-		return false;
-	}
-
 	if (allowedNodeTypes.length && allowedNodeTypes.indexOf(this.jaxNodeType) == -1) {
-		JAX.Report.show("warn", method, "You can not use this method for this node. Doing nothing.", this._node);
+		JAX.Report.show("error", method, "You can not use this method for this node. Doing nothing.", this._node);
 		return false;
 	}
 

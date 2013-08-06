@@ -27,7 +27,7 @@ JAX.Listener.prototype.unregister = function() {
 };
 
 JAX.Listener.prototype.node = function() {
-	return this._node;
+	return this._jaxElm.node();
 };
 
 JAX.Listener.prototype.id = function() {

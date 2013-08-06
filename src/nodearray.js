@@ -20,7 +20,7 @@ JAX.NodeArray = JAK.ClassMaker.makeClass({
  * var all = new JAX.NodeArray(document.getElementsByTagName("*")); // slozitejsi alternativa
  * var all = JAX.all("*"); // pouziti JAX.all je lepsi varianta, jak ziskat pole prvku!
  *
- * @param {Node | Node[] | JAX.Node[]} nodes pole uzlů | pole instancí JAX.Node
+ * @param {Node | Node[] | JAX.Node[] | null} nodes pole uzlů | pole instancí JAX.Node
  */
 JAX.NodeArray.prototype.$constructor = function(nodes) {
 	var nodes = nodes ? [].concat(nodes) : [];

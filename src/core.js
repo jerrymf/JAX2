@@ -1,7 +1,7 @@
 /**
  * @fileOverview core.js - JAX - JAk eXtended
  * @author <a href="mailto:jerrymf@gmail.com">Marek Fojtl</a>
- * @version 2.10
+ * @version 2.11
  */
 
 /**
@@ -20,11 +20,11 @@ var JAX = function(selector, srcElement) {
 		} else if (arguments.length > 1 && srcElement) {
 			var srcElement = srcElement.jaxNodeType ? srcElement.node() : srcElement;
 		} else {
-			return new JAX.Node(null);
+			return new JAX.Node.Null();
 		}
 
 		var foundElm = srcElement.querySelector(selector);
-		var jaxelm = new JAX.Node(foundElm);
+		var jaxelm = foundElm ? new JAX.Node(foundElm) : new JAX.Node.Null();
 
 		return jaxelm;
 	} else if (selector && typeof(selector) == "object" && selector.nodeType) {
@@ -33,7 +33,7 @@ var JAX = function(selector, srcElement) {
 		return selector;
 	}
 
-	return new JAX.Node(null);
+	return new JAX.Node.Null();
 };
 
 /**
@@ -52,7 +52,7 @@ JAX.all = function(selector, srcElement) {
 		} else if (arguments.length > 1 && srcElement) {
 			var srcElement = srcElement.jaxNodeType ? srcElement.node() : srcElement;
 		} else {
-			return new JAX.NodeArray(null);
+			return new JAX.NodeArray([]);
 		}
 
 		var foundElms = srcElement.querySelectorAll(selector);

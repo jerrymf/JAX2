@@ -1,7 +1,7 @@
 /**
  * @fileOverview node-getcomputedstyle.js - JAX - JAk eXtended
  * @author <a href="mailto:jerrymf@gmail.com">Marek Fojtl</a>
- * @version 0.1
+ * @version 0.7
  */
 
 /**

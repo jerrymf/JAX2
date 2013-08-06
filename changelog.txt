@@ -3,6 +3,12 @@ Changelog
 --------------------------------------
 Legend: [+] - added, [*] - fixed or changed, [-] removed
 
+Version 2.11
+	+ JAX.Node.Null - Null object design pattern
+	* JAX never returns null
+	* fixes (typo and logical bugs)
+	* much more better getComputedStyle for IE8
+
 Version 2.10
 	* Processing null node inside JAX.Node
 	* JAX.Node.computedCss now uses JAX polyfill for getComputedStyle in IE8 - experimental, but works for common css properties

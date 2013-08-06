@@ -4,6 +4,7 @@ cd src
 
 cat core.js > ../lib/jax.js
 cat node.js >> ../lib/jax.js
+cat node-null.js >> ../lib/jax.js
 cat node-getcomputedstyle.js >> ../lib/jax.js
 cat nodearray.js >> ../lib/jax.js
 cat event.js >> ../lib/jax.js
