@@ -532,18 +532,22 @@ JAX.Node.prototype.listen = function(type, obj, funcMethod, bindData) {
 		JAX.Report.show("error","JAX.Node.listen","For first argument I expected string. Trying convert to string: " + type, this._node);
 	}
 
-	if (typeof(funcMethod) != "string" && typeof(funcMethod) != "function") { 
-		throw new Error("For second argument I expected string or function"); 
+	if (typeof(obj) != "object" && typeof(obj) != "function") { 
+		throw new Error("For second argument I expected referred object or binded function"); 
 	}
 
-	if (typeof(obj) != "object") { 
-		throw new Error("For third argument I expected referred object"); 
+	if (typeof(funcMethod) != "string" && typeof(funcMethod) != "function") { 
+		throw new Error("For second argument I expected string or function"); 
 	}
 
 	if (typeof(funcMethod) == "string") {
 		var funcMethod = obj[funcMethod];
 		if (!funcMethod) { throw new Error("Given method in second argument was not found in referred object given in third argument"); } 
 		funcMethod = funcMethod.bind(obj);
+	} else if (typeof(funcMethod) == "function" && obj) {
+		funcMethod = funcMethod.bind(obj);
+	} else if (typeof(obj) == "function") {
+		funcMethod = obj;
 	}
 
 	var f = function(e, elm) {
