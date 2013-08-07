@@ -3,9 +3,12 @@
 cd src
 
 cat core.js > ../lib/jax.js
-cat node.js >> ../lib/jax.js
-cat node-null.js >> ../lib/jax.js
-cat node-getcomputedstyle.js >> ../lib/jax.js
+cat nodetypes/jaxnode.js >> ../lib/jax.js
+cat nodetypes/node.js >> ../lib/jax.js
+cat nodetypes/element.js >> ../lib/jax.js
+cat nodetypes/element-getcomputedstyle.js >> ../lib/jax.js
+cat nodetypes/textnode.js >> ../lib/jax.js
+cat nodetypes/nullnode.js >> ../lib/jax.js
 cat nodearray.js >> ../lib/jax.js
 cat event.js >> ../lib/jax.js
 cat listener.js >> ../lib/jax.js

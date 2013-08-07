@@ -14,26 +14,40 @@
  * @returns {JAX.Node}
  */
 var JAX = function(selector, srcElement) {
+	if (selector && selector.jaxNodeType) {
+		return selector;
+	}
+
 	if (typeof(selector) == "string") {
 		if (arguments.length == 1) { 
 			var srcElement = document; 
 		} else if (arguments.length > 1 && srcElement) {
 			var srcElement = srcElement.jaxNodeType ? srcElement.node() : srcElement;
 		} else {
-			return new JAX.Node.Null();
+			return new JAX.NullNode();
 		}
 
 		var foundElm = srcElement.querySelector(selector);
-		var jaxelm = foundElm ? new JAX.Node(foundElm) : new JAX.Node.Null();
-
-		return jaxelm;
+		var nodeType = foundElm ? foundElm.nodeType : -1;
 	} else if (selector && typeof(selector) == "object" && selector.nodeType) {
-		return new JAX.Node(selector);
-	} else if (selector instanceof JAX.Node) {
-		return selector;
+		var nodeType = selector.nodeType;
+		var foundElm = selector;
+	} else {
+		var nodeType = -1;
+		var foundElm = null;
 	}
 
-	return new JAX.Node.Null();
+	switch(nodeType) {
+		case 1:
+			return new JAX.Element(foundElm);
+		case 3:
+		case 8:
+			return new JAX.TextNode(foundElm);
+		case 9:
+		case 11:
+	}
+
+	return new JAX.NullNode();
 };
 
 /**
@@ -58,12 +72,12 @@ JAX.all = function(selector, srcElement) {
 		var foundElms = srcElement.querySelectorAll(selector);
 		var jaxelms = new Array(foundElms.length);
 
-		for (var i=0, len=foundElms.length; i<len; i++) { jaxelms[i] = new JAX.Node(foundElms[i]); }
+		for (var i=0, len=foundElms.length; i<len; i++) { jaxelms[i] = JAX(foundElms[i]); }
 
 		return new JAX.NodeArray(jaxelms);
 	} else if (selector && typeof(selector) == "object" && selector.nodeType) {
-		return new JAX.NodeArray(new JAX.Node(selector));
-	} else if (selector && selector instanceof JAX.Node) {
+		return new JAX.NodeArray(JAX(selector));
+	} else if (selector && selector.jaxNodeType) {
 		return new JAX.NodeArray(selector);
 	}
 	
@@ -130,7 +144,7 @@ JAX.make = function(tagString, attrs, styles, srcDocument) {
 	for (var p in attrs) { createdNode[p] = attrs[p]; }
 	for (var p in styles) { createdNode.style[p] = styles[p]; }
 	
-	return new JAX.Node(createdNode);
+	return new JAX.Element(createdNode);
 };
 
 /**
@@ -143,7 +157,7 @@ JAX.make = function(tagString, attrs, styles, srcDocument) {
  * @returns {JAX.Node}
  */
 JAX.makeText = function(text, srcDocument) {
-	return new JAX.Node((srcDocument || document).createTextNode(text));
+	return new JAX.TextNode((srcDocument || document).createTextNode(text));
 };
 
 /**

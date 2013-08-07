@@ -21,7 +21,7 @@ JAX.DOMBuilder = JAK.ClassMaker.makeClass({
  */
 JAX.DOMBuilder.prototype.$constructor = function(doc) {
 	this._doc = doc || document;
-	this._jax = { container: new JAX.Node(document.createDocumentFragment()) };
+	this._jax = { container: JAX(document.createDocumentFragment()) };
 	this._pointerJaxNode = null;
 	this._stack = [];
 };
@@ -74,7 +74,7 @@ JAX.DOMBuilder.prototype.add = function(node, attributes, styles) {
 		if (styles) { jaxNode.style(styles); }
 	}
 
-	if (!(jaxNode instanceof JAX.Node) || jaxNode.jaxNodeType == 9) {
+	if (!jaxNode.jaxNodeType || jaxNode.jaxNodeType == 9) {
 		throw new Error("First argument must be string with JAX.make compatible definition, node or instance of JAX.Node");
 	}
 
@@ -157,7 +157,7 @@ JAX.DOMBuilder.prototype.appendTo = function(node) {
 
 	if ((typeof(node) == "object" && node.nodeType) || typeof(node) == "string") {
 		var jaxNode = JAX(node);
-	} else if (node instanceof JAX.Node && node.jaxNodeType == 1) {
+	} else if (node.jaxNodeType && node.jaxNodeType == 1) {
 		var jaxNode = node;
 	}
 

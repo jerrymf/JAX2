@@ -177,11 +177,11 @@
 			throw new Error('NotSupportedError: DOM Exception 9');
 		};
 
-		JAX.Node.getComputedStyle = function(element) {
+		JAX.Element.getComputedStyle = function(element) {
 			return new CSSStyleDeclaration(element);
 		}
 	} else {	
-		JAX.Node.getComputedStyle = function(element) {
+		JAX.Element.getComputedStyle = function(element) {
 			return element.ownerDocument.defaultView.getComputedStyle(element, "");
 		}
 	}

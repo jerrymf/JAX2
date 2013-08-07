@@ -1,27 +1,22 @@
 /**
  * @fileOverview node.js - JAX - JAk eXtended
  * @author <a href="mailto:jerrymf@gmail.com">Marek Fojtl</a>
- * @version 1.09
+ * @version 1.0
  */
 
 /**
  * Třída reprezentující prvek v DOMu a poskytující rozšířené metody pro práci s ním
  * @class JAX.Node
  */
-JAX.Node = JAK.ClassMaker.makeClass({
-	NAME: "JAX.Node",
-	VERSION: "1.09"
+JAX.Element = JAK.ClassMaker.makeClass({
+	NAME: "JAX.Element",
+	VERSION: "1.0",
+	EXTEND: JAX.Node
 });
 
-JAX.Node.ELEMENT_NODE = 1;
-JAX.Node.TEXT_NODE = 3;
-JAX.Node.COMMENT_NODE = 8;
-JAX.Node.DOCUMENT_NODE = 9;
-JAX.Node.DOCUMENT_FRAGMENT_NODE = 11;
-
-JAX.Node._events = [];
-JAX.Node._OPACITY_REGEXP = /alpha\(opacity=['"]?([0-9]+)['"]?\)/i;
-JAX.Node._BOX_SIZING = null;
+JAX.Element._events = [];
+JAX.Element._OPACITY_REGEXP = /alpha\(opacity=['"]?([0-9]+)['"]?\)/i;
+JAX.Element._BOX_SIZING = null;
 
 (function() {
 	var boxSizing = {
@@ -33,13 +28,12 @@ JAX.Node._BOX_SIZING = null;
 	var tempDiv = document.createElement("div");
 
 	for (var i in boxSizing) {
-		if (i in tempDiv.style) { JAX.Node._BOX_SIZING = boxSizing[i]; break; }
+		if (i in tempDiv.style) { JAX.Element._BOX_SIZING = boxSizing[i]; break; }
 	}
 })();
 
-JAX.Node.prototype.$constructor = function(node) {
-	this._node = node;
-	this.jaxNodeType = node.nodeType;
+JAX.Element.prototype.$constructor = function(node) {
+	this.$super(node);
 };
 
 /**
@@ -47,32 +41,9 @@ JAX.Node.prototype.$constructor = function(node) {
  * @example
  * JAX("#nejakeId").$destructor();
  */
-JAX.Node.prototype.$destructor = function() {
-	if ([1,9].indexOf(this.jaxNodeType) != -1) { this.stopListening(); }
-
+JAX.Element.prototype.$destructor = function() {
+	this.stopListening();
 	this._node = null;
-};
-
-/**
- * @method vrací uzel, který si instance drží
- * @example
- * JAX("#nejakeId").node();
- *
- * @returns {object} node
- */
-JAX.Node.prototype.node = function() {
-	return this._node;
-};
-
-/**
- * @method zjišťuje, zda-li je node platný nebo nikoliv.
- * @example
- * JAX("#nejakeId").exists(); // vrati true pokud byl node s id nekajeId nalezen
- *
- * @returns {Boolean}
- */
-JAX.Node.prototype.exists = function() {
-	return !!this._node;
 };
 
 /**
@@ -83,9 +54,7 @@ JAX.Node.prototype.exists = function() {
  * @param {String} selector CSS3 (pro IE8 CSS2.1) selector
  * @returns {JAX.Node}
  */
-JAX.Node.prototype.find = function(selector) {
-	if (!this._checkNodeType([1,9,11], "JAX.Node.find")) { return new JAX.Node.Null(); }
-
+JAX.Element.prototype.find = function(selector) {
 	return JAX(selector, this._node);
 };
 
@@ -97,9 +66,7 @@ JAX.Node.prototype.find = function(selector) {
  * @param {String} selector CSS3 (pro IE8 CSS2.1) selector
  * @returns {JAX.NodeArray}
  */
-JAX.Node.prototype.findAll = function(selector) {
-	if (!this._checkNodeType([1,9,11], "JAX.Node.findAll")) { return new JAX.NodeArray([]); }
-
+JAX.Element.prototype.findAll = function(selector) {
 	return JAX.all(selector, this._node);
 };
 
@@ -111,9 +78,7 @@ JAX.Node.prototype.findAll = function(selector) {
  * @param {String} className jméno třídy nebo jména tříd oddělená mezerou
  * @returns {JAX.Node}
  */
-JAX.Node.prototype.addClass = function(classNames) {
-	if (!this._checkNodeType([1], "JAX.Node.addClass")) { return this; }
-	
+JAX.Element.prototype.addClass = function(classNames) {
 	if (typeof(classNames) != "string") { 
 		classNames += "";
 		JAX.Report.show("error","JAX.Node.addClass","Given arguments can be string, array of strings. Trying convert to string: " + classNames, this._node);
@@ -137,9 +102,7 @@ JAX.Node.prototype.addClass = function(classNames) {
  * @param {String} className jméno třídy nebo jména tříd oddělená mezerou
  * @returns {JAX.Node}
  */
-JAX.Node.prototype.removeClass = function(classNames) {
-	if (!this._checkNodeType([1], "JAX.Node.removeClass")) { return this; }
-	
+JAX.Element.prototype.removeClass = function(classNames) {
 	if (typeof(classNames) != "string") {
 		classNames += "";
 		JAX.Report.show("error","JAX.Node.removeClass","Given arguments can be string, array of strings. Trying convert to string: " + classNames, this._node);
@@ -163,9 +126,7 @@ JAX.Node.prototype.removeClass = function(classNames) {
  * @param {String} className jméno třídy nebo jména tříd oddělená mezerou
  * @returns {Boolean}
  */
-JAX.Node.prototype.hasClass = function(className) {
-	if (!this._checkNodeType([1], "JAX.Node.removeClass")) { return false; }
-
+JAX.Element.prototype.hasClass = function(className) {
 	if (typeof(className) != "string") {  
 		className += "";
 		JAX.Report.show("error","JAX.Node.hasClass","For first argument I expected string. Trying convert to string: " + className, this._node);
@@ -190,9 +151,7 @@ JAX.Node.prototype.hasClass = function(className) {
  * @param {String} className jméno třídy nebo jména tříd oddělená mezerou
  * @returns {JAX.Node}
  */
-JAX.Node.prototype.toggleClass = function(className) {
-	if (!this._checkNodeType([1], "JAX.Node.toggleClass")) { return this; }
-	
+JAX.Element.prototype.toggleClass = function(className) {
 	if (typeof(className) != "string") {
 		className += "";
 		JAX.Report.show("error","JAX.Node.toggleClass","Given arguments can be string. Trying convert to string: " + classNames, this._node);
@@ -212,9 +171,7 @@ JAX.Node.prototype.toggleClass = function(className) {
  * @param {String|Undefined} id název id | bez parametru, pokud chceme id vrátit
  * @returns {JAX.Node | String}
  */
-JAX.Node.prototype.id = function(id) {
-	if (!this._checkNodeType([1], "JAX.Node.id")) { return !arguments.length ? "" : this; }
-
+JAX.Element.prototype.id = function(id) {
 	if (!arguments.length) { 
 		return this.attr("id"); 
 	}
@@ -237,9 +194,7 @@ JAX.Node.prototype.id = function(id) {
  * @param {String | Undefined} innerHTML html text | bez parametru, pokud chceme html obsah vrátit
  * @returns {JAX.Node | String}
  */
-JAX.Node.prototype.html = function(innerHTML) {
-	if (!this._checkNodeType([1], "JAX.Node.html")) { return !arguments.length ? "" : this; }
-
+JAX.Element.prototype.html = function(innerHTML) {
 	if (!arguments.length) { 
 		return this._node.innerHTML; 
 	}
@@ -262,19 +217,14 @@ JAX.Node.prototype.html = function(innerHTML) {
  * @param {String | Undefined} text html text | bez parametru, pokud chceme textový obsah vrátit
  * @returns {JAX.Node | String}
  */
-JAX.Node.prototype.text = function(text) {
-	if (!this._checkNodeType([1,3,8], "JAX.Node.text")) { return !arguments.length ? "" : this; }
-
-	if (!arguments.length) { 
-		if ("innerHTML" in this._node) { return this._getText(this._node); }
-		return this._node.nodeValue;
+JAX.Element.prototype.text = function(text) {
+	if (!arguments.length && "innerHTML" in this._node) { 
+		return this._getText(this._node);
 	}
 
-	if ("innerHTML" in this._node) { 
+	if ("innerHTML" in this._node) {
 		this.clear();
 		this._node.appendChild(this._node.ownerDocument.createTextNode(text));
-	} else if ("nodeValue" in this._node) {
-		this._node.nodeValue = text;
 	}
 
 	return this;
@@ -289,9 +239,7 @@ JAX.Node.prototype.text = function(text) {
  * @param {String | Node | Node[] | JAX.NodeArray} HTML string | nodes DOM uzel | pole DOM uzlů | instance JAX.NodeArray
  * @returns {JAX.Node}
  */
-JAX.Node.prototype.add = function(nodes) {
-	if (!this._checkNodeType([1], "JAX.Node.add")) { return this; }
-
+JAX.Element.prototype.add = function(nodes) {
 	if (nodes instanceof JAX.NodeArray) {
 		nodes = nodes.items();
 	} else if (typeof(nodes) == "string") {
@@ -306,7 +254,7 @@ JAX.Node.prototype.add = function(nodes) {
 	
 	for (var i=0, len=nodes.length; i<len; i++) {
 		var node = nodes[i];
-		if (!node.nodeType && !(node instanceof JAX.Node)) { 
+		if (!node.nodeType && !node.jaxNodeType) { 
 			throw new Error("For arguments I expected html node, text node or JAX.Node instance. You can use array of them."); 
 		}
 		var node = node.jaxNodeType ? node.node() : node;
@@ -326,13 +274,11 @@ JAX.Node.prototype.add = function(nodes) {
  * @param {Node | JAX.Node} nodeBefore DOM uzel | instance JAX.Node
  * @returns {JAX.Node}
  */
-JAX.Node.prototype.addBefore = function(node, nodeBefore) {
-	if (!this._checkNodeType([1], "JAX.Node.addBefore")) { return this; }
-
-	if (!node || typeof(node) != "object" || (!node.nodeType && !(node instanceof JAX.Node))) { 
+JAX.Element.prototype.addBefore = function(node, nodeBefore) {
+	if (!node || typeof(node) != "object" || (!node.nodeType && !node.jaxNodeType)) { 
 		throw new Error("For first argument I expected html element, text node, documentFragment or JAX.Node instance"); 
 	}
-	if (!nodeBefore || typeof(nodeBefore) != "object" || (!nodeBefore.nodeType && !(nodeBefore instanceof JAX.Node))) { 
+	if (!nodeBefore || typeof(nodeBefore) != "object" || (!nodeBefore.nodeType && !nodeBefore.jaxNodeType)) { 
 		throw new Error("For second argument I expected html element, text node or JAX.Node instance"); 
 	}
 
@@ -341,168 +287,6 @@ JAX.Node.prototype.addBefore = function(node, nodeBefore) {
 	
 	this._node.insertBefore(node, nodeBefore);
 	return this;
-};
-
-/**
- * @method připne (přesune) element do jiného elementu (na konec)
- * @example
- * document.body.innerHTML = "<span>Ahoj svete!</span>";
- * var jaxElm = JAX.make("span").appendTo(document.body); // pripne span do body
- *
- * @param {Node | JAX.Node | String} node DOM uzel | instance JAX.Node | CSS 3 (CSS 2.1 selector pro IE8)
- * @returns {JAX.Node}
- */
-JAX.Node.prototype.appendTo = function(node) {
-	if (!this._checkNodeType([1,3,8,11], "JAX.Node.appendTo")) { return this; }
-
-	var node = JAX(node);
-
-	if (node.exists()) { 
-		var node = node.jaxNodeType ? node.node() : node;
-		node.appendChild(this._node);
-		return this;
-	}
-	
-	throw new Error("I could not find given element. For first argument I expected html element, documentFragment or JAX.Node instance");
-};
-
-/**
- * @method připne (přesune) element před jiný element
- * @example
- * document.body.innerHTML = "<span>Ahoj svete!</span>";
- * var jaxElm = JAX.make("span").before(document.body.lastChild); // pripne span do body pred posledni prvek v body
- *
- * @param {Node | JAX.Node} node DOM uzel | instance JAX.Node
- * @returns {JAX.Node}
- */
-JAX.Node.prototype.before = function(node) {
-	if (!this._checkNodeType([1,3,8,11], "JAX.Node.before")) { return this; }
-
-	var node = JAX(node);
-
-	if (node.exists()) {
-		var node = node.node();
-		node.parentNode.insertBefore(this._node, node);
-		return this;
-	}
-	
-	throw new Error("I could not find given element. For first argument I expected html element, text node or JAX.Node instance");
-};
-
-/**
- * @method připne (přesune) element za jiný element
- * @example
- * document.body.innerHTML = "<span>Ahoj svete!</span>";
- * var jaxElm = JAX.make("span").after(document.body.lastChild); // pripne span do body za posledni posledni prvek v body
- *
- * @param {Node | JAX.Node} node DOM uzel | instance JAX.Node
- * @returns {JAX.Node}
- */
-JAX.Node.prototype.after = function(node) {
-	if (!this._checkNodeType([1,3,8,11], "JAX.Node.after")) { return this; }
-
-	var node = JAX(node);
-
-	if (node.exists()) {
-		var node = node.node();
-
-		if (node.nextSibling) {
-			node.parentNode.insertBefore(this._node, node.nextSibling);
-		} else {
-			node.parentNode.appendChild(this._node);
-		}
-		
-		return this;
-	}
-	
-	throw new Error("I could not find given element. For first argument I expected html element, text node or JAX.Node instance");
-};
-
-/**
- * @method připne (přesune) element za jiný element
- * @example
- * document.body.innerHTML = "<span>Ahoj svete!</span>";
- * var jaxElm = JAX.make("span").after(document.body.lastChild); // pripne span do body za posledni posledni prvek v body
- *
- * @param {Node | JAX.Node} node DOM uzel | instance JAX.Node
- * @returns {JAX.Node}
- */
-JAX.Node.prototype.insertFirstTo = function(node) {
-	if (!this._checkNodeType([1,11], "JAX.Node.firstTo")) { return this; }
-
-	var node = JAX(node);
-
-	if (node.exists()) {
-		var node = node.node();
-
-		if (node.childNodes && node.firstChild) {
-			node.insertBefore(this._node, node.firstChild);
-		} else if (node.childNodes) {
-			node.appendChild(this._node);
-		} else {
-			throw new Error("Given element can not have child nodes.");		
-		}
-		
-		return this;
-	}
-	
-	throw new Error("I could not find given element. For first argument I expected html element, text node or JAX.Node instance");
-};
-/**
- * @method odstraní zadaný element z DOMu a nahradí ho za sebe
- * @example
- * document.body.innerHTML = "<span>Ahoj svete!</span>";
- * var jaxElm = JAX.make("span.novy").replaceWith(document.body.lastChild); // odstrani prvek a nahradi ho za sebe
- *
- * @param {Node | JAX.Node} node DOM uzel | instance JAX.Node
- * @returns {JAX.Node}
- */
-JAX.Node.prototype.replaceWith = function(node) {
-	if (!this._checkNodeType([1,3,8], "JAX.Node.replaceWith")) { return this; }
-
-	var node = JAX(node);
-
-	if (node.exists()) { 
-		var node = node.node();
-		this.before(node);
-		node.parentNode.removeChild(node);
-		return this;
-	}
-
-	throw new Error("For first argument I expected html element, text node or JAX.Node instance");
-};
-
-/**
- * @method odstraní element z DOMu
- * @example
- * document.body.innerHTML = "<span>Ahoj svete!</span>";
- * var jaxElm = JAX(document.body.firstChild).remove(); // pripne span do body pred posledni prvek v body
- *
- * @returns {JAX.Node}
- */
-JAX.Node.prototype.remove = function() {
-	if (!this._checkNodeType([1,3,8], "JAX.Node.remove")) { return this; }
-	
-	this._node.parentNode.removeChild(this._node);
-
-	return this;
-};
-
-/**
- * @method naklonuje element i vrátí novou instanci JAX.Node
- * @example
- * document.body.innerHTML = "<span>Ahoj svete!</span>";
- * var jaxElm = JAX(document.body.firstChild).clone(true); // naklonuje element span i s textem Ahoj svete!
- *
- * @param {Boolean} withContent true, pokud se má naklonovat i obsah elementu
- * @returns {JAX.Node}
- */
-JAX.Node.prototype.clone = function(withContent) {
-	if (!this._checkNodeType([1,3,8], "JAX.Node.clone")) { return JAX.Node(null); }
-
-	var clone = this._node.cloneNode(!!withContent);
-
-	return new JAX.Node(clone);
 };
 
 /**
@@ -518,9 +302,7 @@ JAX.Node.prototype.clone = function(withContent) {
  * @param {any} bindData pokud je potřeba přenést zároveň s tím i nějakou hodnotu (String, Number, Asociativní pole, ...)
  * @returns {String} Event ID
  */
-JAX.Node.prototype.listen = function(type, obj, funcMethod, bindData) {
-	if (!this._checkNodeType([1,9], "JAX.Node.listen")) { return new JAX.Listener(this, null, type, f); }
-	
+JAX.Element.prototype.listen = function(type, obj, funcMethod, bindData) {
 	if (!funcMethod) {
 		var funcMethod = obj;
 		obj = window;
@@ -555,7 +337,7 @@ JAX.Node.prototype.listen = function(type, obj, funcMethod, bindData) {
 	
 	var listenerId = JAK.Events.addListener(this._node, type, f);
 	var objListener = new JAX.Listener(this, listenerId, type, f);
-	var allNodes = JAX.Node._events;
+	var allNodes = JAX.Element._events;
 	var nodeIndex = -1;
 
 	for (var i=0, len=allNodes.length; i<len; i++) {
@@ -591,10 +373,8 @@ JAX.Node.prototype.listen = function(type, obj, funcMethod, bindData) {
  * @param {String} id konkrétní událost nebo event id vrácené metodou JAX.Node.listen
  * @returns {JAX.Node}
  */
-JAX.Node.prototype.stopListening = function(listener) {
-	if (!this._checkNodeType([1,9], "JAX.Node.stopListening")) { return this; }
-
-	var allNodes = JAX.Node._events;
+JAX.Element.prototype.stopListening = function(listener) {
+	var allNodes = JAX.Element._events;
 	var nodeIndex = -1;
 
 	for (var i=0, len=allNodes.length; i<len; i++) {
@@ -634,42 +414,6 @@ JAX.Node.prototype.stopListening = function(listener) {
 };
 
 /**
- * @method získá nebo nastaví vlastnost elementu
- * @example
- * document.body.innerHTML = "<input type='text' value='aaa'>";
- * var jaxElm = JAX(document.body);
- * console.log(jaxElm.prop("value")); // vraci pole ["mojeId", "demo"]
- * jaxElm.prop("value","bbb"); // nastavi value na "bbb"
- * jaxElm.prop("tagName"); // vrati "input"
- *
- * @param {String | Array | Object} property název vlastnosti | pole názvů vlastností | asociativní pole, např. {id:"mojeId", checked:true}
- * @param {value} value pokud je uvedena a první argument je string, provede se nastavení příslušné vlastnosti na určitou hodnotu
- * @returns {String | Object | JAX.Node}
- */
-JAX.Node.prototype.prop = function(property, value) {
-	if (typeof(property) == "string") { 
-		if (arguments.length == 1) { 
-			return this._node[property]; 
-		}
-		this._node[property] = value;
-		return this;
-	} else if (property instanceof Array) {
-		var props = {};
-		for (var i=0, len=property.length; i<len; i++) { 
-			var p = property[i];
-			props[p] = this._node[p];
-		}
-		return props;	
-	}
-
-	for (var p in property) {
-		this._node[p] = property[p];
-	}
-
-	return this;
-};
-
-/**
  * @method nastaví nebo získá html atributy
  * @example
  * var jaxElm = JAX(document.body);
@@ -682,13 +426,7 @@ JAX.Node.prototype.prop = function(property, value) {
  * @param {value} value pokud je uvedena a první argument je string, provede se nastavení příslušného atributu na určitou hodnotu
  * @returns {String | Object | JAX.Node}
  */
-JAX.Node.prototype.attr = function(property, value) {
-	if (!this._checkNodeType([1,9], "JAX.Node.attr")) { 
-		if (typeof(property) == "string") { return ""; }
-		if (property instanceof Array) { return {}; }
-		return this;  
-	}
-
+JAX.Element.prototype.attr = function(property, value) {
 	if (typeof(property) == "string") { 
 		if (arguments.length == 1) { 
 			return this._node.getAttribute(property); 
@@ -724,13 +462,7 @@ JAX.Node.prototype.attr = function(property, value) {
  * @param {value} value pokud je tento argument uveden a první argument je string, provede se nastavení příslušné vlastnosti na danou hodnotu
  * @returns {String | Object | JAX.Node}
  */
-JAX.Node.prototype.css = function(property, value) {
-	if (!this._checkNodeType([1], "JAX.Node.css")) { 
-		if (typeof(property) == "string") { return ""; }
-		if (property instanceof Array) { return {}; }
-		return this;  
-	}
-
+JAX.Element.prototype.css = function(property, value) {
 	if (typeof(property) == "string") {
 		if (arguments.length == 1) { 
 			return property == "opacity" ? this._getOpacity() : this._node.style[property]; 
@@ -768,18 +500,16 @@ JAX.Node.prototype.css = function(property, value) {
  * @param {String | Array} properties název vlastnosti | pole názvů vlastností
  * @returns {String | Object | JAX.Node}
  */
-JAX.Node.prototype.computedCss = function(properties) {
-	if (!this._checkNodeType([1], "JAX.Node.computedCss")) { return typeof(properties) ? "" : {}; }
-
+JAX.Element.prototype.computedCss = function(properties) {
 	if (typeof(properties) == "string") {
-		var value = JAX.Node.getComputedStyle(this._node).getPropertyValue(properties);
+		var value = JAX.Element.getComputedStyle(this._node).getPropertyValue(properties);
 		return value;
 	}
 
 	var css = {};
 	for (var i=0, len=properties.length; i<len; i++) {
 		var p = properties[i];
-		var value = JAX.Node.getComputedStyle(this._node).getPropertyValue(p);
+		var value = JAX.Element.getComputedStyle(this._node).getPropertyValue(p);
 		css[p] = value;
 	}
 	return css;
@@ -796,9 +526,7 @@ JAX.Node.prototype.computedCss = function(properties) {
  * @param {Number} value hodnota (v px)
  * @returns {Number | JAX.Node}
  */
-JAX.Node.prototype.fullSize = function(sizeType, value) {
-	if (!this._checkNodeType([1], "JAX.Node.fullSize")) { return arguments.length == 1 ? 0 : this; }
-	
+JAX.Element.prototype.fullSize = function(sizeType, value) {
 	if (arguments.length == 1) {
 		var backupDisplay = this.css("display"); 
 		
@@ -823,9 +551,7 @@ JAX.Node.prototype.fullSize = function(sizeType, value) {
  * @param {Number} value hodnota (v px)
  * @returns {Number | JAX.Node}
  */
-JAX.Node.prototype.size = function(sizeType, value) {
-	if (!this._checkNodeType([1], "JAX.Node.size")) { return arguments.length == 1 ? 0 : this; }
-	
+JAX.Element.prototype.size = function(sizeType, value) {
 	if (arguments.length == 1) { 
 		var size = parseInt(this.computedCss(sizeType), 10);
 		if (isFinite(size)) { return size; }
@@ -844,46 +570,6 @@ JAX.Node.prototype.size = function(sizeType, value) {
 };
 
 /** 
- * @method vrací rodičovský prvek
- * @example
- * var body = JAX("body").html("<span>Ahoj svete!</span>");
- * console.log(JAX("body span").parent() == body);
- *
- * @returns {JAX.Node | null}
- */
-JAX.Node.prototype.parent = function() {
-	if (!this._checkNodeType([1,3,8], "JAX.Node.parent")) { return new JAX.Node.Null(); }
-	if (this._node.parentNode) { return new JAX.Node(this._node.parentNode); }
-	return new JAX.Node.Null();
-};
-
-/** 
- * @method vrací následující prvek nebo null, pokud takový není
- * @example
- * var body = JAX("body").html("<span>Ahoj svete!</span><em>Takze dobry vecer!</em>");
- * if (JAX("body span").next()) { console.log("tag SPAN ma souseda"); }
- *
- * @returns {JAX.Node | null}
- */
-JAX.Node.prototype.next = function() {
-	if (!this._checkNodeType([1,3,8], "JAX.Node.next")) { return new JAX.Node.Null(); }
-	return this._node.nextSibling ? JAX(this._node.nextSibling) :  new JAX.Node.Null();
-};
-
-/** 
- * @method vrací předcházející prvek nebo null, pokud takový není
- * @example
- * var body = JAX("body").html("<span>Ahoj svete!</span><em>Takze dobry vecer!</em>");
- * if (JAX("body em").previous()) { console.log("tag EM ma souseda"); }
- *
- * @returns {JAX.Node | null}
- */
-JAX.Node.prototype.previous = function() {
-	if (!this._checkNodeType([1,3,8], "JAX.Node.previous")) { return new JAX.Node.Null(); }
-	return this._node.previousSibling ? JAX(this._node.previousSibling) : new JAX.Node.Null();
-};
-
-/** 
  * @method vrací instanci JAX.NodeArray, která obsahuje všechny přímé potomky uzlu
  * @example
  * var body = JAX("body").html("<span>Ahoj svete!</span><em>Takze dobry vecer!</em>");
@@ -891,9 +577,7 @@ JAX.Node.prototype.previous = function() {
  *
  * @returns {JAX.NodeArray | null}
  */
-JAX.Node.prototype.children = function(index) {
-	if (!this._checkNodeType([1,11], "JAX.Node.children")) { return arguments.length ? new JAX.Node(null) : new JAX.NodeArray([]); }
-
+JAX.Element.prototype.children = function(index) {
 	if (!arguments.length) {
 		var nodes = [];
 		for (var i=0, len=this._node.childNodes.length; i<len; i++) {
@@ -904,10 +588,10 @@ JAX.Node.prototype.children = function(index) {
 
 	var child = this._node.childNodes[index];
 	if (child) {
-		return new JAX.Node(child);
+		return JAX(child);
 	}
 
-	return new JAX.Node.Null();
+	return new JAX.NullNode();
 };
 
 /** 
@@ -918,21 +602,19 @@ JAX.Node.prototype.children = function(index) {
  *
  * @returns {JAX.Node | null}
  */
-JAX.Node.prototype.first = function() {
-	if (!this._checkNodeType([1], "JAX.Node.first") || !this._node.childNodes) {  return new JAX.Node.Null(); }
-
+JAX.Element.prototype.first = function() {
 	if ("firstElementChild" in this._node) {
-		return this._node.firstElementChild ? new JAX.Node(this._node.firstElementChild) : new JAX.Node.Null();
+		return this._node.firstElementChild ? JAX(this._node.firstElementChild) : new JAX.NullNode();
 	}
 
-	if (!this._node.childNodes || !this._node.childNodes.length) { return new JAX.Node.Null(); }
+	if (!this._node.childNodes || !this._node.childNodes.length) { return new JAX.NullNode(); }
 	
 	for (var i=0, len=this._node.childNodes.length; i<len; i++) {
 		var childNode = this._node.childNodes[i];
-		if (childNode.nodeType == 1) { return new JAX.Node(childNode); }
+		if (childNode.nodeType == 1) { return JAX(childNode); }
 	}
 
-	return new JAX.Node.Null();
+	return new JAX.NullNode();
 };
 
 /** 
@@ -943,21 +625,19 @@ JAX.Node.prototype.first = function() {
  *
  * @returns {JAX.Node | null}
  */
-JAX.Node.prototype.last = function() {
-	if (!this._checkNodeType([1], "JAX.Node.last") || !this._node.childNodes) { return new JAX.Node.Null(); }
-
+JAX.Element.prototype.last = function() {
 	if ("lastElementChild" in this._node) {
-		return this._node.lastElementChild ? new JAX.Node(this._node.lastElementChild) : new JAX.Node.Null();
+		return this._node.lastElementChild ? JAX(this._node.lastElementChild) : new JAX.NullNode();
 	}
 
-	if (!this._node.childNodes || !this._node.childNodes.length) { return new JAX.Node.Null(); }
+	if (!this._node.childNodes || !this._node.childNodes.length) { return new JAX.NullNode(); }
 	
 	for (var i=this._node.childNodes.length - 1; i>-1; i--) {
 		var childNode = this._node.childNodes[i];
-		if (childNode.nodeType == 1) { return new JAX.Node(childNode); }
+		if (childNode.nodeType == 1) { return JAX(childNode); }
 	}
 
-	return new JAX.Node.Null();
+	return new JAX.NullNode();
 };
 
 /** 
@@ -968,15 +648,10 @@ JAX.Node.prototype.last = function() {
  *
  * @returns {JAX.Node}
  */
-JAX.Node.prototype.clear = function() {
-	if (!this._checkNodeType([1,3,8,11], "JAX.Node.clear")) { return this; }
-
-	if (this._node.nodeType == 3 || this._node.nodeType == 8) {
-		this._node.nodeValue = "";
-		return this;
+JAX.Element.prototype.clear = function() {
+	if ("innerHTML" in this._node) {
+		JAK.DOM.clear(this._node);
 	}
-
-	JAK.DOM.clear(this._node);
 
 	return this;
 };
@@ -990,12 +665,12 @@ JAX.Node.prototype.clear = function() {
  * @param {Node | JAX.Node | String} node uzel | instance JAX.Node | CSS3 (2.1) selector
  * @returns {Boolean}
  */
-JAX.Node.prototype.eq = function(node) {
+JAX.Element.prototype.eq = function(node) {
 	if (!node) { return false; }
 
-	if (typeof(node) == "object" && (node.nodeType || node instanceof JAX.Node)) {
+	if (typeof(node) == "object" && (node.nodeType || node.jaxNodeType)) {
 		var elm = node.jaxNodeType ? node.node() : node;
-		return elm == this._node;
+		return elm === this._node;
 	} else if (typeof(node) == "string") {
 		if (/^[a-zA-Z0-9]+$/g.test(node)) { return !!(this._node.tagName && this._node.tagName.toLowerCase() == node); }
 		return !!this.parent().findAll(node).filterItems(
@@ -1015,16 +690,11 @@ JAX.Node.prototype.eq = function(node) {
  * @param {Node | JAX.Node | String} node uzel | instance JAX.Node | CSS3 (2.1) selector
  * @returns {Boolean}
  */
-JAX.Node.prototype.contains = function(node) {
-	if (!this._checkNodeType([1,3,8], "JAX.Node.contains") || !node) { return false; }
+JAX.Element.prototype.contains = function(node) {
+	if (!node) { return false; }
 
-	if (this._node.nodeType != 1) {
-		JAX.Report.show("warn","JAX.Node.contains","You can not use this method for this node. Doing nothing.", this._node);
-		return false;
-	}
-
-	if (typeof(node) == "object" && (node.nodeType || node instanceof JAX.Node)) {
-		var elm = node.jaxNodeType ? node.node().parentNode : node.parentNode;
+	if (typeof(node) == "object" && (node.nodeType || node.jaxNodeType)) {
+		var elm = node.jaxNodeType ? node.parent().node() : node.parentNode;
 		while(elm) {
 			if (elm == this._node) { return true; }
 			elm = elm.parentNode;
@@ -1046,17 +716,12 @@ JAX.Node.prototype.contains = function(node) {
  * @param {Node | JAX.Node | String} node uzel | instance JAX.Node | CSS3 (2.1) selector
  * @returns {Boolean}
  */
-JAX.Node.prototype.isIn = function(node) {
-	if (!this._checkNodeType([1], "JAX.Node.isIn") || !node) { return false; }
+JAX.Element.prototype.isIn = function(node) {
+	if (!node) { return false; }
 
-	if ([1,3,8].indexOf(this._node.nodeType) == -1) {
-		JAX.Report.show("warn","JAX.Node.contains","You can not use this method for this node. Doing nothing.", this._node);
-		return false;
-	}
-
-	if (typeof(node) == "object" && (node.nodeType || node instanceof JAX.Node)) {
-		var elm = node.jaxNodeType ? node : new JAX.Node(node);
-		return elm.contains(this);
+	if (typeof(node) == "object" && (node.nodeType || node.jaxNodeType)) {
+		var elm = node.jaxNodeType ? node : JAX(node);
+		return elm.exists() ? elm.contains(this) : false;
 	} else if (typeof(node) == "string") {
 		if (/^[a-zA-Z0-9]+$/g.test(node)) { 
 			var parent = this._node;
@@ -1074,9 +739,7 @@ JAX.Node.prototype.isIn = function(node) {
 	throw new Error("For first argument I expected html element or JAX.Node instance");
 };
 
-JAX.Node.prototype.animate = function(property, duration, start, end) {
-	if (!this._checkNodeType([1], "JAX.Node.animate")) { return new JAK.Promise().reject(this._node); }
-
+JAX.Element.prototype.animate = function(property, duration, start, end) {
 	if (typeof(property) != "string") {
 		type += "";
 		JAX.Report.show("error","JAX.Node.animate","For first argument I expected string. Trying convert to string: " + type, this._node); 
@@ -1097,9 +760,7 @@ JAX.Node.prototype.animate = function(property, duration, start, end) {
  * @param {Number | String} duration délka animace - lze zadat i jednotky s nebo ms
  * @returns {JAX.FX}
  */
-JAX.Node.prototype.fade = function(type, duration) {
-	if (!this._checkNodeType([1], "JAX.Node.fade")) { return new JAK.Promise().reject(this._node); }
-
+JAX.Element.prototype.fade = function(type, duration) {
 	if (typeof(type) != "string") {
 		type += "";
 		JAX.Report.show("error","JAX.Node.fade","For first argument I expected string. Trying convert to string: " + type, this._node); 
@@ -1128,9 +789,7 @@ JAX.Node.prototype.fade = function(type, duration) {
  * @param {Number | String} duration délka animace - lze zadat i jednotky s nebo ms
  * @returns {JAX.FX}
  */
-JAX.Node.prototype.fadeTo = function(opacityValue, duration) {
-	if (!this._checkNodeType([1], "JAX.Node.fadeTo")) { return new JAK.Promise().reject(this._node); }
-	
+JAX.Element.prototype.fadeTo = function(opacityValue, duration) {
 	var opacityValue = parseFloat(opacityValue) || 0;
 
 	if (opacityValue<0) {
@@ -1151,9 +810,7 @@ JAX.Node.prototype.fadeTo = function(opacityValue, duration) {
  * @param {Number | String} duration délka animace - lze zadat i jednotky s nebo ms
  * @returns {JAX.FX}
  */
-JAX.Node.prototype.slide = function(type, duration) {
-	if (!this._checkNodeType([1], "JAX.Node.slide")) { return new JAK.Promise().reject(this._node); }
-
+JAX.Element.prototype.slide = function(type, duration) {
 	if (typeof(type) != "string") {
 		type += "";
 		JAX.Report.show("error","JAX.Node.slide","For first argument I expected string. Trying convert to string: " + type, this._node);
@@ -1197,7 +854,7 @@ JAX.Node.prototype.slide = function(type, duration) {
 	return promise;
 };
 
-JAX.Node.prototype._setOpacity = function(value) {
+JAX.Element.prototype._setOpacity = function(value) {
 	var property = "";
 
 	if (JAK.Browser.client == "ie" && JAK.Browser.version < 9) { 
@@ -1211,7 +868,7 @@ JAX.Node.prototype._setOpacity = function(value) {
 
 };
 
-JAX.Node.prototype._getOpacity = function() {
+JAX.Element.prototype._getOpacity = function() {
 	if (JAK.Browser.client == "ie" && JAK.Browser.version < 9) {
 		var value = "";
 		this._node.style.filter.replace(JAX.NODE.OPACITY_REGEXP, function(match1, match2) {
@@ -1222,7 +879,7 @@ JAX.Node.prototype._getOpacity = function() {
 	return this._node.style["opacity"];
 };
 
-JAX.Node.prototype._getSizeWithBoxSizing = function(sizeType, value) {
+JAX.Element.prototype._getSizeWithBoxSizing = function(sizeType, value) {
 	var boxSizing = JAX.Node._BOX_SIZING ? this.computedCss(JAX.Node._BOX_SIZING) : null;
 
 	var paddingX = 0,
@@ -1256,7 +913,7 @@ JAX.Node.prototype._getSizeWithBoxSizing = function(sizeType, value) {
 	return value;
 };
 
-JAX.Node.prototype._getText = function(node) {
+JAX.Element.prototype._getText = function(node) {
 	var text = "";
 	for (var i=0, len=node.childNodes.length; i<len; i++) {
 		var child = node.childNodes[i];
@@ -1269,18 +926,9 @@ JAX.Node.prototype._getText = function(node) {
 	return text;
 };
 
-JAX.Node.prototype._destroyEvents = function(eventListeners) {
+JAX.Element.prototype._destroyEvents = function(eventListeners) {
 	for (var i=0, len=eventListeners.length; i<len; i++) { 
 		var eventListener = eventListeners[i].id();
 		JAK.Events.removeListener(eventListener);
 	}
-};
-
-JAX.Node.prototype._checkNodeType = function(allowedNodeTypes, method) {
-	if (allowedNodeTypes.length && allowedNodeTypes.indexOf(this.jaxNodeType) == -1) {
-		JAX.Report.show("error", method, "You can not use this method for this node. Doing nothing.", this._node);
-		return false;
-	}
-
-	return true;
 };
