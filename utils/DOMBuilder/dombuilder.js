@@ -161,10 +161,6 @@ JAX.DOMBuilder.prototype.appendTo = function(node) {
 		var jaxNode = node;
 	}
 
-	if (!jaxNode) {
-		throw new Error("You are trying to append me to unsupported or null element. I can be appended only to html element or documentFragment element.");
-	}
-
 	this._jax.container.appendTo(jaxNode);
 	return this;
 };

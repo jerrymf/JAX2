@@ -43,43 +43,43 @@ JAX.JAXNode.prototype.exists = function() {
 };
 
 JAX.JAXNode.prototype.find = function(selector) {
-	this._showMessage("JAX.JAXNode.find");
+	this._showMessage();
 
 	return new JAX.JAXNode();
 };
 
 JAX.JAXNode.prototype.findAll = function(selector) {
-	this._showMessage("JAX.JAXNode.findAll");
+	this._showMessage();
 
 	return new JAX.NodeArray([]);
 };
 
 JAX.JAXNode.prototype.addClass = function(classNames) {
-	this._showMessage("JAX.JAXNode.addClass");
+	this._showMessage();
 
 	return this;
 };
 
 JAX.JAXNode.prototype.removeClass = function(classNames) {
-	this._showMessage("JAX.JAXNode.removeClass");
+	this._showMessage();
 
 	return this;
 };
 
 JAX.JAXNode.prototype.hasClass = function(className) {
-	this._showMessage("JAX.JAXNode.hasClass");
+	this._showMessage();
 
 	return false;
 };
 
 JAX.JAXNode.prototype.toggleClass = function(className) {
-	this._showMessage("JAX.JAXNode.toggleClass");
+	this._showMessage();
 
 	return this;
 }
 
 JAX.JAXNode.prototype.id = function(id) {
-	this._showMessage("JAX.JAXNode.id");
+	this._showMessage();
 
 	if (arguments.length) {
 		return this;
@@ -89,7 +89,7 @@ JAX.JAXNode.prototype.id = function(id) {
 };
 
 JAX.JAXNode.prototype.html = function(innerHTML) {
-	this._showMessage("JAX.JAXNode.html");
+	this._showMessage();
 
 	if (arguments.length) {
 		return this;
@@ -99,7 +99,7 @@ JAX.JAXNode.prototype.html = function(innerHTML) {
 };
 
 JAX.JAXNode.prototype.text = function(text) {
-	this._showMessage("JAX.JAXNode.text");
+	this._showMessage();
 
 	if (arguments.length) {
 		return this;
@@ -109,49 +109,49 @@ JAX.JAXNode.prototype.text = function(text) {
 };
 
 JAX.JAXNode.prototype.add = function(nodes) {
-	this._showMessage("JAX.JAXNode.add");
+	this._showMessage();
 
 	return this;
 };
 
 JAX.JAXNode.prototype.addBefore = function(node, nodeBefore) {
-	this._showMessage("JAX.JAXNode.addBefore");
+	this._showMessage();
 
 	return this;
 };
 
 JAX.JAXNode.prototype.appendTo = function(node) {
-	this._showMessage("JAX.JAXNode.appendTo");
+	this._showMessage();
 
 	return this;
 };
 
 JAX.JAXNode.prototype.before = function(node) {
-	this._showMessage("JAX.JAXNode.before");
+	this._showMessage();
 
 	return this;
 };
 
 JAX.JAXNode.prototype.after = function(node) {
-	this._showMessage("JAX.JAXNode.after");
+	this._showMessage();
 
 	return this;
 };
 
 JAX.JAXNode.prototype.insertFirstTo = function(node) {
-	this._showMessage("JAX.JAXNode.insertFirstTo");
+	this._showMessage();
 
 	return this;
 };
 
 JAX.JAXNode.prototype.replaceWith = function(node) {
-	this._showMessage("JAX.JAXNode.replaceWith");
+	this._showMessage();
 
 	return this;
 };
 
 JAX.JAXNode.prototype.remove = function() {
-	this._showMessage("JAX.JAXNode.remove");
+	this._showMessage();
 
 	return this;
 };
@@ -163,19 +163,19 @@ JAX.JAXNode.prototype.clone = function(withContent) {
 };
 
 JAX.JAXNode.prototype.listen = function(type, obj, funcMethod, bindData) {
-	this._showMessage("JAX.JAXNode.listen");
+	this._showMessage();
 
 	return new JAX.Listener(this, null, type, f);
 };
 
 JAX.JAXNode.prototype.stopListening = function(listener) {
-	this._showMessage("JAX.JAXNode.stopListening");
+	this._showMessage();
 
 	return this;
 };
 
 JAX.JAXNode.prototype.prop = function(property, value) {
-	this._showMessage("JAX.JAXNode.prop");
+	this._showMessage();
 
 	if (typeof(arguments[0]) == "string") { return ""; }
 	if (arguments[0] instanceof Array) { return {}; }
@@ -183,7 +183,7 @@ JAX.JAXNode.prototype.prop = function(property, value) {
 };
 
 JAX.JAXNode.prototype.attr = function(property, value) {
-	this._showMessage("JAX.JAXNode.attr");
+	this._showMessage();
 
 	if (typeof(arguments[0]) == "string") { return ""; }
 	if (arguments[0] instanceof Array) { return {}; }
@@ -191,7 +191,7 @@ JAX.JAXNode.prototype.attr = function(property, value) {
 };
 
 JAX.JAXNode.prototype.css = function(property, value) {
-	this._showMessage("JAX.JAXNode.css");
+	this._showMessage();
 
 	if (typeof(arguments[0]) == "string") { return ""; }
 	if (arguments[0] instanceof Array) { return {}; }
@@ -199,107 +199,107 @@ JAX.JAXNode.prototype.css = function(property, value) {
 };
 
 JAX.JAXNode.prototype.computedCss = function(properties) {
-	this._showMessage("JAX.JAXNode.computedCss");
+	this._showMessage();
 
 	return typeof(properties) ? "" : {};
 };
 
 JAX.JAXNode.prototype.fullSize = function(sizeType, value) {
-	this._showMessage("JAX.JAXNode.fullSize");
+	this._showMessage();
 
 	return arguments.length == 1 ? 0 : this;
 };
 
 JAX.JAXNode.prototype.size = function(sizeType, value) {
-	this._showMessage("JAX.JAXNode.size");
+	this._showMessage();
 
 	return arguments.length == 1 ? 0 : this;
 };
 
 JAX.JAXNode.prototype.parent = function() {
-	this._showMessage("JAX.JAXNode.parent");
+	this._showMessage();
 
 	return new JAX.JAXNode();
 };
 
 JAX.JAXNode.prototype.next = function() {
-	this._showMessage("JAX.JAXNode.next");
+	this._showMessage();
 
 	return new JAX.JAXNode();
 };
 
 JAX.JAXNode.prototype.previous = function() {
-	this._showMessage("JAX.JAXNode.previous");
+	this._showMessage();
 
 	return new JAX.JAXNode();
 };
 
 JAX.JAXNode.prototype.children = function(index) {
-	this._showMessage("JAX.JAXNode.children");
+	this._showMessage();
 
 	return arguments.length ? new JAX.JAXNode() : new JAX.NodeArray([]);
 };
 
 JAX.JAXNode.prototype.first = function() {
-	this._showMessage("JAX.JAXNode.first");
+	this._showMessage();
 
 	return new JAX.JAXNode();
 };
 
 JAX.JAXNode.prototype.last = function() {
-	this._showMessage("JAX.JAXNode.last");
+	this._showMessage();
 
 	return new JAX.JAXNode();
 };
 
 JAX.JAXNode.prototype.clear = function() {
-	this._showMessage("JAX.JAXNode.clear");
+	this._showMessage();
 
 	return new JAX.JAXNode();
 };
 
 JAX.JAXNode.prototype.eq = function(node) {
-	this._showMessage("JAX.JAXNode.eq");
+	this._showMessage();
 
 	return arguments[0] && arguments[0] instanceof JAX.JAXNode;
 };
 
 JAX.JAXNode.prototype.contains = function(node) {
-	this._showMessage("JAX.JAXNode.contains");
+	this._showMessage();
 
 	return false;
 };
 
 JAX.JAXNode.prototype.isIn = function(node) {
-	this._showMessage("JAX.JAXNode.isIn");
+	this._showMessage();
 
 	return false;
 };
 
 JAX.JAXNode.prototype.animate = function(property, duration, start, end) {
-	this._showMessage("JAX.JAXNode.animate");
+	this._showMessage();
 
 	return new JAK.Promise().reject(this._node);
 };
 
 JAX.JAXNode.prototype.fade = function(type, duration) {
-	this._showMessage("JAX.JAXNode.fade");
+	this._showMessage();
 
 	return new JAK.Promise().reject(this._node);
 };
 
 JAX.JAXNode.prototype.fadeTo = function(opacityValue, duration) {
-	this._showMessage("JAX.JAXNode.fadeTo");
+	this._showMessage();
 
 	return new JAK.Promise().reject(this._node);
 };
 
 JAX.JAXNode.prototype.slide = function(type, duration) {
-	this._showMessage("JAX.JAXNode.slide");
+	this._showMessage();
 
 	return new JAK.Promise().reject(this._node);
 };
 
 JAX.JAXNode.prototype._showMessage = function(method) {
-	JAX.Report.show("error", method, "Hey man! You are trying to use unsupported method with my node.", this._node);
+	JAX.Report.error("I have bad feeling about this! You are trying to use unsupported method with my node.", this._node);
 };

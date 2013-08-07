@@ -20,6 +20,68 @@ JAX.Node.prototype.$constructor = function(node) {
 };
 
 /**
+ * @method přidává do elementu další uzly vždy na konec
+ * @example
+ * document.body.innerHTML = "<span>Ahoj svete!</span>";
+ * var jaxElm = JAX(document.body).add(JAX.make("span")); 
+ *
+ * @param {String | Node | Node[] | JAX.NodeArray} HTML string | nodes DOM uzel | pole DOM uzlů | instance JAX.NodeArray
+ * @returns {JAX.Node}
+ */
+JAX.Node.prototype.add = function(nodes) {
+	if (nodes instanceof JAX.NodeArray) {
+		nodes = nodes.items();
+	} else if (typeof(nodes) == "string") {
+		var div = document.createElement("div");
+		div.innerHTML = nodes;
+		var nodesLength = div.childNodes.length;
+		nodes = new Array(nodesLength);
+		for (var i=0, len=nodesLength; i<len; i++) { nodes[i] = div.childNodes[i]; }
+	} else if (!(nodes instanceof Array)) { 
+		nodes = [].concat(nodes); 
+	} 
+	
+	for (var i=0, len=nodes.length; i<len; i++) {
+		var node = nodes[i];
+		if ((!node.nodeType && !node.jaxNodeType) || (node.jaxNodeType && node.jaxNodeType < 1)) {
+			JAX.Report.error("For my argument I expected html node, text node, documentFragment or JAX node. You can use also array of them.");
+			continue;
+		}
+		var node = node.jaxNodeType ? node.node() : node;
+		this._node.appendChild(node);
+	}
+	
+	return this;
+};
+
+/**
+ * @method přidá do elementu DOM uzel před zadaný uzel
+ * @example
+ * document.body.innerHTML = "<span>Ahoj svete!</span>";
+ * var jaxElm = JAX(document.body).add(JAX.make("span"), document.body.lastChild); // prida span pred posledni prvek v body 
+ *
+ * @param {Node | JAX.Node} node DOM uzel | instance JAX.Node
+ * @param {Node | JAX.Node} nodeBefore DOM uzel | instance JAX.Node
+ * @returns {JAX.Node}
+ */
+JAX.Node.prototype.addBefore = function(node, nodeBefore) {
+	if (!node || typeof(node) != "object" || (!node.nodeType && !node.jaxNodeType) || (node.jaxNodeType && node.jaxNodeType < 1)) { 
+		JAX.Report.error("For first argument I expected html element, text node, documentFragment or JAX node.");
+		return this;
+	}
+	if (!nodeBefore || typeof(nodeBefore) != "object" || (!nodeBefore.nodeType && !nodeBefore.jaxNodeType) || (node.jaxNodeType && node.jaxNodeType < 1)) { 
+		JAX.Report.error("For second argument I expected html element, text node or JAX node."); 
+		return this;
+	}
+
+	var node = node.jaxNodeType ? node.node() : node;
+	var nodeBefore = nodeBefore.jaxNodeType ? nodeBefore.node() : nodeBefore;
+	
+	this._node.insertBefore(node, nodeBefore);
+	return this;
+};
+
+/**
  * @method připne (přesune) element do jiného elementu (na konec)
  * @example
  * document.body.innerHTML = "<span>Ahoj svete!</span>";
@@ -37,7 +99,8 @@ JAX.Node.prototype.appendTo = function(node) {
 		return this;
 	}
 	
-	throw new Error("I could not find given element. For first argument I expected html element, documentFragment or JAX.Node instance");
+	JAX.Report.error("I could not find given element. For first argument I expected html element, documentFragment or JAX node.");
+	return this;
 };
 
 /**
@@ -58,7 +121,8 @@ JAX.Node.prototype.before = function(node) {
 		return this;
 	}
 	
-	throw new Error("I could not find given element. For first argument I expected html element, text node or JAX.Node instance");
+	JAX.Report.error("I could not find given element. For first argument I expected html element, text node or JAX node.");
+	return this;
 };
 
 /**
@@ -85,7 +149,8 @@ JAX.Node.prototype.after = function(node) {
 		return this;
 	}
 	
-	throw new Error("I could not find given element. For first argument I expected html element, text node or JAX.Node instance");
+	JAX.Report.error("I could not find given element. For first argument I expected html element, text node or JAX node.");
+	return this;
 };
 
 /**
@@ -114,7 +179,8 @@ JAX.Node.prototype.insertFirstTo = function(node) {
 		return this;
 	}
 	
-	throw new Error("I could not find given element. For first argument I expected html element, text node or JAX.Node instance");
+	JAX.Report.error("I could not find given element. For first argument I expected html element, text node or JAX node.");
+	return this;
 };
 
 /**
@@ -136,7 +202,8 @@ JAX.Node.prototype.replaceWith = function(node) {
 		return this;
 	}
 
-	throw new Error("For first argument I expected html element, text node or JAX.Node instance");
+	JAX.Report.error("For first argument I expected html element, text node or JAX node.");
+	return this;
 };
 
 /**

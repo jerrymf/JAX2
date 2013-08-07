@@ -3,12 +3,9 @@ JAX.Report = JAK.ClassMaker.makeStatic({
 	VERSION: "1.0"
 });
 
-JAX.Report.show = function(type, func, msg, node) {
-	if (console[type]) {
-		console[type]("[" + func + "] » " + msg);
-		if (node) { console.log("Node: ", node); }
-		return;
+JAX.Report.error = function(msg, node) {
+	if (console.error) {
+		console.error("[::JAX::] Found error »»» " + msg + " I will continue but my doing is unstable!");
+		if (node) { console.log("[::JAX::] Problem node »»» ", node); }
 	}
-	
-	throw new Error("Bad console type: " + type); 
 };

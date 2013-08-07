@@ -11,7 +11,8 @@
 JAX.Element = JAK.ClassMaker.makeClass({
 	NAME: "JAX.Element",
 	VERSION: "1.0",
-	EXTEND: JAX.Node
+	EXTEND: JAX.Node,
+	IMPLEMENT: JAX.IListening
 });
 
 JAX.Element._events = [];
@@ -79,9 +80,9 @@ JAX.Element.prototype.findAll = function(selector) {
  * @returns {JAX.Node}
  */
 JAX.Element.prototype.addClass = function(classNames) {
-	if (typeof(classNames) != "string") { 
+	if (typeof(classNames) != "string") {
 		classNames += "";
-		JAX.Report.show("error","JAX.Node.addClass","Given arguments can be string, array of strings. Trying convert to string: " + classNames, this._node);
+		JAX.Report.error("Given argument can be only string.", this._node);
 	}
 
 	var cNames = classNames.split(" ");
@@ -105,7 +106,7 @@ JAX.Element.prototype.addClass = function(classNames) {
 JAX.Element.prototype.removeClass = function(classNames) {
 	if (typeof(classNames) != "string") {
 		classNames += "";
-		JAX.Report.show("error","JAX.Node.removeClass","Given arguments can be string, array of strings. Trying convert to string: " + classNames, this._node);
+		JAX.Report.error("Given argument can be only string.", this._node);
 	}
 
 	var cNames = classNames.split(" ");
@@ -127,9 +128,9 @@ JAX.Element.prototype.removeClass = function(classNames) {
  * @returns {Boolean}
  */
 JAX.Element.prototype.hasClass = function(className) {
-	if (typeof(className) != "string") {  
-		className += "";
-		JAX.Report.show("error","JAX.Node.hasClass","For first argument I expected string. Trying convert to string: " + className, this._node);
+	if (typeof(className) != "string") {
+		className += "";  
+		JAX.Report.error("For my argument I expected string.", this._node);
 	}
 
 	if (className == "")  { return false; }
@@ -154,7 +155,7 @@ JAX.Element.prototype.hasClass = function(className) {
 JAX.Element.prototype.toggleClass = function(className) {
 	if (typeof(className) != "string") {
 		className += "";
-		JAX.Report.show("error","JAX.Node.toggleClass","Given arguments can be string. Trying convert to string: " + classNames, this._node);
+		JAX.Report.error("For my argument I expected string.", this._node);
 	}
 
 	this._node.classList.toggle(className);
@@ -178,7 +179,7 @@ JAX.Element.prototype.id = function(id) {
 
 	if (typeof(id) != "string") {
 		id += "";
-		JAX.Report.show("warn","JAX.Node.id","For first argument I expected string. Trying convert to string: " + id, this._node);
+		JAX.Report.error("For my argument I expected string.", this._node);
 	}
 
 	this.attr({id:id}); 
@@ -200,8 +201,7 @@ JAX.Element.prototype.html = function(innerHTML) {
 	}
 
 	if (typeof(innerHTML) != "string" && typeof(innerHTML) != "number") {
-		innerHTML += "";
-		JAX.Report.show("error","JAX.Node.html","For first argument I expected string or number. Trying convert to string: " + innerHTML, this._node);
+		JAX.Report.error("For my argument I expected string or number.", this._node);
 	}
 
 	this._node.innerHTML = innerHTML + "";
@@ -218,197 +218,18 @@ JAX.Element.prototype.html = function(innerHTML) {
  * @returns {JAX.Node | String}
  */
 JAX.Element.prototype.text = function(text) {
+	if (typeof(innerHTML) != "string" && typeof(innerHTML) != "number") {
+		JAX.Report.error("For my argument I expected string or number.", this._node);
+	}
+
 	if (!arguments.length && "innerHTML" in this._node) { 
 		return this._getText(this._node);
 	}
 
 	if ("innerHTML" in this._node) {
 		this.clear();
-		this._node.appendChild(this._node.ownerDocument.createTextNode(text));
+		this._node.appendChild(this._node.ownerDocument.createTextNode(text + ""));
 	}
-
-	return this;
-};
-
-/**
- * @method přidává do elementu další uzly vždy na konec
- * @example
- * document.body.innerHTML = "<span>Ahoj svete!</span>";
- * var jaxElm = JAX(document.body).add(JAX.make("span")); 
- *
- * @param {String | Node | Node[] | JAX.NodeArray} HTML string | nodes DOM uzel | pole DOM uzlů | instance JAX.NodeArray
- * @returns {JAX.Node}
- */
-JAX.Element.prototype.add = function(nodes) {
-	if (nodes instanceof JAX.NodeArray) {
-		nodes = nodes.items();
-	} else if (typeof(nodes) == "string") {
-		var div = document.createElement("div");
-		div.innerHTML = nodes;
-		var nodesLength = div.childNodes.length;
-		nodes = new Array(nodesLength);
-		for (var i=0, len=nodesLength; i<len; i++) { nodes[i] = div.childNodes[i]; }
-	} else if (!(nodes instanceof Array)) { 
-		nodes = [].concat(nodes); 
-	} 
-	
-	for (var i=0, len=nodes.length; i<len; i++) {
-		var node = nodes[i];
-		if (!node.nodeType && !node.jaxNodeType) { 
-			throw new Error("For arguments I expected html node, text node or JAX.Node instance. You can use array of them."); 
-		}
-		var node = node.jaxNodeType ? node.node() : node;
-		this._node.appendChild(node);
-	}
-	
-	return this;
-};
-
-/**
- * @method přidá do elementu DOM uzel před zadaný uzel
- * @example
- * document.body.innerHTML = "<span>Ahoj svete!</span>";
- * var jaxElm = JAX(document.body).add(JAX.make("span"), document.body.lastChild); // prida span pred posledni prvek v body 
- *
- * @param {Node | JAX.Node} node DOM uzel | instance JAX.Node
- * @param {Node | JAX.Node} nodeBefore DOM uzel | instance JAX.Node
- * @returns {JAX.Node}
- */
-JAX.Element.prototype.addBefore = function(node, nodeBefore) {
-	if (!node || typeof(node) != "object" || (!node.nodeType && !node.jaxNodeType)) { 
-		throw new Error("For first argument I expected html element, text node, documentFragment or JAX.Node instance"); 
-	}
-	if (!nodeBefore || typeof(nodeBefore) != "object" || (!nodeBefore.nodeType && !nodeBefore.jaxNodeType)) { 
-		throw new Error("For second argument I expected html element, text node or JAX.Node instance"); 
-	}
-
-	var node = node.jaxNodeType ? node.node() : node;
-	var nodeBefore = nodeBefore.jaxNodeType ? nodeBefore.node() : nodeBefore;
-	
-	this._node.insertBefore(node, nodeBefore);
-	return this;
-};
-
-/**
- * @method navěsí posluchač události na element a vrátí event id. Pokud událost proběhne, vyvolá se zadané funkce. Do této funkce jsou pak předány parametry event (window.Event), jaxlm (instance JAX.Node) a bindData
- * @example
- * document.body.innerHTML = "<span>Ahoj svete!</span>";
- * var func = function(jaxE) { alert(jaxE.currentTarget().html()); };
- * var eventId = JAX(document.body.firstChild).listen("click", func); // navesi udalost click na span
- *
- * @param {String} type typ události, na kterou chceme reagovat ("click", "mousedown", ...)
- * @param {Object} obj objekt, ve které se metoda uvedená pomocí stringu nachází. Pokud je funcMethod function, tento parameter lze nechat prázdný nebo null
- * @param {String | Function} funcMethod název metody nebo instance funkce, která se má zavolat po té ,co je událost vyvolána
- * @param {any} bindData pokud je potřeba přenést zároveň s tím i nějakou hodnotu (String, Number, Asociativní pole, ...)
- * @returns {String} Event ID
- */
-JAX.Element.prototype.listen = function(type, obj, funcMethod, bindData) {
-	if (!funcMethod) {
-		var funcMethod = obj;
-		obj = window;
-	}
-
-	if (typeof(type) != "string") { 
-		type += "";
-		JAX.Report.show("error","JAX.Node.listen","For first argument I expected string. Trying convert to string: " + type, this._node);
-	}
-
-	if (typeof(obj) != "object" && typeof(obj) != "function") { 
-		throw new Error("For second argument I expected referred object or binded function"); 
-	}
-
-	if (typeof(funcMethod) != "string" && typeof(funcMethod) != "function") { 
-		throw new Error("For second argument I expected string or function"); 
-	}
-
-	if (typeof(funcMethod) == "string") {
-		var funcMethod = obj[funcMethod];
-		if (!funcMethod) { throw new Error("Given method in second argument was not found in referred object given in third argument"); } 
-		funcMethod = funcMethod.bind(obj);
-	} else if (typeof(funcMethod) == "function" && obj) {
-		funcMethod = funcMethod.bind(obj);
-	} else if (typeof(obj) == "function") {
-		funcMethod = obj;
-	}
-
-	var f = function(e, elm) {
-		funcMethod(new JAX.Event(e), bindData); 
-	};
-	
-	var listenerId = JAK.Events.addListener(this._node, type, f);
-	var objListener = new JAX.Listener(this, listenerId, type, f);
-	var allNodes = JAX.Element._events;
-	var nodeIndex = -1;
-
-	for (var i=0, len=allNodes.length; i<len; i++) {
-		if (allNodes[i].node == this._node) { nodeIndex = i; break; }
-	}
-
-	if (nodeIndex == -1) {
-		var nodeInfo = {
-			node: this._node,
-			events: {}
-		};
-		allNodes.push(nodeInfo);
-	} else {
-		var nodeInfo = allNodes[nodeIndex];
-	}
-
-	if (nodeInfo.events[type]) {
-		nodeInfo.events[type].push(objListener);	
-	} else {
-		nodeInfo.events[type] = [objListener];
-	}
-
-	return objListener;
-};
-
-/**
- * @method odvěsí posluchač na základě parametru, což může být eventId vrácené pomocí metody JAX.Node.listen a nebo jméno konkrétkní události, např.: "click" Pokud se uvede jméno konkrétní události, jsou odstranění všechny listenery na tomto elementu, které na ni poslouchají a které byly navěšeny JAXem.
- * @example
- * document.body.innerHTML = "<span>Ahoj svete!</span>";
- * var func = function(e, jaxElm) { jaxElm.stopListening("click"); }; // pri kliknuti odvesi udalost
- * var eventId = JAX(document.body.firstChild).listen("click", func); // navesi udalost click na span
- *
- * @param {String} id konkrétní událost nebo event id vrácené metodou JAX.Node.listen
- * @returns {JAX.Node}
- */
-JAX.Element.prototype.stopListening = function(listener) {
-	var allNodes = JAX.Element._events;
-	var nodeIndex = -1;
-
-	for (var i=0, len=allNodes.length; i<len; i++) {
-		if (allNodes[i].node == this._node) { nodeIndex = i; break; }
-	}
-
-	if (nodeIndex == -1) { return this; }
-	var nodeInfo = allNodes[nodeIndex];
-
-	if (!arguments.length) {
-		var events = nodeInfo.events;
-		for (var p in events) { this._destroyEvents(events[p]); }
-		allNodes.splice(nodeIndex, 1);
-		return this;
-	}
-
-	if (typeof(listener) == "string") {
-		var eventListeners = nodeInfo.events[listener];
-		this._destroyEvents(eventListeners);
-		delete allNodes[nodeIndex].events[listener];
-		return this;
-	}
-
-	if (listener instanceof JAX.Listener) {
-		var eventListeners = nodeInfo.events[listener.type()];
-		var listenerIndex = eventListeners.indexOf(listener);
-		if (listenerIndex > -1) {
-			this._destroyEvents([eventListeners[listenerIndex]]);
-			eventListeners.splice(listenerIndex, 1);
-		}
-		return this;
-	}
-
-	JAX.Report.show("error","JAX.Node.stopListening","For first argument I expected JAX.Listener instance , string with event type or you can call it without arguments.");
 
 	return this;
 };
@@ -704,7 +525,8 @@ JAX.Element.prototype.contains = function(node) {
 		return !!this.find(node);
 	}
 	
-	throw new Error("For first argument I expected html element, text node, string with CSS3 compatible selector or JAX.Node instance");
+	JAX.Report.error("For first argument I expected html element, text node, string with CSS3 compatible selector or JAX node.");
+	return false;
 };
 
 /** 
@@ -736,13 +558,14 @@ JAX.Element.prototype.isIn = function(node) {
 		).length;
 	}
 	
-	throw new Error("For first argument I expected html element or JAX.Node instance");
+	JAX.Report.error("For first argument I expected html element or JAX node.");
+	return false;
 };
 
 JAX.Element.prototype.animate = function(property, duration, start, end) {
 	if (typeof(property) != "string") {
 		type += "";
-		JAX.Report.show("error","JAX.Node.animate","For first argument I expected string. Trying convert to string: " + type, this._node); 
+		JAX.Report.error("For first argument I expected string.", this._node); 
 	}
 
 	var fx = new JAX.FX(this);
@@ -763,7 +586,7 @@ JAX.Element.prototype.animate = function(property, duration, start, end) {
 JAX.Element.prototype.fade = function(type, duration) {
 	if (typeof(type) != "string") {
 		type += "";
-		JAX.Report.show("error","JAX.Node.fade","For first argument I expected string. Trying convert to string: " + type, this._node); 
+		JAX.Report.error("For first argument I expected string.", this._node); 
 	}
 
 	switch(type) {
@@ -774,7 +597,7 @@ JAX.Element.prototype.fade = function(type, duration) {
 			return this.animate("opacity", duration, 1, 0);
 		break;
 		default:
-			JAX.Report.show("warn","JAX.Node.fade","I got unsupported type '" + type + "'.", this._node);
+			JAX.Report.error("I got unsupported type '" + type + "'.", this._node);
 			return new JAK.Promise().reject(this._node);
 	}
 };
@@ -794,7 +617,7 @@ JAX.Element.prototype.fadeTo = function(opacityValue, duration) {
 
 	if (opacityValue<0) {
 		opacityValue = 0;
-		JAX.Report.show("error","JAX.Node.fadeTo","For first argument I expected positive number, but I got negative. I set zero value.", this._node); 
+		JAX.Report.error("For first argument I expected positive number, but I got negative. I set zero value.", this._node); 
 	}
 
 	return this.animate("opacity", duration, null, opacityValue);
@@ -813,7 +636,7 @@ JAX.Element.prototype.fadeTo = function(opacityValue, duration) {
 JAX.Element.prototype.slide = function(type, duration) {
 	if (typeof(type) != "string") {
 		type += "";
-		JAX.Report.show("error","JAX.Node.slide","For first argument I expected string. Trying convert to string: " + type, this._node);
+		JAX.Report.error("For first argument I expected string.", this._node);
 	}
 
 	var backupStyles = {};
@@ -841,7 +664,7 @@ JAX.Element.prototype.slide = function(type, duration) {
 			var end = null;
 		break;
 		default:
-			JAX.Report.show("warn","JAX.Node.slide","I got unsupported type '" + type + "'.", this._node);
+			JAX.Report.error("I got unsupported type '" + type + "'.", this._node);
 			return this;
 	}
 

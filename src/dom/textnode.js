@@ -38,3 +38,15 @@ JAX.TextNode.prototype.eq = function(node) {
 	var elm = node.jaxNodeType ? node.node() : node;
 	return elm == this._node;
 };
+
+JAX.TextNode.prototype.add = function(nodes) {
+	this._showMessage();
+
+	return this;
+};
+
+JAX.TextNode.prototype.addBefore = function(node, nodeBefore) {
+	this._showMessage();
+
+	return this;
+};
