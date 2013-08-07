@@ -37,4 +37,4 @@ JAX.TextNode.prototype.eq = function(node) {
 	if (!node) { return false; }
 	var elm = node.jaxNodeType ? node.node() : node;
 	return elm == this._node;
-}
+};
