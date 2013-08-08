@@ -310,7 +310,8 @@ JAX.NodeArray.prototype.filterItems = function(func, obj) {
  * @returns {JAX.Node}
  */
 JAX.NodeArray.prototype.firstItem = function() {
-	return this._jaxNodes[0];
+	var jaxNode = this._jaxNodes[0];
+	return jaxNode ? jaxNode : new JAX.NullNode();
 };
 
 /**
@@ -318,7 +319,8 @@ JAX.NodeArray.prototype.firstItem = function() {
  * @returns {JAX.Node}
  */
 JAX.NodeArray.prototype.lastItem = function() {
-	return this._jaxNodes[this.length - 1];
+	var jaxNode = this._jaxNodes[this.length - 1];
+	return jaxNode ? jaxNode : new JAX.NullNode();
 };
 
 /**
