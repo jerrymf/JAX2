@@ -15,8 +15,7 @@ JAX.DocumentFragmentNode = JAK.ClassMaker.makeClass({
 });
 
 JAX.DocumentFragmentNode.prototype.$constructor = function(doc) {
-	this._node = doc;
-	this.jaxNodeType = doc.nodeType;
+	this.$super(doc);
 };
 
 JAX.DocumentFragmentNode.prototype.find = function(selector) {
