@@ -306,6 +306,22 @@ JAX.NodeArray.prototype.filterItems = function(func, obj) {
 };
 
 /**
+ * @method vrátí první prvek v poli
+ * @returns {JAX.Node}
+ */
+JAX.NodeArray.prototype.firstItem = function() {
+	return this._jaxNodes[0];
+};
+
+/**
+ * @method vrátí poslední prvek v poli
+ * @returns {JAX.Node}
+ */
+JAX.NodeArray.prototype.lastItem = function() {
+	return this._jaxNodes[this.length - 1];
+};
+
+/**
  * @method přidá prvek do pole
  * @example 
  * document.body.innerHTML = "<span>1</span><span>2</span><div id='cisla'></div>";
