@@ -66,8 +66,8 @@ JAX.NodeArray.prototype.item = function(index) {
 JAX.NodeArray.prototype.items = function(from, to) {
 	if (!arguments.length) { return this._jaxNodes.slice(); }
 	var from = from || 0;
-	var to = to || this._jaxNodes.length;
-	return this._jaxNodes.slice(from, to);
+	var to = typeof(to) == "number" || to ? to : this._jaxNodes.length;
+	return new JAX.NodeArray(this._jaxNodes.slice(from, to));
 };
 
 /**
