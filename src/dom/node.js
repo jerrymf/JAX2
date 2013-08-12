@@ -55,6 +55,33 @@ JAX.Node.prototype.add = function(nodes) {
 };
 
 /**
+ * @method vloží zadaný element jako první
+ *
+ * @param {Node | JAX.Node | String} node DOM uzel | instance JAX.Node | CSS3 (2.1) selector
+ * @returns {JAX.Node}
+ */
+JAX.Node.prototype.insertFirst = function(node) {
+	var node = JAX(node);
+
+	if (node.exists()) {
+		var node = node.node();
+
+		if (this._node.childNodes && this._node.firstChild) {
+			this._node.insertBefore(node, this._node.firstChild);
+		} else if (this._node.childNodes) {
+			this._node.appendChild(node);
+		} else {
+			throw new Error("Given element can not have child nodes.");		
+		}
+		
+		return this;
+	}
+	
+	JAX.Report.error("I could not find given element. For first argument I expected html element, text node or JAX node.");
+	return this;
+};
+
+/**
  * @method přidá do elementu DOM uzel před zadaný uzel
  * @example
  * document.body.innerHTML = "<span>Ahoj svete!</span>";
@@ -144,36 +171,6 @@ JAX.Node.prototype.after = function(node) {
 			node.parentNode.insertBefore(this._node, node.nextSibling);
 		} else {
 			node.parentNode.appendChild(this._node);
-		}
-		
-		return this;
-	}
-	
-	JAX.Report.error("I could not find given element. For first argument I expected html element, text node or JAX node.");
-	return this;
-};
-
-/**
- * @method připne (přesune) element za jiný element
- * @example
- * document.body.innerHTML = "<span>Ahoj svete!</span>";
- * var jaxElm = JAX.make("span").after(document.body.lastChild); // pripne span do body za posledni posledni prvek v body
- *
- * @param {Node | JAX.Node} node DOM uzel | instance JAX.Node
- * @returns {JAX.Node}
- */
-JAX.Node.prototype.insertFirstTo = function(node) {
-	var node = JAX(node);
-
-	if (node.exists()) {
-		var node = node.node();
-
-		if (node.childNodes && node.firstChild) {
-			node.insertBefore(this._node, node.firstChild);
-		} else if (node.childNodes) {
-			node.appendChild(this._node);
-		} else {
-			throw new Error("Given element can not have child nodes.");		
 		}
 		
 		return this;
