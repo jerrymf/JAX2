@@ -114,6 +114,12 @@ JAX.JAXNode.prototype.add = function(nodes) {
 	return this;
 };
 
+JAX.JAXNode.prototype.insertFirst = function(node) {
+	this._showMessage();
+
+	return this;
+};
+
 JAX.JAXNode.prototype.addBefore = function(node, nodeBefore) {
 	this._showMessage();
 
@@ -133,12 +139,6 @@ JAX.JAXNode.prototype.before = function(node) {
 };
 
 JAX.JAXNode.prototype.after = function(node) {
-	this._showMessage();
-
-	return this;
-};
-
-JAX.JAXNode.prototype.insertFirstTo = function(node) {
 	this._showMessage();
 
 	return this;

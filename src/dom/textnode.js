@@ -45,6 +45,12 @@ JAX.TextNode.prototype.add = function(nodes) {
 	return this;
 };
 
+JAX.TextNode.prototype.insertFirst = function(node, nodeBefore) {
+	this._showMessage();
+
+	return this;
+};
+
 JAX.TextNode.prototype.addBefore = function(node, nodeBefore) {
 	this._showMessage();
 
