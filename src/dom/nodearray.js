@@ -210,6 +210,19 @@ JAX.NodeArray.prototype.appendTo = function(node) {
 };
 
 /**
+ * @method připne všechny prvky před zadaný uzel
+ *
+ * @param {object} node element, před který se mají elementy připnout
+ * @returns {JAX.NodeArray}
+ */
+JAX.NodeArray.prototype.before = function(node) {
+	for (var i=0, len=this._jaxNodes.length; i<len; i++) {
+		this._jaxNodes[i].before(node);
+	}
+	return this;
+}
+
+/**
  * @method odebere všechny prvky z DOMu
  * @example 
  * document.body.innerHTML = "<span>1</span><span>2</span><div id='cisla'></div>";
