@@ -150,6 +150,21 @@ JAX.make = function(tagString, attrs, styles, srcDocument) {
 };
 
 /**
+ * @method Vytvoří z HTML elementy a vrátí je jako instance JAX.NodeArray. Zhmotní html string.
+ *
+ * @param {String} html html, které má být transformováno na uzly
+ * @returns {JAX.NodeArray}
+ */
+JAX.makeFromHTML = function(html) {
+	if (!html) { return new JAX.NodeArray([]); }
+
+	var temp = JAX.make("div").html(html);
+	var children = temp.children();
+
+	return children;
+};
+
+/**
  * @method Vytvoří textový uzel a vrátí JAX.Node instanci
  * @example
  * var textNode = JAX.makeText("Hellow world");
