@@ -15,8 +15,8 @@ cat dom/documentnode.js >> ../lib/jax.js
 cat dom/documentfragmentnode.js >> ../lib/jax.js
 cat dom/nullnode.js >> ../lib/jax.js
 cat dom/nodearray.js >> ../lib/jax.js
-cat fx.js >> ../lib/jax.js
-cat report.js >> ../lib/jax.js
+cat fx/fx.js >> ../lib/jax.js
+cat report/report.js >> ../lib/jax.js
 echo "" >> ../lib/jax.js
 
 cp ../dependencies/jak.js ../lib/jak.js
