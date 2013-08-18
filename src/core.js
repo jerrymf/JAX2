@@ -44,9 +44,9 @@ var JAX = function(selector, srcElement) {
 		case 8:
 			return new JAX.TextNode(foundElm);
 		case 9:
-			return new JAX.DocumentNode(foundElm);
+			return new JAX.Document(foundElm);
 		case 11:
-			return new JAX.DocumentFragmentNode(foundElm);
+			return new JAX.DocumentFragment(foundElm);
 	}
 
 	return new JAX.NullNode();

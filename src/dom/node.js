@@ -11,7 +11,7 @@
 JAX.Node = JAK.ClassMaker.makeClass({
 	NAME: "JAX.Node",
 	VERSION: "1.0",
-	EXTEND: JAX.JAXNode
+	IMPLEMENT: JAX.INode
 });
 
 JAX.Node.prototype.$constructor = function(node) {

@@ -7,12 +7,12 @@ cat event/ilistening.js >> ../lib/jax.js
 cat event/event.js >> ../lib/jax.js
 cat event/listener.js >> ../lib/jax.js
 cat dom/jaxnode.js >> ../lib/jax.js
-cat dom/node.js >> ../lib/jax.js
+cat dom/inode.js >> ../lib/jax.js
 cat dom/element.js >> ../lib/jax.js
 cat dom/element-getcomputedstyle.js >> ../lib/jax.js
 cat dom/textnode.js >> ../lib/jax.js
-cat dom/documentnode.js >> ../lib/jax.js
-cat dom/documentfragmentnode.js >> ../lib/jax.js
+cat dom/document.js >> ../lib/jax.js
+cat dom/documentfragment.js >> ../lib/jax.js
 cat dom/nullnode.js >> ../lib/jax.js
 cat dom/nodearray.js >> ../lib/jax.js
 cat fx/fx.js >> ../lib/jax.js

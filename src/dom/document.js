@@ -6,29 +6,28 @@
 
 /**
  * Třída reprezentující document node
- * @class JAX.DocumentNode
+ * @class JAX.Document
  */
-JAX.DocumentNode = JAK.ClassMaker.makeClass({
-	NAME: "JAX.DocumentNode",
+JAX.Document = JAK.ClassMaker.makeClass({
+	NAME: "JAX.Document",
 	VERSION: "1.0",
-	EXTEND: JAX.JAXNode,
-	IMPLEMENT: JAX.IListening
+	IMPLEMENT: [JAX.IListening, JAX.INode]
 });
 
-JAX.DocumentNode.prototype.$constructor = function(doc) {
+JAX.Document.prototype.$constructor = function(doc) {
 	this._node = doc;
 	this.jaxNodeType = doc.nodeType;
 };
 
-JAX.DocumentNode.prototype.find = function(selector) {
+JAX.Document.prototype.find = function(selector) {
 	return JAX(selector, this._node);
 };
 
-JAX.DocumentNode.prototype.findAll = function(selector) {
+JAX.Document.prototype.findAll = function(selector) {
 	return JAX.all(selector, this._node);
 };
 
-JAX.DocumentNode.prototype.size = function(sizeType) {
+JAX.Document.prototype.size = function(sizeType) {
 	if (arguments.length > 1) {
 		JAX.Report.error("I am so sorry, but you can not set " + sizeType + " of document node.", this._node);
 		return this;
@@ -45,11 +44,11 @@ JAX.DocumentNode.prototype.size = function(sizeType) {
 	}
 };
 
-JAX.DocumentNode.prototype.fullSize = function(sizeType) {
+JAX.Document.prototype.fullSize = function(sizeType) {
 	if (arguments.length > 1) {
 		JAX.Report.error("I am so sorry, but you can not set " + sizeType + " of document node.", this._node);
 		return this;
 	}
 
 	return this.size(sizeType);
-}
+};

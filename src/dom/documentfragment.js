@@ -6,27 +6,27 @@
 
 /**
  * Třída reprezentující documentFragment node
- * @class JAX.DocumentFragmentNode
+ * @class JAX.DocumentFragment
  */
-JAX.DocumentFragmentNode = JAK.ClassMaker.makeClass({
-	NAME: "JAX.DocumentFragmentNode",
+JAX.DocumentFragment = JAK.ClassMaker.makeClass({
+	NAME: "JAX.DocumentFragment",
 	VERSION: "1.0",
 	EXTEND: JAX.Node
 });
 
-JAX.DocumentFragmentNode.prototype.$constructor = function(doc) {
+JAX.DocumentFragment.prototype.$constructor = function(doc) {
 	this.$super(doc);
 };
 
-JAX.DocumentFragmentNode.prototype.find = function(selector) {
+JAX.DocumentFragment.prototype.find = function(selector) {
 	return JAX(selector, this._node);
 };
 
-JAX.DocumentFragmentNode.prototype.findAll = function(selector) {
+JAX.DocumentFragment.prototype.findAll = function(selector) {
 	return JAX.all(selector, this._node);
 };
 
-JAX.DocumentFragmentNode.prototype.remove = function() {
+JAX.DocumentFragment.prototype.remove = function() {
 	this._showMessage();
 
 	return this;

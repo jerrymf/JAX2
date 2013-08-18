@@ -6,19 +6,19 @@
 
 /**
  * Třída reprezentující obecný jaxovsky node
- * @class JAX.JAXNode
+ * @class JAX.INode
  */
-JAX.JAXNode = JAK.ClassMaker.makeClass({
-	NAME: "JAX.JAXNode",
+JAX.INode = JAK.ClassMaker.makeClass({
+	NAME: "JAX.INode",
 	VERSION: "1.0"
 });
 
-JAX.JAXNode.prototype.$constructor = function() {
+JAX.INode.prototype.$constructor = function() {
 	this._node = null;
 	this.jaxNodeType = -1;
 };
 
-JAX.JAXNode.prototype.$destructor = function() {};
+JAX.INode.prototype.$destructor = function() {};
 
 /**
  * @method vrací uzel, který si instance drží
@@ -27,7 +27,7 @@ JAX.JAXNode.prototype.$destructor = function() {};
  *
  * @returns {object} node
  */
-JAX.JAXNode.prototype.node = function() {
+JAX.INode.prototype.node = function() {
 	return this._node;
 };
 
@@ -38,47 +38,47 @@ JAX.JAXNode.prototype.node = function() {
  *
  * @returns {Boolean}
  */
-JAX.JAXNode.prototype.exists = function() {
+JAX.INode.prototype.exists = function() {
 	return !!this._node;
 };
 
-JAX.JAXNode.prototype.find = function(selector) {
+JAX.INode.prototype.find = function(selector) {
 	this._showMessage();
 
-	return new JAX.JAXNode();
+	return new JAX.INode();
 };
 
-JAX.JAXNode.prototype.findAll = function(selector) {
+JAX.INode.prototype.findAll = function(selector) {
 	this._showMessage();
 
 	return new JAX.NodeArray([]);
 };
 
-JAX.JAXNode.prototype.addClass = function(classNames) {
+JAX.INode.prototype.addClass = function(classNames) {
 	this._showMessage();
 
 	return this;
 };
 
-JAX.JAXNode.prototype.removeClass = function(classNames) {
+JAX.INode.prototype.removeClass = function(classNames) {
 	this._showMessage();
 
 	return this;
 };
 
-JAX.JAXNode.prototype.hasClass = function(className) {
+JAX.INode.prototype.hasClass = function(className) {
 	this._showMessage();
 
 	return false;
 };
 
-JAX.JAXNode.prototype.toggleClass = function(className) {
+JAX.INode.prototype.toggleClass = function(className) {
 	this._showMessage();
 
 	return this;
 }
 
-JAX.JAXNode.prototype.id = function(id) {
+JAX.INode.prototype.id = function(id) {
 	this._showMessage();
 
 	if (arguments.length) {
@@ -88,7 +88,7 @@ JAX.JAXNode.prototype.id = function(id) {
 	return "";
 };
 
-JAX.JAXNode.prototype.html = function(innerHTML) {
+JAX.INode.prototype.html = function(innerHTML) {
 	this._showMessage();
 
 	if (arguments.length) {
@@ -98,7 +98,7 @@ JAX.JAXNode.prototype.html = function(innerHTML) {
 	return "";
 };
 
-JAX.JAXNode.prototype.text = function(text) {
+JAX.INode.prototype.text = function(text) {
 	this._showMessage();
 
 	if (arguments.length) {
@@ -108,81 +108,73 @@ JAX.JAXNode.prototype.text = function(text) {
 	return "";
 };
 
-JAX.JAXNode.prototype.add = function(nodes) {
+JAX.INode.prototype.add = function(nodes) {
 	this._showMessage();
 
 	return this;
 };
 
-JAX.JAXNode.prototype.insertFirst = function(node) {
+JAX.INode.prototype.insertFirst = function(node) {
 	this._showMessage();
 
 	return this;
 };
 
-JAX.JAXNode.prototype.addBefore = function(node, nodeBefore) {
+JAX.INode.prototype.addBefore = function(node, nodeBefore) {
 	this._showMessage();
 
 	return this;
 };
 
-JAX.JAXNode.prototype.appendTo = function(node) {
+JAX.INode.prototype.appendTo = function(node) {
 	this._showMessage();
 
 	return this;
 };
 
-JAX.JAXNode.prototype.before = function(node) {
+JAX.INode.prototype.before = function(node) {
 	this._showMessage();
 
 	return this;
 };
 
-JAX.JAXNode.prototype.after = function(node) {
+JAX.INode.prototype.after = function(node) {
 	this._showMessage();
 
 	return this;
 };
 
-JAX.JAXNode.prototype.replaceWith = function(node) {
+JAX.INode.prototype.replaceWith = function(node) {
 	this._showMessage();
 
 	return this;
 };
 
-JAX.JAXNode.prototype.remove = function() {
+JAX.INode.prototype.remove = function() {
 	this._showMessage();
 
 	return this;
 };
 
-JAX.JAXNode.prototype.clone = function(withContent) {
-	this._showMessage("JAX.JAXNode.clone");
+JAX.INode.prototype.clone = function(withContent) {
+	this._showMessage("JAX.INode.clone");
 
 	return this;
 };
 
-JAX.JAXNode.prototype.listen = function(type, obj, funcMethod, bindData) {
+JAX.INode.prototype.listen = function(type, obj, funcMethod, bindData) {
 	this._showMessage();
 
 	return new JAX.Listener(this, null, type, f);
 };
 
-JAX.JAXNode.prototype.stopListening = function(listener) {
+JAX.INode.prototype.stopListening = function(listener) {
 	this._showMessage();
 
 	return this;
 };
 
-JAX.JAXNode.prototype.prop = function(property, value) {
-	this._showMessage();
-
-	if (typeof(arguments[0]) == "string") { return ""; }
-	if (arguments[0] instanceof Array) { return {}; }
-	return this;
-};
-
-JAX.JAXNode.prototype.attr = function(property, value) {
+JAX.INode.prototype.prop = function(property, value) {
 	this._showMessage();
 
 	if (typeof(arguments[0]) == "string") { return ""; }
@@ -190,7 +182,7 @@ JAX.JAXNode.prototype.attr = function(property, value) {
 	return this;
 };
 
-JAX.JAXNode.prototype.css = function(property, value) {
+JAX.INode.prototype.attr = function(property, value) {
 	this._showMessage();
 
 	if (typeof(arguments[0]) == "string") { return ""; }
@@ -198,108 +190,116 @@ JAX.JAXNode.prototype.css = function(property, value) {
 	return this;
 };
 
-JAX.JAXNode.prototype.computedCss = function(properties) {
+JAX.INode.prototype.css = function(property, value) {
+	this._showMessage();
+
+	if (typeof(arguments[0]) == "string") { return ""; }
+	if (arguments[0] instanceof Array) { return {}; }
+	return this;
+};
+
+JAX.INode.prototype.computedCss = function(properties) {
 	this._showMessage();
 
 	return typeof(properties) ? "" : {};
 };
 
-JAX.JAXNode.prototype.fullSize = function(sizeType, value) {
+JAX.INode.prototype.fullSize = function(sizeType, value) {
 	this._showMessage();
 
 	return arguments.length == 1 ? 0 : this;
 };
 
-JAX.JAXNode.prototype.size = function(sizeType, value) {
+JAX.INode.prototype.size = function(sizeType, value) {
 	this._showMessage();
 
 	return arguments.length == 1 ? 0 : this;
 };
 
-JAX.JAXNode.prototype.parent = function() {
+JAX.INode.prototype.parent = function() {
 	this._showMessage();
 
-	return new JAX.JAXNode();
+	return new JAX.INode();
 };
 
-JAX.JAXNode.prototype.next = function() {
+JAX.INode.prototype.next = function() {
 	this._showMessage();
 
-	return new JAX.JAXNode();
+	return new JAX.INode();
 };
 
-JAX.JAXNode.prototype.previous = function() {
+JAX.INode.prototype.previous = function() {
 	this._showMessage();
 
-	return new JAX.JAXNode();
+	return new JAX.INode();
 };
 
-JAX.JAXNode.prototype.children = function(index) {
+JAX.INode.prototype.children = function(index) {
 	this._showMessage();
 
-	return arguments.length ? new JAX.JAXNode() : new JAX.NodeArray([]);
+	return arguments.length ? new JAX.INode() : new JAX.NodeArray([]);
 };
 
-JAX.JAXNode.prototype.first = function() {
+JAX.INode.prototype.first = function() {
 	this._showMessage();
 
-	return new JAX.JAXNode();
+	return new JAX.INode();
 };
 
-JAX.JAXNode.prototype.last = function() {
+JAX.INode.prototype.last = function() {
 	this._showMessage();
 
-	return new JAX.JAXNode();
+	return new JAX.INode();
 };
 
-JAX.JAXNode.prototype.clear = function() {
+JAX.INode.prototype.clear = function() {
 	this._showMessage();
 
-	return new JAX.JAXNode();
+	return new JAX.INode();
 };
 
-JAX.JAXNode.prototype.eq = function(node) {
+JAX.INode.prototype.eq = function(node) {
 	this._showMessage();
 
-	return arguments[0] && arguments[0] instanceof JAX.JAXNode;
+	return arguments[0] && arguments[0] instanceof JAX.INode;
 };
 
-JAX.JAXNode.prototype.contains = function(node) {
-	this._showMessage();
-
-	return false;
-};
-
-JAX.JAXNode.prototype.isIn = function(node) {
+JAX.INode.prototype.contains = function(node) {
 	this._showMessage();
 
 	return false;
 };
 
-JAX.JAXNode.prototype.animate = function(property, duration, start, end) {
+JAX.INode.prototype.isIn = function(node) {
+	this._showMessage();
+
+	return false;
+};
+
+JAX.INode.prototype.animate = function(property, duration, start, end) {
 	this._showMessage();
 
 	return new JAK.Promise().reject(this._node);
 };
 
-JAX.JAXNode.prototype.fade = function(type, duration) {
+JAX.INode.prototype.fade = function(type, duration) {
 	this._showMessage();
 
 	return new JAK.Promise().reject(this._node);
 };
 
-JAX.JAXNode.prototype.fadeTo = function(opacityValue, duration) {
+JAX.INode.prototype.fadeTo = function(opacityValue, duration) {
 	this._showMessage();
 
 	return new JAK.Promise().reject(this._node);
 };
 
-JAX.JAXNode.prototype.slide = function(type, duration) {
+JAX.INode.prototype.slide = function(type, duration) {
 	this._showMessage();
 
 	return new JAK.Promise().reject(this._node);
 };
 
-JAX.JAXNode.prototype._showMessage = function(method) {
+JAX.INode.prototype._showMessage = function(method) {
 	JAX.Report.error("I have bad feeling about this! You are trying to use unsupported method with my node.", this._node);
 };
