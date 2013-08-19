@@ -6,8 +6,8 @@ cat core.js > ../lib/jax.js
 cat event/ilistening.js >> ../lib/jax.js
 cat event/event.js >> ../lib/jax.js
 cat event/listener.js >> ../lib/jax.js
-cat dom/jaxnode.js >> ../lib/jax.js
 cat dom/inode.js >> ../lib/jax.js
+cat dom/node.js >> ../lib/jax.js
 cat dom/element.js >> ../lib/jax.js
 cat dom/element-getcomputedstyle.js >> ../lib/jax.js
 cat dom/textnode.js >> ../lib/jax.js
