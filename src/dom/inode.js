@@ -300,6 +300,18 @@ JAX.INode.prototype.slide = function(type, duration) {
 	return new JAK.Promise().reject(this._node);
 };
 
+JAX.INode.prototype.scrollMax = function(type) {
+	this._showMessage();
+
+	return 0;
+};
+
+JAX.INode.prototype.scroll = function(type, value) {
+	this._showMessage();
+
+	return new JAK.Promise().reject(this._node);
+};
+
 JAX.INode.prototype._showMessage = function(method) {
 	JAX.Report.error("I have bad feeling about this! You are trying to use unsupported method with my node.", this._node);
 };

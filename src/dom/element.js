@@ -677,6 +677,23 @@ JAX.Element.prototype.slide = function(type, duration) {
 	return promise;
 };
 
+JAX.Element.prototype.scrollMax = function(type) {
+	if (typeof(type) != "string") {
+		JAX.Report.error("I expected string for my argument.", this._node);
+		type += "";
+	}
+
+	switch(type.toLowerCase()) {
+		case "x":
+			return this._node.scrollWidth - this._node.clientWidth;
+		case "y":
+			return this._node.scrollHeight - this._node.clientHeight;
+		default:
+			JAX.Report.error("You gave me an unsupported type. I expected 'x' or 'y'.", this._node);
+			return 0;
+	}
+};
+
 JAX.Element.prototype._setOpacity = function(value) {
 	var property = "";
 
