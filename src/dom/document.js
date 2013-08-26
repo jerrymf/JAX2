@@ -35,9 +35,17 @@ JAX.Document.prototype.size = function(sizeType) {
 
 	switch(sizeType) {
 		case "width":
-			return document.documentElement.clientWidth;
+     		 return Math.max(
+     		 			this._node.body.scrollWidth, this._node.documentElement.scrollWidth, 
+     		 			this._node.body.offsetWidth, this._node.documentElement.offsetWidth, 
+     		 			this._node.body.clientWidth, this._node.documentElement.clientWidth
+     		 		);
 		case "height":
-			return document.documentElement.clientHeight;
+			return Math.max(
+     		 			this._node.body.scrollHeight, this._node.documentElement.scrollHeight, 
+     		 			this._node.body.offsetHeight, this._node.documentElement.offsetHeight, 
+     		 			this._node.body.clientHeight, this._node.documentElement.clientHeight
+     		 		);
 		default:
 			JAX.Report.error("You gave me an unsupported size type. I expected 'width' or 'height'.", this._node);
 			return 0;
@@ -53,23 +61,6 @@ JAX.Document.prototype.fullSize = function(sizeType) {
 	return this.size(sizeType);
 };
 
-JAX.Document.prototype.scrollMax = function(type) {
-	if (typeof(type) != "string") {
-		JAX.Report.error("I expected string for my argument.", this._node);
-		type += "";
-	}
-
-	switch(type.toLowerCase()) {
-		case "x":
-			return document.documentElement.scrollWidth - document.documentElement.clientWidth;
-		case "y":
-			return document.documentElement.scrollHeight - document.documentElement.clientHeight;
-		default:
-			JAX.Report.error("You gave me an unsupported type. I expected 'x' or 'y'.", this._node);
-			return 0;
-	}
-};
-
 JAX.Document.prototype.scroll = function(type, value, duration) {
 	if (typeof(type) != "string") {
 		JAX.Report.error("I expected String for my first argument.", this._node);
@@ -79,10 +70,10 @@ JAX.Document.prototype.scroll = function(type, value, duration) {
 	if (arguments.length == 1) {
 		switch(type.toLowerCase()) {
 			case "top":
-				var retValue = document.documentElement.scrollTop;
+				var retValue = this._node.documentElement.scrollTop;
 			break;
 			case "left":
-				var retValue = document.documentElement.scrollLeft;
+				var retValue = this._node.documentElement.scrollLeft;
 			break;
 			default:
 				JAX.Report.error("You gave me an unsupported type. I expected 'x' or 'y'.", this._node);
@@ -101,10 +92,10 @@ JAX.Document.prototype.scroll = function(type, value, duration) {
 
 	switch(type.toLowerCase()) {
 		case "top":
-			document.documentElement.scrollTop = parsedValue;
+			this._node.documentElement.scrollTop = parsedValue;
 		break;
 		case "left":
-			document.documentElement.scrollLeft = parsedValue;
+			this._node.documentElement.scrollLeft = parsedValue;
 		break;
 		default:
 			JAX.Report.error("You gave me an unsupported type. I expected 'x' or 'y'.", this._node);
@@ -114,5 +105,5 @@ JAX.Document.prototype.scroll = function(type, value, duration) {
 		console.warn("I am sorry. Duration is not implemented yet. It will be as soon as possible.");
 	}
 
-	return new JAK.Promise().fulfill(this._node);
+	/*return new JAK.Promise().fulfill(this._node);*/
 };

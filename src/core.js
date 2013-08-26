@@ -32,12 +32,19 @@ var JAX = function(selector, srcElement) {
 	} else if (selector && typeof(selector) == "object" && selector.nodeType) {
 		var nodeType = selector.nodeType;
 		var foundElm = selector;
+	} else if (selector && "window" in selector && typeof(selector.window) == "object" && "window" in selector.window) {
+		var nodeType = -2;
+		var foundElm = selector;
 	} else {
 		var nodeType = -1;
 		var foundElm = null;
 	}
 
 	switch(nodeType) {
+		case -2:
+			return new JAX.Window(foundElm);
+		case -1:
+			return new JAX.NullNode();
 		case 1:
 			return new JAX.Element(foundElm);
 		case 3:
@@ -48,8 +55,6 @@ var JAX = function(selector, srcElement) {
 		case 11:
 			return new JAX.DocumentFragment(foundElm);
 	}
-
-	return new JAX.NullNode();
 };
 
 /**

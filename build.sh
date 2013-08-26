@@ -14,6 +14,7 @@ cat dom/textnode.js >> ../lib/jax.js
 cat dom/document.js >> ../lib/jax.js
 cat dom/documentfragment.js >> ../lib/jax.js
 cat dom/nullnode.js >> ../lib/jax.js
+cat dom/window.js >> ../lib/jax.js
 cat dom/nodearray.js >> ../lib/jax.js
 cat fx/fx.js >> ../lib/jax.js
 cat report/report.js >> ../lib/jax.js
