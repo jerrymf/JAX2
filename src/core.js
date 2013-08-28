@@ -132,7 +132,6 @@ JAX.make = function(tagString, attrs, styles, srcDocument) {
 		return JAX(null);
 	}
 	
-	var attrType = "";
 	for (var i=0, len=parts.length; i<len; i++) {
 		var part = parts[i];
 		var ch = part.charAt(0);
