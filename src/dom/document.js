@@ -67,13 +67,17 @@ JAX.Document.prototype.scroll = function(type, value, duration) {
 		type += "";
 	}
 
+	var scrollPos = JAK.DOM.getScrollPos();
+	var left = scrollPos.x;
+	var top = scrollPos.y;
+
 	if (arguments.length == 1) {
 		switch(type.toLowerCase()) {
 			case "top":
-				var retValue = this._node.documentElement.scrollTop;
+				var retValue = top;
 			break;
 			case "left":
-				var retValue = this._node.documentElement.scrollLeft;
+				var retValue = left;
 			break;
 			default:
 				JAX.Report.error("You gave me an unsupported type. I expected 'x' or 'y'.", this._node);
@@ -83,27 +87,49 @@ JAX.Document.prototype.scroll = function(type, value, duration) {
 		return retValue;
 	}
 
-	var parsedValue = parseFloat(value);
+	var targetValue = parseFloat(value);
 
-	if (!isFinite(parsedValue)) {
+	if (!isFinite(targetValue)) {
 		JAX.Report.error("I expected Number or string with number for my second argument.", this._node);
-		parsedValue = 0;
+		targetValue = 0;
 	}
 
-	switch(type.toLowerCase()) {
-		case "top":
-			this._node.documentElement.scrollTop = parsedValue;
-		break;
-		case "left":
-			this._node.documentElement.scrollLeft = parsedValue;
-		break;
-		default:
-			JAX.Report.error("You gave me an unsupported type. I expected 'x' or 'y'.", this._node);
+	if (duration) {
+		var duration = parseFloat(duration);
+		if (!isFinite(duration)) {
+			JAX.Report.error("I expected Number or string with number for my third argument.", this._node);
+			duration = 1;
+		}
 	}
 
-	if (arguments.length > 2) {
-		console.warn("I am sorry. Duration is not implemented yet. It will be as soon as possible.");
+	var type = type.toLowerCase();
+
+	var scrollFunc = function(value) {
+		switch(type) {
+			case "top":
+				this._node.documentElement.scrollTop = value;
+			break;
+			case "left":
+				this._node.documentElement.scrollLeft = value;
+			break;
+		}
+	}.bind(this);
+
+	if (!duration) {
+		scrollFunc(targetValue);
+		return this;
 	}
 
-	/*return new JAK.Promise().fulfill(this._node);*/
+	var scrollingFinished = new JAK.Promise();
+
+	var onScrollingFinished = function() {
+		scrollingFinished.fulfill(this._node);
+	}.bind(this);
+
+	var currentValue = type == "left" ? left : top;
+
+	var interpolator = new JAK.Interpolator(currentValue, targetValue, duration, scrollFunc, {endCallback:onScrollingFinished});
+		interpolator.start();
+
+	return scrollingFinished;
 };

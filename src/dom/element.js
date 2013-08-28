@@ -529,39 +529,6 @@ JAX.Element.prototype.contains = function(node) {
 	return false;
 };
 
-/** 
- * @method zjistí, jestli element obsahuje node podle zadaných kritérií
- * @example
- * document.body.innerHTML = "<div><span>1</span><span>2<em>3</em></span></div>";
- * if (JAX("em").isIn("span")) { alert("Span obsahuje em"); }
- *
- * @param {Node | JAX.Node | String} node uzel | instance JAX.Node | CSS3 (2.1) selector
- * @returns {Boolean}
- */
-JAX.Element.prototype.isIn = function(node) {
-	if (!node) { return false; }
-
-	if (typeof(node) == "object" && (node.nodeType || node.jaxNodeType)) {
-		var elm = node.jaxNodeType ? node : JAX(node);
-		return elm.exists() ? elm.contains(this) : false;
-	} else if (typeof(node) == "string") {
-		if (/^[a-zA-Z0-9]+$/g.test(node)) { 
-			var parent = this._node;
-			node = node.toLowerCase();
-			while((parent = parent.parentNode)) {
-				if (parent.tagName && parent.tagName.toLowerCase() == node) { return true; }
-			}
-			return false;
-		}
-		return !!JAX.all(node).filterItems(
-			function(jaxElm) { return jaxElm.contains(this._node); }.bind(this)
-		).length;
-	}
-	
-	JAX.Report.error("For first argument I expected html element or JAX node.");
-	return false;
-};
-
 JAX.Element.prototype.animate = function(property, duration, start, end) {
 	if (typeof(property) != "string") {
 		type += "";

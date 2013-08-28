@@ -269,6 +269,35 @@ JAX.Node.prototype.prop = function(property, value) {
 };
 
 /** 
+ * @method zjistí, jestli element obsahuje node podle zadaných kritérií
+ * @example
+ * document.body.innerHTML = "<div><span>1</span><span>2<em>3</em></span></div>";
+ * if (JAX("em").isIn("span")) { alert("Span obsahuje em"); }
+ *
+ * @param {Node | JAX.Node | String} node uzel | instance JAX.Node | CSS3 (2.1) selector
+ * @returns {Boolean}
+ */
+JAX.Node.prototype.isIn = function(node) {
+	if (!node) { return false; }
+
+	if (typeof(node) == "object" && (node.nodeType || node.jaxNodeType)) {
+		var elm = node.jaxNodeType ? node : JAX(node);
+		return elm.exists() ? elm.contains(this) : false;
+	} else if (typeof(node) == "string") {
+		if (/^[#.a-z0-9_-]+$/ig.test(node)) {
+			var parent = JAK.DOM.findParent(this._node, node);
+			return !!parent;
+		}
+		return !!JAX.all(node).filterItems(
+			function(jaxElm) { return jaxElm.contains(this._node); }.bind(this)
+		).length;
+	}
+	
+	JAX.Report.error("For first argument I expected html element, JAX node or CSS3 (2.1) selector.");
+	return false;
+};
+
+/** 
  * @method vrací rodičovský prvek
  * @example
  * var body = JAX("body").html("<span>Ahoj svete!</span>");

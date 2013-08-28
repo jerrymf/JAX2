@@ -47,8 +47,14 @@ JAX.Window.prototype.scroll = function(type, value, duration) {
 		type += "";
 	}
 
-	var top = ("pageYOffset" in this._node) ? this._node.pageYOffset : (this._node.document.documentElement || this._node.document.body).scrollTop;
-	var left = ("pageXOffset" in this._node) ? this._node.pageXOffset : (this._node.document.documentElement || this._node.document.body).scrollLeft;
+	if ("pageXOffset" in this._node) {
+		var left = this._node.pageXOffset;
+		var top = this._node.pageYOffset;
+	} else {
+		var scrollPosDoc = JAK.DOM.getScrollPos();
+		var left = scrollPosDoc.x;
+		var top = scrollPosDoc.y;	
+	}
 
 	if (arguments.length == 1) {
 		switch(type.toLowerCase()) {
@@ -66,23 +72,49 @@ JAX.Window.prototype.scroll = function(type, value, duration) {
 		return retValue;
 	}
 
-	var parsedValue = parseFloat(value);
+	var targetValue = parseFloat(value);
 
-	if (!isFinite(parsedValue)) {
+	if (duration) {
+		var duration = parseFloat(duration);
+		if (!isFinite(duration)) {
+			JAX.Report.error("I expected Number or string with number for my third argument.", this._node);
+			duration = 1;
+		}
+	}
+
+	if (!isFinite(targetValue)) {
 		JAX.Report.error("I expected Number or string with number for my second argument.", this._node);
-		parsedValue = 0;
+		targetValue = 0;
 	}
 
-	switch(type.toLowerCase()) {
-		case "top":
-			this._node.scrollTo(left, parsedValue);
-		break;
-		case "left":
-			this._node.scrollTo(parsedValue, top);
-		break;
-		default:
-			JAX.Report.error("You gave me an unsupported type. I expected 'x' or 'y'.", this._node);
+	var type = type.toLowerCase();
+
+	var scrollFunc = function(value) {
+		switch(type) {
+			case "top":
+				this._node.scrollTo(left, value);
+			break;
+			case "left":
+				this._node.scrollTo(value, top);
+			break;
+		}
+	}.bind(this);
+
+	if (!duration) {
+		scrollFunc(targetValue);
+		return this;
 	}
 
-	/*return new JAK.Promise().fulfill(this._node);*/
+	var scrollingFinished = new JAK.Promise();
+
+	var onScrollingFinished = function() {
+		scrollingFinished.fulfill(this._node);
+	}.bind(this);
+
+	var currentValue = type == "left" ? left : top;
+
+	var interpolator = new JAK.Interpolator(currentValue, targetValue, duration, scrollFunc, {endCallback:onScrollingFinished});
+		interpolator.start();
+
+	return scrollingFinished;
 };

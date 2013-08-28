@@ -108,42 +108,45 @@ JAX.make = function(tagString, attrs, styles, srcDocument) {
 	var srcDocument = srcDocument || document;
 
 	if (!tagString || typeof(tagString) != "string") { 
-		throw new Error("First argument must be string."); 
+		JAX.Report.error("First argument must be string.");
+		return JAX(null); 
 	}
 	if (typeof(attrs) != "object") { 
-		throw new Error("Second argument must be associative array."); 
+		JAX.Report.error("Second argument must be associative array."); 
+		attrs = {};
 	}
 	if (typeof(styles) != "object") { 
-		throw new Error("Third argument must be associative array."); 
+		JAX.Report.error("Third argument must be associative array."); 
+		styles = {};
 	}
 	if (typeof(srcDocument) != "object" || !srcDocument.nodeType && [9,11].indexOf(srcDocument.nodeType) == -1) { 
-		throw new Error("Fourth argument must be document element."); 
+		JAX.Report.error("Fourth argument must be document element."); 
+		srcDocument = document;
 	}
 
-	var tagName = tagString.match(/^([a-zA-Z]+[a-zA-Z0-9]*)/g) || [];
+	var parts = tagString.match(/[#.]?[a-z0-9_-]+/ig) || [];
+	var tagName = parts[0];
 
-	if (tagName.length == 1) {
-		tagString = tagString.substring(tagName[0].length, tagString.length);
-	} else {
-		throw new Error("Tagname must be first in element definition");
+	if (!tagName || !/^[a-z0-9]+$/ig.test(tagName)) {
+		JAX.Report.error("Tagname must be first in element definition");
+		return JAX(null);
 	}
 	
 	var attrType = "";
-	for (var i=0, len=tagString.length; i<len; i++) {
-		var ch = tagString[i];
+	for (var i=0, len=parts.length; i<len; i++) {
+		var part = parts[i];
+		var ch = part.charAt(0);
+
 		if (ch == "#") { 
-			attrType = "id"; 
-			attrs["id"] = "";
+			attrs["id"] = part.substring(1);
 		} else if (ch == ".") { 
-			attrType = "className";
 			if (attrs["className"]) { 
 				attrs["className"] += " ";
+				attrs["className"] += part.substring(1);
 			} else {
-				attrs["className"] = "";
+				attrs["className"] = part.substring(1);
 			}
-		} else if (attrType) {
-			attrs[attrType] += ch;
-		}	
+		}
 	}
 	
 	var createdNode = srcDocument.createElement(tagName);
