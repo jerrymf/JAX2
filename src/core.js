@@ -128,7 +128,7 @@ JAX.make = function(tagString, attrs, styles, srcDocument) {
 	var tagName = parts[0];
 
 	if (!tagName || !/^[a-z0-9]+$/ig.test(tagName)) {
-		JAX.Report.error("Tagname must be first in element definition");
+		JAX.Report.error("Tagname must be first in element definition.");
 		return JAX(null);
 	}
 	
