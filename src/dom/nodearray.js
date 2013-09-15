@@ -23,17 +23,25 @@ JAX.NodeArray = JAK.ClassMaker.makeClass({
  * @param {Node | Node[] | JAX.Node[] | null} nodes pole uzlů | pole instancí JAX.Node
  */
 JAX.NodeArray.prototype.$constructor = function(nodes) {
+	var raisedError = false;
 	var nodes = nodes ? [].concat(nodes) : [];
-	var len = nodes.length;
+	var len = 0;
 	this._jaxNodes = [];
 
-	for (var i=0; i<len; i++) { 
-		var node = nodes[i];
+	while(nodes.length) {
+		len++;
+		var node = nodes.shift();
 		if (typeof(node) == "object" && node.nodeType) { this._jaxNodes.push(JAX(node)); continue; }
 		if (node.jaxNodeType && node.exists()) { this._jaxNodes.push(node); continue; }
 
-		throw new Error("First argument must be array of JAX.Node instances or html nodes");
+		len--;
+		raisedError = true;
 	}
+
+	if (raisedError) {
+		JAX.Report.error("First argument can be only html node, JAX node or array of them.", this._node);
+	}
+
 	this.length = len;
 };
 
@@ -61,7 +69,7 @@ JAX.NodeArray.prototype.item = function(index) {
  *
  * @param {Number} from od indexu
  * @param {Number} to po index
- * @returns {JAX.Node | JAX.Node[]}
+ * @returns {JAX.Node[]}
  */
 JAX.NodeArray.prototype.items = function(from, to) {
 	if (!arguments.length) { return this._jaxNodes.slice(); }
@@ -411,12 +419,12 @@ JAX.NodeArray.prototype.unshiftItem = function(node) {
 
 JAX.NodeArray.prototype.animate = function(type, duration, start, end) {
 	var count = this._jaxNodes.length;
-	var promises = new Array(count);
+	var fxs = new Array(count);
 
 	for (var i=0, len=this._jaxNodes.length; i<len; i++) {
-		promises[i] = this._jaxNodes[i].animate(type, duration, start, end);
+		fxs[i] = this._jaxNodes[i].animate(type, duration, start, end);
 	}
-	return JAK.Promise.when(promises);
+	return new JAX.NodeArray.FX(fxs);
 };
 
 /** 
@@ -431,12 +439,12 @@ JAX.NodeArray.prototype.animate = function(type, duration, start, end) {
  */
 JAX.NodeArray.prototype.fade = function(type, duration) {
 	var count = this._jaxNodes.length;
-	var promises = new Array(count);
+	var fxs = new Array(count);
 
 	for (var i=0, len=this._jaxNodes.length; i<len; i++) {
-		promises[i] = this._jaxNodes[i].fade(type, duration);
+		fxs[i] = this._jaxNodes[i].fade(type, duration);
 	}
-	return JAK.Promise.when(promises);
+	return new JAX.NodeArray.FX(fxs);
 };
 
 /**
@@ -451,12 +459,12 @@ JAX.NodeArray.prototype.fade = function(type, duration) {
  */
 JAX.NodeArray.prototype.fadeTo = function(opacityValue, duration) {
 	var count = this._jaxNodes.length;
-	var promises = new Array(count);
+	var fxs = new Array(count);
 
 	for (var i=0, len=this._jaxNodes.length; i<len; i++) {
-		promises[i] = this._jaxNodes[i].fadeTo(opacityValue, duration);
+		fxs[i] = this._jaxNodes[i].fadeTo(opacityValue, duration);
 	}
-	return JAK.Promise.when(promises);
+	return new JAX.NodeArray.FX(fxs);
 };
 
 /**
@@ -471,11 +479,20 @@ JAX.NodeArray.prototype.fadeTo = function(opacityValue, duration) {
  */
 JAX.NodeArray.prototype.slide = function(type, duration) {
 	var count = this._jaxNodes.length;
+	var fxs = new Array(count);
+
+	for (var i=0, len=this._jaxNodes.length; i<len; i++) {
+		fxs[i] = this._jaxNodes[i].slide(type, duration).getPromise();
+	}
+	return new JAX.NodeArray.FX(fxs);
+};
+
+JAX.NodeArray.prototype.scroll = function(type, value, duration) {
+	var count = this._jaxNodes.length;
 	var promises = new Array(count);
 
 	for (var i=0, len=this._jaxNodes.length; i<len; i++) {
-		promises[i] = this._jaxNodes[i].slide(type, duration);
+		promises[i] = this._jaxNodes[i].scroll(type, value, duration);
 	}
 	return JAK.Promise.when(promises);
 };
-

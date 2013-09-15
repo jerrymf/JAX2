@@ -5,18 +5,13 @@
  */
 
 /**
- * Třída reprezentující obecný jaxovsky node
+ * Rozhrani reprezentující obecný jaxovsky node
  * @class JAX.INode
  */
-JAX.INode = JAK.ClassMaker.makeClass({
+JAX.INode = JAK.ClassMaker.makeInterface({
 	NAME: "JAX.INode",
 	VERSION: "1.0"
 });
-
-JAX.INode.prototype.$constructor = function() {
-	this._node = null;
-	this.jaxNodeType = -1;
-};
 
 JAX.INode.prototype.$destructor = function() {};
 
@@ -300,13 +295,7 @@ JAX.INode.prototype.slide = function(type, duration) {
 	return new JAK.Promise().reject(this._node);
 };
 
-JAX.INode.prototype.scrollMax = function(type) {
-	this._showMessage();
-
-	return 0;
-};
-
-JAX.INode.prototype.scroll = function(type, value) {
+JAX.INode.prototype.scroll = function(type, value, duration) {
 	this._showMessage();
 
 	return new JAK.Promise().reject(this._node);
