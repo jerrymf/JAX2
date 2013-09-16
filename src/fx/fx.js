@@ -10,91 +10,24 @@
  */ 
 JAX.FX = JAK.ClassMaker.makeClass({
 	NAME: "JAX.FX",
-	VERSION: "1.05",
-	DEPEND: [{
-		sClass: JAK.CSSInterpolator,
-		ver: "2.1"
-	}]
+	VERSION: "1.1"
 });
 
-JAX.FX._TRANSITION_PROPERTY = "";
-JAX.FX._TRANSITION_EVENT = "";
-
-(function() {
-	var transitions = {
-      "transition":"transitionend",
-      "OTransition":"oTransitionEnd",
-      "MozTransition":"transitionend",
-      "WebkitTransition":"webkitTransitionEnd",
-      "MSTransition":"MSTransitionEnd"
-    };
-
-	for (var p in transitions) {
-		if (p in document.createElement("div").style) {
-			JAX.FX._TRANSITION_PROPERTY = p;
-			JAX.FX._TRANSITION_EVENT = transitions[p];
-			break; 
-		}
-	}
-})();
-
 JAX.FX._SUPPORTED_PROPERTIES = {
-	"width": {
-		defaultUnit:"px", 
-		css:"width" 
-	},
-	"maxWidth": {
-		defaultUnit:"px", 
-		css:"max-width" 
-	},
-	"minWidth": {
-		defaultUnit:"px", 
-		css:"min-width" 
-	},
-	"height": {
-		defaultUnit:"px", 
-		css:"height" 
-	},
-	"maxHeight": {
-		defaultUnit:"px", 
-		css:"max-height" 
-	},
-	"minHeight": {
-		defaultUnit:"px", 
-		css:"min-height" 
-	},
-	"top": {
-		defaultUnit:"px", 
-		css:"top" 
-	},
-	"left": {
-		defaultUnit:"px", 
-		css:"left" 
-	},
-	"bottom": {
-		defaultUnit:"px", 
-		css:"bottom" 
-	},
-	"right": {
-		defaultUnit:"px", 
-		css:"right" 
-	},
-	"fontSize": {
-		defaultUnit:"px", 
-		css:"font-size" 
-	},
-	"opacity": {
-		defaultUnit:"", 
-		css:"opacity" 
-	},
-	"color": {
-		defaultUnit:"", 
-		css:"color" 
-	},
-	"backgroundColor": {
-		defaultUnit:"", 
-		css:"background-color" 
-	}
+	"width": 			{ defaultUnit:"px" },
+	"maxWidth": 		{ defaultUnit:"px" },
+	"minWidth": 		{ defaultUnit:"px" },
+	"height": 			{ defaultUnit:"px" },
+	"maxHeight": 		{ defaultUnit:"px" },
+	"minHeight": 		{ defaultUnit:"px" },
+	"top": 				{ defaultUnit:"px" },
+	"left": 			{ defaultUnit:"px" },
+	"bottom": 			{ defaultUnit:"px" },
+	"right": 			{ defaultUnit:"px" },
+	"fontSize": 		{ defaultUnit:"px" },
+	"opacity": 			{ defaultUnit:""   },
+	"color": 			{ defaultUnit:""   },
+	"backgroundColor": 	{ defaultUnit:""   }
 };
 
 JAX.FX._SUPPORTED_METHODS = [
@@ -115,20 +48,24 @@ JAX.FX._SUPPORTED_METHODS = [
  * @param {HTMLElm} elm html element, který se má animovat
  */
 JAX.FX.prototype.$constructor = function(elm) {
-	this._elm = JAX(elm);
+	this._jaxElm = JAX(elm);
 
-	if (!this._elm.node()) { 
+	if (!this._jaxElm.exists()) { 
 		throw new Error("I can not continue because I got null node. Check your code. please."); 
 	}
 
 	this._settings = [];
 	this._reversed = false;
-	this._durationPassed = 0;
-	this._durationIntervalChecker = null;
-	this._interpolators = [];
-	this._transitionCount = 0;
 	this._running = false;
-	this._transitionSupport = !!JAX.FX._TRANSITION_PROPERTY;
+
+	this._passedTime = 0;
+	this._interval = null;
+
+	this._promise = {
+		finished: null
+	};
+
+	this._processor = null;
 };
 
 /**
@@ -151,7 +88,7 @@ JAX.FX.prototype.$constructor = function(elm) {
 JAX.FX.prototype.addProperty = function(property, duration, start, end, method) {
 	var durationValue = this._parseValue(duration);
 	var durationUnit = this._parseUnit(duration) || "ms";
-	var method = this._transitionSupport ? (method || "linear") : "LINEAR";
+	var method = JAX.FX.CSS3.isSupported ? (method || "linear") : "LINEAR";
 	
 	if (typeof(property) != "string") { 
 		throw new Error("For first argument I expected string"); 
@@ -187,12 +124,19 @@ JAX.FX.prototype.addProperty = function(property, duration, start, end, method) 
 		var cssStart = this._foundCSSValue(property);
 	}
 
+	var duration = {
+		value: durationUnit == "ms" ? durationValue : durationValue * 1000,
+		unit: "ms"
+	};
+
 	this._settings.push({
-		property: property,
-		cssStart: cssStart,
-		cssEnd: cssEnd,
-		duration: durationUnit == "ms" ? durationValue : durationValue * 1000,
-		durationUnit: "ms",
+		property: JAX.FX.CSS3.isSupported ? this._styleToCSSProperty(property) : property,
+		startValue: cssStart.value,
+		startUnit: cssStart.unit,
+		endValue: cssEnd.value,
+		endUnit: cssEnd.unit,
+		durationValue: duration.value,
+		durationUnit: duration.unit,
 		method: method
 	});
 
@@ -210,21 +154,22 @@ JAX.FX.prototype.addProperty = function(property, duration, start, end, method) 
  * @returns {JAK.Promise}
  */
 JAX.FX.prototype.run = function() {
-	if (this.isRunning()) { this.stop(); }
+	if (this.isRunning()) { return this._promise.finished; }
+
+	this._processor = JAX.FX.CSS3.isSupported ? new JAX.FX.CSS3(this._jaxElm) : new JAX.FX.Interpolator(this._jaxElm);
+	this._processor.set(this._settings);
 
 	this._running = true;
-	this._promise = new JAK.Promise();
 
-	if (!this._transitionSupport) { 
-		this._initInterpolators(this._settings); 
-	} else {
-		this._initTransition(this._settings);
-	}
+	this._passedTime = 0;
+	this._interval = setInterval(function() { 
+		this._passedTime = Math.max(this._passedTime + (this._reversed ? -50 : 50), 0);
+	}.bind(this), 50);
 
-	this._durationPassed = 0;
-	this._durationIntervalChecker = setInterval(function() { this._durationPassed += 100; }.bind(this), 100);
+	this._promise.finished = this._processor.run();
+	this._promise.finished.then(this._finishAnimationFulfill.bind(this), this._finishAnimationReject.bind(this));
 
-	return this._promise;
+	return this._promise.finished;
 };
 
 /**
@@ -248,22 +193,30 @@ JAX.FX.prototype.reverse = function() {
 		var setting = this._settings[i];
 		var property = setting.property;
 		var method = setting.method;
+
+		var parsedCss = this._parseCSSValue(property, this._jaxElm.computedCss(JAX.FX.CSS3.isSupported ? property : this._styleToCSSProperty(property)));
+		var startValue = parsedCss.value;
+		var startUnit = parsedCss.unit;
+
 		var durationUnit = setting.durationUnit;
-		var durationValue = this._durationPassed;
 
 		if (this._reversed) {
-			var cssEnd = setting.cssStart;
-			var cssStart = this._parseCSSValue(property, this._elm.computedCss(JAX.FX._SUPPORTED_PROPERTIES[property].css));
+			var durationValue = Math.min(this._passedTime, setting.durationValue);
+			var endValue = setting.startValue;
+			var endUnit = setting.startUnit;
 		} else {
-			var cssEnd = setting.cssEnd;
-			var cssStart = this._parseCSSValue(property, this._elm.computedCss(JAX.FX._SUPPORTED_PROPERTIES[property].css));
+			var durationValue = Math.max(setting.durationValue - this._passedTime, 0);
+			var endValue = setting.endValue;
+			var endUnit = setting.endUnit;
 		}
 
 		var reversedSetting = {
 			property: property,
-			cssStart: cssStart,
-			cssEnd: cssEnd,
-			duration: durationValue,
+			startValue: startValue,
+			startUnit: startUnit,
+			endValue: endValue,
+			endUnit: endUnit,
+			durationValue: durationValue,
 			durationUnit: durationUnit,
 			method: method
 		};
@@ -271,19 +224,19 @@ JAX.FX.prototype.reverse = function() {
 		reversedSettings.push(reversedSetting);
 	}
 
+	this._processor = JAX.FX.CSS3.isSupported ? new JAX.FX.CSS3(this._jaxElm) : new JAX.FX.Interpolator(this._jaxElm);
+	this._processor.set(reversedSettings);
+
 	this._running = true;
-	this._promise = new JAK.Promise();
 
-	if (!this._transitionSupport) { 
-		this._initInterpolators(reversedSettings); 
-	} else {
-		this._initTransition(reversedSettings);
-	}
+	this._interval = setInterval(function() { 
+		this._passedTime = Math.max(this._passedTime + (this._reversed ? -50 : 50), 0);
+	}.bind(this), 50);
 
-	this._durationPassed = 0;
-	this._durationIntervalChecker = setInterval(function() { this._durationPassed += 100; }.bind(this), 100);
+	this._promise.finished = this._processor.run();
+	this._promise.finished.then();
 
-	return this._promise;
+	return this._promise.finished;
 };
 
 /**
@@ -301,8 +254,8 @@ JAX.FX.prototype.isRunning = function() {
  * @returns {JAX.FX}
  */
 JAX.FX.prototype.stop = function() {
-	if (!this._transitionSupport) { this._stopInterpolators(); return this; }
-	this._stopTransition();
+	this._processor.stop();
+	this._finishAnimationReject();
 	return this;
 };
 
@@ -327,75 +280,6 @@ JAX.FX.prototype._checkSupportedMethod = function(method) {
 	var methods = [];
 	for (var i=0, len=JAX.FX._SUPPORTED_METHODS.length; i<len; i++) { methods.push(JAX.FX._SUPPORTED_METHODS[i]); }
 	throw new Error("Fifth argument must be supported method: " + methods.join(", ")); 
-}
-
-JAX.FX.prototype._initInterpolators = function(settings) {
-	for(var i=0, len=settings.length; i<len; i++) {
-		var setting = settings[i];
-		var duration = setting.duration;
-
-		var interpolator = new JAK.CSSInterpolator(this._elm.node(), duration, { 
-			"interpolation": setting.method, 
-			"endCallback": this._finishInterpolatorAnimation.bind(this, i) 
-		});
-		
-		this._interpolators.push(interpolator);
-		if (["backgroundColor", "color"].indexOf(setting.property) != -1) {
-			interpolator.addColorProperty(setting.property, setting.cssStart.value, setting.cssEnd.value);
-		} else {
-			interpolator.addProperty(setting.property, setting.cssStart.value, setting.cssEnd.value, setting.cssStart.unit);
-		}
-		interpolator.start();
-	}
-};
-
-JAX.FX.prototype._stopInterpolators = function() {
-	for (var i=0, len=this._interpolators.length; i<len; i++) { this._endInterpolator(i); }
-	this._promise.reject(this._elm);
-};
-
-JAX.FX.prototype._initTransition = function(settings) {
-	var tp = JAX.FX._TRANSITION_PROPERTY;
-	var te = JAX.FX._TRANSITION_EVENT;
-	var tps = [];
-	var node = this._elm.node();
-	var style = node.style;
-
-	for (var i=0, len=settings.length; i<len; i++) {
-		var setting = settings[i];
-		var cssStartValue = setting.cssStart.value + setting.cssStart.unit;
-		var transitionParam = JAX.FX._SUPPORTED_PROPERTIES[setting.property].css + " " + setting.duration + setting.durationUnit + " " + setting.method;
-
-		style[setting.property] = cssStartValue;
-		tps.push(transitionParam);
-		this._transitionCount++;
-	}
-
-	var render = node.offsetHeight; /* trick pro prerenderovani */
-
-	setTimeout(function() {
-		node.style[tp] = tps.join(",");
-		this._ecTransition = this._elm.listen(te, this, "_finishTransitionAnimation");
-
-		for (var i=0, len=settings.length; i<len; i++) {
-			var setting = settings[i];
-			style[setting.property] = setting.cssEnd.value + setting.cssStart.unit;
-		}
-	}.bind(this), 0);
-};
-
-JAX.FX.prototype._stopTransition = function() {
-	var node = this._elm.node();
-	var style = this._elm.node().style;
-
-	for(var i=0, len=this._settings.length; i<len; i++) {
-		var property = this._settings[i].property;
-		var value = window.getComputedStyle(node).getPropertyValue(JAX.FX._SUPPORTED_PROPERTIES[property].css);
-		style[property] = value;
-	}
-
-	while(this._transitionCount) { this._endTransition(); }
-	this._finishAnimation();
 };
 
 JAX.FX.prototype._parseCSSValue = function(property, cssValue) {
@@ -429,14 +313,14 @@ JAX.FX.prototype._foundCSSValue = function(setting) {
 	switch(setting) {
 		case "width":
 		case "height":
-			value = this._elm.size(setting);
+			value = this._jaxElm.size(setting);
 		break;
 		case "backgroundColor":
 		case "color":
-			var value = this._elm.computedCss(JAX.FX._SUPPORTED_PROPERTIES[setting].css);
+			var value = this._jaxElm.computedCss(this._styleToCSSProperty(JAX.FX._SUPPORTED_PROPERTIES[setting]));
 		break;
 		default:
-			var cssValue = this._elm.computedCss(JAX.FX._SUPPORTED_PROPERTIES[setting].css);
+			var cssValue = this._jaxElm.computedCss(this._styleToCSSProperty(JAX.FX._SUPPORTED_PROPERTIES[setting]));
 			var value = parseFloat(cssValue);
 	}
 
@@ -446,42 +330,19 @@ JAX.FX.prototype._foundCSSValue = function(setting) {
 	}
 };
 
-JAX.FX.prototype._finishTransitionAnimation = function() {
-	this._endTransition();
-	this._finishAnimation(true);
+JAX.FX.prototype._finishAnimationFulfill = function() {
+	clearInterval(this._interval);
+	this._isRunning = false;
+	this._promise.finished.fulfill(this._jaxElm);
 };
 
-JAX.FX.prototype._finishInterpolatorAnimation = function(index) {
-	this._endInterpolator(index);
-	this._finishAnimation(true);
+JAX.FX.prototype._finishAnimationReject = function() {
+	clearInterval(this._interval);
+	this._isRunning = false;
+	this._promise.finished.reject(this._jaxElm);
 };
 
-JAX.FX.prototype._endInterpolator = function(index) {
-	this._interpolators[index].stop();
-	this._interpolators[index] = null;
-
-	for (var i=0, len=this._interpolators.length; i<len; i++) {
-		if (this._interpolators[i]) { return; }
-	}
-
-	this._interpolators = [];
-	this._running = false;
-};
-
-JAX.FX.prototype._endTransition = function() {
-	this._transitionCount--;
-	if (this._transitionCount) { return; }
-
-	var te = JAX.FX._TRANSITION_EVENT;
-	this._elm.stopListening(this._ecTransition);
-	this._elm.node().style[JAX.FX._TRANSITION_PROPERTY] = "";
-	this._ecTransition = null;
-	this._running = false;
-};
-
-JAX.FX.prototype._finishAnimation = function(fulfilled) {
-	clearInterval(this._durationIntervalChecker);
-	if (fulfilled) { this._promise.fulfill(this._elm); return; }
-	this._promise.reject(this._elm);
+JAX.FX.prototype._styleToCSSProperty = function(property) {
+﻿	return property.replace(/([A-Z])/g, function(match, letter) { return "-" + letter.toLowerCase(); });
 };
 
