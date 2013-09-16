@@ -551,7 +551,7 @@ JAX.Element.prototype.animate = function(property, duration, start, end) {
 
 	var fx = new JAX.FX(this);
 	fx.addProperty(property, duration, start, end);
-	return fx.run();
+	return new JAX.Element.FX(this, fx).run();
 };
 
 /** 
@@ -572,14 +572,14 @@ JAX.Element.prototype.fade = function(type, duration) {
 
 	switch(type) {
 		case "in":
-			return this.animate("opacity", duration, 0, 1);	
+			return this.animate("opacity", duration, 0, 1);
 		break;
 		case "out":
 			return this.animate("opacity", duration, 1, 0);
 		break;
 		default:
 			JAX.Report.error("I got unsupported type '" + type + "'.", this._node);
-			return new JAK.Promise().reject(this._node);
+			return new JAX.Element.FX(this, null).run();
 	}
 };
 
@@ -646,33 +646,88 @@ JAX.Element.prototype.slide = function(type, duration) {
 		break;
 		default:
 			JAX.Report.error("I got unsupported type '" + type + "'.", this._node);
-			return this;
+			return new JAX.Element.FX(this, null).run();
 	}
 
 	this.css("overflow", "hidden");
 
 	var func = function() { this.css(backupStyles); }.bind(this);
-	var promise = this.animate(property, duration, start, end);
-	promise.then(func);
+	var fx = this.animate(property, duration, start, end);
+	fx.then(func);
 
-	return promise;
+	return fx;
 };
 
-JAX.Element.prototype.scrollMax = function(type) {
+JAX.Element.prototype.scroll = function(type, value, duration) {
 	if (typeof(type) != "string") {
-		JAX.Report.error("I expected string for my argument.", this._node);
+		JAX.Report.error("I expected String for my first argument.", this._node);
 		type += "";
 	}
 
-	switch(type.toLowerCase()) {
-		case "x":
-			return this._node.scrollWidth - this._node.clientWidth;
-		case "y":
-			return this._node.scrollHeight - this._node.clientHeight;
-		default:
-			JAX.Report.error("You gave me an unsupported type. I expected 'x' or 'y'.", this._node);
-			return 0;
+	var left = this._node.scrollLeft;
+	var top = this._node.scrollTop;
+
+	if (arguments.length == 1) {
+		switch(type.toLowerCase()) {
+			case "top":
+				var retValue = top;
+			break;
+			case "left":
+				var retValue = left;
+			break;
+			default:
+				JAX.Report.error("You gave me an unsupported type. I expected 'x' or 'y'.", this._node);
+				var retValue = 0;
+		}
+
+		return retValue;
 	}
+
+	var targetValue = parseFloat(value);
+
+	if (!isFinite(targetValue)) {
+		JAX.Report.error("I expected Number or string with number for my second argument.", this._node);
+		targetValue = 0;
+	}
+
+	if (duration) {
+		var duration = parseFloat(duration);
+		if (!isFinite(duration)) {
+			JAX.Report.error("I expected Number or string with number for my third argument.", this._node);
+			duration = 1;
+		}
+	}
+
+	var type = type.toLowerCase();
+
+	var scrollFunc = function(value) {
+		switch(type) {
+			case "top":
+				this._node.scrollTop = value;
+			break;
+			case "left":
+				this._node.scrollLeft = value;
+			break;
+		}
+	}.bind(this);
+
+	if (!duration) {
+		scrollFunc(targetValue);
+		return this;
+	}
+
+	var scrollingFinished = new JAK.Promise();
+
+	var onScrollingFinished = function() {
+		scrollingFinished.fulfill(this._node);
+	}.bind(this);
+
+	var currentValue = type == "left" ? left : top;
+
+	var interpolator = new JAK.Interpolator(currentValue, targetValue, duration, scrollFunc, {endCallback:onScrollingFinished});
+		interpolator.start();
+
+	return scrollingFinished;
 };
 
 JAX.Element.prototype._setOpacity = function(value) {
@@ -740,7 +795,6 @@ JAX.Element.prototype._getText = function(node) {
 		var child = node.childNodes[i];
 		var tagName = child.tagName ? child.tagName.toLowerCase() : "";
 		if (child.childNodes && child.childNodes.length) { text += this._getText(child); continue; }
-		if (tagName == "br") { text += "\n"; continue; }
 		if (child.nodeValue) { text += child.nodeValue; continue; }
 		text += " ";
 	}

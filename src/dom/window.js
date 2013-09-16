@@ -11,7 +11,7 @@
 JAX.Window = JAK.ClassMaker.makeClass({
 	NAME: "JAX.Window",
 	VERSION: "1.0",
-	IMPLEMENT: [JAX.IListening]
+	IMPLEMENT: [JAX.IListening, JAX.INode]
 });
 
 JAX.Window.prototype.$constructor = function(win) {

@@ -11,7 +11,7 @@
 JAX.Node = JAK.ClassMaker.makeClass({
 	NAME: "JAX.Node",
 	VERSION: "1.0",
-	IMPLEMENT: JAX.INode
+	IMPLEMENT: [JAX.INode]
 });
 
 JAX.Node.prototype.$constructor = function(node) {
@@ -71,7 +71,7 @@ JAX.Node.prototype.insertFirst = function(node) {
 		} else if (this._node.childNodes) {
 			this._node.appendChild(node);
 		} else {
-			throw new Error("Given element can not have child nodes.");		
+			JAX.Report.error("Given element can not have child nodes.", this._node);
 		}
 		
 		return this;
@@ -229,7 +229,7 @@ JAX.Node.prototype.remove = function() {
 JAX.Node.prototype.clone = function(withContent) {
 	var clone = this._node.cloneNode(!!withContent);
 
-	return new this.constructor(clone);
+	return new this(clone);
 };
 
 /**

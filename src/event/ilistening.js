@@ -39,18 +39,26 @@ JAX.IListening.prototype.listen = function(type, obj, funcMethod, bindData) {
 		JAX.Report.error("For first argument I expected string.", this._node);
 	}
 
-	if (typeof(obj) != "object" && typeof(obj) != "function") { 
-		throw new Error("For second argument I expected referred object or binded function"); 
+	if (!obj || (typeof(obj) != "object" && typeof(obj) != "function")) { 
+		JAX.Report.error("For second argument I expected referred object or binded function.", this._node);
+		obj = function() {};
+		funcMethod = null;
 	}
 
-	if (typeof(funcMethod) != "string" && typeof(funcMethod) != "function") { 
-		throw new Error("For second argument I expected string or function"); 
+	if (funcMethod && typeof(funcMethod) != "string" && typeof(funcMethod) != "function") { 
+		JAX.Report.error("For third argument I expected string with function name or function.", this._node); 
+		obj = function() {};
+		funcMethod = null;
 	}
 
 	if (typeof(funcMethod) == "string") {
 		var funcMethod = obj[funcMethod];
-		if (!funcMethod) { throw new Error("Given method in second argument was not found in referred object given in third argument"); } 
-		funcMethod = funcMethod.bind(obj);
+		if (funcMethod) {
+			funcMethod = funcMethod.bind(obj);
+		} else {
+			JAX.Report.error("Given method in second argument was not found in referred object given in third argument.", this._node);
+			funcMethod = function() {};
+		}
 	} else if (typeof(funcMethod) == "function" && obj) {
 		funcMethod = funcMethod.bind(obj);
 	} else if (typeof(obj) == "function") {

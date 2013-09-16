@@ -18,21 +18,18 @@ var JAX = function(selector, srcElement) {
 		return selector;
 	}
 
-	if (typeof(selector) == "string") {
-		if (arguments.length == 1) { 
-			var srcElement = document; 
-		} else if (arguments.length > 1 && srcElement) {
-			var srcElement = srcElement.jaxNodeType ? srcElement.node() : srcElement;
-		} else {
-			return new JAX.NullNode();
-		}
+	if (!selector) {
+		return new JAX.NullNode();
+	}
 
+	if (typeof(selector) == "string") {
+		var srcElement = (srcElement && srcElement.jaxNodeType ? srcElement.node() : srcElement) || document;
 		var foundElm = srcElement.querySelector(selector);
 		var nodeType = foundElm ? foundElm.nodeType : -1;
-	} else if (selector && typeof(selector) == "object" && selector.nodeType) {
+	} else if (typeof(selector) == "object" && selector.nodeType) {
 		var nodeType = selector.nodeType;
 		var foundElm = selector;
-	} else if (selector && "window" in selector && typeof(selector.window) == "object" && "window" in selector.window) {
+	} else if (("window" in selector) && typeof(selector.window) == "object" && ("window" in selector.window)) {
 		var nodeType = -2;
 		var foundElm = selector;
 	} else {
@@ -67,6 +64,10 @@ var JAX = function(selector, srcElement) {
  * @returns {JAX.NodeArray}
  */
 JAX.all = function(selector, srcElement) {
+	if (!selector) {
+		return JAX.NodeArray(null);
+	}
+
 	if (typeof(selector) == "string") {
 		if (arguments.length == 1) { 
 			var srcElement = document; 
@@ -82,13 +83,13 @@ JAX.all = function(selector, srcElement) {
 		for (var i=0, len=foundElms.length; i<len; i++) { jaxelms[i] = JAX(foundElms[i]); }
 
 		return new JAX.NodeArray(jaxelms);
-	} else if (selector && typeof(selector) == "object" && selector.nodeType) {
+	} else if (typeof(selector) == "object" && selector.nodeType) {
 		return new JAX.NodeArray(JAX(selector));
-	} else if (selector && (selector.jaxNodeType || selector instanceof Array)) {
+	} else if (selector.jaxNodeType || selector instanceof Array) {
 		return new JAX.NodeArray(selector);
 	}
 	
-	return JAX.NodeArray(null);
+	return JAX.NodeArray([]);
 };
 
 /**
