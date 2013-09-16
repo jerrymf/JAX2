@@ -84,7 +84,7 @@ JAX.all = function(selector, srcElement) {
 		return new JAX.NodeArray(jaxelms);
 	} else if (selector && typeof(selector) == "object" && selector.nodeType) {
 		return new JAX.NodeArray(JAX(selector));
-	} else if (selector && selector.jaxNodeType) {
+	} else if (selector && (selector.jaxNodeType || selector instanceof Array)) {
 		return new JAX.NodeArray(selector);
 	}
 	

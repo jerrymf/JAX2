@@ -270,6 +270,20 @@ JAX.Element.prototype.attr = function(property, value) {
 	return this;
 };
 
+JAX.Element.prototype.removeAttr = function(properties) {
+	if (typeof(properties) == "string") { 
+		this._node.removeAttribute(properties);
+		return this;
+	} else if (property instanceof Array) {
+		for (var i=0, len=properties.length; i<len; i++) {
+			this._node.removeAttribute(properties[i]);
+		}
+		return this;
+	}
+
+	JAX.Report.error("For first argument I expected string or array of strings.", this._node);
+	return this;
+}
 /** 
  * @method nastaví nebo získá style vlastnosti u elementu
  * @example

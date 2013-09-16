@@ -37,6 +37,16 @@ JAX.NodeArray.prototype.$constructor = function(nodes) {
 	this.length = len;
 };
 
+JAX.NodeArray.prototype.allExists = function() {
+	if (!this._jaxNodes.length) { return false; }
+	
+	for (var i=0, len=this._jaxNodes.length; i<len; i++) {
+		if (!this._jaxNodes[i].exists()) { return false; }
+	}
+
+	return true;
+};
+
 /**
  * @method vrátí konkrétní prvek (uzel) v poli
  * @example
@@ -167,6 +177,14 @@ JAX.NodeArray.prototype.attr = function(property, value) {
 	for (var i=0, len=this._jaxNodes.length; i<len; i++) { 
 		var jaxNode = this._jaxNodes[i];
 		jaxNode.attr(property, value);
+	}
+	return this;
+};
+
+JAX.NodeArray.prototype.removeAttr = function(properties) {
+	for (var i=0, len=this._jaxNodes.length; i<len; i++) { 
+		var jaxNode = this._jaxNodes[i];
+		jaxNode.removeAttr(properties);
 	}
 	return this;
 };
