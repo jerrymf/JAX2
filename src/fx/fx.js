@@ -43,9 +43,25 @@ JAX.FX._SUPPORTED_PROPERTIES = {
 		defaultUnit:"px", 
 		css:"width" 
 	},
+	"maxWidth": {
+		defaultUnit:"px", 
+		css:"max-width" 
+	},
+	"minWidth": {
+		defaultUnit:"px", 
+		css:"min-width" 
+	},
 	"height": {
 		defaultUnit:"px", 
 		css:"height" 
+	},
+	"maxHeight": {
+		defaultUnit:"px", 
+		css:"max-height" 
+	},
+	"minHeight": {
+		defaultUnit:"px", 
+		css:"min-height" 
 	},
 	"top": {
 		defaultUnit:"px", 
@@ -295,7 +311,7 @@ JAX.FX.prototype._checkSupportedProperty = function(property) {
 		var properties = [];
 
 		for (var p in JAX.FX._SUPPORTED_PROPERTIES) { 
-			properties.push(JAX.FX._SUPPORTED_PROPERTIES[p]); 
+			properties.push(p); 
 		}
 
 		throw new Error("First argument must be supported setting: " + properties.join(", ")); 
@@ -309,7 +325,7 @@ JAX.FX.prototype._checkSupportedMethod = function(method) {
 	}
 
 	var methods = [];
-	for (var p in JAX.FX._SUPPORTED_METHODS) { methods.concat(JAX.FX._SUPPORTED_METHODS[p]); }
+	for (var i=0, len=JAX.FX._SUPPORTED_METHODS.length; i<len; i++) { methods.push(JAX.FX._SUPPORTED_METHODS[i]); }
 	throw new Error("Fifth argument must be supported method: " + methods.join(", ")); 
 }
 
