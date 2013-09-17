@@ -16,7 +16,17 @@ JAX.NodeArray.FX.prototype.then = function(onFulfill, onReject) {
 		fxPromises[i] = this._jaxElementFXArray[i].getPromise();
 	}
 
-	return JAK.Promise.when(fxPromises).then(onFulfill, onReject);
+	var fulfill = function(array) {
+		var nodeArray = new JAX.NodeArray(array);
+		onFulfill(nodeArray);
+	};
+
+	var reject = function(array) {
+		var nodeArray = new JAX.NodeArray(array);
+		onReject(nodeArray);
+	};
+
+	return JAK.Promise.when(fxPromises).then(fulfill, reject);
 };
 
 JAX.NodeArray.FX.prototype.stop = function() {

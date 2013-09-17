@@ -52,7 +52,7 @@ JAX.FX.CSS3.prototype.run = function() {
 	for (var i=0, len=settings.length; i<len; i++) {
 		var setting = settings[i];
 		var cssStartValue = setting.startValue + setting.startUnit;
-		var transitionParam = setting.property + " " + setting.durationValue + setting.durationUnit + " " + setting.method;
+		var transitionParam = this._styleToCSSProperty(setting.property) + " " + setting.durationValue + setting.durationUnit + " " + setting.method;
 
 		style[setting.property] = cssStartValue;
 		tps.push(transitionParam);
@@ -81,7 +81,7 @@ JAX.FX.CSS3.prototype.stop = function() {
 
 	for(var i=0, len=this._settings.length; i<len; i++) {
 		var property = this._settings[i].property;
-		var value = window.getComputedStyle(node).getPropertyValue(property);
+		var value = window.getComputedStyle(node).getPropertyValue(this._styleToCSSProperty(property));
 		style[property] = value;
 	}
 
@@ -101,4 +101,8 @@ JAX.FX.CSS3.prototype._endTransition = function() {
 JAX.FX.CSS3.prototype._finishTransitionAnimation = function() {
 	this._endTransition();
 	this._promise.finished.fulfill(this._jaxElm);
+};
+
+JAX.FX.CSS3.prototype._styleToCSSProperty = function(property) {
+﻿	return property.replace(/([A-Z])/g, function(match, letter) { return "-" + letter.toLowerCase(); });
 };

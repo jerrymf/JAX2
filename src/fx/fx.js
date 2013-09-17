@@ -130,7 +130,7 @@ JAX.FX.prototype.addProperty = function(property, duration, start, end, method) 
 	};
 
 	this._settings.push({
-		property: JAX.FX.CSS3.isSupported ? this._styleToCSSProperty(property) : property,
+		property: property,
 		startValue: cssStart.value,
 		startUnit: cssStart.unit,
 		endValue: cssEnd.value,
@@ -167,7 +167,7 @@ JAX.FX.prototype.run = function() {
 	}.bind(this), 50);
 
 	this._promise.finished = this._processor.run();
-	this._promise.finished.then(this._finishAnimationFulfill.bind(this), this._finishAnimationReject.bind(this));
+	this._promise.finished.then(this._finishAnimation.bind(this), this._finishAnimation.bind(this));
 
 	return this._promise.finished;
 };
@@ -194,7 +194,7 @@ JAX.FX.prototype.reverse = function() {
 		var property = setting.property;
 		var method = setting.method;
 
-		var parsedCss = this._parseCSSValue(property, this._jaxElm.computedCss(JAX.FX.CSS3.isSupported ? property : this._styleToCSSProperty(property)));
+		var parsedCss = this._parseCSSValue(property, this._jaxElm.computedCss(this._styleToCSSProperty(property)));
 		var startValue = parsedCss.value;
 		var startUnit = parsedCss.unit;
 
@@ -234,7 +234,7 @@ JAX.FX.prototype.reverse = function() {
 	}.bind(this), 50);
 
 	this._promise.finished = this._processor.run();
-	this._promise.finished.then();
+	this._promise.finished.then(this._finishAnimation.bind(this), this._finishAnimation.bind(this));
 
 	return this._promise.finished;
 };
@@ -255,7 +255,7 @@ JAX.FX.prototype.isRunning = function() {
  */
 JAX.FX.prototype.stop = function() {
 	this._processor.stop();
-	this._finishAnimationReject();
+	this._finishAnimation();
 	return this;
 };
 
@@ -317,10 +317,10 @@ JAX.FX.prototype._foundCSSValue = function(setting) {
 		break;
 		case "backgroundColor":
 		case "color":
-			var value = this._jaxElm.computedCss(this._styleToCSSProperty(JAX.FX._SUPPORTED_PROPERTIES[setting]));
+			var value = this._jaxElm.computedCss(this._styleToCSSProperty(setting));
 		break;
 		default:
-			var cssValue = this._jaxElm.computedCss(this._styleToCSSProperty(JAX.FX._SUPPORTED_PROPERTIES[setting]));
+			var cssValue = this._jaxElm.computedCss(this._styleToCSSProperty(setting));
 			var value = parseFloat(cssValue);
 	}
 
@@ -330,16 +330,9 @@ JAX.FX.prototype._foundCSSValue = function(setting) {
 	}
 };
 
-JAX.FX.prototype._finishAnimationFulfill = function() {
+JAX.FX.prototype._finishAnimation = function() {
 	clearInterval(this._interval);
 	this._isRunning = false;
-	this._promise.finished.fulfill(this._jaxElm);
-};
-
-JAX.FX.prototype._finishAnimationReject = function() {
-	clearInterval(this._interval);
-	this._isRunning = false;
-	this._promise.finished.reject(this._jaxElm);
 };
 
 JAX.FX.prototype._styleToCSSProperty = function(property) {
