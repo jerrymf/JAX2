@@ -275,7 +275,7 @@ JAX.NodeArray.prototype.before = function(node) {
 JAX.NodeArray.prototype.remove = function() {
 	for (var i=0, len=this._jaxNodes.length; i<len; i++) { 
 		var jaxNode = this._jaxNodes[i];
-		jaxNode.removeFromDOM(); 
+		jaxNode.remove(); 
 	}
 	return this;
 };
