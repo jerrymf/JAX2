@@ -24,7 +24,7 @@ JAX.FX.CSS3._TRANSITION_EVENT = "";
 	}
 })();
 
-JAX.FX.CSS3.isSuported = !!JAX.FX.CSS3._TRANSITION_PROPERTY;
+JAX.FX.CSS3.isSupported = !!JAX.FX.CSS3._TRANSITION_PROPERTY;
 
 JAX.FX.CSS3.prototype.$constructor = function(jaxElm) {
 	this._jaxElm = jaxElm;
@@ -49,8 +49,8 @@ JAX.FX.CSS3.prototype.run = function() {
 	var node = this._jaxElm.node();
 	var style = node.style;
 
-	for (var i=0, len=settings.length; i<len; i++) {
-		var setting = settings[i];
+	for (var i=0, len=this._settings.length; i<len; i++) {
+		var setting = this._settings[i];
 		var cssStartValue = setting.startValue + setting.startUnit;
 		var transitionParam = this._styleToCSSProperty(setting.property) + " " + setting.durationValue + setting.durationUnit + " " + setting.method;
 
@@ -65,8 +65,8 @@ JAX.FX.CSS3.prototype.run = function() {
 		node.style[tp] = tps.join(",");
 		this._ecTransition = this._jaxElm.listen(te, this, "_finishTransitionAnimation");
 
-		for (var i=0, len=settings.length; i<len; i++) {
-			var setting = settings[i];
+		for (var i=0, len=this._settings.length; i<len; i++) {
+			var setting = this._settings[i];
 			var cssEndValue = setting.endValue + setting.startUnit;
 			style[setting.property] = cssEndValue;
 		}
