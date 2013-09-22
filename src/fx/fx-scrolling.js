@@ -94,7 +94,7 @@ JAX.FX.Scrolling.prototype.reverse = function() {
 
 	for (var i=0, len=this._settings.length; i<len; i++) {
 		var setting = this._settings[i];
-		var duration = this._reversed ? Math.min(setting.duration, this._timeline) : Math.max(setting.duration, this._timeline);
+		var duration = this._reversed ? Math.min(setting.duration, this._timeline) : Math.max(setting.duration - this._timeline, 0);
 		this._startInterval(setting.property, this._reversed ? setting.defValue : setting.value, duration);
 	}
 

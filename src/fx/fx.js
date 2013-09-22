@@ -206,7 +206,7 @@ JAX.FX.prototype.reverse = function() {
 			var endValue = setting.startValue;
 			var endUnit = setting.startUnit;
 		} else {
-			var durationValue = Math.max(this._timeline, setting.durationValue);
+			var durationValue = Math.max(setting.durationValue - this._timeline, 0);
 			var endValue = setting.endValue;
 			var endUnit = setting.endUnit;
 		}
