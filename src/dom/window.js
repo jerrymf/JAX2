@@ -74,14 +74,6 @@ JAX.Window.prototype.scroll = function(type, value, duration) {
 
 	var targetValue = parseFloat(value);
 
-	if (duration) {
-		var duration = parseFloat(duration);
-		if (!isFinite(duration)) {
-			JAX.Report.error("I expected Number or string with number for my third argument.", this._node);
-			duration = 1;
-		}
-	}
-
 	if (!isFinite(targetValue)) {
 		JAX.Report.error("I expected Number or string with number for my second argument.", this._node);
 		targetValue = 0;
@@ -89,7 +81,7 @@ JAX.Window.prototype.scroll = function(type, value, duration) {
 
 	var type = type.toLowerCase();
 
-	var scrollFunc = function(value) {
+	if (!duration) {
 		switch(type) {
 			case "top":
 				this._node.scrollTo(left, value);
@@ -98,23 +90,18 @@ JAX.Window.prototype.scroll = function(type, value, duration) {
 				this._node.scrollTo(value, top);
 			break;
 		}
-	}.bind(this);
-
-	if (!duration) {
-		scrollFunc(targetValue);
-		return this;
+		return this; 
 	}
 
-	var scrollingFinished = new JAK.Promise();
+	var duration = parseFloat(duration);
+	if (!isFinite(duration)) {
+		JAX.Report.error("I expected Number or string with number for my third argument.", this._node);
+		duration = 1;
+	}
 
-	var onScrollingFinished = function() {
-		scrollingFinished.fulfill(this._node);
-	}.bind(this);
+	var fx = new JAX.FX.Scrolling(this);
+		fx.addProperty(type, value, duration);
+		fx.run();
 
-	var currentValue = type == "left" ? left : top;
-
-	var interpolator = new JAK.Interpolator(currentValue, targetValue, duration, scrollFunc, {endCallback:onScrollingFinished});
-		interpolator.start();
-
-	return scrollingFinished;
+	return fx;
 };

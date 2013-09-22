@@ -58,7 +58,8 @@ JAX.FX.prototype.$constructor = function(elm) {
 	this._reversed = false;
 	this._running = false;
 
-	this._passedTime = 0;
+	this._maxDuration = 0;
+	this._timeline = 0;
 	this._interval = null;
 
 	this._promise = {
@@ -129,6 +130,8 @@ JAX.FX.prototype.addProperty = function(property, duration, start, end, method) 
 		unit: "ms"
 	};
 
+	this._maxDuration = Math.max(duration.value, this._maxDuration);
+
 	this._settings.push({
 		property: property,
 		startValue: cssStart.value,
@@ -161,10 +164,8 @@ JAX.FX.prototype.run = function() {
 
 	this._running = true;
 
-	this._passedTime = 0;
-	this._interval = setInterval(function() { 
-		this._passedTime = Math.max(this._passedTime + (this._reversed ? -50 : 50), 0);
-	}.bind(this), 50);
+	this._timeline = 0;
+	this._interval = setInterval(this._tick.bind(this), 30);
 
 	this._promise.finished = this._processor.run();
 	this._promise.finished.then(this._finishAnimation.bind(this), this._finishAnimation.bind(this));
@@ -201,11 +202,11 @@ JAX.FX.prototype.reverse = function() {
 		var durationUnit = setting.durationUnit;
 
 		if (this._reversed) {
-			var durationValue = Math.min(this._passedTime, setting.durationValue);
+			var durationValue = Math.min(this._timeline, setting.durationValue);
 			var endValue = setting.startValue;
 			var endUnit = setting.startUnit;
 		} else {
-			var durationValue = Math.max(setting.durationValue - this._passedTime, 0);
+			var durationValue = Math.max(this._timeline, setting.durationValue);
 			var endValue = setting.endValue;
 			var endUnit = setting.endUnit;
 		}
@@ -229,9 +230,7 @@ JAX.FX.prototype.reverse = function() {
 
 	this._running = true;
 
-	this._interval = setInterval(function() { 
-		this._passedTime = Math.max(this._passedTime + (this._reversed ? -50 : 50), 0);
-	}.bind(this), 50);
+	this._interval = setInterval(this._tick.bind(this), 30);
 
 	this._promise.finished = this._processor.run();
 	this._promise.finished.then(this._finishAnimation.bind(this), this._finishAnimation.bind(this));
@@ -332,6 +331,7 @@ JAX.FX.prototype._foundCSSValue = function(setting) {
 
 JAX.FX.prototype._finishAnimation = function() {
 	clearInterval(this._interval);
+	this._timeline = !this._reversed ? this._maxDuration : 0;
 	this._isRunning = false;
 };
 
@@ -339,3 +339,6 @@ JAX.FX.prototype._styleToCSSProperty = function(property) {
 ﻿	return property.replace(/([A-Z])/g, function(match, letter) { return "-" + letter.toLowerCase(); });
 };
 
+JAX.FX.prototype._tick = function() {
+	this._timeline = Math.min(Math.max(this._timeline + (this._reversed ? -30 : 30), 0), this._maxDuration);
+};

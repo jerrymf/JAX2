@@ -39,6 +39,8 @@ type ".\src\fx\fx-css3.js" >> ".\lib\jax.js"
 ECHO. >> ".\lib\jax.js"
 type ".\src\fx\fx-interpolator.js" >> ".\lib\jax.js"
 ECHO. >> ".\lib\jax.js"
+type ".\src\fx\fx-scrolling.js" >> ".\lib\jax.js"
+ECHO. >> ".\lib\jax.js"
 type ".\src\report\report.js" >> ".\lib\jax.js"
 ECHO. >> ".\lib\jax.js"
 

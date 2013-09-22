@@ -21,6 +21,7 @@ cat dom/nodearray-fx.js >> ../lib/jax.js
 cat fx/fx.js >> ../lib/jax.js
 cat fx/fx-css3.js >> ../lib/jax.js
 cat fx/fx-interpolator.js >> ../lib/jax.js
+cat fx/fx-scrolling.js >> ../lib/jax.js
 cat report/report.js >> ../lib/jax.js
 echo "" >> ../lib/jax.js
 
