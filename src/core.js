@@ -14,23 +14,25 @@
  * @returns {JAX.Node}
  */
 var JAX = function(selector, srcElement) {
-	if (selector && selector.jaxNodeType) {
-		return selector;
-	}
-
 	if (!selector) {
 		return new JAX.NullNode();
 	}
 
+	if (JAX.isJAXElement(selector)) {
+		return selector;
+	}
+
 	if (typeof(selector) == "string") {
-		var srcElement = (srcElement && srcElement.jaxNodeType ? srcElement.node() : srcElement) || document;
+		var srcElement = (srcElement && JAX.isJAXElement(srcElement) ? srcElement.node() : srcElement) || document;
+
+		if (!JAX.isDOMElement(srcElement)) {
+			return new JAX.NullNode();
+		}
+
 		var foundElm = srcElement.querySelector(selector);
 		var nodeType = foundElm ? foundElm.nodeType : -1;
-	} else if (typeof(selector) == "object" && selector.nodeType) {
-		var nodeType = selector.nodeType;
-		var foundElm = selector;
-	} else if (("window" in selector) && typeof(selector.window) == "object" && ("window" in selector.window)) {
-		var nodeType = -2;
+	} else if (JAX.isDOMElement(selector)) {
+		var nodeType = !("nodeType" in selector) ? -2 : selector.nodeType;
 		var foundElm = selector;
 	} else {
 		var nodeType = -1;
@@ -69,27 +71,21 @@ JAX.all = function(selector, srcElement) {
 	}
 
 	if (typeof(selector) == "string") {
-		if (arguments.length == 1) { 
-			var srcElement = document; 
-		} else if (arguments.length > 1 && srcElement) {
-			var srcElement = srcElement.jaxNodeType ? srcElement.node() : srcElement;
-		} else {
+		var srcElement = (srcElement && JAX.isJAXElement(srcElement) ? srcElement.node() : srcElement) || document;
+
+		if (!JAX.isDOMElement(srcElement)) {
 			return new JAX.NodeArray([]);
 		}
 
 		var foundElms = srcElement.querySelectorAll(selector);
-		var jaxelms = new Array(foundElms.length);
+		var arrayElms = new Array(foundElms.length);
 
-		for (var i=0, len=foundElms.length; i<len; i++) { jaxelms[i] = JAX(foundElms[i]); }
+		for (var i=0, len=foundElms.length; i<len; i++) { arrayElms[i] = foundElms[i]; }
 
-		return new JAX.NodeArray(jaxelms);
-	} else if (typeof(selector) == "object" && selector.nodeType) {
-		return new JAX.NodeArray(JAX(selector));
-	} else if (selector.jaxNodeType || selector instanceof Array) {
-		return new JAX.NodeArray(selector);
+		return new JAX.NodeArray(arrayElms);
 	}
 	
-	return JAX.NodeArray([]);
+	return new JAX.NodeArray(selector);
 };
 
 /**
@@ -219,4 +215,35 @@ JAX.getTypeOf = function(value) {
 	}
 
 	return "object";
+};
+
+JAX.isDOMElement = function(o) {
+	if (typeof(o) != "object") {
+		return false;
+	}
+
+	if (o.Window && o instanceof o.Window || o instanceof Window) {
+		return true;
+	}
+
+	var win = o.defaultView || o.parentWindow || (o.ownerDocument ? (o.ownerDocument.defaultView || o.ownerDocument.parentWindow) : null);
+
+	return win && (
+		(win.HTMLElement && o instanceof win.HTMLElement) ||
+		(win.Element && o instanceof win.Element) ||
+		(win.HTMLDocument && o instanceof win.HTMLDocument) ||
+		(win.DocumentFragment && o instanceof win.DocumentFragment) ||
+		(win.Text && o instanceof win.Text)
+	);
+};
+
+JAX.isJAXElement = function(o) {
+	return (
+		o instanceof JAX.Element ||
+		o instanceof JAX.Document ||
+		o instanceof JAX.TextNode ||
+		o instanceof JAX.DocumentFragment ||
+		o instanceof JAX.Window ||
+		o instanceof JAX.NullNode
+	);
 };

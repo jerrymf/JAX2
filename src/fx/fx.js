@@ -59,8 +59,8 @@ JAX.FX.prototype.$constructor = function(elm) {
 	this._running = false;
 
 	this._maxDuration = 0;
-	this._timeline = 0;
-	this._interval = null;
+	this._startTime = 0;
+	this._currentTime = 0;
 
 	this._promise = {
 		finished: null
@@ -164,8 +164,7 @@ JAX.FX.prototype.run = function() {
 
 	this._running = true;
 
-	this._timeline = 0;
-	this._interval = setInterval(this._tick.bind(this), 30);
+	this._startTime = new Date().getTime();
 
 	this._promise.finished = this._processor.run();
 	this._promise.finished.then(this._finishAnimation.bind(this), this._finishAnimation.bind(this));
@@ -202,11 +201,11 @@ JAX.FX.prototype.reverse = function() {
 		var durationUnit = setting.durationUnit;
 
 		if (this._reversed) {
-			var durationValue = Math.min(this._timeline, setting.durationValue);
+			var durationValue = Math.min(this._currentTime, setting.durationValue);
 			var endValue = setting.startValue;
 			var endUnit = setting.startUnit;
 		} else {
-			var durationValue = Math.max(setting.durationValue - this._timeline, 0);
+			var durationValue = Math.max(setting.durationValue - this._currentTime, 0);
 			var endValue = setting.endValue;
 			var endUnit = setting.endUnit;
 		}
@@ -230,7 +229,7 @@ JAX.FX.prototype.reverse = function() {
 
 	this._running = true;
 
-	this._interval = setInterval(this._tick.bind(this), 30);
+	this._startTime = new Date().getTime();
 
 	this._promise.finished = this._processor.run();
 	this._promise.finished.then(this._finishAnimation.bind(this), this._finishAnimation.bind(this));
@@ -254,7 +253,6 @@ JAX.FX.prototype.isRunning = function() {
  */
 JAX.FX.prototype.stop = function() {
 	this._processor.stop();
-	this._finishAnimation();
 	return this;
 };
 
@@ -330,15 +328,20 @@ JAX.FX.prototype._foundCSSValue = function(setting) {
 };
 
 JAX.FX.prototype._finishAnimation = function() {
-	clearInterval(this._interval);
-	this._timeline = !this._reversed ? this._maxDuration : 0;
+	var passedTime = new Date().getTime() - this._startTime;
+
+	if (!this._reversed) {
+		this._currentTime += passedTime;
+		this._currentTime = Math.min(this._currentTime, this._maxDuration);
+	} else {
+		this._currentTime -= passedTime;
+		this._currentTime = Math.max(this._currentTime, 0);
+	}
+
+	this._startTime = 0;
 	this._isRunning = false;
 };
 
 JAX.FX.prototype._styleToCSSProperty = function(property) {
 ﻿	return property.replace(/([A-Z])/g, function(match, letter) { return "-" + letter.toLowerCase(); });
-};
-
-JAX.FX.prototype._tick = function() {
-	this._timeline = Math.min(Math.max(this._timeline + (this._reversed ? -30 : 30), 0), this._maxDuration);
 };

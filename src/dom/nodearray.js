@@ -23,29 +23,32 @@ JAX.NodeArray = JAK.ClassMaker.makeClass({
  * @param {Node | Node[] | JAX.Node[] | null} nodes pole uzlů | pole instancí JAX.Node
  */
 JAX.NodeArray.prototype.$constructor = function(nodes) {
-	var raisedError = false;
-	var nodes = nodes ? [].concat(nodes) : [];
-	var len = 0;
+	if (nodes instanceof JAX.NodeArray) {
+		var arr = nodes.items();
+	} else {
+		var arr = [].concat(nodes);
+	}
+
+	this.length = 0;
 	this._jaxNodes = [];
 
-	while(nodes.length) {
-		len++;
-		var node = nodes.shift();
-		if (typeof(node) == "object" && node.nodeType) { this._jaxNodes.push(JAX(node)); continue; }
-		if (node.jaxNodeType && node.exists()) { this._jaxNodes.push(node); continue; }
-
-		len--;
-		raisedError = true;
+	for(var i=0, len=arr.length; i<len; i++) {
+		var node = arr[i];
+		var jaxNode = JAX(node);
+		
+		if (jaxNode.exists()) {
+			this.length++;
+			this._jaxNodes.push(JAX(node)); 
+			continue;
+		}
 	}
 
-	if (raisedError) {
-		JAX.Report.error("First argument can be only html node, JAX node or array of them.", this._node);
+	if (this.length != arr.length) {
+		JAX.Report.error("First argument can be only html node, JAX node, array of them or instance of JAX.NodeArray.");
 	}
-
-	this.length = len;
 };
 
-JAX.NodeArray.prototype.allExists = function() {
+JAX.NodeArray.prototype.exist = function() {
 	if (!this._jaxNodes.length) { return false; }
 	
 	for (var i=0, len=this._jaxNodes.length; i<len; i++) {
