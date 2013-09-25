@@ -239,10 +239,8 @@ JAX.isDOMElement = function(o) {
 
 JAX.isJAXElement = function(o) {
 	return (
-		o instanceof JAX.Element ||
+		o instanceof JAX.Node ||
 		o instanceof JAX.Document ||
-		o instanceof JAX.TextNode ||
-		o instanceof JAX.DocumentFragment ||
 		o instanceof JAX.Window ||
 		o instanceof JAX.NullNode
 	);
