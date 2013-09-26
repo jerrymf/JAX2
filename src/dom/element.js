@@ -80,6 +80,8 @@ JAX.Element.prototype.findAll = function(selector) {
  * @returns {JAX.Node}
  */
 JAX.Element.prototype.addClass = function(classNames) {
+	if (classNames == "") { return this; }
+
 	if (typeof(classNames) != "string") {
 		classNames += "";
 		JAX.Report.error("Given argument can be only string.", this._node);
@@ -104,6 +106,8 @@ JAX.Element.prototype.addClass = function(classNames) {
  * @returns {JAX.Node}
  */
 JAX.Element.prototype.removeClass = function(classNames) {
+	if (classNames == "") { return this; }
+
 	if (typeof(classNames) != "string") {
 		classNames += "";
 		JAX.Report.error("Given argument can be only string.", this._node);
@@ -128,6 +132,8 @@ JAX.Element.prototype.removeClass = function(classNames) {
  * @returns {Boolean}
  */
 JAX.Element.prototype.hasClass = function(className) {
+	if (className == "") { return true; }
+
 	if (typeof(className) != "string") {
 		className += "";  
 		JAX.Report.error("For my argument I expected string.", this._node);
@@ -153,6 +159,8 @@ JAX.Element.prototype.hasClass = function(className) {
  * @returns {JAX.Node}
  */
 JAX.Element.prototype.toggleClass = function(className) {
+	if (className == "") { return this; }
+
 	if (typeof(className) != "string") {
 		className += "";
 		JAX.Report.error("For my argument I expected string.", this._node);
