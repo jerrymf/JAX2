@@ -230,8 +230,9 @@ JAX.isDOMElement = function(o) {
 
 	return win && (
 		(win.HTMLElement && o instanceof win.HTMLElement) ||
-		(win.Element && o instanceof win.Element) ||
+		(win.Element && o instanceof win.Element) || // IE
 		(win.HTMLDocument && o instanceof win.HTMLDocument) ||
+		(win.Document && o instanceof win.Document) || // IE 10
 		(win.DocumentFragment && o instanceof win.DocumentFragment) ||
 		(win.Text && o instanceof win.Text)
 	);
