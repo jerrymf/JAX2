@@ -11,7 +11,7 @@
 JAX.NullNode = JAK.ClassMaker.makeClass({
 	NAME: "JAX.NullNode",
 	VERSION: "1.0",
-	IMPLEMENT: [JAX.INode]
+	EXTEND: JAX.Node
 });
 
 JAX.NullNode.prototype.$constructor = function() {
@@ -20,5 +20,5 @@ JAX.NullNode.prototype.$constructor = function() {
 };
 
 JAX.NullNode.prototype._showMessage = function(method) {
-	JAX.Report.error("Hello! I am null node. It means you are trying to work with not existing node. Be careful what you do. Try to use JAX.Node.exists method for checking if element is found.");
+	console.error("Hello! I am null node. It means you are trying to work with not existing node. Be careful what you do. Try to use JAX.Node.exists method for checking if element is found.");
 };

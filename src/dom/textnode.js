@@ -11,7 +11,7 @@
 JAX.TextNode = JAK.ClassMaker.makeClass({
 	NAME: "JAX.Node",
 	VERSION: "1.0",
-	EXTEND: JAX.Node
+	EXTEND: JAX.DOMNode
 });
 
 JAX.TextNode.prototype.$constructor = function(node) {

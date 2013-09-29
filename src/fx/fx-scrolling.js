@@ -21,18 +21,18 @@ JAX.FX.Scrolling.prototype.$constructor = function(jaxElm) {
 		animationFinished: null
 	};
 	this._maxDuration = 0;
-	this._timeline = 0;
+	this._startTime = 0;
+	this._currentTime = 0;
 	this._interpolators = [];
 	this._runningInterpolatorCount = 0;
 	this._reversed = false;
 	this._isRunning = false;
-	this._interval = null;
 	this._onScrollingFinished = this._onScrollingFinished.bind(this);
 };
 
 JAX.FX.Scrolling.prototype.addProperty = function(property, value, duration) {
 	if (property != "left" && property != "top") {
-		JAX.Report.error("You are trying to use unsupported property: " + property + ".", this._jaxElm.node());
+		console.error("You are trying to use unsupported property: " + property + ".", this._jaxElm.node());
 		return;
 	}
 	this._settings.push({property:property, defValue: null, value:value, duration:duration});
@@ -57,9 +57,9 @@ JAX.FX.Scrolling.prototype.run = function() {
 
 	this._isRunning = true;
 	this._reversed = false;
-	this._interval = setInterval(this._tick.bind(this), 30);
+	this._startTime = new Date().getTime();
 
-	return this._promises.animationFinished;
+	return this;
 };
 
 JAX.FX.Scrolling.prototype.then = function(onFulfill, onReject) {
@@ -69,17 +69,10 @@ JAX.FX.Scrolling.prototype.then = function(onFulfill, onReject) {
 JAX.FX.Scrolling.prototype.stop = function() {
 	if (!this._isRunning) { return this; }
 
-	for (var i=0, len=this._interpolators.length; i<len; i++) {
-		this._interpolators[i].stop();
+	while(this._runningInterpolatorCount) {
+		this._onScrollingFinished();
 	}
-
-	this._runningInterpolatorCount = 0;
-	this._interpolators = [];
-	this._isRunning = false;
-	this._promises.animationFinished.reject(this._jaxElm);
-	this._promises.animationFinished = null;
-	clearInterval(this._interval);
-
+	
 	return this;
 };
 
@@ -94,14 +87,14 @@ JAX.FX.Scrolling.prototype.reverse = function() {
 
 	for (var i=0, len=this._settings.length; i<len; i++) {
 		var setting = this._settings[i];
-		var duration = this._reversed ? Math.min(setting.duration, this._timeline) : Math.max(setting.duration - this._timeline, 0);
+		var duration = this._reversed ? Math.min(setting.duration, this._currentTime) : Math.max(setting.duration - this._currentTime, 0);
 		this._startInterval(setting.property, this._reversed ? setting.defValue : setting.value, duration);
 	}
 
 	this._isRunning = true;
-	this._interval = setInterval(this._tick.bind(this), 30);
+	this._startTime = new Date().getTime();
 
-	return this._promises.animationFinished;
+	return this;
 };
 
 JAX.FX.Scrolling.prototype._startInterval = function(property, value, duration) {
@@ -123,13 +116,20 @@ JAX.FX.Scrolling.prototype._onScrollingFinished = function() {
 	this._runningInterpolatorCount--;
 	if (this._runningInterpolatorCount) { return; }
 	this._interpolators = [];
+
+	var passedTime = new Date().getTime() - this._startTime;
+
+	if (!this._reversed) {
+		this._currentTime += passedTime;
+		this._currentTime = Math.min(this._currentTime, this._maxDuration);
+	} else {
+		this._currentTime -= passedTime;
+		this._currentTime = Math.max(this._currentTime, 0);
+	}
+
+	this._startTime = 0;
 	this._isRunning = false;
+
 	this._promises.animationFinished.fulfill(this._jaxElm);
 	this._promises.animationFinished = null;
-	clearInterval(this._interval);
-	this._timeline = !this._reversed ? this._maxDuration : 0;
-};
-
-JAX.FX.Scrolling.prototype._tick = function() {
-	this._timeline = Math.min(Math.max(this._timeline + (this._reversed ? -30 : 30), 0), this._maxDuration);
 };

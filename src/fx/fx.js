@@ -169,7 +169,11 @@ JAX.FX.prototype.run = function() {
 	this._promise.finished = this._processor.run();
 	this._promise.finished.then(this._finishAnimation.bind(this), this._finishAnimation.bind(this));
 
-	return this._promise.finished;
+	return this;
+};
+
+JAX.FX.prototype.then = function(onfulfill, onreject) {
+	this._promise.finished.then(onfulfill, onreject);
 };
 
 /**
@@ -234,7 +238,7 @@ JAX.FX.prototype.reverse = function() {
 	this._promise.finished = this._processor.run();
 	this._promise.finished.then(this._finishAnimation.bind(this), this._finishAnimation.bind(this));
 
-	return this._promise.finished;
+	return this;
 };
 
 /**

@@ -11,7 +11,7 @@
 JAX.DocumentFragment = JAK.ClassMaker.makeClass({
 	NAME: "JAX.DocumentFragment",
 	VERSION: "1.0",
-	EXTEND: JAX.Node
+	EXTEND: JAX.DOMNode
 });
 
 JAX.DocumentFragment.prototype.$constructor = function(doc) {

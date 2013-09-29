@@ -11,7 +11,8 @@
 JAX.Window = JAK.ClassMaker.makeClass({
 	NAME: "JAX.Window",
 	VERSION: "1.0",
-	IMPLEMENT: [JAX.IListening, JAX.INode]
+	EXTEND: JAX.Node,
+	IMPLEMENT: [JAX.IListening]
 });
 
 JAX.Window.prototype.$constructor = function(win) {
@@ -21,12 +22,12 @@ JAX.Window.prototype.$constructor = function(win) {
 
 JAX.Window.prototype.size = function(sizeType) {
 	if (arguments.length > 1) {
-		JAX.Report.error("I am so sorry, but you can not set " + sizeType + " of document node.", this._node);
+		console.error("I am so sorry, but you can not set " + sizeType + " of document node.", this._node);
 		return this;
 	}
 
 	if (sizeType != "width" && sizeType != "height") {
-		JAX.Report.error("You gave me an unsupported size type. I expected 'width' or 'height'.", this._node);
+		console.error("You gave me an unsupported size type. I expected 'width' or 'height'.", this._node);
 	}
 
 	if ("innerWidth" in window) {
@@ -36,14 +37,14 @@ JAX.Window.prototype.size = function(sizeType) {
 	} else if ("clientWidth" in document.body) {
 		return sizeType == "width" ? document.body.clientWidth : document.body.clientHeight;
 	} else {
-		JAX.Report.error("You have probably unsupported browser.", this._node);
+		console.error("You have probably unsupported browser.", this._node);
 		return 0;
 	}
 };
 
 JAX.Window.prototype.scroll = function(type, value, duration) {
 	if (typeof(type) != "string") {
-		JAX.Report.error("I expected String for my first argument.", this._node);
+		console.error("I expected String for my first argument.", this._node);
 		type += "";
 	}
 
@@ -65,7 +66,7 @@ JAX.Window.prototype.scroll = function(type, value, duration) {
 				var retValue = left;
 			break;
 			default:
-				JAX.Report.error("You gave me an unsupported type. I expected 'x' or 'y'.", this._node);
+				console.error("You gave me an unsupported type. I expected 'x' or 'y'.", this._node);
 				var retValue = 0;
 		}
 
@@ -75,7 +76,7 @@ JAX.Window.prototype.scroll = function(type, value, duration) {
 	var targetValue = parseFloat(value);
 
 	if (!isFinite(targetValue)) {
-		JAX.Report.error("I expected Number or string with number for my second argument.", this._node);
+		console.error("I expected Number or string with number for my second argument.", this._node);
 		targetValue = 0;
 	}
 
@@ -95,7 +96,7 @@ JAX.Window.prototype.scroll = function(type, value, duration) {
 
 	var duration = parseFloat(duration);
 	if (!isFinite(duration)) {
-		JAX.Report.error("I expected Number or string with number for my third argument.", this._node);
+		console.error("I expected Number or string with number for my third argument.", this._node);
 		duration = 1;
 	}
 

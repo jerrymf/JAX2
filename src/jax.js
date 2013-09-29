@@ -1,17 +1,16 @@
 /**
- * @fileOverview core.js - JAX - JAk eXtended
- * @author <a href="mailto:jerrymf@gmail.com">Marek Fojtl</a>
- * @version 2.11
+ * @fileOverview jax.js - JAX - JAk eXtended
+ * @author <a href="mailto:marek.fojtl@firma.seznam.cz">Marek Fojtl</a>
+ * @version 2.2
+ * @group jak-util
  */
 
 /**
- * @method Najde element, který odpovídá selector a vrátí instanci JAX.Node
- * @example
- * var jaxNode = JAX("#ads"); // vrati element s id ads
+ * @method Najde element, který odpovídá selectoru
  *
- * @param {String|Node|JAX.Node} selector Řetězec splňující pravidla css3 (pro IE8 css2.1) selectoru, node nebo instance JAX.Node
- * @param {Node} [srcElement=window.document] node ve kterém se má hledat
- * @returns {JAX.Node}
+ * @param {string || object} selector řetězec splňující pravidla css3 (pro IE8 css2.1) selectoru | HTMLElement | Text | HTMLDocument | Window | JAX.Node
+ * @param {string || object} [srcElement=window.document] element, ve kterém se má hledat
+ * @returns {object} JAX.Node
  */
 var JAX = function(selector, srcElement) {
 	if (!selector) {
@@ -23,10 +22,16 @@ var JAX = function(selector, srcElement) {
 	}
 
 	if (typeof(selector) == "string") {
-		var srcElement = (srcElement && JAX.isJAXElement(srcElement) ? srcElement.node() : srcElement) || document;
+		srcElement = srcElement || document;
 
-		if (!JAX.isDOMElement(srcElement)) {
-			return new JAX.NullNode();
+		if (srcElement != document) {
+			var jaxSrcElement = JAX(srcElement);
+
+			if (!jaxSrcElement.exists()) {
+				return new JAX.NullNode();
+			}
+
+			srcElement = jaxSrcElement.node();
 		}
 
 		var foundElm = srcElement.querySelector(selector);
@@ -57,13 +62,11 @@ var JAX = function(selector, srcElement) {
 };
 
 /**
- * @method Najde elementy, které odpovídají selectoru a vrátí instanci JAX.NodeArray
- * @example
- * var jaxNodes = JAX.all("div.example"); // najde vsechny divy s className example a vrati instanci JAX.NodeArray
+ * @method Najde elementy, které odpovídají selectoru
  *
- * @param {String|Node|JAX.Node} selector řetězec splňující pravidla css3 (pro IE8 css2.1) selectoru, node nebo instance JAX.Node
- * @param {Node} [srcElement=window.document] node ve kterém se má hledat
- * @returns {JAX.NodeArray}
+ * @param {string || object || array} selector řetězec splňující pravidla css3 (pro IE8 css2.1) selectoru | Array of (HTMLElement | Text | HTMLDocument | Window | JAX.Node) | JAX.NodeArray
+ * @param {object || string} [srcElement=window.document] CSS3 (CSS2.1) selector nebo element, ve kterém se má hledat
+ * @returns {object} JAX.NodeArray
  */
 JAX.all = function(selector, srcElement) {
 	if (!selector) {
@@ -71,10 +74,16 @@ JAX.all = function(selector, srcElement) {
 	}
 
 	if (typeof(selector) == "string") {
-		var srcElement = (srcElement && JAX.isJAXElement(srcElement) ? srcElement.node() : srcElement) || document;
+		srcElement = srcElement || document;
 
-		if (!JAX.isDOMElement(srcElement)) {
-			return new JAX.NodeArray([]);
+		if (srcElement != document) {
+			var jaxSrcElement = JAX(srcElement);
+
+			if (!jaxSrcElement.exists()) {
+				return new JAX.NullNode();
+			}
+
+			srcElement = jaxSrcElement.node();
 		}
 
 		var foundElms = srcElement.querySelectorAll(selector);
@@ -89,15 +98,13 @@ JAX.all = function(selector, srcElement) {
 };
 
 /**
- * @method Vytvoří element na základě zadaných parametrů a vrátí JAX.Node instanci
- * @example
- * var elm = JAX.make("div#ads.column"); // vytvori element div s id ads a className column
+ * @method Vytvoří element na základě zadaných parametrů
  *
- * @param {String} tagString řetězec definující název tagu (lze přidat i název tříd(y) a id, se kterými se má vytvořit)
- * @param {Object} attrs asociativní pole atributů tagu
- * @param {Object} styles asociativní pole stylů, které se mají přiřadit do node.style
- * @param {documentElement} [srcDocument=window.document] document node, ve kterém se má vytvářet
- * @returns {JAX.Node}
+ * @param {string} tagString řetězec definující název tagu (lze přidat i název tříd(y) a id, se kterými se má vytvořit)
+ * @param {object} attrs asociativní pole atributů tagu
+ * @param {object} styles asociativní pole stylů, které se mají přiřadit do node.style
+ * @param {object} [srcDocument=window.document] documentElement, ve kterém se má vytvářet
+ * @returns {object} instance JAX.Node
  */
 JAX.make = function(tagString, attrs, styles, srcDocument) {
 	var attrs = attrs || {};
@@ -105,19 +112,19 @@ JAX.make = function(tagString, attrs, styles, srcDocument) {
 	var srcDocument = srcDocument || document;
 
 	if (!tagString || typeof(tagString) != "string") { 
-		JAX.Report.error("First argument must be string.");
+		console.error("First argument must be string.");
 		return JAX(null); 
 	}
 	if (typeof(attrs) != "object") { 
-		JAX.Report.error("Second argument must be associative array."); 
+		console.error("Second argument must be associative array."); 
 		attrs = {};
 	}
 	if (typeof(styles) != "object") { 
-		JAX.Report.error("Third argument must be associative array."); 
+		console.error("Third argument must be associative array."); 
 		styles = {};
 	}
 	if (typeof(srcDocument) != "object" || !srcDocument.nodeType && [9,11].indexOf(srcDocument.nodeType) == -1) { 
-		JAX.Report.error("Fourth argument must be document element."); 
+		console.error("Fourth argument must be document element."); 
 		srcDocument = document;
 	}
 
@@ -125,7 +132,7 @@ JAX.make = function(tagString, attrs, styles, srcDocument) {
 	var tagName = parts[0];
 
 	if (!tagName || !/^[a-z0-9]+$/ig.test(tagName)) {
-		JAX.Report.error("Tagname must be first in element definition.");
+		console.error("Tagname must be first in element definition.");
 		return JAX(null);
 	}
 	
@@ -154,10 +161,10 @@ JAX.make = function(tagString, attrs, styles, srcDocument) {
 };
 
 /**
- * @method Vytvoří z HTML elementy a vrátí je jako instance JAX.NodeArray. Zhmotní html string.
+ * @method Vytvoří z HTML stringu elementy - *zhmotní* html string.
  *
- * @param {String} html html, které má být transformováno na uzly
- * @returns {JAX.NodeArray}
+ * @param {string} html html string, který má být transformováno na uzly
+ * @returns {object} JAX.NodeArray
  */
 JAX.makeFromHTML = function(html) {
 	if (!html) { return new JAX.NodeArray([]); }
@@ -169,13 +176,11 @@ JAX.makeFromHTML = function(html) {
 };
 
 /**
- * @method Vytvoří textový uzel a vrátí JAX.Node instanci
- * @example
- * var textNode = JAX.makeText("Hellow world");
+ * @method Vytvoří textový uzel
  *
- * @param {String} text text, který má uzel obsahovat
- * @param {documentElement} [srcDocument=window.document] document node, ve kterém se má vytvářet
- * @returns {JAX.Node}
+ * @param {string} text text, který má uzel obsahovat
+ * @param {object} [srcDocument=window.document] documentElement node, ve kterém se má vytvářet
+ * @returns {object} JAX.Node
  */
 JAX.makeText = function(text, srcDocument) {
 	return new JAX.TextNode((srcDocument || document).createTextNode(text));
@@ -183,12 +188,8 @@ JAX.makeText = function(text, srcDocument) {
 
 /**
  * @method Zjistí, jakého typu je zadaný parametr
- * @example
- * console.log(JAX.getTypeOf(10)); // vrati "number"
- * console.log(JAX.getTypeOf("10")); // vrati "string"
  *
- * @param value testovana hodnota
- * @param {documentElement} [srcDocument=window.document] document node, ve kterém se má vytvářet
+ * @param {} value testovaná hodnota
  * @returns {string}
  */
 JAX.getTypeOf = function(value) {
@@ -217,6 +218,12 @@ JAX.getTypeOf = function(value) {
 	return "object";
 };
 
+/**
+ * @method Zjistí, jestli se jedná o podporovaný DOM element
+ *
+ * @param {} o testovaná hodnota
+ * @returns {boolean}
+ */
 JAX.isDOMElement = function(o) {
 	if (!o || typeof(o) != "object") {
 		return false;
@@ -225,7 +232,7 @@ JAX.isDOMElement = function(o) {
 	if ((o.Window && o instanceof o.Window) || o instanceof Window) {
 		return true;
 	}
-
+	
 	var win = o.defaultView || o.parentWindow || (o.ownerDocument ? (o.ownerDocument.defaultView || o.ownerDocument.parentWindow) : null);
 
 	return win && (
@@ -238,11 +245,12 @@ JAX.isDOMElement = function(o) {
 	);
 };
 
+/**
+ * @method Zjistí, jestli se jedná o instanci JAX.Node
+ *
+ * @param {} o testovaná hodnota
+ * @returns {boolean}
+ */
 JAX.isJAXElement = function(o) {
-	return (
-		o instanceof JAX.Node ||
-		o instanceof JAX.Document ||
-		o instanceof JAX.Window ||
-		o instanceof JAX.NullNode
-	);
+	return o instanceof JAX.Node;
 };

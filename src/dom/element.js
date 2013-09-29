@@ -11,7 +11,7 @@
 JAX.Element = JAK.ClassMaker.makeClass({
 	NAME: "JAX.Element",
 	VERSION: "1.0",
-	EXTEND: JAX.Node,
+	EXTEND: JAX.DOMNode,
 	IMPLEMENT: JAX.IListening
 });
 
@@ -22,8 +22,8 @@ JAX.Element._BOX_SIZING = null;
 (function() {
 	var boxSizing = {
 		"boxSizing": "box-sizing",
-		"mozBoxSizing": "-moz-box-sizing",
-		"WebkitBoxSizing": "-webkit-box-sizing"
+		"MozBoxSizing": "-moz-box-sizing",
+		"webkitBoxSizing": "-webkit-box-sizing"
 	};
 
 	var tempDiv = document.createElement("div");
@@ -84,10 +84,10 @@ JAX.Element.prototype.addClass = function(classNames) {
 
 	if (typeof(classNames) != "string") {
 		classNames += "";
-		JAX.Report.error("Given argument can be only string.", this._node);
+		console.error("Given argument can be only string.", this._node);
 	}
 
-	var cNames = classNames.split(" ");
+	var cNames = classNames.trim().split(" ");
 	
 	for (var i=0, len=cNames.length; i<len; i++) {
 		var cName = cNames[i];
@@ -110,10 +110,10 @@ JAX.Element.prototype.removeClass = function(classNames) {
 
 	if (typeof(classNames) != "string") {
 		classNames += "";
-		JAX.Report.error("Given argument can be only string.", this._node);
+		console.error("Given argument can be only string.", this._node);
 	}
 
-	var cNames = classNames.split(" ");
+	var cNames = classNames.trim().split(" ");
 	
 	for (var i=0, len=cNames.length; i<len; i++) {
 		var cName = cNames[i];
@@ -136,7 +136,7 @@ JAX.Element.prototype.hasClass = function(className) {
 
 	if (typeof(className) != "string") {
 		className += "";  
-		JAX.Report.error("For my argument I expected string.", this._node);
+		console.error("For my argument I expected string.", this._node);
 	}
 
 	if (className == "")  { return false; }
@@ -163,7 +163,7 @@ JAX.Element.prototype.toggleClass = function(className) {
 
 	if (typeof(className) != "string") {
 		className += "";
-		JAX.Report.error("For my argument I expected string.", this._node);
+		console.error("For my argument I expected string.", this._node);
 	}
 
 	this._node.classList.toggle(className);
@@ -187,7 +187,7 @@ JAX.Element.prototype.id = function(id) {
 
 	if (typeof(id) != "string") {
 		id += "";
-		JAX.Report.error("For my argument I expected string.", this._node);
+		console.error("For my argument I expected string.", this._node);
 	}
 
 	this.attr({id:id}); 
@@ -209,7 +209,7 @@ JAX.Element.prototype.html = function(innerHTML) {
 	}
 
 	if (typeof(innerHTML) != "string" && typeof(innerHTML) != "number") {
-		JAX.Report.error("For my argument I expected string or number.", this._node);
+		console.error("For my argument I expected string or number.", this._node);
 	}
 
 	this._node.innerHTML = innerHTML + "";
@@ -227,7 +227,7 @@ JAX.Element.prototype.html = function(innerHTML) {
  */
 JAX.Element.prototype.text = function(text) {
 	if (typeof(innerHTML) != "string" && typeof(innerHTML) != "number") {
-		JAX.Report.error("For my argument I expected string or number.", this._node);
+		console.error("For my argument I expected string or number.", this._node);
 	}
 
 	if (!arguments.length && "innerHTML" in this._node) { 
@@ -289,7 +289,7 @@ JAX.Element.prototype.removeAttr = function(properties) {
 		return this;
 	}
 
-	JAX.Report.error("For first argument I expected string or array of strings.", this._node);
+	console.error("For first argument I expected string or array of strings.", this._node);
 	return this;
 }
 /** 
@@ -547,19 +547,19 @@ JAX.Element.prototype.contains = function(node) {
 		return !!this.find(node);
 	}
 	
-	JAX.Report.error("For first argument I expected html element, text node, string with CSS3 compatible selector or JAX node.");
+	console.error("For first argument I expected html element, text node, string with CSS3 compatible selector or JAX node.");
 	return false;
 };
 
 JAX.Element.prototype.animate = function(property, duration, start, end) {
 	if (typeof(property) != "string") {
 		type += "";
-		JAX.Report.error("For first argument I expected string.", this._node); 
+		console.error("For first argument I expected string.", this._node); 
 	}
 
 	var fx = new JAX.FX(this);
 	fx.addProperty(property, duration, start, end);
-	return new JAX.Element.FX(this, fx).run();
+	return fx.run();
 };
 
 /** 
@@ -575,7 +575,7 @@ JAX.Element.prototype.animate = function(property, duration, start, end) {
 JAX.Element.prototype.fade = function(type, duration) {
 	if (typeof(type) != "string") {
 		type += "";
-		JAX.Report.error("For first argument I expected string.", this._node); 
+		console.error("For first argument I expected string.", this._node); 
 	}
 
 	switch(type) {
@@ -586,8 +586,8 @@ JAX.Element.prototype.fade = function(type, duration) {
 			return this.animate("opacity", duration, 1, 0);
 		break;
 		default:
-			JAX.Report.error("I got unsupported type '" + type + "'.", this._node);
-			return new JAX.Element.FX(this, null).run();
+			console.error("I got unsupported type '" + type + "'.", this._node);
+			return new JAX.FX(null).run();
 	}
 };
 
@@ -606,7 +606,7 @@ JAX.Element.prototype.fadeTo = function(opacityValue, duration) {
 
 	if (opacityValue<0) {
 		opacityValue = 0;
-		JAX.Report.error("For first argument I expected positive number, but I got negative. I set zero value.", this._node); 
+		console.error("For first argument I expected positive number, but I got negative. I set zero value.", this._node); 
 	}
 
 	return this.animate("opacity", duration, null, opacityValue);
@@ -625,7 +625,7 @@ JAX.Element.prototype.fadeTo = function(opacityValue, duration) {
 JAX.Element.prototype.slide = function(type, duration) {
 	if (typeof(type) != "string") {
 		type += "";
-		JAX.Report.error("For first argument I expected string.", this._node);
+		console.error("For first argument I expected string.", this._node);
 	}
 
 	var backupStyles = {};
@@ -653,8 +653,8 @@ JAX.Element.prototype.slide = function(type, duration) {
 			var end = null;
 		break;
 		default:
-			JAX.Report.error("I got unsupported type '" + type + "'.", this._node);
-			return new JAX.Element.FX(this, null).run();
+			console.error("I got unsupported type '" + type + "'.", this._node);
+			return new JAX.FX(null).run();
 	}
 
 	this.css("overflow", "hidden");
@@ -668,7 +668,7 @@ JAX.Element.prototype.slide = function(type, duration) {
 
 JAX.Element.prototype.scroll = function(type, value, duration) {
 	if (typeof(type) != "string") {
-		JAX.Report.error("I expected String for my first argument.", this._node);
+		console.error("I expected String for my first argument.", this._node);
 		type += "";
 	}
 
@@ -684,7 +684,7 @@ JAX.Element.prototype.scroll = function(type, value, duration) {
 				var retValue = left;
 			break;
 			default:
-				JAX.Report.error("You gave me an unsupported type. I expected 'x' or 'y'.", this._node);
+				console.error("You gave me an unsupported type. I expected 'x' or 'y'.", this._node);
 				var retValue = 0;
 		}
 
@@ -694,7 +694,7 @@ JAX.Element.prototype.scroll = function(type, value, duration) {
 	var targetValue = parseFloat(value);
 
 	if (!isFinite(targetValue)) {
-		JAX.Report.error("I expected Number or string with number for my second argument.", this._node);
+		console.error("I expected Number or string with number for my second argument.", this._node);
 		targetValue = 0;
 	}
 
@@ -714,15 +714,14 @@ JAX.Element.prototype.scroll = function(type, value, duration) {
 
 	var duration = parseFloat(duration);
 	if (!isFinite(duration)) {
-		JAX.Report.error("I expected Number or string with number for my third argument.", this._node);
+		console.error("I expected Number or string with number for my third argument.", this._node);
 		duration = 1;
 	}
 
 	var fx = new JAX.FX.Scrolling(this);
 		fx.addProperty(type, value, duration);
-		fx.run();
-
-	return fx;
+		
+	return fx.run();
 };
 
 JAX.Element.prototype._setOpacity = function(value) {
@@ -751,7 +750,7 @@ JAX.Element.prototype._getOpacity = function() {
 };
 
 JAX.Element.prototype._getSizeWithBoxSizing = function(sizeType, value) {
-	var boxSizing = JAX.Node._BOX_SIZING ? this.computedCss(JAX.Node._BOX_SIZING) : null;
+	var boxSizing = JAX.Node._BOX_SIZING ? this.computedCss(JAX.Node._BOX_SIZING) : "";
 
 	var paddingX = 0,
 		paddingY = 0,

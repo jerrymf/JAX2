@@ -1,7 +1,7 @@
 /**
  * @fileOverview node-getcomputedstyle.js - JAX - JAk eXtended
  * @author <a href="mailto:jerrymf@gmail.com">Marek Fojtl</a>
- * @version 0.7
+ * @version 1.0
  */
 
 /**
@@ -16,6 +16,27 @@
 
 		function denormalize(property) {
 ﻿		 ﻿ return property.replace(/([A-Z])/g, function(match, letter) { return "-" + letter.toLowerCase(); });
+		};
+
+		function getRecountedPixelSize(size, suffix, rootSize, fontSize) {
+			switch (suffix) {
+				case "em":
+					return size * fontSize;
+				case "in":
+					return size * 96;
+				case "pt":
+					return size * 96 / 72;
+				case "pc":
+					return size * 12 * 96 / 72;
+				case "cm":
+					return size * 0.3937 * 96;
+				case "mm":
+					return size * 0.3937 * 96 / 10;
+				case "%":
+					return size / 100 * rootSize;
+				default:
+					return size;
+			}
 		};
 
 		function getBaseFontSize(element) {
@@ -53,8 +74,8 @@
 				var rootSize = fontSize;
 			} else if (element.parentElement != element.ownerDocument) {
 				var parentElement = element.parentElement;
-				/* dirty trick, how to find out width of parent element */
-				var temp = document.createElement("jaxtemp");
+				/* dirty trick, how to quickly find out width of parent element */
+				var temp = document.createElement("jaxtempxyz");
 					temp.style.display = "block";
 					parentElement.appendChild(temp);
 				var rootSize = temp.offsetWidth;
@@ -63,7 +84,7 @@
 				var rootSize = element.parentElement.documentElement.clientWidth;
 			}
 
-			return getRecountedPixelSize(size, suffix, rootSize, fontSize);
+			return getRecountedPixelSize(size, suffix, rootSize, fontSize) || 0;
 		};
 
 		function getPixelPosition(element, style, property, fontSize) {
@@ -107,27 +128,6 @@
 			return value;
 		};
 
-		function getRecountedPixelSize(size, suffix, rootSize, fontSize) {
-			switch (suffix) {
-				case "em":
-					return size * fontSize;
-				case "in":
-					return size * 96;
-				case "pt":
-					return size * 96 / 72;
-				case "pc":
-					return size * 12 * 96 / 72;
-				case "cm":
-					return size * 0.3937 * 96;
-				case "mm":
-					return size * 0.3937 * 96 / 10;
-				case "%":
-					return size / 100 * rootSize;
-				default:
-					return size;
-			}
-		};
-
 		function CSSStyleDeclaration(element) {
 			var currentStyle = element.currentStyle;
 			var fontSize = getBaseFontSize(element);
@@ -139,11 +139,11 @@
 					this[property] = getPixelSize(element, currentStyle, property, fontSize) + "px";
 				} else if (property == "styleFloat") {
 					this["float"] = currentStyle[property];
-				} else if (["left","right","top","bottom"].indexOf(property) != -1 && ["absolute","relative","fixed"].indexOf(currentStyle["position"]) != -1 && currentStyle[property] != "auto") {
+				} else if (["left","right","top","bottom"].indexOf(property) > -1 && ["absolute","relative","fixed"].indexOf(currentStyle["position"]) > -1 && currentStyle[property] != "auto") {
 					this[property] = getPixelPosition(element, currentStyle, property, fontSize) + "px";
 				} else {
 					try {
-						/* IE8 crashed in case of getting some properties (outline, outlineWidth, ...) */
+						/* IE8 crashes in case of getting some properties (outline, outlineWidth, ...) */
 						this[property] = currentStyle[property];
 					} catch(e) {
 						this[property] = "";
@@ -154,8 +154,19 @@
 
 			this.length = index;
 
-			this["width"] = currentStyle["width"].indexOf("px") != -1 ? currentStyle["width"] : getPixelSizeWH("width", this, fontSize, element.offsetWidth) + "px";
-			this["height"] = currentStyle["height"].indexOf("px") != -1 ? currentStyle["height"] : getPixelSizeWH("height", this, fontSize, element.offsetHeight) + "px";
+			var currentStyleWidth = currentStyle["width"];
+			if (currentStyleWidth != "auto") {
+				this["width"] = currentStyleWidth.indexOf("px") > -1 ? currentStyleWidth : getPixelSizeWH("width", this, fontSize, element.offsetWidth) + "px";
+			} else {
+				this["width"] = currentStyleWidth;
+			}
+
+			var currentStyleHeight = currentStyle["height"];
+			if (currentStyleHeight != "auto") {
+				this["height"] = currentStyleHeight.indexOf("px") > -1 ? currentStyleHeight : getPixelSizeWH("height", this, fontSize, element.offsetHeight) + "px";
+			} else {
+				this["height"] = currentStyleHeight;
+			}
 		};
 
 		CSSStyleDeclaration.prototype.getPropertyPriority =  function () {

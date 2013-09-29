@@ -1,26 +1,22 @@
 /**
  * @fileOverview nodearray.js - JAX - JAk eXtended
- * @author <a href="mailto:jerrymf@gmail.com">Marek Fojtl</a>
- * @version 1.02
+ * @author <a href="mailto:marek.fojtl@firma.seznam.cz">Marek Fojtl</a>
+ * @version 1.1
  */
 
 /**
- * Třída reprezentující pole prvků v DOMu a poskytující rozšířené metody pro práci s ním
+ * Třída reprezentující pole instancí JAX.Node a poskytující metody pro hromadné zpracování
  * @class JAX.NodeArray
  */
 JAX.NodeArray = JAK.ClassMaker.makeClass({
 	NAME: "JAX.NodeArray",
-	VERSION: "1.02"
+	VERSION: "1.1"
 });
 
 /**
  * @method $constructor
- * @example
- * document.body.innerHTML = "<span>1</span><span>2</span><div id='cisla'></div>";
- * var all = new JAX.NodeArray(document.getElementsByTagName("*")); // slozitejsi alternativa
- * var all = JAX.all("*"); // pouziti JAX.all je lepsi varianta, jak ziskat pole prvku!
  *
- * @param {Node | Node[] | JAX.Node[] | null} nodes pole uzlů | pole instancí JAX.Node
+ * @param {Object} lze zadat 
  */
 JAX.NodeArray.prototype.$constructor = function(nodes) {
 	if (nodes instanceof JAX.NodeArray) {
@@ -44,7 +40,7 @@ JAX.NodeArray.prototype.$constructor = function(nodes) {
 	}
 
 	if (this.length != arr.length) {
-		JAX.Report.error("First argument can be only html node, JAX node, array of them or instance of JAX.NodeArray.");
+		console.error("First argument can be only html node, JAX node, array of them or instance of JAX.NodeArray.");
 	}
 };
 
@@ -323,7 +319,7 @@ JAX.NodeArray.prototype.listen = function(type, obj, funcMethod, bindData) {
 	for(var i=0; i<len; i++) {
 		listeners[i] = this._jaxNodes[i].listen(type, obj, funcMethod, bindData);
 	}
-	return listeners;
+	return new JAX.ListenerArray(listeners);
 };
 
 JAX.NodeArray.prototype.stopListening = function(type) {
@@ -445,7 +441,7 @@ JAX.NodeArray.prototype.animate = function(type, duration, start, end) {
 	for (var i=0, len=this._jaxNodes.length; i<len; i++) {
 		fxs[i] = this._jaxNodes[i].animate(type, duration, start, end);
 	}
-	return new JAX.NodeArray.FX(fxs);
+	return new JAX.FXArray(fxs);
 };
 
 /** 
@@ -465,7 +461,7 @@ JAX.NodeArray.prototype.fade = function(type, duration) {
 	for (var i=0, len=this._jaxNodes.length; i<len; i++) {
 		fxs[i] = this._jaxNodes[i].fade(type, duration);
 	}
-	return new JAX.NodeArray.FX(fxs);
+	return new JAX.FXArray(fxs);
 };
 
 /**
@@ -485,7 +481,7 @@ JAX.NodeArray.prototype.fadeTo = function(opacityValue, duration) {
 	for (var i=0, len=this._jaxNodes.length; i<len; i++) {
 		fxs[i] = this._jaxNodes[i].fadeTo(opacityValue, duration);
 	}
-	return new JAX.NodeArray.FX(fxs);
+	return new JAX.FXArray(fxs);
 };
 
 /**
@@ -505,15 +501,15 @@ JAX.NodeArray.prototype.slide = function(type, duration) {
 	for (var i=0, len=this._jaxNodes.length; i<len; i++) {
 		fxs[i] = this._jaxNodes[i].slide(type, duration).getPromise();
 	}
-	return new JAX.NodeArray.FX(fxs);
+	return new JAX.FXArray(fxs);
 };
 
 JAX.NodeArray.prototype.scroll = function(type, value, duration) {
 	var count = this._jaxNodes.length;
-	var promises = new Array(count);
+	var fxs = new Array(count);
 
 	for (var i=0, len=this._jaxNodes.length; i<len; i++) {
-		promises[i] = this._jaxNodes[i].scroll(type, value, duration);
+		fxs[i] = this._jaxNodes[i].scroll(type, value, duration);
 	}
-	return JAK.Promise.when(promises);
+	return new JAX.FXArray(fxs);
 };
