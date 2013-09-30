@@ -25,30 +25,14 @@ JAX.DOMNode.prototype.$constructor = function(node) {
  * document.body.innerHTML = "<span>Ahoj svete!</span>";
  * var jaxElm = JAX(document.body).add(JAX.make("span")); 
  *
- * @param {String | Node | Node[] | JAX.DOMNodeArray} HTML string | nodes DOM uzel | pole DOM uzlů | instance JAX.DOMNodeArray
+ * @param {String | Node | Node[] | JAX.NodeArray} HTML string | nodes DOM uzel | pole DOM uzlů | instance JAX.NodeArray
  * @returns {JAX.DOMNode}
  */
 JAX.DOMNode.prototype.add = function(nodes) {
-	if (nodes instanceof JAX.DOMNodeArray) {
-		nodes = nodes.items();
-	} else if (typeof(nodes) == "string") {
-		var div = document.createElement("div");
-		div.innerHTML = nodes;
-		var nodesLength = div.childNodes.length;
-		nodes = new Array(nodesLength);
-		for (var i=0, len=nodesLength; i<len; i++) { nodes[i] = div.childNodes[i]; }
-	} else if (!(nodes instanceof Array)) { 
-		nodes = [].concat(nodes); 
-	} 
-	
-	for (var i=0, len=nodes.length; i<len; i++) {
-		var node = nodes[i];
-		if ((!node.nodeType && !node.jaxNodeType) || (node.jaxNodeType && node.jaxNodeType < 1)) {
-			console.error("For my argument I expected html node, text node, documentFragment or JAX node. You can use also array of them.");
-			continue;
-		}
-		var node = node.jaxNodeType ? node.node() : node;
-		this._node.appendChild(node);
+	var jaxNodes = JAX.all(nodes).appendTo(this);
+
+	if (!jaxNodes.length) {
+		console.error("JAX.DOMNode.add: There was no node added.")
 	}
 	
 	return this;
@@ -61,23 +45,23 @@ JAX.DOMNode.prototype.add = function(nodes) {
  * @returns {JAX.DOMNode}
  */
 JAX.DOMNode.prototype.insertFirst = function(node) {
-	var node = JAX(node);
+	var jaxNode = JAX(node);
 
-	if (node.exists()) {
-		var node = node.node();
+	if (jaxNode.exists()) {
+		var n = jaxNode.node();
 
 		if (this._node.childNodes && this._node.firstChild) {
-			this._node.insertBefore(node, this._node.firstChild);
+			this._node.insertBefore(n, this._node.firstChild);
 		} else if (this._node.childNodes) {
-			this._node.appendChild(node);
+			this._node.appendChild(n);
 		} else {
-			console.error("Given element can not have child nodes.", this._node);
+			console.error("JAX.DOMNode.insertFirst: Given element can not have child nodes.", this._node);
 		}
 		
 		return this;
 	}
 	
-	console.error("I could not find given element. For first argument I expected html element, text node or JAX node.");
+	console.error("JAX.DOMNode.insertFirst: I could not find given element. For first argument I expected html element, text node or JAX.Node.");
 	return this;
 };
 
@@ -92,19 +76,19 @@ JAX.DOMNode.prototype.insertFirst = function(node) {
  * @returns {JAX.DOMNode}
  */
 JAX.DOMNode.prototype.addBefore = function(node, nodeBefore) {
-	if (!node || typeof(node) != "object" || (!node.nodeType && !node.jaxNodeType) || (node.jaxNodeType && node.jaxNodeType < 1)) { 
-		console.error("For first argument I expected html element, text node, documentFragment or JAX node.");
-		return this;
-	}
-	if (!nodeBefore || typeof(nodeBefore) != "object" || (!nodeBefore.nodeType && !nodeBefore.jaxNodeType) || (node.jaxNodeType && node.jaxNodeType < 1)) { 
-		console.error("For second argument I expected html element, text node or JAX node."); 
-		return this;
-	}
+	var jaxNode = JAX(node);
+	var jaxNodeBefore = JAX(nodeBefore);
 
-	var node = node.jaxNodeType ? node.node() : node;
-	var nodeBefore = nodeBefore.jaxNodeType ? nodeBefore.node() : nodeBefore;
+	if (!jaxNode.exists()) { 
+		console.error("JAX.DOMNode.addBefore: For first argument I expected html element, text node, documentFragment or JAX.Node.");
+		return this;
+	}
+	if (!jaxNodeBefore.exists()) { 
+		console.error("JAX.DOMNode.addBefore: For second argument I expected html element, text node or JAX.Node."); 
+		return this;
+	}
 	
-	this._node.insertBefore(node, nodeBefore);
+	this._node.insertBefore(jaxNode.node(), jaxNodeBefore.node());
 	return this;
 };
 
@@ -118,15 +102,14 @@ JAX.DOMNode.prototype.addBefore = function(node, nodeBefore) {
  * @returns {JAX.DOMNode}
  */
 JAX.DOMNode.prototype.appendTo = function(node) {
-	var node = JAX(node);
+	var jaxNode = JAX(node);
 
-	if (node.exists()) { 
-		var node = node.jaxNodeType ? node.node() : node;
-		node.appendChild(this._node);
+	if (jaxNode.exists()) { 
+		jaxNode.node().appendChild(this._node);
 		return this;
 	}
 	
-	console.error("I could not find given element. For first argument I expected html element, documentFragment or JAX node.");
+	console.error("JAX.DOMNode.append: I could not find given element. For first argument I expected html element, documentFragment or JAX node.");
 	return this;
 };
 
@@ -140,15 +123,14 @@ JAX.DOMNode.prototype.appendTo = function(node) {
  * @returns {JAX.DOMNode}
  */
 JAX.DOMNode.prototype.before = function(node) {
-	var node = JAX(node);
+	var jaxNode = JAX(node);
 
-	if (node.exists()) {
-		var node = node.node();
-		node.parentNode.insertBefore(this._node, node);
+	if (jaxNode.exists()) {
+		node.parentNode.insertBefore(this._node, jaxNode.node());
 		return this;
 	}
 	
-	console.error("I could not find given element. For first argument I expected html element, text node or JAX node.");
+	console.error("JAX.DOMNode.before: I could not find given element. For first argument I expected html element, text node or JAX node.");
 	return this;
 };
 
@@ -162,21 +144,21 @@ JAX.DOMNode.prototype.before = function(node) {
  * @returns {JAX.DOMNode}
  */
 JAX.DOMNode.prototype.after = function(node) {
-	var node = JAX(node);
+	var jaxNode = JAX(node);
 
-	if (node.exists()) {
-		var node = node.node();
+	if (jaxNnode.exists()) {
+		var n = jaxNode.node();
 
-		if (node.nextSibling) {
-			node.parentNode.insertBefore(this._node, node.nextSibling);
+		if (n.nextSibling) {
+			n.parentNode.insertBefore(this._node, n.nextSibling);
 		} else {
-			node.parentNode.appendChild(this._node);
+			n.parentNode.appendChild(this._node);
 		}
 		
 		return this;
 	}
 	
-	console.error("I could not find given element. For first argument I expected html element, text node or JAX node.");
+	console.error("JAX.DOMNode.after: I could not find given element. For first argument I expected html element, text node or JAX node.");
 	return this;
 };
 
@@ -190,15 +172,15 @@ JAX.DOMNode.prototype.after = function(node) {
  * @returns {JAX.DOMNode}
  */
 JAX.DOMNode.prototype.replaceWith = function(node) {
-	var node = JAX(node);
+	var jaxNode = JAX(node);
 
-	if (node.exists()) { 
-		var node = node.node();
-		node.parentNode.replaceChild(this._node, node);
+	if (jaxNode.exists()) { 
+		var n = jaxNode.node();
+		n.parentNode.replaceChild(this._node, n);
 		return this;
 	}
 
-	console.error("For first argument I expected html element, text node or JAX node.");
+	console.error("JAX.DOMNode.replaceWith: For first argument I expected html element, text node or JAX node.");
 	return this;
 };
 
@@ -228,7 +210,7 @@ JAX.DOMNode.prototype.swapPlaceWith = function(node) {
 		return this;
 	}
 
-	console.error("For first argument I expected html element, text node or JAX node.");
+	console.error("JAX.DOMNode.swapPlaceWith: For first argument I expected html element, text node or JAX node.");
 	return this;
 };
 
@@ -241,8 +223,12 @@ JAX.DOMNode.prototype.swapPlaceWith = function(node) {
  * @returns {JAX.DOMNode}
  */
 JAX.DOMNode.prototype.remove = function() {
-	this._node.parentNode.removeChild(this._node);
+	if (this._node.parentNode) {
+		this._node.parentNode.removeChild(this._node);
+		return this;
+	}
 
+	console.error("JAX.DOMNode.remove: I can not remove node with no parentNode.");
 	return this;
 };
 
@@ -309,21 +295,17 @@ JAX.DOMNode.prototype.prop = function(property, value) {
 JAX.DOMNode.prototype.isIn = function(node) {
 	if (!node) { return false; }
 
-	if (typeof(node) == "object" && (node.nodeType || node.jaxNodeType)) {
-		var elm = node.jaxNodeType ? node : JAX(node);
-		return elm.exists() ? elm.contains(this) : false;
-	} else if (typeof(node) == "string") {
+	if (typeof(node) == "string") {
 		if (/^[#.a-z0-9_-]+$/ig.test(node)) {
-			var parent = JAK.DOM.findParent(this._node, node);
-			return !!parent;
+			return !!JAK.DOM.findParent(this._node, node);
 		}
 		return !!JAX.all(node).filterItems(
 			function(jaxElm) { return jaxElm.contains(this._node); }.bind(this)
 		).length;
 	}
-	
-	console.error("For first argument I expected html element, JAX node or CSS3 (2.1) selector.");
-	return false;
+
+	var jaxNode = JAX(node);
+	return jaxNode.exists() && jaxNode.contains(this);
 };
 
 /** 
@@ -335,8 +317,7 @@ JAX.DOMNode.prototype.isIn = function(node) {
  * @returns {JAX.DOMNode | null}
  */
 JAX.DOMNode.prototype.parent = function() {
-	if (this._node.parentNode) { return JAX(this._node.parentNode); }
-	return new JAX.NullNode();
+	return JAX(this._node.parentNode);
 };
 
 /** 
@@ -348,7 +329,7 @@ JAX.DOMNode.prototype.parent = function() {
  * @returns {JAX.DOMNode | null}
  */
 JAX.DOMNode.prototype.next = function() {
-	return this._node.nextSibling ? JAX(this._node.nextSibling) : new JAX.NullNode();
+	return JAX(this._node.nextSibling);
 };
 
 /** 
@@ -360,5 +341,5 @@ JAX.DOMNode.prototype.next = function() {
  * @returns {JAX.DOMNode | null}
  */
 JAX.DOMNode.prototype.previous = function() {
-	return this._node.previousSibling ? JAX(this._node.previousSibling) : new JAX.NullNode();
+	return JAX(this._node.previousSibling);
 };

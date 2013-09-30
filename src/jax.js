@@ -17,7 +17,7 @@ var JAX = function(selector, srcElement) {
 		return new JAX.NullNode();
 	}
 
-	if (JAX.isJAXElement(selector)) {
+	if (selector instanceof JAX.Node) {
 		return selector;
 	}
 
@@ -28,7 +28,8 @@ var JAX = function(selector, srcElement) {
 			var jaxSrcElement = JAX(srcElement);
 
 			if (!jaxSrcElement.exists()) {
-				return new JAX.NullNode();
+				console.error("JAX: Second argument must be valid element.");
+				return new JAX.NullNode(typeof(srcElement) == "string" ? selector : "");
 			}
 
 			srcElement = jaxSrcElement.node();
@@ -48,7 +49,7 @@ var JAX = function(selector, srcElement) {
 		case -2:
 			return new JAX.Window(foundElm);
 		case -1:
-			return new JAX.NullNode();
+			return new JAX.NullNode(typeof(selector) == "string" ? selector : "");
 		case 1:
 			return new JAX.Element(foundElm);
 		case 3:
@@ -80,6 +81,7 @@ JAX.all = function(selector, srcElement) {
 			var jaxSrcElement = JAX(srcElement);
 
 			if (!jaxSrcElement.exists()) {
+				console.error("JAX.all: Second argument must be valid element.");
 				return new JAX.NullNode();
 			}
 
@@ -112,19 +114,19 @@ JAX.make = function(tagString, attrs, styles, srcDocument) {
 	var srcDocument = srcDocument || document;
 
 	if (!tagString || typeof(tagString) != "string") { 
-		console.error("First argument must be string.");
+		console.error("JAX.make: First argument must be string.");
 		return JAX(null); 
 	}
 	if (typeof(attrs) != "object") { 
-		console.error("Second argument must be associative array."); 
+		console.error("JAX.make: Second argument must be associative array."); 
 		attrs = {};
 	}
 	if (typeof(styles) != "object") { 
-		console.error("Third argument must be associative array."); 
+		console.error("JAX.make: Third argument must be associative array."); 
 		styles = {};
 	}
 	if (typeof(srcDocument) != "object" || !srcDocument.nodeType && [9,11].indexOf(srcDocument.nodeType) == -1) { 
-		console.error("Fourth argument must be document element."); 
+		console.error("JAX.make: Fourth argument must be document element."); 
 		srcDocument = document;
 	}
 
@@ -132,7 +134,7 @@ JAX.make = function(tagString, attrs, styles, srcDocument) {
 	var tagName = parts[0];
 
 	if (!tagName || !/^[a-z0-9]+$/ig.test(tagName)) {
-		console.error("Tagname must be first in element definition.");
+		console.error("JAX.make: Tagname must be first in element definition.");
 		return JAX(null);
 	}
 	
@@ -243,14 +245,4 @@ JAX.isDOMElement = function(o) {
 		(win.DocumentFragment && o instanceof win.DocumentFragment) ||
 		(win.Text && o instanceof win.Text)
 	);
-};
-
-/**
- * @method Zjistí, jestli se jedná o instanci JAX.Node
- *
- * @param {} o testovaná hodnota
- * @returns {boolean}
- */
-JAX.isJAXElement = function(o) {
-	return o instanceof JAX.Node;
 };

@@ -84,7 +84,7 @@ JAX.Element.prototype.addClass = function(classNames) {
 
 	if (typeof(classNames) != "string") {
 		classNames += "";
-		console.error("Given argument can be only string.", this._node);
+		console.error("JAX.Element.addClass: Given argument can be only string.", this._node);
 	}
 
 	var cNames = classNames.trim().split(" ");
@@ -110,7 +110,7 @@ JAX.Element.prototype.removeClass = function(classNames) {
 
 	if (typeof(classNames) != "string") {
 		classNames += "";
-		console.error("Given argument can be only string.", this._node);
+		console.error("JAX.Element.removeClass: Given argument can be only string.", this._node);
 	}
 
 	var cNames = classNames.trim().split(" ");
@@ -136,7 +136,7 @@ JAX.Element.prototype.hasClass = function(className) {
 
 	if (typeof(className) != "string") {
 		className += "";  
-		console.error("For my argument I expected string.", this._node);
+		console.error("JAX.Element.hasClass: For my argument I expected string.", this._node);
 	}
 
 	if (className == "")  { return false; }
@@ -163,7 +163,7 @@ JAX.Element.prototype.toggleClass = function(className) {
 
 	if (typeof(className) != "string") {
 		className += "";
-		console.error("For my argument I expected string.", this._node);
+		console.error("JAX.Element.toggleClass: For my argument I expected string.", this._node);
 	}
 
 	this._node.classList.toggle(className);
@@ -187,7 +187,7 @@ JAX.Element.prototype.id = function(id) {
 
 	if (typeof(id) != "string") {
 		id += "";
-		console.error("For my argument I expected string.", this._node);
+		console.error("JAX.Element.id: For my argument I expected string.", this._node);
 	}
 
 	this.attr({id:id}); 
@@ -209,7 +209,7 @@ JAX.Element.prototype.html = function(innerHTML) {
 	}
 
 	if (typeof(innerHTML) != "string" && typeof(innerHTML) != "number") {
-		console.error("For my argument I expected string or number.", this._node);
+		console.error("JAX.Element.html: For my argument I expected string or number.", this._node);
 	}
 
 	this._node.innerHTML = innerHTML + "";
@@ -227,7 +227,7 @@ JAX.Element.prototype.html = function(innerHTML) {
  */
 JAX.Element.prototype.text = function(text) {
 	if (typeof(innerHTML) != "string" && typeof(innerHTML) != "number") {
-		console.error("For my argument I expected string or number.", this._node);
+		console.error("JAX.Element.text: For my argument I expected string or number.", this._node);
 	}
 
 	if (!arguments.length && "innerHTML" in this._node) { 
@@ -289,7 +289,7 @@ JAX.Element.prototype.removeAttr = function(properties) {
 		return this;
 	}
 
-	console.error("For first argument I expected string or array of strings.", this._node);
+	console.error("JAX.Element.removeAttr: For first argument I expected string or array of strings.", this._node);
 	return this;
 }
 /** 
@@ -310,15 +310,23 @@ JAX.Element.prototype.css = function(property, value) {
 		if (arguments.length == 1) { 
 			return property == "opacity" ? this._getOpacity() : this._node.style[property]; 
 		}
-		this._node.style[property] = value;
+
+		if (property == "opacity") {
+			this._setOpacity(value);
+		} else {
+			this._node.style[property] = value;
+		}
+
 		return this;
 	} else if (property instanceof Array) {
 		var css = {};
+
 		for (var i=0, len=property.length; i<len; i++) {
 			var p = property[i];
 			if (p == "opacity") { css[p] = this._getOpacity(); continue; }
 			css[p] = this._node.style[p];
 		}
+
 		return css;
 	}
 
@@ -447,7 +455,7 @@ JAX.Element.prototype.children = function(index) {
  */
 JAX.Element.prototype.first = function() {
 	if ("firstElementChild" in this._node) {
-		return this._node.firstElementChild ? JAX(this._node.firstElementChild) : new JAX.NullNode();
+		return JAX(this._node.firstElementChild);
 	}
 
 	if (!this._node.childNodes || !this._node.childNodes.length) { return new JAX.NullNode(); }
@@ -470,7 +478,7 @@ JAX.Element.prototype.first = function() {
  */
 JAX.Element.prototype.last = function() {
 	if ("lastElementChild" in this._node) {
-		return this._node.lastElementChild ? JAX(this._node.lastElementChild) : new JAX.NullNode();
+		return JAX(this._node.lastElementChild);
 	}
 
 	if (!this._node.childNodes || !this._node.childNodes.length) { return new JAX.NullNode(); }
@@ -511,17 +519,15 @@ JAX.Element.prototype.clear = function() {
 JAX.Element.prototype.eq = function(node) {
 	if (!node) { return false; }
 
-	if (typeof(node) == "object" && (node.nodeType || node.jaxNodeType)) {
-		var elm = node.jaxNodeType ? node.node() : node;
-		return elm === this._node;
-	} else if (typeof(node) == "string") {
+	if (typeof(node) == "string") {
 		if (/^[a-zA-Z0-9]+$/g.test(node)) { return !!(this._node.tagName && this._node.tagName.toLowerCase() == node); }
 		return !!this.parent().findAll(node).filterItems(
 			function(jaxElm) { return jaxElm.eq(this._node); }, this
 		).length;
 	}
 
-	return false;
+	var jaxNode = JAX(node);
+	return jaxNode.node() == this._node;
 };
 
 /** 
@@ -536,18 +542,21 @@ JAX.Element.prototype.eq = function(node) {
 JAX.Element.prototype.contains = function(node) {
 	if (!node) { return false; }
 
-	if (typeof(node) == "object" && (node.nodeType || node.jaxNodeType)) {
-		var elm = node.jaxNodeType ? node.parent().node() : node.parentNode;
-		while(elm) {
-			if (elm == this._node) { return true; }
-			elm = elm.parentNode;
-		}
-		return false;
-	} else if (typeof(node) == "string") {
+	if (typeof(node) == "string") {
 		return !!this.find(node);
 	}
+
+	var jaxNode = JAX(node);
+	if (jaxNode.exists()) {
+		var n = jaxNode.node().parentNode;
+		while(n) {
+			if (n == this._node) { return true; }
+			n = n.parentNode;
+		}
+		return false;
+	} 
 	
-	console.error("For first argument I expected html element, text node, string with CSS3 compatible selector or JAX node.");
+	console.error("JAX.Element.contains: For first argument I expected html element, text node, string with CSS3 compatible selector or JAX.Node.");
 	return false;
 };
 
@@ -726,16 +735,20 @@ JAX.Element.prototype.scroll = function(type, value, duration) {
 
 JAX.Element.prototype._setOpacity = function(value) {
 	var property = "";
+	var newValue = "";
 
 	if (JAK.Browser.client == "ie" && JAK.Browser.version < 9) { 
 		property = "filter";
-		value = Math.round(100*value);
-		value = "progid:DXImageTransform.Microsoft.Alpha(opacity=" + value + ");";
+		if (value != "") {
+			newValue = Math.round(100*value) + "";
+			newValue = "progid:DXImageTransform.Microsoft.Alpha(opacity=" + newValue + ");";
+		}
 	} else {
+		newValue = value + "";
 		property = "opacity";
 	}
-	this._node.style[property] = value + "";
 
+	this._node.style[property] = newValue;
 };
 
 JAX.Element.prototype._getOpacity = function() {
@@ -744,7 +757,7 @@ JAX.Element.prototype._getOpacity = function() {
 		this._node.style.filter.replace(JAX.ELEMENT._OPACITY_REGEXP, function(match1, match2) {
 			value = match2;
 		});
-		return value ? (parseInt(value, 10)/100)+"" : value;
+		return value ? (parseFloat(value)/100) + "" : value;
 	}
 	return this._node.style["opacity"];
 };

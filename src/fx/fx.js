@@ -51,7 +51,7 @@ JAX.FX.prototype.$constructor = function(elm) {
 	this._jaxElm = JAX(elm);
 
 	if (!this._jaxElm.exists()) { 
-		throw new Error("I can not continue because I got null node. Check your code. please."); 
+		console.error("JAX.FX: I got null node. Check your code please."); 
 	}
 
 	this._settings = [];
@@ -87,31 +87,44 @@ JAX.FX.prototype.$constructor = function(elm) {
  * @returns {JAX.FX}
  */
 JAX.FX.prototype.addProperty = function(property, duration, start, end, method) {
+	if (!this._jaxElm.exists()) { return this; }
+
 	var durationValue = this._parseValue(duration);
 	var durationUnit = this._parseUnit(duration) || "ms";
 	var method = JAX.FX.CSS3.isSupported ? (method || "linear") : "LINEAR";
 	
 	if (typeof(property) != "string") { 
-		throw new Error("For first argument I expected string"); 
+		console.error("JAX.FX.addProperty: For first argument I expected string"); 
+		return this;
+	}
+	if (!(property in JAX.FX._SUPPORTED_PROPERTIES)) {
+		console.error("JAX.FX.addProperty: First argument must be supported property. You are trying to give me '" + property + "' which is unsupoorted.");
+		return this;
 	}
 	if (!isFinite(durationValue) || durationValue < 0) { 
-		throw new Error("For second argument I expected positive number"); 
+		console.error("JAX.FX.addProperty: For second argument I expected positive number"); 
+		return this;
 	}
 	if (start && typeof(start) != "string" && (typeof(start) != "number" || !isFinite(start))) { 
-		throw new Error("For third argument I expected string, number or null for automatic checking"); 
+		console.error("JAX.FX.addProperty: For third argument I expected string, number or null for automatic checking"); 
+		return this;
 	}
 	if (end && typeof(end) != "string" && (typeof(end) != "number" || !isFinite(end))) { 
-		throw new Error("For fourth argument I expected string or number"); 
+		console.error("JAX.FX.addProperty: For fourth argument I expected string or number"); 
+		return this;
 	}
 	if (start == null && end == null) {
-		throw new Error("At least one of start and end values must be defined."); 	
+		console.error("JAX.FX.addProperty: At least one of start and end values must be defined."); 	
+		return this;
 	}
 	if (typeof(method) != "string") { 
-		throw new Error("For fifth argument I expected string"); 
+		console.error("JAX.FX.addProperty: For fifth argument I expected string"); 
+		return this;
 	}
-
-	this._checkSupportedProperty(property);
-	this._checkSupportedMethod(method);
+	if (JAX.FX._SUPPORTED_METHODS.indexOf(method.toLowerCase()) == -1 && method.toLowerCase().indexOf("cubic-bezier") != 0) {
+		console.error("JAX.FX.addProperty: Fifth argument must be supported method. You are trying to give me '" + method + "' which is unsupoorted."); 
+		method = JAX.FX.CSS3.isSupported ? "linear" : "LINEAR";
+	}
 
 	if (end || (typeof(end) == "number" && isFinite(end))) {
 		var cssEnd = this._parseCSSValue(property, end);
@@ -159,6 +172,12 @@ JAX.FX.prototype.addProperty = function(property, duration, start, end, method) 
 JAX.FX.prototype.run = function() {
 	if (this.isRunning()) { return this._promise.finished; }
 
+	if (!this._settings.length) {
+		this._promise.finished = new JAK.Promise().reject(this._jaxElm);
+		console.error("JAX.FX.run: I have no added properties. FX will not run.");
+		return this;
+	}
+
 	this._processor = JAX.FX.CSS3.isSupported ? new JAX.FX.CSS3(this._jaxElm) : new JAX.FX.Interpolator(this._jaxElm);
 	this._processor.set(this._settings);
 
@@ -189,6 +208,12 @@ JAX.FX.prototype.then = function(onfulfill, onreject) {
  */
 JAX.FX.prototype.reverse = function() {
 	if (this.isRunning()) { this.stop(); }
+
+	if (!this._settings.length) {
+		this._promise.finished = new JAK.Promise().reject(this._jaxElm);
+		console.error("JAX.FX.reverse: I have no added properties. FX will not run in reversed mode.");
+		return this;
+	}
 
 	this._reversed = !this._reversed;
 	var reversedSettings = [];
@@ -258,29 +283,6 @@ JAX.FX.prototype.isRunning = function() {
 JAX.FX.prototype.stop = function() {
 	this._processor.stop();
 	return this;
-};
-
-JAX.FX.prototype._checkSupportedProperty = function(property) {
-	if (!(property in JAX.FX._SUPPORTED_PROPERTIES)) { 
-		var properties = [];
-
-		for (var p in JAX.FX._SUPPORTED_PROPERTIES) { 
-			properties.push(p); 
-		}
-
-		throw new Error("First argument must be supported setting: " + properties.join(", ")); 
-	}
-};
-
-JAX.FX.prototype._checkSupportedMethod = function(method) {
-	var method = method.toLowerCase();
-	if (JAX.FX._SUPPORTED_METHODS.indexOf(method) > -1 || method.indexOf("cubic-bezier") == 0) {
-		return;
-	}
-
-	var methods = [];
-	for (var i=0, len=JAX.FX._SUPPORTED_METHODS.length; i<len; i++) { methods.push(JAX.FX._SUPPORTED_METHODS[i]); }
-	throw new Error("Fifth argument must be supported method: " + methods.join(", ")); 
 };
 
 JAX.FX.prototype._parseCSSValue = function(property, cssValue) {

@@ -10,6 +10,16 @@
 (function() {
 	if (!window.getComputedStyle) {
 
+		function getOpacity(currentStyle) {
+			var value = "";
+
+			currentStyle.filter.replace(/alpha\(opacity=['"]?([0-9]+)['"]?\)/i, function(match1, match2) {
+				value = match2;
+			});
+
+			return value ? (parseFloat(value)/100) + "" : value;
+		};
+
 		function normalize(property) {
 ﻿		 ﻿ return property.replace(/-([a-z])/g, function(match, letter) { return letter.toUpperCase(); });
 		};
@@ -167,6 +177,8 @@
 			} else {
 				this["height"] = currentStyleHeight;
 			}
+
+			this["opacity"] = getOpacity(currentStyle);
 		};
 
 		CSSStyleDeclaration.prototype.getPropertyPriority =  function () {
