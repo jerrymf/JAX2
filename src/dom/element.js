@@ -80,6 +80,8 @@ JAX.Element.prototype.findAll = function(selector) {
  * @returns {JAX.Node}
  */
 JAX.Element.prototype.addClass = function(classNames) {
+	var classNames = classNames.trim();
+
 	if (classNames == "") { return this; }
 
 	if (typeof(classNames) != "string") {
@@ -87,7 +89,7 @@ JAX.Element.prototype.addClass = function(classNames) {
 		console.error("JAX.Element.addClass: Given argument can be only string.", this._node);
 	}
 
-	var cNames = classNames.trim().split(" ");
+	var cNames = classNames.split(" ");
 	
 	for (var i=0, len=cNames.length; i<len; i++) {
 		var cName = cNames[i];
@@ -106,6 +108,8 @@ JAX.Element.prototype.addClass = function(classNames) {
  * @returns {JAX.Node}
  */
 JAX.Element.prototype.removeClass = function(classNames) {
+	var classNames = classNames.trim();
+
 	if (classNames == "") { return this; }
 
 	if (typeof(classNames) != "string") {
@@ -113,7 +117,7 @@ JAX.Element.prototype.removeClass = function(classNames) {
 		console.error("JAX.Element.removeClass: Given argument can be only string.", this._node);
 	}
 
-	var cNames = classNames.trim().split(" ");
+	var cNames = classNames.split(" ");
 	
 	for (var i=0, len=cNames.length; i<len; i++) {
 		var cName = cNames[i];
@@ -132,6 +136,8 @@ JAX.Element.prototype.removeClass = function(classNames) {
  * @returns {Boolean}
  */
 JAX.Element.prototype.hasClass = function(className) {
+	var className = className.trim();
+
 	if (className == "") { return true; }
 
 	if (typeof(className) != "string") {
@@ -159,6 +165,8 @@ JAX.Element.prototype.hasClass = function(className) {
  * @returns {JAX.Node}
  */
 JAX.Element.prototype.toggleClass = function(className) {
+	var className = className.trim();
+
 	if (className == "") { return this; }
 
 	if (typeof(className) != "string") {
