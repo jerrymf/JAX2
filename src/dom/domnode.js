@@ -29,7 +29,11 @@ JAX.DOMNode.prototype.$constructor = function(node) {
  * @returns {JAX.DOMNode}
  */
 JAX.DOMNode.prototype.add = function(nodes) {
-	var jaxNodes = JAX.all(nodes).appendTo(this);
+	if (typeof(nodes) == "string") {
+		var jaxNodes = JAX.makeFromHTML(nodes).appendTo(this);
+	} else {
+		var jaxNodes = JAX.all(nodes).appendTo(this);
+	}
 
 	if (!jaxNodes.length) {
 		console.error("JAX.DOMNode.add: There was no node added.")

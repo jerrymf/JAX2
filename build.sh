@@ -2,7 +2,7 @@
 # Zretezeni vsech knihoven do jedne
 cd src
 
-cat core.js > ../lib/jax.js
+cat jax.js > ../lib/jax.js
 cat event/ilistening.js >> ../lib/jax.js
 cat event/event.js >> ../lib/jax.js
 cat event/listener.js >> ../lib/jax.js
@@ -22,7 +22,6 @@ cat fx/fxarray.js >> ../lib/jax.js
 cat fx/fx-css3.js >> ../lib/jax.js
 cat fx/fx-interpolator.js >> ../lib/jax.js
 cat fx/fx-scrolling.js >> ../lib/jax.js
-cat report/report.js >> ../lib/jax.js
 echo "" >> ../lib/jax.js
 
 cp ../dependencies/jak.js ../lib/jak.js

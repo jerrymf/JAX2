@@ -193,6 +193,11 @@ JAX.FX.prototype.run = function() {
 
 JAX.FX.prototype.then = function(onfulfill, onreject) {
 	this._promise.finished.then(onfulfill, onreject);
+	return this._promise.finished;
+};
+
+JAX.FX.prototype.getPromise = function() {
+	return this._promise.finished;
 };
 
 /**
