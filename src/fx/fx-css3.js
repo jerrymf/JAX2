@@ -67,7 +67,7 @@ JAX.FX.CSS3.prototype.run = function() {
 
 		for (var i=0, len=this._settings.length; i<len; i++) {
 			var setting = this._settings[i];
-			var cssEndValue = setting.endValue + setting.startUnit;
+			var cssEndValue = setting.endValue + setting.endUnit;
 			style[setting.property] = cssEndValue;
 		}
 	}.bind(this), 0);

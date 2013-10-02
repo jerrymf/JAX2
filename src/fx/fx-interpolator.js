@@ -44,11 +44,25 @@ JAX.FX.Interpolator.prototype._start = function() {
 		});
 		
 		this._interpolators.push(interpolator);
+
 		if (["backgroundColor", "color"].indexOf(setting.property) != -1) {
 			interpolator.addColorProperty(setting.property, setting.startValue, setting.endValue);
+		} else if (setting.startUnit != setting.endUnit) {
+			var property = setting.property;
+			var cssProperty = this._styleToCSSProperty(property);
+			var backupPropertyValue = this._jaxElm.css(property);
+
+			this._jaxElm.css(property, setting.startValue + setting.startUnit);
+			var sValue = parseFloat(this._jaxElm.computedCss(cssProperty));
+			this._jaxElm.css(property, setting.endValue + setting.endUnit);
+			var eValue = parseFloat(this._jaxElm.computedCss(cssProperty));
+
+			this._jaxElm.css(property, backupPropertyValue);
+			interpolator.addProperty(property, sValue, eValue, "px");
 		} else {
 			interpolator.addProperty(setting.property, setting.startValue, setting.endValue, setting.startUnit);
 		}
+
 		interpolator.start();
 		this._interpolatorsCount++;
 	}
@@ -71,4 +85,8 @@ JAX.FX.Interpolator.prototype._destroyInterpolator = function(index) {
 		this._interpolators[index] = null;
 		this._interpolatorsCount--;
 	}
+};
+
+JAX.FX.Interpolator.prototype._styleToCSSProperty = function(property) {
+﻿	return property.replace(/([A-Z])/g, function(match, letter) { return "-" + letter.toLowerCase(); });
 };

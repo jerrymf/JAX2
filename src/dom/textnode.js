@@ -35,8 +35,8 @@ JAX.TextNode.prototype.clear = function() {
 
 JAX.TextNode.prototype.eq = function(node) {
 	if (!node) { return false; }
-	var elm = node.jaxNodeType ? node.node() : node;
-	return elm == this._node;
+	var jaxElm = JAX(node);
+	return jaxElm.node() == this._node;
 };
 
 JAX.TextNode.prototype.add = function(nodes) {
