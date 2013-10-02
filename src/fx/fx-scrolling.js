@@ -59,7 +59,7 @@ JAX.FX.Scrolling.prototype.run = function() {
 	this._reversed = false;
 	this._startTime = new Date().getTime();
 
-	return this;
+	return this._promises.animationFinished;
 };
 
 JAX.FX.Scrolling.prototype.then = function(onFulfill, onReject) {
@@ -94,7 +94,11 @@ JAX.FX.Scrolling.prototype.reverse = function() {
 	this._isRunning = true;
 	this._startTime = new Date().getTime();
 
-	return this;
+	return this._promises.animationFinished;
+};
+
+JAX.FX.Scrolling.prototype.isRunning = function() {
+	return this._isRunning;
 };
 
 JAX.FX.Scrolling.prototype._startInterval = function(property, value, duration) {

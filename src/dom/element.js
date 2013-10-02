@@ -576,7 +576,9 @@ JAX.Element.prototype.animate = function(property, duration, start, end) {
 
 	var fx = new JAX.FX(this);
 	fx.addProperty(property, duration, start, end);
-	return fx.run();
+	fx.run();
+
+	return fx;
 };
 
 /** 
@@ -604,7 +606,9 @@ JAX.Element.prototype.fade = function(type, duration) {
 		break;
 		default:
 			console.error("I got unsupported type '" + type + "'.", this._node);
-			return new JAX.FX(null).run();
+			var fx = new JAX.FX(null);
+			fx.run();
+			return fx;
 	}
 };
 
@@ -671,7 +675,9 @@ JAX.Element.prototype.slide = function(type, duration) {
 		break;
 		default:
 			console.error("I got unsupported type '" + type + "'.", this._node);
-			return new JAX.FX(null).run();
+			var fx = new JAX.FX(null);
+			fx.run();
+			return fx;
 	}
 
 	this.css("overflow", "hidden");
@@ -737,8 +743,9 @@ JAX.Element.prototype.scroll = function(type, value, duration) {
 
 	var fx = new JAX.FX.Scrolling(this);
 		fx.addProperty(type, value, duration);
+		fx.run();
 		
-	return fx.run();
+	return fx;
 };
 
 JAX.Element.prototype._setOpacity = function(value) {
