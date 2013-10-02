@@ -289,7 +289,9 @@ JAX.FX.prototype.isRunning = function() {
  * @returns {JAX.FX}
  */
 JAX.FX.prototype.stop = function() {
-	this._processor.stop();
+	if (this._isRunning) { 
+		this._processor.stop();
+	}
 	return this;
 };
 
