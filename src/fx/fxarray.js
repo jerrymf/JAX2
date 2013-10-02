@@ -8,6 +8,10 @@ JAX.FXArray.prototype.$constructor = function(fxArray) {
 	this._fxArray = fxArray;
 };
 
+JAX.FXArray.prototype.getItems = function() {
+	return this._fxArray.slice();
+};
+
 JAX.FXArray.prototype.run = function() {
 	var len = this._fxArray.length;
 	var fxPromises = new Array(len);
