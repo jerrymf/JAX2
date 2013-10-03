@@ -8,8 +8,8 @@ JAX.FX.CSS3._TRANSITION_EVENT = "";
 
 (function() {
 	var transitions = {
-		"WebkitTransition":"webkitTransitionEnd", // vendorprefix webkit musi byt prvni, Android 4.1.1 spatne vyhodnocuje svoje schopnosti a vraci transitionend, ktery nepodporuje
 		"transition":"transitionend",
+		"WebkitTransition":"webkitTransitionEnd",
 		"OTransition":"oTransitionEnd",
 		"MozTransition":"transitionend",
 		"MSTransition":"MSTransitionEnd"
@@ -29,11 +29,13 @@ JAX.FX.CSS3.isSupported = !!JAX.FX.CSS3._TRANSITION_PROPERTY;
 JAX.FX.CSS3.prototype.$constructor = function(jaxElm) {
 	this._jaxElm = jaxElm;
 	this._settings = [];
+	this._maxDuration = 0;
 	this._transitionCount = 0;
 	this._ecTransition = null;
 	this._promise = {
 		finished: null
 	};
+	this._timeout = null;
 };
 
 JAX.FX.CSS3.prototype.set = function(settings) {
@@ -53,7 +55,7 @@ JAX.FX.CSS3.prototype.run = function() {
 		var setting = this._settings[i];
 		var cssStartValue = setting.startValue + setting.startUnit;
 		var transitionParam = this._styleToCSSProperty(setting.property) + " " + setting.durationValue + setting.durationUnit + " " + setting.method;
-
+		this._maxDuration = Math.max(this._maxDuration, setting.durationValue);
 		style[setting.property] = cssStartValue;
 		tps.push(transitionParam);
 		this._transitionCount++;
@@ -70,6 +72,8 @@ JAX.FX.CSS3.prototype.run = function() {
 			var cssEndValue = setting.endValue + setting.endUnit;
 			style[setting.property] = cssEndValue;
 		}
+
+		this._timeout = setTimeout(this._fallback.bind(this), this._maxDuration + 50); /* sometimes transitioend is not fired, we must use fallback :-/ */
 	}.bind(this), 0);
 
 	return this._promise.finished;
@@ -86,6 +90,8 @@ JAX.FX.CSS3.prototype.stop = function() {
 	}
 
 	while(this._transitionCount) { this._endTransition(); }
+	clearTimeout(this._timeout);
+	this._timeout = null;
 	this._promise.finished.reject(this._jaxElm);
 };
 
@@ -99,10 +105,24 @@ JAX.FX.CSS3.prototype._endTransition = function() {
 };
 
 JAX.FX.CSS3.prototype._finishTransitionAnimation = function() {
-	this._endTransition();
+	if (this._transitionCount) {
+		this._endTransition();
+		return;
+	}
+
+	clearTimeout(this._timeout);
+	this._timeout = null;
 	this._promise.finished.fulfill(this._jaxElm);
 };
 
 JAX.FX.CSS3.prototype._styleToCSSProperty = function(property) {
 ﻿	return property.replace(/([A-Z])/g, function(match, letter) { return "-" + letter.toLowerCase(); });
+};
+
+JAX.FX.CSS3.prototype._fallback = function() {
+	while(this._transitionCount) {
+		this._endTransition();
+	}
+
+	this._finishTransitionAnimation();
 };
