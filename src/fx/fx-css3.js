@@ -8,11 +8,11 @@ JAX.FX.CSS3._TRANSITION_EVENT = "";
 
 (function() {
 	var transitions = {
-      "transition":"transitionend",
-      "OTransition":"oTransitionEnd",
-      "MozTransition":"transitionend",
-      "WebkitTransition":"webkitTransitionEnd",
-      "MSTransition":"MSTransitionEnd"
+		"WebkitTransition":"webkitTransitionEnd", // vendorprefix webkit musi byt prvni, Android 4.1.1 spatne vyhodnocuje svoje schopnosti a vraci transitionend, ktery nepodporuje
+		"transition":"transitionend",
+		"OTransition":"oTransitionEnd",
+		"MozTransition":"transitionend",
+		"MSTransition":"MSTransitionEnd"
     };
 
 	for (var p in transitions) {
