@@ -103,6 +103,22 @@ JAX.NodeArray.prototype.index = function(item) {
 	return -1;
 };
 
+JAX.NodeArray.prototype.firstElement = function() {
+	for (var i=0, len=this._jaxNodes.length; i<len; i++) {
+		if (this._jaxNodes[i].jaxNodeType == 1) { return this._jaxNodes[i]; }
+	}
+
+	return new JAX.NullNode();
+};
+
+JAX.NodeArray.prototype.lastElement = function() {
+	for (var i=this._jaxNodes.length - 1; i>=0; i--) {
+		if (this._jaxNodes[i].jaxNodeType == 1) { return this._jaxNodes[i]; }
+	}
+
+	return new JAX.NullNode();
+};
+
 /**
  * @method nastaví všem prvkům, které si drží, určitou classu
  * @example
