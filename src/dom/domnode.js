@@ -150,7 +150,7 @@ JAX.DOMNode.prototype.before = function(node) {
 JAX.DOMNode.prototype.after = function(node) {
 	var jaxNode = JAX(node);
 
-	if (jaxNnode.exists()) {
+	if (jaxNode.exists()) {
 		var n = jaxNode.node();
 
 		if (n.nextSibling) {
