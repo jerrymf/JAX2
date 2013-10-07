@@ -231,7 +231,7 @@ JAX.isDOMElement = function(o) {
 		return false;
 	}
 
-	if ((o.Window && o instanceof o.Window) || o instanceof Window) {
+	if (o == window || (o.Window && o instanceof o.Window) || (o.constructor.toString().indexOf("DOMWindow") > -1)) { /* toString - fix pro Android */
 		return true;
 	}
 	
