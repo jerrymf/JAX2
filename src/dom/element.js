@@ -401,10 +401,7 @@ JAX.Element.prototype.computedCss = function(properties) {
  */
 JAX.Element.prototype.fullSize = function(sizeType, value) {
 	if (arguments.length == 1) {
-		var backupDisplay = this.css("display"); 
-		
 		var size = sizeType == "width" ? this._node.offsetWidth : this._node.offsetHeight;
-		this.css("display", backupDisplay);
 		return size; 
 	}
 
@@ -429,11 +426,7 @@ JAX.Element.prototype.size = function(sizeType, value) {
 		var size = parseInt(this.computedCss(sizeType), 10);
 		if (isFinite(size)) { return size; }
 
-		var backupDisplay = this.css("display");
-		if (backupDisplay.indexOf("none") == 0) { this.css("display",""); }
-
 		size = this._getSizeWithBoxSizing(sizeType);
-		this.css("display", backupDisplay);
 		return size; 
 	}
 
