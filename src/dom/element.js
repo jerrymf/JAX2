@@ -315,7 +315,12 @@ JAX.Element.prototype.removeAttr = function(properties) {
  */
 JAX.Element.prototype.css = function(property, value) {
 	if (typeof(property) == "string") {
-		if (arguments.length == 1) { 
+		if (property.indexOf(" ") > -1) {
+			var property = this._findMyProperty(property);
+			if (!property) { return arguments.length == 1 ? "" : this; }
+		}
+
+		if (arguments.length == 1) {
 			return property == "opacity" ? this._getOpacity() : this._node.style[property]; 
 		}
 
@@ -331,6 +336,10 @@ JAX.Element.prototype.css = function(property, value) {
 
 		for (var i=0, len=property.length; i<len; i++) {
 			var p = property[i];
+			if (p.indexOf(" ") > -1) {
+				var p = this._findMyProperty(p);
+				if (!p) { continue; }
+			}
 			if (p == "opacity") { css[p] = this._getOpacity(); continue; }
 			css[p] = this._node.style[p];
 		}
@@ -340,6 +349,10 @@ JAX.Element.prototype.css = function(property, value) {
 
 	for (var p in property) {
 		var value = property[p];
+		if (p.indexOf(" ") > -1) {
+			var p = this._findMyProperty(p);
+			if (!p) { continue; }
+		}
 		if (p == "opacity") { this._setOpacity(value); continue; }
 		this._node.style[p] = value;
 	}
@@ -829,3 +842,16 @@ JAX.Element.prototype._destroyEvents = function(eventListeners) {
 		JAK.Events.removeListener(eventListener);
 	}
 };
+
+JAX.Element.prototype._findMyProperty = function(property) {
+	var properties = property.trim().split(" ");
+	var style = document.createElement("div").style;
+
+	for (var i=0, len=properties.length; i<len; i++) {
+		var property = properties[i];
+		if (property in style) { return property; }
+	}
+
+	return "";
+};
+
