@@ -130,7 +130,8 @@ JAX.DOMNode.prototype.before = function(node) {
 	var jaxNode = JAX(node);
 
 	if (jaxNode.exists()) {
-		node.parentNode.insertBefore(this._node, jaxNode.node());
+		var n = jaxNode.node();
+		n.parentNode.insertBefore(this._node, n);
 		return this;
 	}
 	
