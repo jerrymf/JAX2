@@ -18,6 +18,7 @@ JAX.Element = JAK.ClassMaker.makeClass({
 JAX.Element._events = [];
 JAX.Element._OPACITY_REGEXP = /alpha\(opacity=['"]?([0-9]+)['"]?\)/i;
 JAX.Element._BOX_SIZING = null;
+JAX.Element._TEST = document.createElement("div");
 
 (function() {
 	var boxSizing = {
@@ -845,7 +846,7 @@ JAX.Element.prototype._destroyEvents = function(eventListeners) {
 
 JAX.Element.prototype._findMyProperty = function(property) {
 	var properties = property.trim().split(" ");
-	var style = document.createElement("div").style;
+	var style = JAX.Element._TEST.style;
 
 	for (var i=0, len=properties.length; i<len; i++) {
 		var property = properties[i];
