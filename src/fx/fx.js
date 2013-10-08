@@ -13,6 +13,33 @@ JAX.FX = JAK.ClassMaker.makeClass({
 	VERSION: "1.1"
 });
 
+JAX.FX.isCSS3Supported = null; 
+
+(function() {
+	var style = document.createElement("div").style;
+	JAX.FX.isCSS3Supported = "transition" in  style || "MozTransition" in style || "WebkitTransition" in style || "OTransition" in style || "MSTransition" in style;
+})();
+
+JAX.FX.TRANSFORM = "";
+
+(function() {
+	var transforms = [
+		"transform",
+		"WebkitTransform",
+		"OTransform",
+		"MozTransform",
+		"MSTransform"
+	];
+
+	for (var i=0, len=transforms.length; i<len; i++) {
+		var transform = transforms[i];
+		if (transform in document.createElement("div").style) {
+			JAX.FX.TRANSFORM = transform;
+			break; 
+		}
+	}
+})();
+
 JAX.FX._SUPPORTED_PROPERTIES = {
 	"width": 			{ defaultUnit:"px" },
 	"maxWidth": 		{ defaultUnit:"px" },
@@ -33,6 +60,11 @@ JAX.FX._SUPPORTED_PROPERTIES = {
 	"marginLeft": 		{ defaultUnit:"px" },
 	"marginRight": 		{ defaultUnit:"px" },
 	"fontSize": 		{ defaultUnit:"px" },
+	"transform": 		{ defaultUnit:""   },
+	"WebkitTransform": 	{ defaultUnit:""   },
+	"MozTransform": 	{ defaultUnit:""   },
+	"MSTransform": 		{ defaultUnit:""   },
+	"OTransform": 		{ defaultUnit:""   },
 	"opacity": 			{ defaultUnit:""   },
 	"color": 			{ defaultUnit:""   },
 	"backgroundColor": 	{ defaultUnit:""   }
@@ -99,7 +131,7 @@ JAX.FX.prototype.addProperty = function(property, duration, start, end, method) 
 
 	var durationValue = this._parseValue(duration);
 	var durationUnit = this._parseUnit(duration) || "ms";
-	var method = JAX.FX.CSS3.isSupported ? (method || "linear") : "LINEAR";
+	var method = JAX.FX.isCSS3Supported ? (method || "linear") : "LINEAR";
 	
 	if (typeof(property) != "string") { 
 		console.error("JAX.FX.addProperty: For first argument I expected string"); 
@@ -131,7 +163,7 @@ JAX.FX.prototype.addProperty = function(property, duration, start, end, method) 
 	}
 	if (JAX.FX._SUPPORTED_METHODS.indexOf(method.toLowerCase()) == -1 && method.toLowerCase().indexOf("cubic-bezier") != 0) {
 		console.error("JAX.FX.addProperty: Fifth argument must be supported method. You are trying to give me '" + method + "' which is unsupoorted."); 
-		method = JAX.FX.CSS3.isSupported ? "linear" : "LINEAR";
+		method = JAX.FX.isCSS3Supported ? "linear" : "LINEAR";
 	}
 
 	if (end || (typeof(end) == "number" && isFinite(end))) {
@@ -167,6 +199,67 @@ JAX.FX.prototype.addProperty = function(property, duration, start, end, method) 
 	return this;
 };
 
+JAX.FX.prototype.addTranslateProperty = function(duration, start, end, method) {
+	if (!JAX.FX.isCSS3Supported) {
+		var translates = {
+			"x":"left",
+			"y":"top",
+			"z":""
+		};
+
+		for (var i in start) {
+			var translate = translates[i];
+			if (!translate) { continue; }
+			this.addProperty(translate, duration, start[i], end[i], method);
+		};
+
+		console.info("JAX.FX.addTranslateProperty: There is no CSS3 transition support. I will use top or left instead of transform attribute.");
+		return this;
+	}
+
+	var translates = {
+		"x":"translateX(%v)",
+		"y":"translateY(%v)",
+		"z":"translateZ(%v)"
+	};
+
+	var tvalues = [];
+	for (var i in start) {
+		var value = this._parseValue(start[i] || 0);
+		var unit = this._parseUnit(start[i] || 0) || "px";
+		var translate = translates[i];
+
+		if (!translate) { continue; }
+		tvalues.push(translate.replace("%v", value + unit));
+	}
+
+	if (!tvalues.length) {
+		console.error("JAX.FX.addTranslateProperty: I got unsupported start translate axis. Supported: x, y or z.")
+		return this; 
+	}
+	var s = tvalues.join(" ");
+
+	var tvalues = [];
+	for (var i in end) {
+		var value = this._parseValue(end[i] || 0);
+		var unit = this._parseUnit(end[i] || 0) || "px";
+		var translate = translates[i];
+
+		if (!translate) { continue; }
+		tvalues.push(translate.replace("%v", value + unit));
+	}
+
+	if (!tvalues.length) { 
+		console.error("JAX.FX.addTranslateProperty: I got unsupported end translate axis. Supported: x, y or z.")
+		return this; 
+	}
+	var e = tvalues.join(" ");
+
+	this.addProperty(JAX.FX.TRANSFORM, duration, s, e, method);
+
+	return this;
+};
+
 /**
  * @method Spustí animaci
  * @example
@@ -186,7 +279,7 @@ JAX.FX.prototype.run = function() {
 		return this;
 	}
 
-	this._processor = JAX.FX.CSS3.isSupported ? new JAX.FX.CSS3(this._jaxElm) : new JAX.FX.Interpolator(this._jaxElm);
+	this._processor = JAX.FX.isCSS3Supported ? new JAX.FX.CSS3(this._jaxElm) : new JAX.FX.Interpolator(this._jaxElm);
 	this._processor.set(this._settings);
 
 	this._running = true;
@@ -261,7 +354,7 @@ JAX.FX.prototype.reverse = function() {
 		reversedSettings.push(reversedSetting);
 	}
 
-	this._processor = JAX.FX.CSS3.isSupported ? new JAX.FX.CSS3(this._jaxElm) : new JAX.FX.Interpolator(this._jaxElm);
+	this._processor = JAX.FX.isCSS3Supported ? new JAX.FX.CSS3(this._jaxElm) : new JAX.FX.Interpolator(this._jaxElm);
 	this._processor.set(reversedSettings);
 
 	this._running = true;
@@ -298,7 +391,7 @@ JAX.FX.prototype.stop = function() {
 JAX.FX.prototype._parseCSSValue = function(property, cssValue) {
 	var unit = JAX.FX._SUPPORTED_PROPERTIES[property].defaultUnit;
 
-	if (property == "backgroundColor" || property == "color") {
+	if (property == "backgroundColor" || property == "color" || property.toLowerCase().indexOf("transform") > -1) {
 		var value = cssValue;
 	} else {
 		var value = this._parseValue(cssValue);

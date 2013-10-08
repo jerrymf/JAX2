@@ -24,8 +24,6 @@ JAX.FX.CSS3._TRANSITION_EVENT = "";
 	}
 })();
 
-JAX.FX.CSS3.isSupported = !!JAX.FX.CSS3._TRANSITION_PROPERTY;
-
 JAX.FX.CSS3.prototype.$constructor = function(jaxElm) {
 	this._jaxElm = jaxElm;
 	this._settings = [];
