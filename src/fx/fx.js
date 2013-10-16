@@ -213,7 +213,7 @@ JAX.FX.prototype.addTranslateProperty = function(duration, start, end, method) {
 			this.addProperty(translate, duration, start[i], end[i], method);
 		};
 
-		console.info("JAX.FX.addTranslateProperty: There is no CSS3 transition support. I will use top or left instead of transform attribute.");
+		console.info("JAX.FX.addTranslateProperty: There is no CSS3 transition support. I will use top or left instead of transform attribute. Element should have non-static position.");
 		return this;
 	}
 
