@@ -146,3 +146,10 @@ JAX.IListening.prototype.stopListening = function(listener) {
 
 	return this;
 };
+
+JAX.IListening.prototype._destroyEvents = function(eventListeners) {
+	for (var i=0, len=eventListeners.length; i<len; i++) { 
+		var eventListener = eventListeners[i].id();
+		JAK.Events.removeListener(eventListener);
+	}
+};

@@ -246,3 +246,15 @@ JAX.isDOMElement = function(o) {
 		(win.Text && o instanceof win.Text)
 	);
 };
+
+JAX.findCSSProperty = function(property) {
+	var properties = property.trim().split(" ");
+	var style = document.createElement("div").style;
+
+	for (var i=0, len=properties.length; i<len; i++) {
+		var property = properties[i];
+		if (property in style) { return property; }
+	}
+
+	return "";
+};

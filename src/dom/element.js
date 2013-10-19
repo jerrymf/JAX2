@@ -18,7 +18,6 @@ JAX.Element = JAK.ClassMaker.makeClass({
 JAX.Element._events = [];
 JAX.Element._OPACITY_REGEXP = /alpha\(opacity=['"]?([0-9]+)['"]?\)/i;
 JAX.Element._BOX_SIZING = null;
-JAX.Element._TEST = document.createElement("div");
 
 (function() {
 	var boxSizing = {
@@ -301,6 +300,7 @@ JAX.Element.prototype.removeAttr = function(properties) {
 	console.error("JAX.Element.removeAttr: For first argument I expected string or array of strings.", this._node);
 	return this;
 }
+
 /** 
  * @method nastaví nebo získá style vlastnosti u elementu
  * @example
@@ -315,49 +315,62 @@ JAX.Element.prototype.removeAttr = function(properties) {
  * @returns {String | Object | JAX.Node}
  */
 JAX.Element.prototype.css = function(property, value) {
-	if (typeof(property) == "string") {
-		if (property.indexOf(" ") > -1) {
-			var property = this._findMyProperty(property);
-			if (!property) { return arguments.length == 1 ? "" : this; }
-		}
+	var argLength = arguments.length;
 
-		if (arguments.length == 1) {
+	if (argLength == 1) {
+		if (typeof(property) == "string") {
 			return property == "opacity" ? this._getOpacity() : this._node.style[property]; 
-		}
+		} else if (typeof(property) == "object") {
+			for (var p in property) {
+				var value = property[p];
+				if (p == "opacity") { 
+					this._setOpacity(value); 
+					continue; 
+				}
+				this._node.style[p] = value;
+			}	
+			return this;
+		} else if (property instanceof Array) {
+			var css = {};
 
-		if (property == "opacity") {
-			this._setOpacity(value);
-		} else {
-			this._node.style[property] = value;
-		}
-
-		return this;
-	} else if (property instanceof Array) {
-		var css = {};
-
-		for (var i=0, len=property.length; i<len; i++) {
-			var p = property[i];
-			if (p.indexOf(" ") > -1) {
-				var p = this._findMyProperty(p);
-				if (!p) { continue; }
+			for (var i=0, len=property.length; i<len; i++) {
+				var p = property[i];
+				if (p == "opacity") { 
+					css[p] = this._getOpacity(); 
+					continue; 
+				}
+				css[p] = this._node.style[p];
 			}
-			if (p == "opacity") { css[p] = this._getOpacity(); continue; }
-			css[p] = this._node.style[p];
-		}
 
-		return css;
+			return css;
+		}
 	}
 
-	for (var p in property) {
-		var value = property[p];
-		if (p.indexOf(" ") > -1) {
-			var p = this._findMyProperty(p);
-			if (!p) { continue; }
+	if (argLength == 2) {
+		if (typeof(property) == "string") {
+			if (property == "opacity") {
+				this._setOpacity(value);
+				return this;
+			}
+				
+			this._node.style[property] = value;
+
+			return this;
+		} else if (property instanceof Array) {
+			for (var i=0, len=property.length; i<len; i++) {
+				var p = property[i];
+				if (p == "opacity") { 
+					this._setOpacity(value); 
+					continue; 
+				}
+				this._node.style[p] = value;
+			}
+
+			return this;
 		}
-		if (p == "opacity") { this._setOpacity(value); continue; }
-		this._node.style[p] = value;
 	}
 
+	console.error("JAX.Element.css: Unsupported arguments: ", arguments);
 	return this;
 };
 
@@ -446,8 +459,9 @@ JAX.Element.prototype.size = function(sizeType, value) {
 JAX.Element.prototype.children = function(index) {
 	if (!arguments.length) {
 		var nodes = [];
-		for (var i=0, len=this._node.childNodes.length; i<len; i++) {
-			nodes.push(JAX(this._node.childNodes[i]));
+		var childNodes = this._node.childNodes;
+		for (var i=0, len=childNodes.length; i<len; i++) {
+			nodes.push(JAX(childNodes[i]));
 		}
 		return new JAX.NodeArray(nodes);
 	}
@@ -829,23 +843,3 @@ JAX.Element.prototype._getText = function(node) {
 	}
 	return text;
 };
-
-JAX.Element.prototype._destroyEvents = function(eventListeners) {
-	for (var i=0, len=eventListeners.length; i<len; i++) { 
-		var eventListener = eventListeners[i].id();
-		JAK.Events.removeListener(eventListener);
-	}
-};
-
-JAX.Element.prototype._findMyProperty = function(property) {
-	var properties = property.trim().split(" ");
-	var style = JAX.Element._TEST.style;
-
-	for (var i=0, len=properties.length; i<len; i++) {
-		var property = properties[i];
-		if (property in style) { return property; }
-	}
-
-	return "";
-};
-
