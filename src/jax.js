@@ -89,14 +89,18 @@ JAX.all = function(selector, srcElement) {
 		}
 
 		var foundElms = srcElement.querySelectorAll(selector);
-		var arrayElms = new Array(foundElms.length);
 
-		for (var i=0, len=foundElms.length; i<len; i++) { arrayElms[i] = foundElms[i]; }
-
-		return new JAX.NodeArray(arrayElms);
+		return new JAX.NodeArray(foundElms);
+	} else if (selector instanceof Array || (window.NodeList && selector instanceof window.NodeList) || selector instanceof JAX.NodeArray) {
+		return new JAX.NodeArray(selector);
+	} else if (selector.length && selector[0] && selector[selector.length - 1]) {
+		/* IE8 can't detect NodeList, so if we have something iterable we will pass it */
+		return new JAX.NodeArray(selector);
+	} else if (JAX.isDOMElement(selector)) {
+		return new JAX.NodeArray([selector]);
 	}
 	
-	return new JAX.NodeArray(selector);
+	return new JAX.NodeArray([]);
 };
 
 /**
@@ -247,6 +251,12 @@ JAX.isDOMElement = function(o) {
 	);
 };
 
+/**
+ * @method Najde platnou CSS vlasnost. Lze použít při hledání platné CSS hodnoty s vendor prefixem. Zadávají se oddělené mezerou.
+ *
+ * @param {String} property CSS vlasnosti oddělené mezereou
+ * @returns {String}
+ */
 JAX.findCSSProperty = function(property) {
 	var properties = property.trim().split(" ");
 	var style = document.createElement("div").style;

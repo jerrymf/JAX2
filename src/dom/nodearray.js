@@ -19,26 +19,14 @@ JAX.NodeArray = JAK.ClassMaker.makeClass({
  * @param {Object} lze zadat 
  */
 JAX.NodeArray.prototype.$constructor = function(nodes) {
-	this.length = 0;
+	var nodesLength = nodes.length;
+	this.length = nodesLength;
 
-	var arr = nodes instanceof JAX.NodeArray ? nodes.items() : [].concat(nodes);
-	var arrLength = arr.length;
-
-	this._jaxNodes = new Array(arrLength);
-
-	for(var i=0, len=arrLength; i<len; i++) {
-		var node = arr[i];
-
-		if (node instanceof JAX.Node) {
-			var jaxNode = node;
-		} else {
-			var jaxNode = JAX(node);
-		}
-		
-		this._jaxNodes[i] = jaxNode; 
+	for(var i=0; i<nodesLength; i++) {
+		var node = nodes[i];
+		var jaxNode = node instanceof JAX.Node ? node : JAX(node);
+		this[i] = jaxNode; 
 	}
-
-	this.length = this._jaxNodes.length;
 };
 
 JAX.NodeArray.prototype.exist = function() {
@@ -57,7 +45,7 @@ JAX.NodeArray.prototype.exist = function() {
  */
 JAX.NodeArray.prototype.item = function(index) {
 	var index = index || 0;
-	return this._jaxNodes[index];
+	return this[index];
 };
 
 /**
@@ -72,10 +60,15 @@ JAX.NodeArray.prototype.item = function(index) {
  * @returns {JAX.Node[]}
  */
 JAX.NodeArray.prototype.items = function(from, to) {
-	if (!arguments.length) { return this._jaxNodes.slice(); }
-	var from = typeof(from) == "number" || from ? from : 0;
-	var to = typeof(to) == "number" || to ? to : this._jaxNodes.length;
-	return this._jaxNodes.slice(from, to);
+	var from = parseFloat(from) || 0;
+	var to = parseFloat(to) || this._jaxNodes.length;
+	var items = new Array(this.length);
+
+	for (var i=from; i<to; i++) {
+		items[i] = this[i];
+	}
+
+	return items; 
 };
 
 JAX.NodeArray.prototype.limit = function(from, to) {
@@ -83,11 +76,11 @@ JAX.NodeArray.prototype.limit = function(from, to) {
 };
 
 JAX.NodeArray.prototype.index = function(item) {
-	var item = JAX(item);
+	var item = item instanceof JAX.Node ? item : JAX(item);
 	var nodeTarget = item.node();
 
-	for (var i=0, len = this._jaxNodes.length; i<len; i++) {
-		var nodeSource = this._jaxNodes[i].node();
+	for (var i=0; i<this.length; i++) {
+		var nodeSource = this[i].node();
 		if (nodeSource == nodeTarget) { return i; }
 	}
 
@@ -95,16 +88,16 @@ JAX.NodeArray.prototype.index = function(item) {
 };
 
 JAX.NodeArray.prototype.firstElement = function() {
-	for (var i=0, len=this._jaxNodes.length; i<len; i++) {
-		if (this._jaxNodes[i].jaxNodeType == 1) { return this._jaxNodes[i]; }
+	for (var i=0; i<this.length; i++) {
+		if (this[i].jaxNodeType == 1) { return this[i]; }
 	}
 
 	return new JAX.NullNode();
 };
 
 JAX.NodeArray.prototype.lastElement = function() {
-	for (var i=this._jaxNodes.length - 1; i>=0; i--) {
-		if (this._jaxNodes[i].jaxNodeType == 1) { return this._jaxNodes[i]; }
+	for (var i=this.length; i>=0; i--) {
+		if (this[i].jaxNodeType == 1) { return this[i]; }
 	}
 
 	return new JAX.NullNode();
@@ -120,8 +113,8 @@ JAX.NodeArray.prototype.lastElement = function() {
  * @returns {JAX.NodeArray}
  */
 JAX.NodeArray.prototype.addClass = function(classNames) {
-	for (var i=0, len=this._jaxNodes.length; i<len; i++) { 
-		var jaxNode = this._jaxNodes[i];
+	for (var i=0; i<this.length; i++) { 
+		var jaxNode = this[i];
 		jaxNode.addClass(classNames); 
 	}
 	return this;
@@ -137,8 +130,8 @@ JAX.NodeArray.prototype.addClass = function(classNames) {
  * @returns {Boolean}
  */
 JAX.NodeArray.prototype.haveClass = function(className) {
-	for (var i=0, len=this._jaxNodes.length; i<len; i++) { 
-		if (!this._jaxNodes[i].hasClass(className)) { return false; } 
+	for (var i=0; i<this.length; i++) { 
+		if (!this[i].hasClass(className)) { return false; } 
 	}
 	return true;
 };
@@ -153,8 +146,8 @@ JAX.NodeArray.prototype.haveClass = function(className) {
  * @returns {JAX.NodeArray}
  */
 JAX.NodeArray.prototype.toggleClass = function(className) {
-	for (var i=0, len=this._jaxNodes.length; i<len; i++) { 
-		this._jaxNodes[i].toggleClass(className);
+	for (var i=0; i<this.length; i++) { 
+		this[i].toggleClass(className);
 	}
 	return this;	
 };
@@ -169,8 +162,8 @@ JAX.NodeArray.prototype.toggleClass = function(className) {
  * @returns {JAX.NodeArray}
  */
 JAX.NodeArray.prototype.removeClass = function(classNames) {
-	for (var i=0, len=this._jaxNodes.length; i<len; i++) { 
-		var jaxNode = this._jaxNodes[i];
+	for (var i=0; i<this.length; i++) { 
+		var jaxNode = this[i];
 		jaxNode.removeClass(classNames); 
 	}
 	return this;
@@ -188,16 +181,16 @@ JAX.NodeArray.prototype.removeClass = function(classNames) {
  * @returns {JAX.NodeArray}
  */
 JAX.NodeArray.prototype.attr = function(property, value) {
-	for (var i=0, len=this._jaxNodes.length; i<len; i++) { 
-		var jaxNode = this._jaxNodes[i];
+	for (var i=0; i<this.length; i++) { 
+		var jaxNode = this[i];
 		jaxNode.attr(property, value);
 	}
 	return this;
 };
 
 JAX.NodeArray.prototype.removeAttr = function(properties) {
-	for (var i=0, len=this._jaxNodes.length; i<len; i++) { 
-		var jaxNode = this._jaxNodes[i];
+	for (var i=0; i<this.length; i++) { 
+		var jaxNode = this[i];
 		jaxNode.removeAttr(properties);
 	}
 	return this;
@@ -215,8 +208,8 @@ JAX.NodeArray.prototype.removeAttr = function(properties) {
  * @returns {JAX.NodeArray}
  */
 JAX.NodeArray.prototype.css = function(property, value) {
-	for (var i=0, len=this._jaxNodes.length; i<len; i++) { 
-		var jaxNode = this._jaxNodes[i];
+	for (var i=0; i<this.length; i++) { 
+		var jaxNode = this[i];
 		jaxNode.css(property, value);
 	}
 	return this;
@@ -234,8 +227,8 @@ JAX.NodeArray.prototype.css = function(property, value) {
  * @returns {JAX.NodeArray}
  */
 JAX.NodeArray.prototype.prop = function(property, value) {
-	for (var i=0, len=this._jaxNodes.length; i<len; i++) { 
-		var jaxNode = this._jaxNodes[i];
+	for (var i=0; i<this.length; i++) { 
+		var jaxNode = this[i];
 		jaxNode.prop(property, value);
 	}
 	return this;
@@ -251,8 +244,8 @@ JAX.NodeArray.prototype.prop = function(property, value) {
  * @returns {JAX.NodeArray}
  */
 JAX.NodeArray.prototype.appendTo = function(node) {
-	for (var i=0, len=this._jaxNodes.length; i<len; i++) {
-		this._jaxNodes[i].appendTo(node);
+	for (var i=0; i<this.length; i++) {
+		this[i].appendTo(node);
 	}
 	return this;
 };
@@ -264,8 +257,8 @@ JAX.NodeArray.prototype.appendTo = function(node) {
  * @returns {JAX.NodeArray}
  */
 JAX.NodeArray.prototype.before = function(node) {
-	for (var i=0, len=this._jaxNodes.length; i<len; i++) {
-		this._jaxNodes[i].before(node);
+	for (var i=0; i<this.length; i++) {
+		this[i].before(node);
 	}
 	return this;
 }
@@ -279,8 +272,8 @@ JAX.NodeArray.prototype.before = function(node) {
  * @returns {JAX.NodeArray}
  */
 JAX.NodeArray.prototype.remove = function() {
-	for (var i=0, len=this._jaxNodes.length; i<len; i++) { 
-		var jaxNode = this._jaxNodes[i];
+	for (var i=0; i<this.length; i++) { 
+		var jaxNode = this[i];
 		jaxNode.remove(); 
 	}
 	return this;
@@ -296,8 +289,8 @@ JAX.NodeArray.prototype.remove = function() {
  * @returns {JAX.NodeArray}
  */
 JAX.NodeArray.prototype.areIn = function(node) {
-	for (var i=0, len=this._jaxNodes.length; i<len; i++) {
-		var jaxNode = this._jaxNodes[i];
+	for (var i=0; i<this.length; i++) {
+		var jaxNode = this[i];
 		if (!jaxNode.isIn(node)) { return false; }
 	}
 
@@ -313,25 +306,26 @@ JAX.NodeArray.prototype.areIn = function(node) {
  * @returns {void}
  */
 JAX.NodeArray.prototype.destroyNodes = function() {
-	for (var i=0, len=this._jaxNodes.length; i<len; i++) {
-		this._jaxNodes[i].$destructor(); 
+	for (var i=0; i<this.length; i++) {
+		this[i].$destructor();
+		delete this[i];
+		this.length--;
 	}
-	this._jaxNodes = [];
+
 	return;
 };
 
 JAX.NodeArray.prototype.listen = function(type, obj, funcMethod, bindData) {
-	var len = this._jaxNodes.length;
-	var listeners = new Array(len);
-	for(var i=0; i<len; i++) {
-		listeners[i] = this._jaxNodes[i].listen(type, obj, funcMethod, bindData);
+	var listeners = new Array(this.length);
+	for(var i=0; i<this.length; i++) {
+		listeners[i] = this[i].listen(type, obj, funcMethod, bindData);
 	}
 	return new JAX.ListenerArray(listeners);
 };
 
 JAX.NodeArray.prototype.stopListening = function(type) {
-	for (var i=0, len=this._jaxNodes.length; i<len; i++) {
-		this._jaxNodes[i].stopListening(type);
+	for (var i=0; i<this.length; i++) {
+		this[i].stopListening(type);
 	}
 	return this;
 };
@@ -347,7 +341,12 @@ JAX.NodeArray.prototype.stopListening = function(type) {
  * @returns {JAX.NodeArray}
  */
 JAX.NodeArray.prototype.forEachItem = function(func, obj) {
-	this._jaxNodes.forEach(func, obj || this);
+	var func = obj ? func.bind(obj) : func;
+
+	for (var i=0; i<this.length; i++) {
+		func(this[i], i, this);
+	}
+
 	return this;
 };
 
@@ -362,7 +361,15 @@ JAX.NodeArray.prototype.forEachItem = function(func, obj) {
  * @returns {JAX.NodeArray}
  */
 JAX.NodeArray.prototype.filterItems = function(func, obj) {
-	var filtered = this._jaxNodes.filter(func, obj || this);
+	var func = obj ? func.bind(obj) : func;
+	var filtered = [];
+
+	for (var i=0; i<this.length; i++) {
+		if (func(this[i], i, this)) {
+			filtered.push(this[i]);
+		}
+	}
+
 	return new JAX.NodeArray(filtered);
 };
 
@@ -371,8 +378,7 @@ JAX.NodeArray.prototype.filterItems = function(func, obj) {
  * @returns {JAX.Node}
  */
 JAX.NodeArray.prototype.firstItem = function() {
-	var jaxNode = this._jaxNodes[0];
-	return jaxNode ? jaxNode : new JAX.NullNode();
+	return this[0] || new JAX.NullNode();
 };
 
 /**
@@ -380,8 +386,7 @@ JAX.NodeArray.prototype.firstItem = function() {
  * @returns {JAX.Node}
  */
 JAX.NodeArray.prototype.lastItem = function() {
-	var jaxNode = this._jaxNodes[this.length - 1];
-	return jaxNode ? jaxNode : new JAX.NullNode();
+	return this[this.length - 1] || new JAX.NullNode();
 };
 
 /**
@@ -394,9 +399,9 @@ JAX.NodeArray.prototype.lastItem = function() {
  * @returns {JAX.NodeArray}
  */
 JAX.NodeArray.prototype.pushItem = function(node) {
-	var JAXNode = JAX(node);
+	var jaxNode = jaxNode instanceof JAX.Node ? node : JAX(node);
 	this.length++;
-	this._jaxNodes.push(JAXNode);
+	this[this.length - 1] = jaxNode;
 	return this;
 };
 
@@ -409,8 +414,13 @@ JAX.NodeArray.prototype.pushItem = function(node) {
  * @returns {JAX.Node}
  */
 JAX.NodeArray.prototype.popItem = function() {
-	this.length = Math.max(--this.length, 0);
-	return this._jaxNodes.pop();
+	if (this.length > 0) {
+		var jaxNode = this[this.length - 1];
+		delete this[this.length - 1];
+		this.length--;
+		return jaxNode;
+	}
+	return new JAX.NullNode();
 };
 
 /**
@@ -422,8 +432,16 @@ JAX.NodeArray.prototype.popItem = function() {
  * @returns {JAX.Node}
  */
 JAX.NodeArray.prototype.shiftItem = function() {
-	this.length = Math.max(--this.length, 0);
-	return this._jaxNodes.shift();
+	var jaxNode = this[0];
+	if (jaxNode) {
+		this.length--;
+		for (var i=0; i<this.length; i--) {
+			this[i] = this[i+1];
+		}
+		return jaxNode;
+	}
+
+	return new JAX.NullNode();
 };
 
 /**
@@ -435,18 +453,23 @@ JAX.NodeArray.prototype.shiftItem = function() {
  * @returns {JAX.NodeArray}
  */
 JAX.NodeArray.prototype.unshiftItem = function(node) {
-	var JAXNode = JAX(node);
+	var jaxNode = node instanceof JAX.Node ? node : JAX(node);
+
 	this.length++;
-	this._jaxNodes.unshift(JAXNode);
+	for (var i=this.length - 1; i>0; i--) {
+		this[i] = this[i - 1];
+	}
+	this[0] = jaxNode;
+
 	return this;
 };
 
 JAX.NodeArray.prototype.animate = function(type, duration, start, end) {
-	var count = this._jaxNodes.length;
+	var count = this.length;
 	var fxs = new Array(count);
 
-	for (var i=0, len=this._jaxNodes.length; i<len; i++) {
-		fxs[i] = this._jaxNodes[i].animate(type, duration, start, end);
+	for (var i=0; i<this.length; i++) {
+		fxs[i] = this[i].animate(type, duration, start, end);
 	}
 	return new JAX.FXArray(fxs);
 };
@@ -462,11 +485,11 @@ JAX.NodeArray.prototype.animate = function(type, duration, start, end) {
  * @returns {JAK.Promise}
  */
 JAX.NodeArray.prototype.fade = function(type, duration) {
-	var count = this._jaxNodes.length;
+	var count = this.length;
 	var fxs = new Array(count);
 
-	for (var i=0, len=this._jaxNodes.length; i<len; i++) {
-		fxs[i] = this._jaxNodes[i].fade(type, duration);
+	for (var i=0; i<this.length; i++) {
+		fxs[i] = this[i].fade(type, duration);
 	}
 	return new JAX.FXArray(fxs);
 };
@@ -482,11 +505,11 @@ JAX.NodeArray.prototype.fade = function(type, duration) {
  * @returns {JAK.Promise}
  */
 JAX.NodeArray.prototype.fadeTo = function(opacityValue, duration) {
-	var count = this._jaxNodes.length;
+	var count = this.length;
 	var fxs = new Array(count);
 
-	for (var i=0, len=this._jaxNodes.length; i<len; i++) {
-		fxs[i] = this._jaxNodes[i].fadeTo(opacityValue, duration);
+	for (var i=0; i<this.length; i++) {
+		fxs[i] = this[i].fadeTo(opacityValue, duration);
 	}
 	return new JAX.FXArray(fxs);
 };
@@ -502,21 +525,21 @@ JAX.NodeArray.prototype.fadeTo = function(opacityValue, duration) {
  * @returns {JAK.Promise}
  */
 JAX.NodeArray.prototype.slide = function(type, duration) {
-	var count = this._jaxNodes.length;
+	var count = this.length;
 	var fxs = new Array(count);
 
-	for (var i=0, len=this._jaxNodes.length; i<len; i++) {
-		fxs[i] = this._jaxNodes[i].slide(type, duration).getPromise();
+	for (var i=0; i<this.length; i++) {
+		fxs[i] = this[i].slide(type, duration).getPromise();
 	}
 	return new JAX.FXArray(fxs);
 };
 
 JAX.NodeArray.prototype.scroll = function(type, value, duration) {
-	var count = this._jaxNodes.length;
+	var count = this.length;
 	var fxs = new Array(count);
 
-	for (var i=0, len=this._jaxNodes.length; i<len; i++) {
-		fxs[i] = this._jaxNodes[i].scroll(type, value, duration);
+	for (var i=0; i<this.length; i++) {
+		fxs[i] = this[i].scroll(type, value, duration);
 	}
 	return new JAX.FXArray(fxs);
 };

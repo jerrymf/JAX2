@@ -14,16 +14,26 @@ JAX.ListenerArray = JAK.ClassMaker.makeClass({
 });
 
 JAX.ListenerArray.prototype.$constructor = function(listeners) {
-	this._listeners = listeners;
+	this.length = listeners.length;
+
+	for (var i=0; i<this.length; i++) {
+		this[i] = listeners[i];
+	}
 };
 
 JAX.ListenerArray.prototype.unregister = function() {
-	for (var i=0, len=this._listeners.length; i<len; i++) {
-		this._listeners[i].unregister();
+	for (var i=0; i<this.length; i++) {
+		this[i].unregister();
+		delete this[i];
 	}
-	this._listeners = [];
 };
 
 JAX.ListenerArray.prototype.getListeners = function() {
-	return this._listeners.slice();	
+	var arr = new Array(this.length);
+
+	for (var i=0; i<this.length; i++) {
+		arr[i] = this[i];
+	}
+
+	return arr;
 };

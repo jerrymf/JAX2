@@ -5,34 +5,40 @@ JAX.FXArray = JAK.ClassMaker.makeClass({
 });
 
 JAX.FXArray.prototype.$constructor = function(fxArray) {
-	this._fxArray = fxArray;
+	this.length = fxArray.length
+
+	for (var i=0; i<this.length; i++) {
+		this[i] = fxArray[i];
+	}
 };
 
 JAX.FXArray.prototype.getItems = function() {
-	return this._fxArray.slice();
+	var arr = new Array(this.length);
+
+	for (var i=0; i<this.length; i++) {
+		arr[i] = this[i];
+	}
+
+	return arr;
 };
 
 JAX.FXArray.prototype.run = function() {
-	var len = this._fxArray.length;
-	var fxPromises = new Array(len);
-
-	for (var i=0; i<len; i++) {
-		fxPromises[i] = this._fxArray[i].run();
+	for (var i=0; i<this.length; i++) {
+		this[i].run();
 	}
 
 	return this;
 };
 
 JAX.FXArray.prototype.then = function(onFulfill, onReject) {
-	var len = this._fxArray.length;
-	var fxPromises = new Array(len);
+	var fxPromises = new Array(this.length);
 
 	var func = function(jaxElm) {
 		return jaxElm;
 	};
 
-	for (var i=0; i<len; i++) {
-		fxPromises[i] = this._fxArray[i].then(func, func);
+	for (var i=0; i<this.length; i++) {
+		fxPromises[i] = this[i].then(func, func);
 	}
 
 	var finalFulfill = function(array) {
@@ -49,21 +55,16 @@ JAX.FXArray.prototype.then = function(onFulfill, onReject) {
 };
 
 JAX.FXArray.prototype.stop = function() {
-	var len = this._fxArray.length;
-
-	for (var i=0; i<len; i++) {
-		this._fxArray[i].stop();
+	for (var i=0; i<this.length; i++) {
+		this[i].stop();
 	}
 
 	return this;
 };
 
 JAX.FXArray.prototype.reverse = function() {
-	var len = this._fxArray.length;
-	var fxPromises = new Array(len);
-
-	for (var i=0; i<len; i++) {
-		fxPromises[i] = this._fxArray[i].reverse();
+	for (var i=0; i<this.length; i++) {
+		this[i].reverse();
 	}
 
 	return this;
