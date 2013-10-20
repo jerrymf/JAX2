@@ -34,10 +34,6 @@ JAX.DOMNode.prototype.add = function(nodes) {
 	} else {
 		var jaxNodes = JAX.all(nodes).appendTo(this);
 	}
-
-	if (!jaxNodes.length) {
-		console.error("JAX.DOMNode.add: There was no node added.")
-	}
 	
 	return this;
 };
@@ -253,38 +249,46 @@ JAX.DOMNode.prototype.clone = function(withContent) {
 };
 
 /**
- * @method získá nebo nastaví vlastnost elementu
- * @example
- * document.body.innerHTML = "<input type='text' value='aaa'>";
- * var jaxElm = JAX(document.body);
- * console.log(jaxElm.prop("value")); // vraci pole ["mojeId", "demo"]
- * jaxElm.prop("value","bbb"); // nastavi value na "bbb"
- * jaxElm.prop("tagName"); // vrati "input"
+ * @method získá nebo nastaví vlastnost nodu
  *
- * @param {String | Array | Object} property název vlastnosti | pole názvů vlastností | asociativní pole, např. {id:"mojeId", checked:true}
- * @param {value} value pokud je uvedena a první argument je string, provede se nastavení příslušné vlastnosti na určitou hodnotu
- * @returns {String | Object | JAX.DOMNode}
+ * @param {String || Array || Object} property název vlastnosti | pole názvů vlastností | asociativní pole, např. {id:"mojeId", checked:true}
+ * @param {} value nastavená hodnota
+ * @returns {String || Object || JAX.DOMNode}
  */
 JAX.DOMNode.prototype.prop = function(property, value) {
-	if (typeof(property) == "string") { 
-		if (arguments.length == 1) { 
+	var argLength = arguments.length;
+
+	if (argLength == 1) {
+		if (typeof(property) == "string") {
 			return this._node[property]; 
+		} else if (typeof(property) == "object") {
+			for (var p in property) {
+				this._node[p] = property[p];
+			}
+			return this;
+		} else if (property instanceof Array) {
+			var props = {};
+			for (var i=0, len=property.length; i<len; i++) { 
+				var p = property[i];
+				props[p] = this._node[p];
+			}
+			return props;
 		}
-		this._node[property] = value;
-		return this;
-	} else if (property instanceof Array) {
-		var props = {};
-		for (var i=0, len=property.length; i<len; i++) { 
-			var p = property[i];
-			props[p] = this._node[p];
-		}
-		return props;	
 	}
 
-	for (var p in property) {
-		this._node[p] = property[p];
+	if (argLength == 2) {
+		if (typeof(property) == "string") {
+			this._node[property] = value;
+			return this;
+		} else if (property instanceof Array) {
+			for (var i=0, len=property.length; i<len; i++) { 
+				this._node[property[i]] = value;
+			}
+			return this;
+		}
 	}
 
+	console.error("JAX.DOMNode.prop: Unsupported arguments: ", arguments);
 	return this;
 };
 

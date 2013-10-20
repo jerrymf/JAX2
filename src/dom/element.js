@@ -264,25 +264,39 @@ JAX.Element.prototype.text = function(text) {
  * @returns {String | Object | JAX.Node}
  */
 JAX.Element.prototype.attr = function(property, value) {
-	if (typeof(property) == "string") { 
-		if (arguments.length == 1) { 
-			return this._node.getAttribute(property); 
+	var argLength = arguments.length;
+
+	if (argLength == 1) {
+		if (typeof(property) == "string") {
+			return this._node.getAttribute(property);
+		} else if (typeof(property) == "object") {
+			for (var p in property) {
+				this._node.setAttribute(p, property[p] + "");
+			}
+			return this;
+		} else if (property instanceof Array) {
+			var attrs = {};
+			for (var i=0, len=property.length; i<len; i++) { 
+				var p = property[i];
+				attrs[p] = this._node.getAttribute(p);
+			}
+			return attrs;	
 		}
-		this._node.setAttribute(property, value + "");
-		return this;
-	} else if (property instanceof Array) {
-		var attrs = {};
-		for (var i=0, len=property.length; i<len; i++) { 
-			var p = property[i];
-			attrs[p] = this._node.getAttribute(p);
-		}
-		return attrs;	
 	}
 
-	for (var p in property) {
-		this._node.setAttribute(p, property[p]);
+	if (argLength == 2) {
+		if (typeof(property) == "string") {
+			this._node.setAttribute(property, value + "");
+			return this;
+		} else if (property instanceof Array) {
+			for (var i=0, len=property.length; i<len; i++) { 
+				this._node.setAttribute(property[i], value + "");
+			}
+			return this;
+		}
 	}
 
+	console.error("JAX.Element.attr: Unsupported arguments: ", arguments);
 	return this;
 };
 
@@ -297,7 +311,7 @@ JAX.Element.prototype.removeAttr = function(properties) {
 		return this;
 	}
 
-	console.error("JAX.Element.removeAttr: For first argument I expected string or array of strings.", this._node);
+	console.error("JAX.Element.removeAttr: For argument I expected string or array of strings.", this._node);
 	return this;
 }
 
@@ -319,6 +333,7 @@ JAX.Element.prototype.css = function(property, value) {
 
 	if (argLength == 1) {
 		if (typeof(property) == "string") {
+			if (!property) { return ""; }
 			return property == "opacity" ? this._getOpacity() : this._node.style[property]; 
 		} else if (typeof(property) == "object") {
 			for (var p in property) {
@@ -347,6 +362,8 @@ JAX.Element.prototype.css = function(property, value) {
 	}
 
 	if (argLength == 2) {
+		if (!property) { return this; }
+		
 		if (typeof(property) == "string") {
 			if (property == "opacity") {
 				this._setOpacity(value);

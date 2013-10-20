@@ -96,7 +96,7 @@ JAX.all = function(selector, srcElement) {
 	} else if (selector.length && selector[0] && selector[selector.length - 1]) {
 		/* IE8 can't detect NodeList, so if we have something iterable we will pass it */
 		return new JAX.NodeArray(selector);
-	} else if (JAX.isDOMElement(selector)) {
+	} else if (selector instanceof JAX.Node || JAX.isDOMElement(selector)) {
 		return new JAX.NodeArray([selector]);
 	}
 	
