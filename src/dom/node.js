@@ -328,3 +328,14 @@ JAX.Node.prototype.scroll = function(type, value, duration) {
 JAX.Node.prototype._showMessage = function(method) {
 	console.error("You are trying to use unsupported method '" + method + "' with my node.", this._node);
 };
+
+JAX.Node.prototype._contains = function(node) {
+	var n = node;
+
+	while(n && n.nodeType != 11 && n.nodeType != 9) {
+		if (n == this._node) { return true; }
+		n = n.parentNode;
+	}
+
+	return false;
+};

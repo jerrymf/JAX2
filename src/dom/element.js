@@ -567,43 +567,11 @@ JAX.Element.prototype.eq = function(node) {
 
 	if (typeof(node) == "string") {
 		if (/^[a-zA-Z0-9]+$/g.test(node)) { return !!(this._node.tagName && this._node.tagName.toLowerCase() == node); }
-		return !!this.parent().findAll(node).filterItems(
-			function(jaxElm) { return jaxElm.eq(this._node); }, this
-		).length;
+		return !!this.parent().findAll(node).filterItems(jaxElm.eq.bind(this, this)).length;
 	}
 
-	var jaxNode = JAX(node);
+	var jaxNode = node instanceof JAX.Node ? node : JAX(node);
 	return jaxNode.node() == this._node;
-};
-
-/** 
- * @method zjistí, jestli element obsahuje node podle zadaných kritérií
- * @example
- * document.body.innerHTML = "<div><span>1</span><span>2</span><em>3</em></div>";
- * if (JAX("body").first().contains("em")) { alert("Obsahuje em"); }
- *
- * @param {Node | JAX.Node | String} node uzel | instance JAX.Node | CSS3 (2.1) selector
- * @returns {Boolean}
- */
-JAX.Element.prototype.contains = function(node) {
-	if (!node) { return false; }
-
-	if (typeof(node) == "string") {
-		return !!this.find(node);
-	}
-
-	var jaxNode = JAX(node);
-	if (jaxNode.exists()) {
-		var n = jaxNode.node().parentNode;
-		while(n) {
-			if (n == this._node) { return true; }
-			n = n.parentNode;
-		}
-		return false;
-	} 
-	
-	console.error("JAX.Element.contains: For first argument I expected html element, text node, string with CSS3 compatible selector or JAX.Node.");
-	return false;
 };
 
 JAX.Element.prototype.animate = function(property, duration, start, end) {

@@ -28,6 +28,23 @@ JAX.Document.prototype.findAll = function(selector) {
 	return JAX.all(selector, this._node);
 };
 
+JAX.Document.prototype.contains = function(node) {
+	if (!node) { return false; }
+
+	if (typeof(node) == "string") {
+		return !!this.find(node).exists();
+	}
+
+	var jaxNode = node instanceof JAX.Node ? node : JAX(node);
+	if (jaxNode.exists()) { 
+		var n = jaxNode.node();
+		return this._node.contains(n);
+	}
+	
+	console.error("JAX.Element.contains: For first argument I expected html element, text node, string with CSS3 compatible selector or JAX.Node.");
+	return false;
+};
+
 JAX.Document.prototype.size = function(sizeType) {
 	if (arguments.length > 1) {
 		console.error("I am so sorry, but you can not set " + sizeType + " of document node.", this._node);

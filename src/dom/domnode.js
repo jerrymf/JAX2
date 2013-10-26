@@ -30,9 +30,13 @@ JAX.DOMNode.prototype.$constructor = function(node) {
  */
 JAX.DOMNode.prototype.add = function(nodes) {
 	if (typeof(nodes) == "string") {
-		var jaxNodes = JAX.makeFromHTML(nodes).appendTo(this);
+		if (this._node.insertAdjacentHTML) {
+			this._node.insertAdjacentHTML("afterend", nodes);
+		} else {
+			JAX.makeFromHTML(nodes).appendTo(this);
+		}
 	} else {
-		var jaxNodes = JAX.all(nodes).appendTo(this);
+		JAX.all(nodes).appendTo(this);
 	}
 	
 	return this;
@@ -245,7 +249,7 @@ JAX.DOMNode.prototype.remove = function() {
 JAX.DOMNode.prototype.clone = function(withContent) {
 	var clone = this._node.cloneNode(!!withContent);
 
-	return new this(clone);
+	return new this.constructor(clone);
 };
 
 /**
@@ -308,13 +312,41 @@ JAX.DOMNode.prototype.isIn = function(node) {
 		if (/^[#.a-z0-9_-]+$/ig.test(node)) {
 			return !!JAK.DOM.findParent(this._node, node);
 		}
-		return !!JAX.all(node).filterItems(
-			function(jaxElm) { return jaxElm.contains(this._node); }.bind(this)
-		).length;
+		return !!JAX.all(node).filterItems(jaxElm.contains.bind(this, this)).length;
 	}
 
-	var jaxNode = JAX(node);
+	var jaxNode = node instanceof JAX.Node ? node : JAX(node);
 	return jaxNode.exists() && jaxNode.contains(this);
+};
+
+/** 
+ * @method zjistí, jestli element obsahuje node podle zadaných kritérií
+ * @example
+ * document.body.innerHTML = "<div><span>1</span><span>2</span><em>3</em></div>";
+ * if (JAX("body").first().contains("em")) { alert("Obsahuje em"); }
+ *
+ * @param {Node | JAX.Node | String} node uzel | instance JAX.Node | CSS3 (2.1) selector
+ * @returns {Boolean}
+ */
+JAX.DOMNode.prototype.contains = function(node) {
+	if (!node) { return false; }
+
+	if (typeof(node) == "string") {
+		return !!this.find(node).exists();
+	}
+
+	var jaxNode = node instanceof JAX.Node ? node : JAX(node);
+	if (jaxNode.exists()) { 
+		var n = jaxNode.node();
+		if (this._node.contains) {
+			return this._node.contains(n);
+		} else {
+			return this._contains(n);
+		}
+	}
+	
+	console.error("JAX.Element.contains: For first argument I expected html element, text node, string with CSS3 compatible selector or JAX.Node.");
+	return false;
 };
 
 /** 

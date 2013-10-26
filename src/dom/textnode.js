@@ -35,24 +35,28 @@ JAX.TextNode.prototype.clear = function() {
 
 JAX.TextNode.prototype.eq = function(node) {
 	if (!node) { return false; }
-	var jaxElm = JAX(node);
+	var jaxElm = node instanceof JAX.Node ? node : JAX(node);
 	return jaxElm.node() == this._node;
 };
 
+JAX.TextNode.prototype.contains = function(node) {
+	return false;
+};
+
 JAX.TextNode.prototype.add = function(nodes) {
-	this._showMessage();
+	this._showMessage("JAX.TextNode.add");
 
 	return this;
 };
 
 JAX.TextNode.prototype.insertFirst = function(node, nodeBefore) {
-	this._showMessage();
+	this._showMessage("JAX.TextNode.insertFirst");
 
 	return this;
 };
 
 JAX.TextNode.prototype.addBefore = function(node, nodeBefore) {
-	this._showMessage();
+	this._showMessage("JAX.TextNode.addBefore");
 
 	return this;
 };
