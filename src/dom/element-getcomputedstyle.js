@@ -155,6 +155,17 @@
 					this[property] = getSizeInPixels(element, currentStyle, property, baseFontSize) + "px";
 				} else if (property == "styleFloat") {
 					this["float"] = currentStyle[property];
+				} else if (property == "height" || property == "width") {
+					var value = currentStyle[property];
+					var valueLower = value.toLowerCase();
+					var isMeasurable = value != "auto";
+					var isInPixels = valueLower.indexOf("px") > -1;
+
+					if (!isMeasurable || isInPixels) {
+						this[property] = value;
+					} else {
+						this[property] = getSizeInPixelsWH(property, this, baseFontSize, element.offsetWidth) + "px";
+					}
 				} else if (sides.indexOf(property) > -1 && positions.indexOf(currentStyle["position"]) > -1 && currentStyle[property] != "auto") {
 					this[property] = getPositionInPixels(element, currentStyle, property, baseFontSize) + "px";
 				} else {
@@ -169,20 +180,6 @@
 			}
 
 			this.length = count;
-
-			var currentStyleWidth = currentStyle["width"];
-			if (currentStyleWidth != "auto") {
-				this["width"] = currentStyleWidth.toLowerCase().indexOf("px") > -1 ? currentStyleWidth : getSizeInPixelsWH("width", this, baseFontSize, element.offsetWidth) + "px";
-			} else {
-				this["width"] = currentStyleWidth;
-			}
-
-			var currentStyleHeight = currentStyle["height"];
-			if (currentStyleHeight != "auto") {
-				this["height"] = currentStyleHeight.toLowerCase().indexOf("px") > -1 ? currentStyleHeight : getSizeInPixelsWH("height", this, baseFontSize, element.offsetHeight) + "px";
-			} else {
-				this["height"] = currentStyleHeight;
-			}
 
 			this["opacity"] = getOpacity(currentStyle);
 		};
