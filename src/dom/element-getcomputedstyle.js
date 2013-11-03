@@ -28,7 +28,7 @@
 ﻿		 ﻿ return property.replace(/([A-Z])/g, function(match, letter) { return "-" + letter.toLowerCase(); });
 		};
 
-		function getRecountedPixelSize(size, suffix, rootSize, fontSize) {
+		function sizeToPixels(size, suffix, rootSize, fontSize) {
 			switch (suffix) {
 				case "em":
 					return size * fontSize;
@@ -50,32 +50,35 @@
 		};
 
 		function getBaseFontSize(element) {
-			if (!element) { return 16; }
+			do {
+				var style = element.currentStyle;
+				var cssValue = style["fontSize"];
+				var suffix = cssValue.split(/\d/)[0];
+				var isProportional = /%|em/.test(suffix);
+				var element = element.parentNode;
+			} while(isProportional && element && element.nodeType != 11);
 
-			var style = element.currentStyle;
-			var cssValue = style["fontSize"];
-			var size = parseFloat(cssValue);
-			var suffix = cssValue.split(/\d/)[0];
-			var isProportional = /%|em/.test(suffix);
-
-			if (isProportional) { 
-				return getBaseFontSize(element.parentElement); 
+			if (isProportional && (!element || element.nodeType == 11)) { 
+				return 16; 
 			}
 
-			return getRecountedPixelSize(size, suffix);
+			var size = parseFloat(cssValue);
+			return sizeToPixels(size, suffix);
 		};
 
 		function getFirstNonStaticElementSize(element, property) {
+			var positions = ["absolute","relative","fixed"];
+
 			while(element.parentElement && element.parentElement.currentStyle) {
 				element = element.parentElement;
 				var position = element.currentStyle.position || "";
-				if (["absolute","relative","fixed"].indexOf(position) != -1) { return element[property]; }
+				if (positions.indexOf(position) != -1) { return element[property]; }
 			}
 
 			return element.ownerDocument.documentElement[property];
 		};
 
-		function getPixelSize(element, style, property, fontSize) {
+		function getSizeInPixels(element, style, property, fontSize) {
 			var value = style[property];
 			var size = parseFloat(value);
 			var suffix = value.split(/\d/)[0];
@@ -94,10 +97,10 @@
 				var rootSize = element.parentElement.documentElement.clientWidth;
 			}
 
-			return getRecountedPixelSize(size, suffix, rootSize, fontSize) || 0;
+			return sizeToPixels(size, suffix, rootSize, fontSize) || 0;
 		};
 
-		function getPixelPosition(element, style, property, fontSize) {
+		function getPositionInPixels(element, style, property, fontSize) {
 			var value = style[property];
 			var size = parseFloat(value);
 			var suffix = value.split(/\d/)[0];
@@ -105,10 +108,10 @@
 
 			rootSize = getFirstNonStaticElementSize(element, property == "left" || property == "right" ? "clientWidth" : "clientHeight"); 
 
-			return getRecountedPixelSize(size, suffix, rootSize, fontSize);
+			return sizeToPixels(size, suffix, rootSize, fontSize);
 		};
 
-		function getPixelSizeWH(property, style, fontSize, offsetLength) {
+		function getSizeInPixelsWH(property, style, fontSize, offsetLength) {
 			var boxSizing = style.boxSizing,
 				paddingX = 0,
 				paddingY = 0,
@@ -140,17 +143,20 @@
 
 		function CSSStyleDeclaration(element) {
 			var currentStyle = element.currentStyle;
-			var fontSize = getBaseFontSize(element);
-			var index = 0;
+			var baseFontSize = getBaseFontSize(element);
+			var count = 0;
+			var regexMeasureable = /margin.|padding.|border.+W|^fontSize$/;
+			var positions = ["absolute","relative","fixed"];
+			var sides = ["left","right","top","bottom"];
 
 			for (property in currentStyle) {
-				this[index] = denormalize(property);
-				if (/margin.|padding.|border.+W|^fontSize$/.test(property) && currentStyle[property] != "auto") {
-					this[property] = getPixelSize(element, currentStyle, property, fontSize) + "px";
+				/*this[count] = denormalize(property);*/
+				if (regexMeasureable.test(property) && currentStyle[property] != "auto") {
+					this[property] = getSizeInPixels(element, currentStyle, property, baseFontSize) + "px";
 				} else if (property == "styleFloat") {
 					this["float"] = currentStyle[property];
-				} else if (["left","right","top","bottom"].indexOf(property) > -1 && ["absolute","relative","fixed"].indexOf(currentStyle["position"]) > -1 && currentStyle[property] != "auto") {
-					this[property] = getPixelPosition(element, currentStyle, property, fontSize) + "px";
+				} else if (sides.indexOf(property) > -1 && positions.indexOf(currentStyle["position"]) > -1 && currentStyle[property] != "auto") {
+					this[property] = getPositionInPixels(element, currentStyle, property, baseFontSize) + "px";
 				} else {
 					try {
 						/* IE8 crashes in case of getting some properties (outline, outlineWidth, ...) */
@@ -159,21 +165,21 @@
 						this[property] = "";
 					}
 				}
-				index++;
+				count++;
 			}
 
-			this.length = index;
+			this.length = count;
 
 			var currentStyleWidth = currentStyle["width"];
 			if (currentStyleWidth != "auto") {
-				this["width"] = currentStyleWidth.indexOf("px") > -1 ? currentStyleWidth : getPixelSizeWH("width", this, fontSize, element.offsetWidth) + "px";
+				this["width"] = currentStyleWidth.toLowerCase().indexOf("px") > -1 ? currentStyleWidth : getSizeInPixelsWH("width", this, baseFontSize, element.offsetWidth) + "px";
 			} else {
 				this["width"] = currentStyleWidth;
 			}
 
 			var currentStyleHeight = currentStyle["height"];
 			if (currentStyleHeight != "auto") {
-				this["height"] = currentStyleHeight.indexOf("px") > -1 ? currentStyleHeight : getPixelSizeWH("height", this, fontSize, element.offsetHeight) + "px";
+				this["height"] = currentStyleHeight.toLowerCase().indexOf("px") > -1 ? currentStyleHeight : getSizeInPixelsWH("height", this, baseFontSize, element.offsetHeight) + "px";
 			} else {
 				this["height"] = currentStyleHeight;
 			}
@@ -190,7 +196,8 @@
 		};
 
 		CSSStyleDeclaration.prototype.item = function(index) {
-			return this[index];
+			throw new Error('NoModificationAllowedError: DOM Exception 7');
+			/*return this[index];*/
 		};
 
 		CSSStyleDeclaration.prototype.removeProperty =  function () {
