@@ -31,7 +31,7 @@ JAX.DOMNode.prototype.$constructor = function(node) {
 JAX.DOMNode.prototype.add = function(nodes) {
 	if (typeof(nodes) == "string") {
 		if (this._node.insertAdjacentHTML) {
-			this._node.insertAdjacentHTML("afterend", nodes);
+			this._node.insertAdjacentHTML("beforeend", nodes);
 		} else {
 			JAX.makeFromHTML(nodes).appendTo(this);
 		}
