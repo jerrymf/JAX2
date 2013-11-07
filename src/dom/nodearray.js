@@ -19,10 +19,9 @@ JAX.NodeArray = JAK.ClassMaker.makeClass({
  * @param {Object || Array} nodes Array || NodeList || JAX.NodeArray 
  */
 JAX.NodeArray.prototype.$constructor = function(nodes) {
-	var nodesLength = nodes.length;
-	this.length = nodesLength;
+	this.length = nodes.length;
 
-	for(var i=0; i<nodesLength; i++) {
+	for(var i=0; i<this.length; i++) {
 		var node = nodes[i];
 		var jaxNode = node instanceof JAX.Node ? node : JAX(node);
 		this[i] = jaxNode; 
@@ -235,8 +234,9 @@ JAX.NodeArray.prototype.removeClass = function(classNames) {
  * @returns {Object} JAX.NodeArray
  */
 JAX.NodeArray.prototype.attr = function(property, value) {
-	for (var i=0; i<this.length; i++) { 
-		this[i].attr(property, value);
+	for (var i=0; i<this.length; i++) {
+		var jaxElm = this[i];
+		jaxElm.attr.apply(jaxElm, arguments);
 	}
 	return this;
 };
@@ -262,8 +262,9 @@ JAX.NodeArray.prototype.removeAttr = function(properties) {
  * @returns {Object} JAX.NodeArray
  */
 JAX.NodeArray.prototype.css = function(property, value) {
-	for (var i=0; i<this.length; i++) { 
-		this[i].css(property, value);
+	for (var i=0; i<this.length; i++) {
+		var jaxElm = this[i]; 
+		jaxElm.css.apply(jaxElm, arguments);
 	}
 	return this;
 };
@@ -276,8 +277,9 @@ JAX.NodeArray.prototype.css = function(property, value) {
  * @returns {Object} JAX.NodeArray
  */
 JAX.NodeArray.prototype.prop = function(property, value) {
-	for (var i=0; i<this.length; i++) { 
-		this[i].prop(property, value);
+	for (var i=0; i<this.length; i++) {
+		var jaxElm = this[i];
+		jaxElm.prop.apply(jaxElm, arguments);
 	}
 	return this;
 };
@@ -352,7 +354,8 @@ JAX.NodeArray.prototype.destroyNodes = function() {
 JAX.NodeArray.prototype.listen = function(type, obj, funcMethod, bindData) {
 	var listeners = new Array(this.length);
 	for(var i=0; i<this.length; i++) {
-		listeners[i] = this[i].listen(type, obj, funcMethod, bindData);
+		var jaxElm = this[i];
+		listeners[i] = jaxElm.listen.apply(jaxElm, arguments);
 	}
 	return new JAX.ListenerArray(listeners);
 };
