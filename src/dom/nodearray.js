@@ -59,7 +59,7 @@ JAX.NodeArray.prototype.item = function(index) {
 JAX.NodeArray.prototype.items = function(from, to) {
 	var from = parseFloat(from) || 0;
 	var to = parseFloat(to) || this.length;
-	var items = new Array(this.length);
+	var items = new Array(to-from);
 
 	for (var i=from; i<to; i++) {
 		items[i] = this[i];
