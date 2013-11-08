@@ -95,6 +95,7 @@ JAX.FX.prototype.$constructor = function(elm) {
 	}
 
 	this._settings = [];
+	this._wasRun = false;
 	this._reversed = false;
 	this._running = false;
 
@@ -283,7 +284,8 @@ JAX.FX.prototype.run = function() {
 	this._processor.set(this._settings);
 
 	this._running = true;
-
+	this._wasRun = true;
+	
 	this._startTime = new Date().getTime();
 
 	this._promise.finished = this._processor.run();
@@ -308,6 +310,7 @@ JAX.FX.prototype.then = function(onfulfill, onreject) {
  * @returns {JAK.Promise}
  */
 JAX.FX.prototype.reverse = function() {
+	if (!this._wasRun) { return this.run(); }
 	if (this.isRunning()) { this.stop(); }
 
 	if (!this._settings.length) {

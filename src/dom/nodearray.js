@@ -28,6 +28,31 @@ JAX.NodeArray.prototype.$constructor = function(nodes) {
 	}
 };
 
+JAX.NodeArray.prototype.find = function(selector) {
+	for (var i=0; i<this.length; i++) {
+		var jaxElm = this[i];
+		if (jaxElm.jaxNodeType == 3) { continue; }
+		var foundElm = jaxElm.find(selector);
+		if (foundElm.exists()) { continue; }
+		return foundElm;
+	}
+
+	return JAX(null);
+};
+
+JAX.NodeArray.prototype.findAll = function(selector) {
+	var foundElms = [];
+
+	for (var i=0; i<this.length; i++) {
+		var jaxElm = this[i];
+		if (jaxElm.jaxNodeType == 3) { continue; }
+		var jaxElms = jaxElm.findAll(selector);
+		if (!jaxElms.length) { continue; }
+		foundElms = foundElms.concat(jaxElms.items());
+	}
+
+	return JAX.all(foundElms);
+};
 /**
  * @method vrátí true, pokud je pole nenulové
  *
@@ -428,7 +453,8 @@ JAX.NodeArray.prototype.animate = function(type, duration, start, end) {
 	var fxs = new Array(count);
 
 	for (var i=0; i<this.length; i++) {
-		fxs[i] = this[i].animate(type, duration, start, end);
+		var jaxElm = this[i];
+		fxs[i] = jaxElm.animate.apply(jaxElm, arguments);
 	}
 	return new JAX.FXArray(fxs);
 };
@@ -448,7 +474,8 @@ JAX.NodeArray.prototype.fade = function(type, duration) {
 	var fxs = new Array(count);
 
 	for (var i=0; i<this.length; i++) {
-		fxs[i] = this[i].fade(type, duration);
+		var jaxElm = this[i];
+		fxs[i] = jaxElm.fade.apply(jaxElm, arguments);
 	}
 	return new JAX.FXArray(fxs);
 };
@@ -468,7 +495,8 @@ JAX.NodeArray.prototype.fadeTo = function(opacityValue, duration) {
 	var fxs = new Array(count);
 
 	for (var i=0; i<this.length; i++) {
-		fxs[i] = this[i].fadeTo(opacityValue, duration);
+		var jaxElm = this[i];
+		fxs[i] = jaxElm.fadeTo.apply(jaxElm, arguments);
 	}
 	return new JAX.FXArray(fxs);
 };
@@ -488,7 +516,8 @@ JAX.NodeArray.prototype.slide = function(type, duration) {
 	var fxs = new Array(count);
 
 	for (var i=0; i<this.length; i++) {
-		fxs[i] = this[i].slide(type, duration).getPromise();
+		var jaxElm = this[i];
+		fxs[i] = jaxElm.slide.apply(jaxElm, arguments);
 	}
 	return new JAX.FXArray(fxs);
 };
@@ -498,7 +527,8 @@ JAX.NodeArray.prototype.scroll = function(type, value, duration) {
 	var fxs = new Array(count);
 
 	for (var i=0; i<this.length; i++) {
-		fxs[i] = this[i].scroll(type, value, duration);
+		var jaxElm = this[i];
+		fxs[i] = jaxElm.scroll.apply(jaxElm, arguments);
 	}
 	return new JAX.FXArray(fxs);
 };
