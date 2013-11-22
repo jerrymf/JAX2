@@ -7,6 +7,7 @@ cat event/ilistening.js >> ../lib/jax.js
 cat event/event.js >> ../lib/jax.js
 cat event/listener.js >> ../lib/jax.js
 cat event/listenerarray.js >> ../lib/jax.js
+cat dom/clonenode.js >> ../lib/jax.js
 cat dom/node.js >> ../lib/jax.js
 cat dom/domnode.js >> ../lib/jax.js
 cat dom/element.js >> ../lib/jax.js
