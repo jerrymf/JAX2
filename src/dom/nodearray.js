@@ -10,7 +10,8 @@
  */
 JAX.NodeArray = JAK.ClassMaker.makeClass({
 	NAME: "JAX.NodeArray",
-	VERSION: "2.0"
+	VERSION: "2.1",
+	IMPLEMENT: [JAX.IIterable]
 });
 
 /**
@@ -53,60 +54,6 @@ JAX.NodeArray.prototype.findAll = function(selector) {
 
 	return JAX.all(foundElms);
 };
-/**
- * @method vrátí true, pokud je pole nenulové
- *
- * @returns {Boolean}
- */
-JAX.NodeArray.prototype.exist = function() {
-	return !!this.length;
-};
-
-/**
- * @method vrátí konkrétní prvek (uzel) v poli
- *
- * @param {Number} index pořadové číslo prvku
- * @returns { Object } JAX.Node
- */
-JAX.NodeArray.prototype.item = function(index) {
-	var index = index || 0;
-	return this[index];
-};
-
-/**
- * @method vrací pole nodů. Pokud jsou zadány from a to, tak vrací výřez tohoto pole.
- *
- * @param {Number} from od indexu
- * @param {Number} to po index
- * @returns {Array}
- */
-JAX.NodeArray.prototype.items = function(from, to) {
-	var from = parseFloat(from) || 0;
-	var to = parseFloat(to) || this.length;
-	var items = new Array(to-from);
-
-	for (var i=from; i<to; i++) {
-		items[i] = this[i];
-	}
-
-	return items; 
-};
-
-/**
- * @method vrátí první prvek v poli
- * @returns {Object} JAX.Node || Null
- */
-JAX.NodeArray.prototype.firstItem = function() {
-	return this[0];
-};
-
-/**
- * @method vrátí poslední prvek v poli
- * @returns {Object} JAX.Node || Null
- */
-JAX.NodeArray.prototype.lastItem = function() {
-	return this[this.length - 1];
-};
 
 /**
  * @method přidá prvek do pole
@@ -119,39 +66,6 @@ JAX.NodeArray.prototype.pushItem = function(node) {
 	this.length++;
 	this[this.length - 1] = jaxNode;
 	return this;
-};
-
-/**
- * @method odebere a vrátí poslední prvek v poli
- *
- * @returns {Object} JAX.Node || Null
- */
-JAX.NodeArray.prototype.popItem = function() {
-	if (this.length > 0) {
-		var jaxNode = this[this.length - 1];
-		delete this[this.length - 1];
-		this.length--;
-		return jaxNode;
-	}
-	return null;
-};
-
-/**
- * @method odebere a vrátí první prvek z pole
- *
- * @returns {Object} JAX.Node || Null
- */
-JAX.NodeArray.prototype.shiftItem = function() {
-	var jaxNode = this[0];
-	if (jaxNode) {
-		this.length--;
-		for (var i=0; i<this.length; i--) {
-			this[i] = this[i+1];
-		}
-		return jaxNode;
-	}
-
-	return null;
 };
 
 /**
@@ -187,8 +101,8 @@ JAX.NodeArray.prototype.limit = function(from, to) {
  *
  * @returns {Number}
  */
-JAX.NodeArray.prototype.index = function(item) {
-	var item = item instanceof JAX.Node ? item : JAX(item);
+JAX.NodeArray.prototype.index = function(node) {
+	var item = node instanceof JAX.Node ? node : JAX(node);
 	var nodeTarget = item.node();
 
 	for (var i=0; i<this.length; i++) {
@@ -389,23 +303,6 @@ JAX.NodeArray.prototype.stopListening = function(type) {
 	for (var i=0; i<this.length; i++) {
 		this[i].stopListening(type);
 	}
-	return this;
-};
-
-/**
- * @method nad každým elementem zavolá funkci a předá jej jako parametr
- *
- * @param {Function} func funkce, která se má provádět. Jako parametr je předána instance JAX.Node, aktuálně zpracovávaný index a jako třetí parametr je samotné pole
- * @param {Object} obj context, ve kterém se má fce provést
- * @returns {Object} JAX.NodeArray
- */
-JAX.NodeArray.prototype.forEachItem = function(func, obj) {
-	var func = obj ? func.bind(obj) : func;
-
-	for (var i=0; i<this.length; i++) {
-		func(this[i], i, this);
-	}
-
 	return this;
 };
 

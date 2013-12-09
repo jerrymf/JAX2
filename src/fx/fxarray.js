@@ -1,7 +1,8 @@
 
 JAX.FXArray = JAK.ClassMaker.makeClass({
 	NAME: "JAX.FXArray",
-	VERSION: "1.0"
+	VERSION: "1.0",
+	IMPLEMENT: [JAX.IIterable]
 });
 
 JAX.FXArray.prototype.$constructor = function(fxArray) {
@@ -10,16 +11,6 @@ JAX.FXArray.prototype.$constructor = function(fxArray) {
 	for (var i=0; i<this.length; i++) {
 		this[i] = fxArray[i];
 	}
-};
-
-JAX.FXArray.prototype.getItems = function() {
-	var arr = new Array(this.length);
-
-	for (var i=0; i<this.length; i++) {
-		arr[i] = this[i];
-	}
-
-	return arr;
 };
 
 JAX.FXArray.prototype.run = function() {

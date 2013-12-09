@@ -10,7 +10,8 @@
  */ 
 JAX.ListenerArray = JAK.ClassMaker.makeClass({
 	NAME: "JAX.ListenerArray",
-	VERSION: "1.0"
+	VERSION: "1.0",
+	IMPLEMENT: [JAX.IIterable]
 });
 
 JAX.ListenerArray.prototype.$constructor = function(listeners) {
@@ -26,14 +27,4 @@ JAX.ListenerArray.prototype.unregister = function() {
 		this[i].unregister();
 		delete this[i];
 	}
-};
-
-JAX.ListenerArray.prototype.getListeners = function() {
-	var arr = new Array(this.length);
-
-	for (var i=0; i<this.length; i++) {
-		arr[i] = this[i];
-	}
-
-	return arr;
 };

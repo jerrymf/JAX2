@@ -3,6 +3,8 @@ REM Zretezeni vsech knihoven do jedne
 
 type ".\src\jax.js" > ".\lib\jax.js"
 ECHO. >> ".\lib\jax.js"
+type ".\src\event\iiterable.js" >> ".\lib\jax.js"
+ECHO. >> ".\lib\jax.js"
 type ".\src\event\ilistening.js" >> ".\lib\jax.js"
 ECHO. >> ".\lib\jax.js"
 type ".\src\event\event.js" >> ".\lib\jax.js"
