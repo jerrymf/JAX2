@@ -8,9 +8,11 @@ cat event/ilistening.js >> ../lib/jax.js
 cat event/event.js >> ../lib/jax.js
 cat event/listener.js >> ../lib/jax.js
 cat event/listenerarray.js >> ../lib/jax.js
+cat dom/interfaces/ijaxnode.js >> ../lib/jax.js
+cat dom/interfaces/imoveablenode.js >> ../lib/jax.js
+cat dom/interfaces/inodewithchildren.js >> ../lib/jax.js
 cat dom/clonenode.js >> ../lib/jax.js
 cat dom/node.js >> ../lib/jax.js
-cat dom/domnode.js >> ../lib/jax.js
 cat dom/element.js >> ../lib/jax.js
 cat dom/element-getcomputedstyle.js >> ../lib/jax.js
 cat dom/textnode.js >> ../lib/jax.js

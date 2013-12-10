@@ -11,8 +11,8 @@
 JAX.Element = JAK.ClassMaker.makeClass({
 	NAME: "JAX.Element",
 	VERSION: "1.0",
-	EXTEND: JAX.DOMNode,
-	IMPLEMENT: JAX.IListening
+	EXTEND: JAX.Node,
+	IMPLEMENT: [JAX.IJAXNode, JAX.IListening, JAX.INodeWithChildren, JAX.IMoveableNode]
 });
 
 JAX.Element._events = [];
@@ -466,84 +466,12 @@ JAX.Element.prototype.size = function(sizeType, value) {
 };
 
 /** 
- * @method vrací instanci JAX.NodeArray, která obsahuje všechny přímé potomky uzlu
- * @example
- * var body = JAX("body").html("<span>Ahoj svete!</span><em>Takze dobry vecer!</em>");
- * console.log(body.children().length);
- *
- * @returns {JAX.NodeArray | null}
- */
-JAX.Element.prototype.children = function(index) {
-	if (!arguments.length) {
-		var nodes = [];
-		var childNodes = this._node.childNodes;
-		for (var i=0, len=childNodes.length; i<len; i++) {
-			nodes.push(JAX(childNodes[i]));
-		}
-		return new JAX.NodeArray(nodes);
-	}
-
-	var child = this._node.childNodes[index];
-	if (child) {
-		return JAX(child);
-	}
-
-	return new JAX.NullNode();
-};
-
-/** 
- * @method vrací první html element (potomka) nebo null, pokud takový není
- * @example
- * var body = JAX("body").html("<span>Ahoj svete!</span><em>Takze dobry vecer!</em>");
- * console.log(JAX("body").first().prop("tagName") == "span");
- *
- * @returns {JAX.Node | null}
- */
-JAX.Element.prototype.first = function() {
-	if ("firstElementChild" in this._node) {
-		return JAX(this._node.firstElementChild);
-	}
-
-	if (!this._node.childNodes || !this._node.childNodes.length) { return new JAX.NullNode(); }
-	
-	for (var i=0, len=this._node.childNodes.length; i<len; i++) {
-		var childNode = this._node.childNodes[i];
-		if (childNode.nodeType == 1) { return JAX(childNode); }
-	}
-
-	return new JAX.NullNode();
-};
-
-/** 
- * @method vrací poslední uzel (potomka) nebo null, pokud takový není
- * @example
- * var body = JAX("body").html("<span>Ahoj svete!</span>");
- * console.log(JAX("body span").last().node() == JAX("body span").first().node();
- *
- * @returns {JAX.Node | null}
- */
-JAX.Element.prototype.last = function() {
-	if ("lastElementChild" in this._node) {
-		return JAX(this._node.lastElementChild);
-	}
-
-	if (!this._node.childNodes || !this._node.childNodes.length) { return new JAX.NullNode(); }
-	
-	for (var i=this._node.childNodes.length - 1; i>-1; i--) {
-		var childNode = this._node.childNodes[i];
-		if (childNode.nodeType == 1) { return JAX(childNode); }
-	}
-
-	return new JAX.NullNode();
-};
-
-/** 
  * @method promaže element
  * @example
  * var body = JAX("body").html("<span>Ahoj svete!</span><em>Takze dobry vecer!</em>");
  * body.clear();
  *
- * @returns {JAX.Node}
+ * @returns {JAX.Element}
  */
 JAX.Element.prototype.clear = function() {
 	if ("innerHTML" in this._node) {

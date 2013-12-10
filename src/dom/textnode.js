@@ -11,7 +11,8 @@
 JAX.TextNode = JAK.ClassMaker.makeClass({
 	NAME: "JAX.Node",
 	VERSION: "1.0",
-	EXTEND: JAX.DOMNode
+	EXTEND: JAX.Node,
+	IMPLEMENT: [JAX.IJAXNode, JAX.IMoveableNode]
 });
 
 JAX.TextNode.prototype.$constructor = function(node) {
@@ -37,26 +38,4 @@ JAX.TextNode.prototype.eq = function(node) {
 	if (!node) { return false; }
 	var jaxElm = node instanceof JAX.Node ? node : JAX(node);
 	return jaxElm.node() == this._node;
-};
-
-JAX.TextNode.prototype.contains = function(node) {
-	return false;
-};
-
-JAX.TextNode.prototype.add = function(nodes) {
-	this._showMessage("JAX.TextNode.add");
-
-	return this;
-};
-
-JAX.TextNode.prototype.insertFirst = function(node, nodeBefore) {
-	this._showMessage("JAX.TextNode.insertFirst");
-
-	return this;
-};
-
-JAX.TextNode.prototype.addBefore = function(node, nodeBefore) {
-	this._showMessage("JAX.TextNode.addBefore");
-
-	return this;
 };

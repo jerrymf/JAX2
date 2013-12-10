@@ -52,6 +52,13 @@ JAX.NodeArray.prototype.findAll = function(selector) {
 		foundElms = foundElms.concat(jaxElms.items());
 	}
 
+	foundElms = foundElms.filter(function(elm, index, array) {
+		for (var i=0, len=array.length; i<len; i++) {
+			if (foundElms[i].node() != elm.node()) { continue; }
+			return i == index;
+		}
+	});
+
 	return JAX.all(foundElms);
 };
 
@@ -334,7 +341,7 @@ JAX.NodeArray.prototype.firstElement = function() {
 		if (this[i].jaxNodeType == 1) { return this[i]; }
 	}
 
-	return new JAX.NullNode();
+	return null;
 };
 
 JAX.NodeArray.prototype.lastElement = function() {
@@ -342,7 +349,7 @@ JAX.NodeArray.prototype.lastElement = function() {
 		if (this[i].jaxNodeType == 1) { return this[i]; }
 	}
 
-	return new JAX.NullNode();
+	return null;
 };
 
 JAX.NodeArray.prototype.animate = function(type, duration, start, end) {
