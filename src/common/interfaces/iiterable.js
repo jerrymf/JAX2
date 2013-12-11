@@ -23,12 +23,23 @@ JAX.IIterable.prototype.item = function(index) {
 	return this[index];
 };
 
-JAX.IIterable.prototype.items = function() {
-	var from = parseFloat(from) || 0;
-	var to = parseFloat(to) || this.length;
+JAX.IIterable.prototype.items = function(from, to) {
+	var from = arguments.length ? parseFloat(from) : 0;
+	var to = arguments.length > 1 ? parseFloat(to) : this.length;
+
+	from = Math.min(Math.max(from, 0), this.length -1);
+	to = Math.max(Math.min(to, this.length - 1), 0);
+
+	from = isNaN(from) ? 0 : from;
+	to = isNaN(from) ? 0 : to;
+
+	if (from == to) {
+		return [this[from]];
+	}
+
 	var items = new Array(to-from);
 
-	for (var i=from; i<to; i++) {
+	for (var i=from; i<=to; i++) {
 		items[i] = this[i];
 	}
 

@@ -32,9 +32,23 @@ JAX.NodeArray.prototype.$constructor = function(nodes) {
 JAX.NodeArray.prototype.find = function(selector) {
 	for (var i=0; i<this.length; i++) {
 		var jaxElm = this[i];
+		var node = jaxElm.n;
+		var parentNode = node.parentNode;
+
 		if ([1,9,11].indexOf(jaxElm.jaxNodeType) == -1) { continue; }
-		var foundElm = jaxElm.find(selector);
-		if (foundElm.exists()) { continue; }
+
+		if (!parentNode) {
+			parentNode = document.createDocumentFragment();
+			parentNode.appendChild(node);
+
+			var foundElm = JAX(parentNode).find(selector);
+
+			parentNode.removeChild(node);
+		} else {
+			var foundElm = JAX(parentNode).find(selector);
+		}
+
+		if (!foundElm.exists()) { continue; }
 		return foundElm;
 	}
 
@@ -46,15 +60,29 @@ JAX.NodeArray.prototype.findAll = function(selector) {
 
 	for (var i=0; i<this.length; i++) {
 		var jaxElm = this[i];
+		var node = jaxElm.n;
+		var parentNode = node.parentNode;
+
 		if ([1,9,11].indexOf(jaxElm.jaxNodeType) == -1) { continue; }
-		var jaxElms = jaxElm.findAll(selector);
+
+		if (!parentNode) {
+			parentNode = document.createDocumentFragment();
+			parentNode.appendChild(node);
+
+			var jaxElms = JAX(parentNode).findAll(selector);
+
+			parentNode.removeChild(node);
+		} else {
+			var jaxElms = JAX(parentNode).findAll(selector);
+		}
+
 		if (!jaxElms.length) { continue; }
 		foundElms = foundElms.concat(jaxElms.items());
 	}
 
 	foundElms = foundElms.filter(function(elm, index, array) {
 		for (var i=0, len=array.length; i<len; i++) {
-			if (foundElms[i].node() != elm.node()) { continue; }
+			if (foundElms[i].n != elm.n) { continue; }
 			return i == index;
 		}
 	});
