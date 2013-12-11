@@ -11,7 +11,8 @@
 JAX.NullNode = JAK.ClassMaker.makeClass({
 	NAME: "JAX.NullNode",
 	VERSION: "1.0",
-	EXTEND: JAX.Node
+	EXTEND: JAX.Node,
+	IMPLEMENT: [JAX.IJAXNode]
 });
 
 JAX.NullNode.prototype.$constructor = function(selector) {

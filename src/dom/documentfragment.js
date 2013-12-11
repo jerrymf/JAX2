@@ -11,7 +11,8 @@
 JAX.DocumentFragment = JAK.ClassMaker.makeClass({
 	NAME: "JAX.DocumentFragment",
 	VERSION: "1.0",
-	EXTEND: JAX.DOMNode
+	EXTEND: JAX.Node,
+	IMPLEMENT: [JAX.IJAXNode, JAX.INodeWithChildren, JAX.IMoveableNode]
 });
 
 JAX.DocumentFragment.prototype.$constructor = function(doc) {
@@ -45,13 +46,13 @@ JAX.DocumentFragment.prototype.isIn = function(node) {
 };
 
 JAX.DocumentFragment.prototype.parent = function() {
-	return JAX(null);
+	return null;
 };
 
 JAX.DocumentFragment.prototype.next = function() {
-	return JAX(null);
+	return null;
 };
 
 JAX.DocumentFragment.prototype.previous = function() {
-	return JAX(null);
+	return null;
 };

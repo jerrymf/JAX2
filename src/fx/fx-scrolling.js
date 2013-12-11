@@ -15,7 +15,7 @@ JAX.FX.Scrolling = JAK.ClassMaker.makeClass({
 
 
 JAX.FX.Scrolling.prototype.$constructor = function(jaxElm) {
-	this._jaxElm = jaxElm;
+	this._jaxElm = JAX(jaxElm);
 	this._settings = [];
 	this._promises = {
 		animationFinished: null
