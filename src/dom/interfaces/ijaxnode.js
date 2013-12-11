@@ -171,11 +171,47 @@ JAX.IJAXNode.prototype.stopListening = function(listener) {
 	return this;
 };
 
+/**
+ * @method získá nebo nastaví vlastnost nodu
+ *
+ * @param {String || Array || Object} property název vlastnosti | pole názvů vlastností | asociativní pole, např. {id:"mojeId", checked:true}
+ * @param {} value nastavená hodnota
+ * @returns {String || Object || JAX.MoveableNode}
+ */
 JAX.IJAXNode.prototype.prop = function(property, value) {
-	this._showMessage("prop");
+	var argLength = arguments.length;
 
-	if (typeof(arguments[0]) == "string") { return ""; }
-	if (arguments[0] instanceof Array) { return {}; }
+	if (argLength == 1) {
+		if (typeof(property) == "string") {
+			return this._node[property]; 
+		} else if (typeof(property) == "object") {
+			for (var p in property) {
+				this._node[p] = property[p];
+			}
+			return this;
+		} else if (property instanceof Array) {
+			var props = {};
+			for (var i=0, len=property.length; i<len; i++) { 
+				var p = property[i];
+				props[p] = this._node[p];
+			}
+			return props;
+		}
+	}
+
+	if (argLength == 2) {
+		if (typeof(property) == "string") {
+			this._node[property] = value;
+			return this;
+		} else if (property instanceof Array) {
+			for (var i=0, len=property.length; i<len; i++) { 
+				this._node[property[i]] = value;
+			}
+			return this;
+		}
+	}
+
+	console.error("JAX.MoveableNode.prop: Unsupported arguments: ", arguments);
 	return this;
 };
 

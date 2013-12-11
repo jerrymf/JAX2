@@ -15,7 +15,6 @@ JAX.Element = JAK.ClassMaker.makeClass({
 	IMPLEMENT: [JAX.IJAXNode, JAX.IListening, JAX.INodeWithChildren, JAX.IMoveableNode]
 });
 
-JAX.Element._events = [];
 JAX.Element._OPACITY_REGEXP = /alpha\(opacity=['"]?([0-9]+)['"]?\)/i;
 JAX.Element._BOX_SIZING = null;
 
