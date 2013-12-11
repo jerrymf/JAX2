@@ -3,8 +3,8 @@
 cd src
 
 cat jax.js > ../lib/jax.js
-cat common/iiterable.js >> ../lib/jax.js
-cat event/ilistening.js >> ../lib/jax.js
+cat common/interfaces/iiterable.js >> ../lib/jax.js
+cat event/interfaces/ilistening.js >> ../lib/jax.js
 cat event/event.js >> ../lib/jax.js
 cat event/listener.js >> ../lib/jax.js
 cat event/listenerarray.js >> ../lib/jax.js
