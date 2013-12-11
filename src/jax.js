@@ -29,7 +29,7 @@ var JAX = function(selector, srcElement) {
 
 			if (!jaxSrcElement.n) {
 				console.error("JAX: Second argument must be valid element.");
-				return new JAX.NullNode(typeof(srcElement) == "string" ? selector : "");
+				return new JAX.NullNode(typeof(selector) == "string" ? selector : "");
 			}
 
 			srcElement = jaxSrcElement.n;
