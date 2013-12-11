@@ -105,6 +105,12 @@ JAX.IJAXNode.prototype.insertFirst = function(node) {
 	return this;
 };
 
+JAX.IJAXNode.prototype.insertFirstTo = function(node) {
+	this._showMessage("inserFirstTo");
+
+	return this;
+};
+
 JAX.IJAXNode.prototype.addBefore = function(node, nodeBefore) {
 	this._showMessage("addBefore");
 

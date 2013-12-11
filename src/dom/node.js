@@ -17,7 +17,8 @@ JAX.Node = JAK.ClassMaker.makeClass({
  * @param {object} HTMLElement | Text | HTMLDocument | Window
  */
 JAX.Node.prototype.$constructor = function(node) {
-	this._node = node;
+	this.n = node; // verejny atribut
+	this._node = node; // privatni atribut
 	this.jaxNodeType = node.nodeType;
 };
 

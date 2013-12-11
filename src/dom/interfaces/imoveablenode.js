@@ -84,6 +84,27 @@ JAX.IMoveableNode.prototype.after = function(node) {
 	return this;
 };
 
+JAX.IMoveableNode.prototype.insertFirstTo = function(node) {
+	var jaxNode = JAX(node);
+
+	if (jaxNode.exists()) {
+		var n = jaxNode.node();
+
+		if (n.childNodes && n.firstChild) {
+			n.insertBefore(this._node, n.firstChild);
+		} else if (n.childNodes) {
+			n.appendChild(this._node);
+		} else {
+			console.error("JAX.IMoveableNode.insertFirstTo: Given element can not have child nodes.", this._node);
+		}
+
+		return this;
+	}
+
+	console.error("JAX.IMoveableNode.insertFirstTo: I could not find given element. For first argument I expected html element or JAX node.");
+	return this;
+};
+
 /**
  * @method odstraní zadaný element z DOMu a nahradí ho za sebe
  * @example

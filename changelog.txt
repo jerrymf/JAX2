@@ -3,9 +3,25 @@ Changelog
 --------------------------------------
 Legend: [+] - added, [*] - fixed or changed, [-] removed
 
+Version 2.2
+	+ JAX.makeFromHTML - creates JAX.NodeArray from given HTML string
+	+ JAX.findCSSproperty - finds supported CSS property (for example JAX.findCSSproperty("boxSizing mozBoxSizing webkitBoxSizing") returns one property)
+	+ Elements of JAX.NodeArray can be acessed by numeral index and iterated by for, while, ...
+	+ JAX.NodeArray - added methods: find, findAll, firstElement, lastElement, limit and index
+	+ JAX.FX - added methods: addTranslateProperty, then
+	+ Added scrolling methods (with FX) for elements
+	+ Added possibility to get holding node by public atribute 'n'
+	+ Added possibility to stop animation run by methods: animate, fade, fadeTo, slide
+	+ Added insertFirst method for elements
+	+ Added support for JAX(window)
+	+ Added new JAK to JAX2 repository
+	* Huge internal refactoring
+	* Lots of bug fixes
+	* Added some new bugs :-)
+
 Version 2.11
 	+ JAX.Node.Null - Null object design pattern
-	* JAX never returns null
+	* calling JAX, JAX.all never returns null
 	* fixes (typo and logical bugs)
 	* much more better getComputedStyle for IE8
 

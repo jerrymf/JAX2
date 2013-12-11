@@ -53,7 +53,7 @@ JAX.INodeWithChildren.prototype.insertFirst = function(node) {
 		} else if (this._node.childNodes) {
 			this._node.appendChild(n);
 		} else {
-			console.error("JAX.INodeWithChildren.insertFirst: Given element can not have child nodes.", this._node);
+			console.error("JAX.INodeWithChildren.insertFirst: My element can not have children.", this._node);
 		}
 		
 		return this;
