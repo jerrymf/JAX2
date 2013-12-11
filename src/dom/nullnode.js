@@ -17,6 +17,7 @@ JAX.NullNode = JAK.ClassMaker.makeClass({
 
 JAX.NullNode.prototype.$constructor = function(selector) {
 	this._selector = selector || "";
+	this.n = null;
 	this._node = null;
 	this.jaxNodeType = -1;
 };

@@ -25,8 +25,8 @@ JAX.IMoveableNode = JAK.ClassMaker.makeInterface({
 JAX.IMoveableNode.prototype.appendTo = function(node) {
 	var jaxNode = JAX(node);
 
-	if (jaxNode.exists()) { 
-		jaxNode.node().appendChild(this._node);
+	if (jaxNode.n) { 
+		jaxNode.n.appendChild(this._node);
 		return this;
 	}
 	
@@ -46,8 +46,8 @@ JAX.IMoveableNode.prototype.appendTo = function(node) {
 JAX.IMoveableNode.prototype.before = function(node) {
 	var jaxNode = JAX(node);
 
-	if (jaxNode.exists()) {
-		var n = jaxNode.node();
+	if (jaxNode.n) {
+		var n = jaxNode.n;
 		n.parentNode.insertBefore(this._node, n);
 		return this;
 	}
@@ -68,8 +68,8 @@ JAX.IMoveableNode.prototype.before = function(node) {
 JAX.IMoveableNode.prototype.after = function(node) {
 	var jaxNode = JAX(node);
 
-	if (jaxNode.exists()) {
-		var n = jaxNode.node();
+	if (jaxNode.n) {
+		var n = jaxNode.n;
 
 		if (n.nextSibling) {
 			n.parentNode.insertBefore(this._node, n.nextSibling);
@@ -87,8 +87,8 @@ JAX.IMoveableNode.prototype.after = function(node) {
 JAX.IMoveableNode.prototype.insertFirstTo = function(node) {
 	var jaxNode = JAX(node);
 
-	if (jaxNode.exists()) {
-		var n = jaxNode.node();
+	if (jaxNode.n) {
+		var n = jaxNode.n;
 
 		if (n.childNodes && n.firstChild) {
 			n.insertBefore(this._node, n.firstChild);
@@ -117,8 +117,8 @@ JAX.IMoveableNode.prototype.insertFirstTo = function(node) {
 JAX.IMoveableNode.prototype.replaceWith = function(node) {
 	var jaxNode = JAX(node);
 
-	if (jaxNode.exists()) { 
-		var n = jaxNode.node();
+	if (jaxNode.n) { 
+		var n = jaxNode.n;
 		n.parentNode.replaceChild(this._node, n);
 		return this;
 	}
@@ -130,8 +130,8 @@ JAX.IMoveableNode.prototype.replaceWith = function(node) {
 JAX.IMoveableNode.prototype.swapPlaceWith = function(node) {
 	var jaxNode = JAX(node);
 
-	if (jaxNode.exists()) { 
-		var targetNode = jaxNode.node();
+	if (jaxNode.n) { 
+		var targetNode = jaxNode.n;
 		var targetSiblingNode = targetNode.nextSibling; 
 		var targetParentNode = targetNode.parentNode;
 		var thisParent = this._node.parentNode;
@@ -216,7 +216,7 @@ JAX.IMoveableNode.prototype.isIn = function(node) {
 	}
 
 	var jaxNode = node instanceof JAX.Node ? node : JAX(node);
-	return jaxNode.exists() && jaxNode.contains(this);
+	return jaxNode.n && jaxNode.contains(this);
 };
 
 /** 
@@ -236,7 +236,7 @@ JAX.IMoveableNode.prototype.parent = function(selector) {
 	}
 	
 	var jaxNode = JAX(this._node.parentNode);
-	return jaxNode.exists() ? jaxNode : null;
+	return jaxNode.n ? jaxNode : null;
 };
 
 /** 
@@ -249,7 +249,7 @@ JAX.IMoveableNode.prototype.parent = function(selector) {
  */
 JAX.IMoveableNode.prototype.next = function() {
 	var jaxNode = JAX(this._node.nextSibling)
-	return jaxNode.exists() ? jaxNode : null;
+	return jaxNode.n ? jaxNode : null;
 };
 
 /** 
@@ -262,5 +262,5 @@ JAX.IMoveableNode.prototype.next = function() {
  */
 JAX.IMoveableNode.prototype.previous = function() {
 	var jaxNode = JAX(this._node.previousSibling);
-	return jaxNode.exists() ? jaxNode : null;
+	return jaxNode.n ? jaxNode : null;
 };

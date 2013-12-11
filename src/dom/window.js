@@ -16,6 +16,7 @@ JAX.Window = JAK.ClassMaker.makeClass({
 });
 
 JAX.Window.prototype.$constructor = function(win) {
+	this._n = win;
 	this._node = win;
 	this.jaxNodeType = -2;
 };

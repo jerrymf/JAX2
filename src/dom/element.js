@@ -498,7 +498,7 @@ JAX.Element.prototype.eq = function(node) {
 	}
 
 	var jaxNode = node instanceof JAX.Node ? node : JAX(node);
-	return jaxNode.node() == this._node;
+	return jaxNode.n == this._node;
 };
 
 JAX.Element.prototype.animate = function(property, duration, start, end) {

@@ -48,7 +48,7 @@ JAX.NodeArray.prototype.find = function(selector) {
 			var foundElm = JAX(parentNode).find(selector);
 		}
 
-		if (!foundElm.exists()) { continue; }
+		if (!foundElm.n) { continue; }
 		return foundElm;
 	}
 
@@ -138,10 +138,10 @@ JAX.NodeArray.prototype.limit = function(from, to) {
  */
 JAX.NodeArray.prototype.index = function(node) {
 	var item = node instanceof JAX.Node ? node : JAX(node);
-	var nodeTarget = item.node();
+	var nodeTarget = item.n;
 
 	for (var i=0; i<this.length; i++) {
-		var nodeSource = this[i].node();
+		var nodeSource = this[i].n;
 		if (nodeSource == nodeTarget) { return i; }
 	}
 

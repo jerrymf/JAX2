@@ -27,12 +27,12 @@ var JAX = function(selector, srcElement) {
 		if (srcElement != document) {
 			var jaxSrcElement = JAX(srcElement);
 
-			if (!jaxSrcElement.exists()) {
+			if (!jaxSrcElement.n) {
 				console.error("JAX: Second argument must be valid element.");
 				return new JAX.NullNode(typeof(srcElement) == "string" ? selector : "");
 			}
 
-			srcElement = jaxSrcElement.node();
+			srcElement = jaxSrcElement.n;
 		}
 
 		var foundElm = srcElement.querySelector(selector);
@@ -80,12 +80,12 @@ JAX.all = function(selector, srcElement) {
 		if (srcElement != document) {
 			var jaxSrcElement = JAX(srcElement);
 
-			if (!jaxSrcElement.exists()) {
+			if (!jaxSrcElement.n) {
 				console.error("JAX.all: Second argument must be valid element.");
 				return new JAX.NullNode();
 			}
 
-			srcElement = jaxSrcElement.node();
+			srcElement = jaxSrcElement.n;
 		}
 
 		var foundElms = srcElement.querySelectorAll(selector);

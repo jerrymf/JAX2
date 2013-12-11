@@ -32,12 +32,12 @@ JAX.Document.prototype.contains = function(node) {
 	if (!node) { return false; }
 
 	if (typeof(node) == "string") {
-		return !!this.find(node).exists();
+		return !!this.find(node).n;
 	}
 
 	var jaxNode = node instanceof JAX.Node ? node : JAX(node);
-	if (jaxNode.exists()) { 
-		var n = jaxNode.node();
+	if (jaxNode.n) { 
+		var n = jaxNode.n;
 		return this._node.contains(n);
 	}
 	

@@ -45,8 +45,8 @@ JAX.INodeWithChildren.prototype.add = function(nodes) {
 JAX.INodeWithChildren.prototype.insertFirst = function(node) {
 	var jaxNode = JAX(node);
 
-	if (jaxNode.exists()) {
-		var n = jaxNode.node();
+	if (jaxNode.n) {
+		var n = jaxNode.n;
 
 		if (this._node.childNodes && this._node.firstChild) {
 			this._node.insertBefore(n, this._node.firstChild);
@@ -77,16 +77,16 @@ JAX.INodeWithChildren.prototype.addBefore = function(node, nodeBefore) {
 	var jaxNode = JAX(node);
 	var jaxNodeBefore = JAX(nodeBefore);
 
-	if (!jaxNode.exists()) { 
+	if (!jaxNode.n) { 
 		console.error("JAX.INodeWithChildren.addBefore: For first argument I expected html element, text node, documentFragment or JAX.Node.");
 		return this;
 	}
-	if (!jaxNodeBefore.exists()) { 
+	if (!jaxNodeBefore.n) { 
 		console.error("JAX.INodeWithChildren.addBefore: For second argument I expected html element, text node or JAX.Node."); 
 		return this;
 	}
 	
-	this._node.insertBefore(jaxNode.node(), jaxNodeBefore.node());
+	this._node.insertBefore(jaxNode.n, jaxNodeBefore.n);
 	return this;
 };
 
@@ -103,12 +103,12 @@ JAX.INodeWithChildren.prototype.contains = function(node) {
 	if (!node) { return false; }
 
 	if (typeof(node) == "string") {
-		return !!this.find(node).exists();
+		return !!this.find(node).n;
 	}
 
 	var jaxNode = node instanceof JAX.Node ? node : JAX(node);
-	if (jaxNode.exists()) { 
-		var n = jaxNode.node();
+	if (jaxNode.n) { 
+		var n = jaxNode.n;
 		if (this._node.contains) {
 			return this._node.contains(n);
 		} else {
@@ -173,7 +173,7 @@ JAX.INodeWithChildren.prototype.first = function() {
  * @method vrací poslední uzel (potomka) nebo null, pokud takový není
  * @example
  * var body = JAX("body").html("<span>Ahoj svete!</span>");
- * console.log(JAX("body span").last().node() == JAX("body span").first().node();
+ * console.log(JAX("body span").last().n == JAX("body span").first().n;
  *
  * @returns {JAX.Node | null}
  */

@@ -37,5 +37,5 @@ JAX.TextNode.prototype.clear = function() {
 JAX.TextNode.prototype.eq = function(node) {
 	if (!node) { return false; }
 	var jaxElm = node instanceof JAX.Node ? node : JAX(node);
-	return jaxElm.node() == this._node;
+	return jaxElm.n == this._node;
 };

@@ -90,7 +90,7 @@ JAX.FX._SUPPORTED_METHODS = [
 JAX.FX.prototype.$constructor = function(elm) {
 	this._jaxElm = JAX(elm);
 
-	if (!this._jaxElm.exists()) { 
+	if (!this._jaxElm.n) { 
 		console.error("JAX.FX: I got null node. Check your code please."); 
 	}
 
@@ -128,7 +128,7 @@ JAX.FX.prototype.$constructor = function(elm) {
  * @returns {JAX.FX}
  */
 JAX.FX.prototype.addProperty = function(property, duration, start, end, method) {
-	if (!this._jaxElm.exists()) { return this; }
+	if (!this._jaxElm.n) { return this; }
 
 	var durationValue = this._parseValue(duration);
 	var durationUnit = this._parseUnit(duration) || "ms";
