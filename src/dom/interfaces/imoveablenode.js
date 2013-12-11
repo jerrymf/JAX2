@@ -134,12 +134,18 @@ JAX.IMoveableNode.prototype.swapPlaceWith = function(node) {
 		var targetNode = jaxNode.node();
 		var targetSiblingNode = targetNode.nextSibling; 
 		var targetParentNode = targetNode.parentNode;
-		var parent = this._node.parentNode;
+		var thisParent = this._node.parentNode;
+		var thisSiblingNode = this._node.nextSibling;
 
-		if (parent) {
-			this._node.parentNode.replaceChild(targetNode, this._node);
-		} else if (targetParentNode) {
-			jaxNode.remove();
+		this.remove();
+		jaxNode.remove();
+
+		if (thisParent) {
+			if (thisSiblingNode) {
+				thisParent.insertBefore(targetNode, thisSiblingNode);
+			} else {
+				thisParent.appendChild(targetNode);
+			}
 		}
 
 		if (targetParentNode) {
