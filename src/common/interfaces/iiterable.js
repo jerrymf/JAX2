@@ -5,7 +5,7 @@
  */
 
 /**
- * Rozhraní pri iterovatelé prvky, které je svým chováním velice podobné datovému typu Array
+ * Rozhraní pro iterovatelé prvky, které je svým chováním velice podobné datovému typu Array
  * @class JAX.IIterable
  */
 
