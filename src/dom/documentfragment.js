@@ -12,7 +12,7 @@ JAX.DocumentFragment = JAK.ClassMaker.makeClass({
 	NAME: "JAX.DocumentFragment",
 	VERSION: "1.0",
 	EXTEND: JAX.Node,
-	IMPLEMENT: [JAX.IJAXNode, JAX.INodeWithChildren, JAX.IMoveableNode]
+	IMPLEMENT: [JAX.INodeWithChildren, JAX.IMoveableNode]
 });
 
 JAX.DocumentFragment.prototype.$constructor = function(doc) {
@@ -28,19 +28,19 @@ JAX.DocumentFragment.prototype.findAll = function(selector) {
 };
 
 JAX.DocumentFragment.prototype.remove = function() {
-	this._showMessage("JAX.DocumentFragment.remove");
+	console.error("You can not remove documentFragment node.")
 
 	return this;
 };
 
 JAX.DocumentFragment.prototype.swapPlaceWith = function(node) {
-	this._showMessage("JAX.DocumentFragment.swapPlaceWith");
+	console.error("You can not switch place with documentFragment node. Use replaceWith method instead this.")
 
 	return this;
 };
 
 JAX.DocumentFragment.prototype.isIn = function(node) {
-	this._showMessage("JAX.DocumentFragment.isIn");
+	console.error("DocumentFragment can not be in DOM. Do not used method isIn.")
 
 	return false;
 };

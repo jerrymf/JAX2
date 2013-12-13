@@ -12,7 +12,7 @@ JAX.Element = JAK.ClassMaker.makeClass({
 	NAME: "JAX.Element",
 	VERSION: "1.0",
 	EXTEND: JAX.Node,
-	IMPLEMENT: [JAX.IJAXNode, JAX.IListening, JAX.INodeWithChildren, JAX.IMoveableNode]
+	IMPLEMENT: [JAX.IListening, JAX.INodeWithChildren, JAX.IMoveableNode]
 });
 
 JAX.Element._OPACITY_REGEXP = /alpha\(opacity=['"]?([0-9]+)['"]?\)/i;
@@ -43,40 +43,34 @@ JAX.Element.prototype.$constructor = function(node) {
  */
 JAX.Element.prototype.$destructor = function() {
 	this.stopListening();
-	this._node = null;
+	this.$super();
 };
 
 /**
- * @method vyhledá a vrátí jeden DOM prvek, který odpovídá zadanému CSS3 (pro IE8 CSS2.1) selectoru
- * @example
- * JAX("#nejakeId").find(".trida"); // vrati prvni nalezeny prvek s classou trida v danem elementu
+ * @method najde element odpovídající selectoru v rámci tohoto elementu
  *
- * @param {String} selector CSS3 (pro IE8 CSS2.1) selector
- * @returns {JAX.Node}
+ * @param {string || object} selector řetězec splňující pravidla css3 (pro IE8 css2.1) selectoru | HTMLElement | Text | HTMLDocument | Window | JAX.Node
+ * @returns {object}
  */
 JAX.Element.prototype.find = function(selector) {
 	return JAX(selector, this._node);
 };
 
 /**
- * @method vyhledá a vrátí instance JAX.NodeArray obsahující DOM prvky, které odpovídají zadanému CSS3 (pro IE8 CSS2.1) selectoru
- * @example
- * JAX("#nejakeId").findAll(".trida"); // vrati vsechny nalezene prvky s classou trida v danem elementu
+ * @method najde elementy odpovídají selectoru v rámci tohoto elementu
  *
- * @param {String} selector CSS3 (pro IE8 CSS2.1) selector
- * @returns {JAX.NodeArray}
+ * @param {string || object || array} selector řetězec splňující pravidla css3 (pro IE8 css2.1) selectoru | Array of (HTMLElement | Text | HTMLDocument | Window | object
+ * @returns {object}
  */
 JAX.Element.prototype.findAll = function(selector) {
 	return JAX.all(selector, this._node);
 };
 
 /**
- * @method přídá css třídu k elementu, lze zadat i více tříd oddělených mezerou
- * @example
- * JAX("#nejakeId").addClass("trida"); // piseme bez tecky
+ * @method přidá zadané css třídu nebo třídy k elementu
  *
- * @param {String} className jméno třídy nebo jména tříd oddělená mezerou
- * @returns {JAX.Node}
+ * @param {string} classNames css třída nebo třídy oddělené mezerou (píše se bez tečky na začátku)
+ * @returns {object}
  */
 JAX.Element.prototype.addClass = function(classNames) {
 	var classNames = classNames.trim();
@@ -99,12 +93,10 @@ JAX.Element.prototype.addClass = function(classNames) {
 };
 
 /**
- * @method odebere css třídu od elementu, lze zadat i více tříd oddělených mezerou
- * @example
- * JAX("#nejakeId").removeClass("trida"); // piseme bez tecky
+ * @method odstraní zadané css třídu nebo třídy z elementu
  *
- * @param {String} className jméno třídy nebo jména tříd oddělená mezerou
- * @returns {JAX.Node}
+ * @param {string} classNames css třída nebo třídy oddělené mezerou (píše se bez tečky na začátku)
+ * @returns {object}
  */
 JAX.Element.prototype.removeClass = function(classNames) {
 	var classNames = classNames.trim();
@@ -127,12 +119,10 @@ JAX.Element.prototype.removeClass = function(classNames) {
 };
 
 /**
- * @method zjistí, zda má element nastavenou požadovanou tříd. Lze zadat i jména více tříd oddělených mezerů, ale pokud alespoň jedna není přítomna, vrací false.
- * @example
- * if (JAX("#nejakeId").hasClass("trida")) { console.log("Trida pritomna"); } // jmeno tridy piseme bez tecky
+ * @method zjistí, jestli element má nastavenu zadanou css třídu
  *
- * @param {String} className jméno třídy nebo jména tříd oddělená mezerou
- * @returns {Boolean}
+ * @param {string} className css třída (píše se bez tečky na začátku)
+ * @returns {object}
  */
 JAX.Element.prototype.hasClass = function(className) {
 	var className = className.trim();
@@ -156,12 +146,10 @@ JAX.Element.prototype.hasClass = function(className) {
 };
 
 /**
- * @method pokud element classu má, tak i odebere, jinak ji přidá. Lze operovat jen s jednou classou.
- * @example
- * JAX("body").toggleClass("trida");
+ * @method pokud má element css třídu již nastavenu, tak ji odebere, pokud nikoliv, tak ji přidá
  *
- * @param {String} className jméno třídy nebo jména tříd oddělená mezerou
- * @returns {JAX.Node}
+ * @param {string} className css třída (píše se bez tečky na začátku)
+ * @returns {object}
  */
 JAX.Element.prototype.toggleClass = function(className) {
 	var className = className.trim();
@@ -179,13 +167,10 @@ JAX.Element.prototype.toggleClass = function(className) {
 };
 
 /**
- * @method nastavuje nebo vrací atribut id elementu
- * @example
- * var jaxElm = JAX(document.body).id("mojeId"); 
- * console.log(jaxElm.id());
+ * @method volání bez parametru zjistíme, jaké id má element nastaveno, voláním s parametrem ho nastavíme
  *
- * @param {String|Undefined} id název id | bez parametru, pokud chceme id vrátit
- * @returns {JAX.Node | String}
+ * @param {string || undefined} id id elementu
+ * @returns {string || object}
  */
 JAX.Element.prototype.id = function(id) {
 	if (!arguments.length) { 
@@ -202,13 +187,10 @@ JAX.Element.prototype.id = function(id) {
 };
 
 /**
- * @method nastavuje nebo vrací textový html obsah elementu
- * @example
- * var jaxElm = JAX(document.body).html("neco"); 
- * console.log(jaxElm.html());
+ * @method volání bez parametru zjistíme, jaké innerHTML má element nastaveno, voláním s parametrem ho nastavíme
  *
- * @param {String | Undefined} innerHTML html text | bez parametru, pokud chceme html obsah vrátit
- * @returns {JAX.Node | String}
+ * @param {string || undefined} id innerHTML elementu
+ * @returns {string || object}
  */
 JAX.Element.prototype.html = function(innerHTML) {
 	if (!arguments.length) { 
@@ -224,13 +206,10 @@ JAX.Element.prototype.html = function(innerHTML) {
 };
 
 /**
- * @method nastavuje nebo vrací textový obsah elementu, pozn.: při získávání textu je zahrnut veškerý text, tedy i ten, který není na stránce vidět
- * @example
- * var jaxElm = JAX(document.body).text("neco"); 
- * console.log(jaxElm.text());
+ * @method volání bez parametru zjistíme, jaký čistý text element obsahuje (bez html tagů), voláním s parametrem ho nastavíme; pozn.: při získávání textu je zahrnut veškerý text, tedy i ten, který není na stránce vidět
  *
- * @param {String | Undefined} text html text | bez parametru, pokud chceme textový obsah vrátit
- * @returns {JAX.Node | String}
+ * @param {string || undefined} text text, který chceme nastavit
+ * @returns {object || string}
  */
 JAX.Element.prototype.text = function(text) {
 	if (typeof(innerHTML) != "string" && typeof(innerHTML) != "number") {

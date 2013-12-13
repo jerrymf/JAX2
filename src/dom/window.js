@@ -12,13 +12,13 @@ JAX.Window = JAK.ClassMaker.makeClass({
 	NAME: "JAX.Window",
 	VERSION: "1.0",
 	EXTEND: JAX.Node,
-	IMPLEMENT: [JAX.IJAXNode, JAX.IListening]
+	IMPLEMENT: [JAX.IListening]
 });
 
 JAX.Window.prototype.$constructor = function(win) {
-	this._n = win;
-	this._node = win;
+	this.$super(win);
 	this.jaxNodeType = -2;
+	this._setFlags();
 };
 
 JAX.Window.prototype.size = function(sizeType) {

@@ -31,11 +31,11 @@ JAX.NodeArray.prototype.$constructor = function(nodes) {
 
 JAX.NodeArray.prototype.find = function(selector) {
 	for (var i=0; i<this.length; i++) {
-		var jaxElm = this[i];
-		var node = jaxElm.n;
+		var item = this[i];
+		var node = item.n;
 		var parentNode = node.parentNode;
 
-		if ([1,9,11].indexOf(jaxElm.jaxNodeType) == -1) { continue; }
+		if (!item.isSearchable) { continue; }
 
 		if (!parentNode) {
 			parentNode = document.createDocumentFragment();
@@ -59,25 +59,25 @@ JAX.NodeArray.prototype.findAll = function(selector) {
 	var foundElms = [];
 
 	for (var i=0; i<this.length; i++) {
-		var jaxElm = this[i];
-		var node = jaxElm.n;
+		var item = this[i];
+		var node = item.n;
 		var parentNode = node.parentNode;
 
-		if ([1,9,11].indexOf(jaxElm.jaxNodeType) == -1) { continue; }
+		if (!item.isSearchable) { continue; }
 
 		if (!parentNode) {
 			parentNode = document.createDocumentFragment();
 			parentNode.appendChild(node);
 
-			var jaxElms = JAX(parentNode).findAll(selector);
+			var items = JAX(parentNode).findAll(selector);
 
 			parentNode.removeChild(node);
 		} else {
-			var jaxElms = JAX(parentNode).findAll(selector);
+			var items = JAX(parentNode).findAll(selector);
 		}
 
-		if (!jaxElms.length) { continue; }
-		foundElms = foundElms.concat(jaxElms.items());
+		if (!items.length) { continue; }
+		foundElms = foundElms.concat(items.items());
 	}
 
 	foundElms = foundElms.filter(function(elm, index, array) {
@@ -155,7 +155,9 @@ JAX.NodeArray.prototype.index = function(node) {
  * @returns {Object} JAX.NodeArray
  */
 JAX.NodeArray.prototype.addClass = function(classNames) {
-	for (var i=0; i<this.length; i++) { 
+	for (var i=0; i<this.length; i++) {
+		var item = this[i];
+		if (!item.isElement) { continue; }
 		this[i].addClass(classNames); 
 	}
 	return this;
@@ -168,7 +170,9 @@ JAX.NodeArray.prototype.addClass = function(classNames) {
  * @returns {Boolean}
  */
 JAX.NodeArray.prototype.haveClass = function(className) {
-	for (var i=0; i<this.length; i++) { 
+	for (var i=0; i<this.length; i++) {
+		var item = this[i];
+		if (!item.isElement) { continue; }
 		if (!this[i].hasClass(className)) { return false; } 
 	}
 	return true;
@@ -181,7 +185,9 @@ JAX.NodeArray.prototype.haveClass = function(className) {
  * @returns {Object} JAX.NodeArray
  */
 JAX.NodeArray.prototype.toggleClass = function(className) {
-	for (var i=0; i<this.length; i++) { 
+	for (var i=0; i<this.length; i++) {
+		var item = this[i];
+		if (!item.isElement) { continue; }
 		this[i].toggleClass(className);
 	}
 	return this;	
@@ -194,7 +200,9 @@ JAX.NodeArray.prototype.toggleClass = function(className) {
  * @returns {Object} JAX.NodeArray
  */
 JAX.NodeArray.prototype.removeClass = function(classNames) {
-	for (var i=0; i<this.length; i++) { 
+	for (var i=0; i<this.length; i++) {
+		var item = this[i];
+		if (!item.isElement) { continue; }
 		this[i].removeClass(classNames); 
 	}
 	return this;
@@ -209,8 +217,9 @@ JAX.NodeArray.prototype.removeClass = function(classNames) {
  */
 JAX.NodeArray.prototype.attr = function(property, value) {
 	for (var i=0; i<this.length; i++) {
-		var jaxElm = this[i];
-		jaxElm.attr.apply(jaxElm, arguments);
+		var item = this[i];
+		if (!item.isElement) { continue; }
+		item.attr.apply(item, arguments);
 	}
 	return this;
 };
@@ -222,8 +231,10 @@ JAX.NodeArray.prototype.attr = function(property, value) {
  * @returns {Object} JAX.NodeArray
  */
 JAX.NodeArray.prototype.removeAttr = function(properties) {
-	for (var i=0; i<this.length; i++) { 
-		this[i].removeAttr(properties);
+	for (var i=0; i<this.length; i++) {
+		var item = this[i];
+		if (!item.isElement) { continue; }
+		item.removeAttr(properties);
 	}
 	return this;
 };
@@ -237,8 +248,9 @@ JAX.NodeArray.prototype.removeAttr = function(properties) {
  */
 JAX.NodeArray.prototype.css = function(property, value) {
 	for (var i=0; i<this.length; i++) {
-		var jaxElm = this[i]; 
-		jaxElm.css.apply(jaxElm, arguments);
+		var item = this[i];
+		if (!item.isElement) { continue; }
+		item.css.apply(item, arguments);
 	}
 	return this;
 };
@@ -252,8 +264,8 @@ JAX.NodeArray.prototype.css = function(property, value) {
  */
 JAX.NodeArray.prototype.prop = function(property, value) {
 	for (var i=0; i<this.length; i++) {
-		var jaxElm = this[i];
-		jaxElm.prop.apply(jaxElm, arguments);
+		var item = this[i];
+		item.prop.apply(item, arguments);
 	}
 	return this;
 };
@@ -266,7 +278,18 @@ JAX.NodeArray.prototype.prop = function(property, value) {
  */
 JAX.NodeArray.prototype.appendTo = function(node) {
 	for (var i=0; i<this.length; i++) {
+		var item = this[i];
+		if (!item.isMoveable) { continue; }
 		this[i].appendTo(node);
+	}
+	return this;
+};
+
+JAX.NodeArray.prototype.insertFirstTo = function(node) {
+	for (var i=this.length - 1; i>=0; i--) {
+		var item = this[i];
+		if (!item.isMoveable) { continue; }
+		this[i].insertFirstTo(node);
 	}
 	return this;
 };
@@ -279,6 +302,8 @@ JAX.NodeArray.prototype.appendTo = function(node) {
  */
 JAX.NodeArray.prototype.before = function(node) {
 	for (var i=0; i<this.length; i++) {
+		var item = this[i];
+		if (!item.isMoveable) { continue; }
 		this[i].before(node);
 	}
 	return this;
@@ -290,8 +315,10 @@ JAX.NodeArray.prototype.before = function(node) {
  * @returns {Object} JAX.NodeArray
  */
 JAX.NodeArray.prototype.remove = function() {
-	for (var i=0; i<this.length; i++) { 
-		this[i].remove(); 
+	for (var i=0; i<this.length; i++) {
+		var item = this[i];
+		if (!item.isRemoveable) { continue; }
+		item.remove(); 
 	}
 	return this;
 };
@@ -304,6 +331,7 @@ JAX.NodeArray.prototype.remove = function() {
  */
 JAX.NodeArray.prototype.areIn = function(node) {
 	for (var i=0; i<this.length; i++) {
+		if (!item.isMoveable) { continue; }
 		if (!this[i].isIn(node)) { return false; }
 	}
 
@@ -328,15 +356,18 @@ JAX.NodeArray.prototype.destroyNodes = function() {
 JAX.NodeArray.prototype.listen = function(type, obj, funcMethod, bindData) {
 	var listeners = new Array(this.length);
 	for(var i=0; i<this.length; i++) {
-		var jaxElm = this[i];
-		listeners[i] = jaxElm.listen.apply(jaxElm, arguments);
+		var item = this[i];
+		if (!item.isListenable) { continue; }
+		listeners[i] = item.listen.apply(item, arguments);
 	}
 	return new JAX.ListenerArray(listeners);
 };
 
 JAX.NodeArray.prototype.stopListening = function(type) {
 	for (var i=0; i<this.length; i++) {
-		this[i].stopListening(type);
+		var item = this[i];
+		if (!item.isListenable) { continue; }
+		item.stopListening(type);
 	}
 	return this;
 };
@@ -366,7 +397,7 @@ JAX.NodeArray.prototype.filterItems = function(func, obj) {
 
 JAX.NodeArray.prototype.firstElement = function() {
 	for (var i=0; i<this.length; i++) {
-		if (this[i].jaxNodeType == 1) { return this[i]; }
+		if (this[i].isElement) { return this[i]; }
 	}
 
 	return null;
@@ -374,7 +405,7 @@ JAX.NodeArray.prototype.firstElement = function() {
 
 JAX.NodeArray.prototype.lastElement = function() {
 	for (var i=this.length - 1; i>=0; i--) {
-		if (this[i].jaxNodeType == 1) { return this[i]; }
+		if (this[i].isElement) { return this[i]; }
 	}
 
 	return null;
@@ -385,8 +416,9 @@ JAX.NodeArray.prototype.animate = function(type, duration, start, end) {
 	var fxs = new Array(count);
 
 	for (var i=0; i<this.length; i++) {
-		var jaxElm = this[i];
-		fxs[i] = jaxElm.animate.apply(jaxElm, arguments);
+		var item = this[i];
+		if (item.isElement) { continue; }
+		fxs[i] = item.animate.apply(item, arguments);
 	}
 	return new JAX.FXArray(fxs);
 };
@@ -406,8 +438,9 @@ JAX.NodeArray.prototype.fade = function(type, duration) {
 	var fxs = new Array(count);
 
 	for (var i=0; i<this.length; i++) {
-		var jaxElm = this[i];
-		fxs[i] = jaxElm.fade.apply(jaxElm, arguments);
+		var item = this[i];
+		if (item.isElement) { continue; }
+		fxs[i] = item.fade.apply(item, arguments);
 	}
 	return new JAX.FXArray(fxs);
 };
@@ -427,8 +460,9 @@ JAX.NodeArray.prototype.fadeTo = function(opacityValue, duration) {
 	var fxs = new Array(count);
 
 	for (var i=0; i<this.length; i++) {
-		var jaxElm = this[i];
-		fxs[i] = jaxElm.fadeTo.apply(jaxElm, arguments);
+		var item = this[i];
+		if (item.isElement) { continue; }
+		fxs[i] = item.fadeTo.apply(item, arguments);
 	}
 	return new JAX.FXArray(fxs);
 };
@@ -448,8 +482,9 @@ JAX.NodeArray.prototype.slide = function(type, duration) {
 	var fxs = new Array(count);
 
 	for (var i=0; i<this.length; i++) {
-		var jaxElm = this[i];
-		fxs[i] = jaxElm.slide.apply(jaxElm, arguments);
+		var item = this[i];
+		if (item.isElement) { continue; }
+		fxs[i] = item.slide.apply(item, arguments);
 	}
 	return new JAX.FXArray(fxs);
 };
@@ -459,8 +494,9 @@ JAX.NodeArray.prototype.scroll = function(type, value, duration) {
 	var fxs = new Array(count);
 
 	for (var i=0; i<this.length; i++) {
-		var jaxElm = this[i];
-		fxs[i] = jaxElm.scroll.apply(jaxElm, arguments);
+		var item = this[i];
+		if (item.isScrollable) { continue; }
+		fxs[i] = item.scroll.apply(item, arguments);
 	}
 	return new JAX.FXArray(fxs);
 };

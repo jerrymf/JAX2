@@ -12,7 +12,7 @@ JAX.TextNode = JAK.ClassMaker.makeClass({
 	NAME: "JAX.Node",
 	VERSION: "1.0",
 	EXTEND: JAX.Node,
-	IMPLEMENT: [JAX.IJAXNode, JAX.IMoveableNode]
+	IMPLEMENT: [JAX.IMoveableNode]
 });
 
 JAX.TextNode.prototype.$constructor = function(node) {

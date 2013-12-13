@@ -89,9 +89,14 @@ JAX.FX._SUPPORTED_METHODS = [
  */
 JAX.FX.prototype.$constructor = function(elm) {
 	this._jaxElm = JAX(elm);
+	this._canBeAnimated = this._jaxElm.isElement;
 
 	if (!this._jaxElm.n) { 
 		console.error("JAX.FX: I got null node. Check your code please."); 
+	}
+
+	if (!this._jaxElm.isElement) {
+		console.error("JAX.FX: I got node that can not be animated."); 	
 	}
 
 	this._settings = [];
@@ -128,7 +133,7 @@ JAX.FX.prototype.$constructor = function(elm) {
  * @returns {JAX.FX}
  */
 JAX.FX.prototype.addProperty = function(property, duration, start, end, method) {
-	if (!this._jaxElm.n) { return this; }
+	if (!this._canBeAnimated) { return this; }
 
 	var durationValue = this._parseValue(duration);
 	var durationUnit = this._parseUnit(duration) || "ms";
@@ -201,6 +206,8 @@ JAX.FX.prototype.addProperty = function(property, duration, start, end, method) 
 };
 
 JAX.FX.prototype.addTranslateProperty = function(duration, start, end, method) {
+	if (!this._canBeAnimated) { return this; }
+
 	if (!JAX.FX.isCSS3Supported) {
 		var translates = {
 			"x":"left",
@@ -272,6 +279,7 @@ JAX.FX.prototype.addTranslateProperty = function(duration, start, end, method) {
  * @returns {JAK.Promise}
  */
 JAX.FX.prototype.run = function() {
+	if (!this._canBeAnimated) { return this; }
 	if (this.isRunning()) { return this._promise.finished; }
 
 	if (!this._settings.length) {
@@ -310,6 +318,7 @@ JAX.FX.prototype.then = function(onfulfill, onreject) {
  * @returns {JAK.Promise}
  */
 JAX.FX.prototype.reverse = function() {
+	if (!this._canBeAnimated) { return this; }
 	if (!this._wasRun) { return this.run(); }
 	if (this.isRunning()) { this.stop(); }
 

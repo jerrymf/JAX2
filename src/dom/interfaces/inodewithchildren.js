@@ -14,68 +14,89 @@ JAX.INodeWithChildren = JAK.ClassMaker.makeInterface({
 });
 
 /**
- * @method přidává do elementu další uzly vždy na konec
- * @example
- * document.body.innerHTML = "<span>Ahoj svete!</span>";
- * var jaxElm = JAX(document.body).add(JAX.make("span")); 
+ * @method přidává do elementu další uzly vždy na konec, lze zadat i jako html string, který se následně připne
  *
- * @param {String | Node | Node[] | JAX.NodeArray} HTML string | nodes DOM uzel | pole DOM uzlů | instance JAX.NodeArray
- * @returns {JAX.INodeWithChildren}
+ * @param {string || object || array} nodes HTML string || HTMLElement || Text || HTMLDocumetFragment || pole elementů || instance JAX.NodeArray
+ * @returns {object}
  */
 JAX.INodeWithChildren.prototype.add = function(nodes) {
+	if (!this._node.childNodes) {
+		console.error("JAX.INodeWithChildren.add: My element can not have children.", this._node);
+		return this;
+	}
+
 	if (typeof(nodes) == "string") {
 		if (this._node.insertAdjacentHTML) {
 			this._node.insertAdjacentHTML("beforeend", nodes);
-		} else {
-			JAX.makeFromHTML(nodes).appendTo(this);
-		}
-	} else {
-		JAX.all(nodes).appendTo(this);
-	}
-	
-	return this;
-};
-
-/**
- * @method vloží zadaný element jako první
- *
- * @param {Node | JAX.INodeWithChildren | String} node DOM uzel | instance JAX.INodeWithChildren | CSS3 (2.1) selector
- * @returns {JAX.INodeWithChildren}
- */
-JAX.INodeWithChildren.prototype.insertFirst = function(node) {
-	var jaxNode = JAX(node);
-
-	if (jaxNode.n) {
-		var n = jaxNode.n;
-
-		if (this._node.childNodes && this._node.firstChild) {
-			this._node.insertBefore(n, this._node.firstChild);
-		} else if (this._node.childNodes) {
-			this._node.appendChild(n);
-		} else {
-			console.error("JAX.INodeWithChildren.insertFirst: My element can not have children.", this._node);
+			return this;
 		}
 		
+		JAX.makeFromHTML(nodes).appendTo(this);
 		return this;
 	}
+		
+	JAX.all(nodes).appendTo(this);
 	
-	console.error("JAX.INodeWithChildren.insertFirst: I could not find given element. For first argument I expected html element, text node or JAX.Node.");
 	return this;
 };
 
 /**
- * @method přidá do elementu DOM uzel před zadaný uzel
- * @example
- * document.body.innerHTML = "<span>Ahoj svete!</span>";
- * var jaxElm = JAX(document.body).add(JAX.make("span"), document.body.lastChild); // prida span pred posledni prvek v body 
+ * @method vloží zadané uzly před první uzel v elementu, lze zadat i jako html string, který se následně připne před první element
  *
- * @param {Node | JAX.INodeWithChildren} node DOM uzel | instance JAX.INodeWithChildren
- * @param {Node | JAX.INodeWithChildren} nodeBefore DOM uzel | instance JAX.INodeWithChildren
- * @returns {JAX.INodeWithChildren}
+ * @param {string || object || array}
+ * @returns {object}
+ */
+JAX.INodeWithChildren.prototype.insertFirst = function(nodes) {
+	if (!this._node.childNodes) {
+		console.error("JAX.INodeWithChildren.insertFirst: My element can not have children.", this._node);
+		return this;
+	}
+
+	if (typeof(nodes) == "string") {
+		if (this._node.insertAdjacentHTML) {
+			this._node.insertAdjacentHTML("afterbegin", nodes);
+			return this;
+		} 
+	}
+
+	if (typeof(nodes) == "string") {
+		var jaxNodes = JAX.makeFromHTML(nodes);
+	} else {
+		var jaxNodes = JAX.all(nodes);
+	}
+
+	if (!jaxNodes.length) {
+		return this;
+	}
+
+	for (var i=0;i<jaxNodes.length; i++) {
+		var n = jaxNodes[i].n;
+
+		if (this._node.firstChild) {
+			this._node.insertBefore(n, this._node.firstChild);
+		} else {
+			this._node.appendChild(n);
+		}
+	}
+	
+	return this;
+};
+
+/**
+ * @method vloží uzel před jiný
+ *
+ * @param {object || string} node element nebo css selector, jak se k elementu dostat
+ * @param {object || string} nodeBefore element nebo css selector, jak se k elementu dostat
+ * @returns {object}
  */
 JAX.INodeWithChildren.prototype.addBefore = function(node, nodeBefore) {
-	var jaxNode = JAX(node);
-	var jaxNodeBefore = JAX(nodeBefore);
+	if (!this._node.childNodes) {
+		console.error("JAX.INodeWithChildren.addBefore: My element can not have children.", this._node);
+		return this;
+	}
+
+	var jaxNode = node instanceof JAX.Node ? node : JAX(node);
+	var jaxNodeBefore = nodeBefore instanceof JAX.Node ? nodeBefore : JAX(nodeBefore);
 
 	if (!jaxNode.n) { 
 		console.error("JAX.INodeWithChildren.addBefore: For first argument I expected html element, text node, documentFragment or JAX.Node.");
@@ -91,44 +112,50 @@ JAX.INodeWithChildren.prototype.addBefore = function(node, nodeBefore) {
 };
 
 /** 
- * @method zjistí, jestli element obsahuje node podle zadaných kritérií
- * @example
- * document.body.innerHTML = "<div><span>1</span><span>2</span><em>3</em></div>";
- * if (JAX("body").first().contains("em")) { alert("Obsahuje em"); }
+ * @method zjistí, jestli element obsahuje nody podle zadaných kritérií
  *
- * @param {Node | JAX.Node | String} node uzel | instance JAX.Node | CSS3 (2.1) selector
- * @returns {Boolean}
+ * @param {object || string} nodes HTMLElement || Text || pole elementů || instance JAX.NodeArray || CSS 3 (CSS 2.1 pro IE8) selector
+ * @returns {boolean}
  */
-JAX.INodeWithChildren.prototype.contains = function(node) {
-	if (!node) { return false; }
+JAX.INodeWithChildren.prototype.contains = function(nodes) {
+	if (!nodes) { return false; }
 
-	if (typeof(node) == "string") {
-		return !!this.find(node).n;
+	if (typeof(nodes) == "string") {
+		return !!this.findAll(nodes).length;
 	}
 
-	var jaxNode = node instanceof JAX.Node ? node : JAX(node);
-	if (jaxNode.n) { 
-		var n = jaxNode.n;
-		if (this._node.contains) {
-			return this._node.contains(n);
+	var jaxNodes = JAX.all([].concat(nodes));
+
+	if (!jaxNodes.length) { return false; }
+
+	for (var i=0, len=jaxNodes.length; i<len; i++) {
+		var n = jaxNodes[i].n;
+		if (!n) { return false; }
+
+		if (this._node.contains && !this._node.contains(n)) {
+			return false;
 		} else {
-			return this._contains(n);
+			if (!this._contains(n)) {
+				return false;
+			}
 		}
 	}
 	
-	console.error("JAX.Element.contains: For first argument I expected html element, text node, string with CSS3 compatible selector or JAX.Node.");
-	return false;
+	return true;
 };
 
 /** 
- * @method vrací instanci JAX.NodeArray, která obsahuje všechny přímé potomky uzlu
- * @example
- * var body = JAX("body").html("<span>Ahoj svete!</span><em>Takze dobry vecer!</em>");
- * console.log(body.children().length);
+ * @method vrací JAXové pole (JAX.NodeArray) přímých potomků; pokud je ale zadán parametr index, vrací právě jeden JAXový node
  *
- * @returns {JAX.NodeArray | null}
+ * @param {number || undefined} index číselný index požadovaného potomku
+ * @returns {object || null} JAX.Node || JAX.NodeArray
  */
 JAX.INodeWithChildren.prototype.children = function(index) {
+	if (!this._node.childNodes) {
+		console.error("JAX.INodeWithChildren.children: My element can not have children.", this._node);
+		return new JAX.NodeArray([]);
+	}
+
 	if (!arguments.length) {
 		var nodes = [];
 		var childNodes = this._node.childNodes;
@@ -147,19 +174,21 @@ JAX.INodeWithChildren.prototype.children = function(index) {
 };
 
 /** 
- * @method vrací první html element (potomka) nebo null, pokud takový není
- * @example
- * var body = JAX("body").html("<span>Ahoj svete!</span><em>Takze dobry vecer!</em>");
- * console.log(JAX("body").first().prop("tagName") == "span");
+ * @method vrací první HTMLElement jako JAXový node
  *
- * @returns {JAX.Node | null}
+ * @returns {object || null} JAX.Node
  */
 JAX.INodeWithChildren.prototype.first = function() {
+	if (!this._node.childNodes) {
+		console.error("JAX.INodeWithChildren.first: My element can not have children.", this._node);
+		return null;
+	}
+
 	if ("firstElementChild" in this._node) {
 		return this._node.firstElementChild ? JAX(this._node.firstElementChild) : null;
 	}
 
-	if (!this._node.childNodes || !this._node.childNodes.length) { return null; }
+	if (!this._node.childNodes.length) { return null; }
 	
 	for (var i=0, len=this._node.childNodes.length; i<len; i++) {
 		var childNode = this._node.childNodes[i];
@@ -170,14 +199,16 @@ JAX.INodeWithChildren.prototype.first = function() {
 };
 
 /** 
- * @method vrací poslední uzel (potomka) nebo null, pokud takový není
- * @example
- * var body = JAX("body").html("<span>Ahoj svete!</span>");
- * console.log(JAX("body span").last().n == JAX("body span").first().n;
+ * @method vrací poslední HTMLElement jako JAXový node
  *
- * @returns {JAX.Node | null}
+ * @returns {object || null} JAX.Node
  */
 JAX.INodeWithChildren.prototype.last = function() {
+	if (!this._node.childNodes) {
+		console.error("JAX.INodeWithChildren.last: My element can not have children.", this._node);
+		return null;
+	}
+
 	if ("lastElementChild" in this._node) {
 		return this._node.lastElementChild ? JAX(this._node.lastElementChild) : null;
 	}
@@ -193,15 +224,28 @@ JAX.INodeWithChildren.prototype.last = function() {
 };
 
 /** 
- * @method promaže element
- * @example
- * var body = JAX("body").html("<span>Ahoj svete!</span><em>Takze dobry vecer!</em>");
- * body.clear();
+ * @method promaže element, odstraní jeho přímé potomky
  *
- * @returns {JAX.Node}
+ * @returns {object} JAX.Node
  */
 JAX.INodeWithChildren.prototype.clear = function() {
+	if (!this._node.childNodes) {
+		console.error("JAX.INodeWithChildren.clear: My element can not have children.", this._node);
+		return this;
+	}
+
 	JAK.DOM.clear(this._node);
 
 	return this;
+};
+
+JAX.INodeWithChildren.prototype._contains = function(node) {
+	var n = node;
+
+	while(n && n.nodeType != 11 && n.nodeType != 9) {
+		if (n == this._node) { return true; }
+		n = n.parentNode;
+	}
+
+	return false;
 };

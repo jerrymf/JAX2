@@ -16,8 +16,7 @@ JAX.Document = JAK.ClassMaker.makeClass({
 });
 
 JAX.Document.prototype.$constructor = function(doc) {
-	this._node = doc;
-	this.jaxNodeType = doc.nodeType;
+	this.$super(doc);
 };
 
 JAX.Document.prototype.find = function(selector) {

@@ -5,7 +5,7 @@
  */
 
 /**
- * Rozhraní pro nody, které jdou přesouvat v DOMu
+ * Rozhraní pro nody, kterými jde manipulovat v rámci DOMu
  * @class JAX.IMoveableNode
  */
 JAX.IMoveableNode = JAK.ClassMaker.makeInterface({
@@ -14,16 +14,13 @@ JAX.IMoveableNode = JAK.ClassMaker.makeInterface({
 });
 
 /**
- * @method připne (přesune) element do jiného elementu (na konec)
- * @example
- * document.body.innerHTML = "<span>Ahoj svete!</span>";
- * var jaxElm = JAX.make("span").appendTo(document.body); // pripne span do body
+ * @method přesune element na konec zadaného elementu
  *
- * @param {Node | JAX.IMoveableNode | String} node DOM uzel | instance JAX.IMoveableNode | CSS 3 (CSS 2.1 selector pro IE8)
- * @returns {JAX.IMoveableNode}
+ * @param {string || object} node řetězec splňující pravidla css3 (pro IE8 css2.1) selectoru | HTMLElement | Text | HTMLDocument | Window | JAX.Node
+ * @returns {object} JAX.Node
  */
 JAX.IMoveableNode.prototype.appendTo = function(node) {
-	var jaxNode = JAX(node);
+	var jaxNode = node instanceof JAX.Node ? node : JAX(node);
 
 	if (jaxNode.n) { 
 		jaxNode.n.appendChild(this._node);
@@ -35,16 +32,13 @@ JAX.IMoveableNode.prototype.appendTo = function(node) {
 };
 
 /**
- * @method připne (přesune) element před jiný element
- * @example
- * document.body.innerHTML = "<span>Ahoj svete!</span>";
- * var jaxElm = JAX.make("span").before(document.body.lastChild); // pripne span do body pred posledni prvek v body
+ * @method přesune element před zadaný element
  *
- * @param {Node | JAX.IMoveableNode} node DOM uzel | instance JAX.IMoveableNode
- * @returns {JAX.IMoveableNode}
+ * @param {string || object} node řetězec splňující pravidla css3 (pro IE8 css2.1) selectoru | HTMLElement | Text | HTMLDocument | Window | JAX.Node
+ * @returns {object} JAX.Node
  */
 JAX.IMoveableNode.prototype.before = function(node) {
-	var jaxNode = JAX(node);
+	var jaxNode = node instanceof JAX.Node ? node : JAX(node);
 
 	if (jaxNode.n) {
 		var n = jaxNode.n;
@@ -57,16 +51,13 @@ JAX.IMoveableNode.prototype.before = function(node) {
 };
 
 /**
- * @method připne (přesune) element za jiný element
- * @example
- * document.body.innerHTML = "<span>Ahoj svete!</span>";
- * var jaxElm = JAX.make("span").after(document.body.lastChild); // pripne span do body za posledni posledni prvek v body
+ * @method přesune element za zadaný element
  *
- * @param {Node | JAX.IMoveableNode} node DOM uzel | instance JAX.IMoveableNode
- * @returns {JAX.IMoveableNode}
+ * @param {string || object} node řetězec splňující pravidla css3 (pro IE8 css2.1) selectoru | HTMLElement | Text | HTMLDocument | Window | JAX.Node
+ * @returns {object} JAX.Node
  */
 JAX.IMoveableNode.prototype.after = function(node) {
-	var jaxNode = JAX(node);
+	var jaxNode = node instanceof JAX.Node ? node : JAX(node);
 
 	if (jaxNode.n) {
 		var n = jaxNode.n;
@@ -84,8 +75,14 @@ JAX.IMoveableNode.prototype.after = function(node) {
 	return this;
 };
 
+/**
+ * @method vloží element do zadaného elementu na první místo
+ *
+ * @param {string || object} node řetězec splňující pravidla css3 (pro IE8 css2.1) selectoru | HTMLElement | Text | HTMLDocument | Window | JAX.Node
+ * @returns {object} JAX.Node
+ */
 JAX.IMoveableNode.prototype.insertFirstTo = function(node) {
-	var jaxNode = JAX(node);
+	var jaxNode = node instanceof JAX.Node ? node : JAX(node);
 
 	if (jaxNode.n) {
 		var n = jaxNode.n;
@@ -106,16 +103,13 @@ JAX.IMoveableNode.prototype.insertFirstTo = function(node) {
 };
 
 /**
- * @method odstraní zadaný element z DOMu a nahradí ho za sebe
- * @example
- * document.body.innerHTML = "<span>Ahoj svete!</span>";
- * var jaxElm = JAX.make("span.novy").replaceWith(document.body.lastChild); // odstrani prvek a nahradi ho za sebe
+ * @method vymění element za zadaný element v DOMu a původní element z DOMu smaže
  *
- * @param {Node | JAX.IMoveableNode} node DOM uzel | instance JAX.IMoveableNode
- * @returns {JAX.IMoveableNode}
+ * @param {string || object} node řetězec splňující pravidla css3 (pro IE8 css2.1) selectoru | HTMLElement | Text | HTMLDocument | Window | JAX.Node
+ * @returns {object} JAX.Node
  */
 JAX.IMoveableNode.prototype.replaceWith = function(node) {
-	var jaxNode = JAX(node);
+	var jaxNode = node instanceof JAX.Node ? node : JAX(node);
 
 	if (jaxNode.n) { 
 		var n = jaxNode.n;
@@ -127,8 +121,14 @@ JAX.IMoveableNode.prototype.replaceWith = function(node) {
 	return this;
 };
 
+/**
+ * @method vymění element za zadaný element v DOMu, prohodí si místa
+ *
+ * @param {string || object} node řetězec splňující pravidla css3 (pro IE8 css2.1) selectoru | HTMLElement | Text | HTMLDocument | Window | JAX.Node
+ * @returns {object} JAX.Node
+ */
 JAX.IMoveableNode.prototype.swapPlaceWith = function(node) {
-	var jaxNode = JAX(node);
+	var jaxNode = node instanceof JAX.Node ? node : JAX(node);
 
 	if (jaxNode.n) { 
 		var targetNode = jaxNode.n;
@@ -165,14 +165,11 @@ JAX.IMoveableNode.prototype.swapPlaceWith = function(node) {
 
 /**
  * @method odstraní element z DOMu
- * @example
- * document.body.innerHTML = "<span>Ahoj svete!</span>";
- * var jaxElm = JAX(document.body.firstChild).remove(); // pripne span do body pred posledni prvek v body
  *
- * @returns {JAX.IMoveableNode}
+ * @returns {object} JAX.Node
  */
 JAX.IMoveableNode.prototype.remove = function() {
-	if (this._node.parentNode) {
+	if (this._node.parentNode && this._node.parentNode.nodeType != 11) {
 		this._node.parentNode.removeChild(this._node);
 		return this;
 	}
@@ -182,28 +179,22 @@ JAX.IMoveableNode.prototype.remove = function() {
 };
 
 /**
- * @method naklonuje element i vrátí novou instanci JAX.IMoveableNode
- * @example
- * document.body.innerHTML = "<span>Ahoj svete!</span>";
- * var jaxElm = JAX(document.body.firstChild).clone(true); // naklonuje element span i s textem Ahoj svete!
+ * @method naklonuje element a vrátí ho jako JAXový node
  *
- * @param {Boolean} withContent true, pokud se má naklonovat i obsah elementu
- * @returns {JAX.IMoveableNode}
+ * @param {boolean} withContent mám naklonovat včet obsahu včetně obsahu
+ * @returns {object} JAX.Node
  */
 JAX.IMoveableNode.prototype.clone = function(withContent) {
 	var clone = this._node.cloneNode(!!withContent);
-
+	
 	return new this.constructor(clone);
 };
 
-/** 
- * @method zjistí, jestli element obsahuje node podle zadaných kritérií
- * @example
- * document.body.innerHTML = "<div><span>1</span><span>2<em>3</em></span></div>";
- * if (JAX("em").isIn("span")) { alert("Span obsahuje em"); }
+/**
+ * @method zjistí, jestli je element umístěn v zadaném elementu
  *
- * @param {Node | JAX.IMoveableNode | String} node uzel | instance JAX.IMoveableNode | CSS3 (2.1) selector
- * @returns {Boolean}
+ * @param {string || object} node řetězec splňující pravidla css3 (pro IE8 css2.1) selectoru | HTMLElement | Text | HTMLDocument | Window | JAX.Node
+ * @returns {boolean}
  */
 JAX.IMoveableNode.prototype.isIn = function(node) {
 	if (!node) { return false; }
@@ -219,13 +210,11 @@ JAX.IMoveableNode.prototype.isIn = function(node) {
 	return jaxNode.n && jaxNode.contains(this);
 };
 
-/** 
- * @method vrací rodičovský prvek
- * @example
- * var body = JAX("body").html("<span>Ahoj svete!</span>");
- * console.log(JAX("body span").parent() == body);
+/**
+ * @method bez zadaného parametru vrací přímo rodiče; se zadaným zjednodušeným css selectorem vrací rodiče, který jako první odpovídá pravidlu
  *
- * @returns {JAX.IMoveableNode | null}
+ * @param {string || object} selector řetězec splňující pravidla: tag#id.trida, kde id a třída mohou být zadány vícenásobně nebo vůbec | HTMLElement | JAX.Node
+ * @returns {boolean}
  */
 JAX.IMoveableNode.prototype.parent = function(selector) {
 	if (selector && typeof(selector) == "string") {
@@ -240,12 +229,9 @@ JAX.IMoveableNode.prototype.parent = function(selector) {
 };
 
 /** 
- * @method vrací následující prvek nebo null, pokud takový není
- * @example
- * var body = JAX("body").html("<span>Ahoj svete!</span><em>Takze dobry vecer!</em>");
- * if (JAX("body span").next()) { console.log("tag SPAN ma souseda"); }
+ * @method vrací následující node
  *
- * @returns {JAX.IMoveableNode | null}
+ * @returns {object || null} JAX.Node
  */
 JAX.IMoveableNode.prototype.next = function() {
 	var jaxNode = JAX(this._node.nextSibling)
@@ -253,12 +239,9 @@ JAX.IMoveableNode.prototype.next = function() {
 };
 
 /** 
- * @method vrací předcházející prvek nebo null, pokud takový není
- * @example
- * var body = JAX("body").html("<span>Ahoj svete!</span><em>Takze dobry vecer!</em>");
- * if (JAX("body em").previous()) { console.log("tag EM ma souseda"); }
+ * @method vrací předchazející node
  *
- * @returns {JAX.IMoveableNode | null}
+ * @returns {object || null} JAX.Node
  */
 JAX.IMoveableNode.prototype.previous = function() {
 	var jaxNode = JAX(this._node.previousSibling);
