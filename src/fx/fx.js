@@ -279,7 +279,7 @@ JAX.FX.prototype.addTranslateProperty = function(duration, start, end, method) {
  * @returns {JAK.Promise}
  */
 JAX.FX.prototype.run = function() {
-	if (!this._canBeAnimated) { return this; }
+	if (!this._canBeAnimated) { return new JAK.Promise.reject(this._jaxElm); }
 	if (this.isRunning()) { return this._promise.finished; }
 
 	if (!this._settings.length) {
@@ -318,7 +318,7 @@ JAX.FX.prototype.then = function(onfulfill, onreject) {
  * @returns {JAK.Promise}
  */
 JAX.FX.prototype.reverse = function() {
-	if (!this._canBeAnimated) { return this; }
+	if (!this._canBeAnimated) { return new JAK.Promise.reject(this._jaxElm); }
 	if (!this._wasRun) { return this.run(); }
 	if (this.isRunning()) { this.stop(); }
 
