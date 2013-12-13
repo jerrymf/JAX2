@@ -37,9 +37,26 @@ var JAX = function(selector, srcElement) {
 
 		var foundElm = srcElement.querySelector(selector);
 		var nodeType = foundElm ? foundElm.nodeType : -1;
-	} else if (JAX.isDOMElement(selector)) {
-		var nodeType = !("nodeType" in selector) ? -2 : selector.nodeType;
-		var foundElm = selector;
+	} else if (typeof(selector) == "object") {
+		var isWindow = selector == window || (selector.Window && selector instanceof selector.Window) || (selector.constructor.toString().indexOf("DOMWindow") > -1); /* toString - fix pro Android */
+		
+		if (isWindow) { 
+			var nodeType = -2;
+			var foundElm = selector;	
+		} else {
+			var win = selector.defaultView || selector.parentWindow || (selector.ownerDocument ? (selector.ownerDocument.defaultView || selector.ownerDocument.parentWindow) : null);
+
+			if (win && 
+			   (win.HTMLElement && selector instanceof win.HTMLElement) || (win.Element && selector instanceof win.Element) || 
+			   (win.HTMLDocument && selector instanceof win.HTMLDocument) || (win.Document && selector instanceof win.Document) ||
+			   (win.DocumentFragment && selector instanceof win.DocumentFragment) || (win.Text && selector instanceof win.Text)) {
+				var nodeType = selector.nodeType;
+				var foundElm = selector;
+			} else {
+				var nodeType = -1;
+				var foundElm = null;		
+			}
+		}
 	} else {
 		var nodeType = -1;
 		var foundElm = null;
@@ -78,7 +95,7 @@ JAX.all = function(selector, srcElement) {
 		srcElement = srcElement || document;
 
 		if (srcElement != document) {
-			var jaxSrcElement = JAX(srcElement);
+			var jaxSrcElement = srcElement instanceof JAX.Node ? srcElement : JAX(srcElement);
 
 			if (!jaxSrcElement.n) {
 				console.error("JAX.all: Second argument must be valid element.");
@@ -231,8 +248,8 @@ JAX.getTypeOf = function(value) {
  * @returns {boolean}
  */
 JAX.isDOMElement = function(o) {
-	if (!o || typeof(o) != "object") {
-		return false;
+	if (!o) { 
+		return false; 
 	}
 
 	if (o == window || (o.Window && o instanceof o.Window) || (o.constructor.toString().indexOf("DOMWindow") > -1)) { /* toString - fix pro Android */
