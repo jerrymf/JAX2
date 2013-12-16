@@ -80,14 +80,15 @@ JAX.NodeArray.prototype.findAll = function(selector) {
 		foundElms = foundElms.concat(items.items());
 	}
 
-	foundElms = foundElms.filter(function(elm, index, array) {
-		for (var i=0, len=array.length; i<len; i++) {
-			if (foundElms[i].n != elm.n) { continue; }
-			return i == index;
+	var uniqueElms = [];
+	for (var i=0, len=foundElms.length; i<len; i++) {
+		var elm = foundElms[i].n;
+		if (uniqueElms.indexOf(elm) == -1) {
+			uniqueElms.push(elm);
 		}
-	});
+	}
 
-	return JAX.all(foundElms);
+	return JAX.all(uniqueElms);
 };
 
 /**

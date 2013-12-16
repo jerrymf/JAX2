@@ -31,7 +31,7 @@ JAX.IIterable.prototype.items = function(from, to) {
 	to = Math.max(Math.min(to, this.length - 1), 0);
 
 	from = isNaN(from) ? 0 : from;
-	to = isNaN(from) ? 0 : to;
+	to = isNaN(to) ? 0 : to;
 
 	if (from == to) {
 		return [this[from]];
