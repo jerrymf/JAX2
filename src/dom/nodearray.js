@@ -398,7 +398,7 @@ JAX.NodeArray.prototype.stopListening = function(type) {
 	for (var i=0; i<this.length; i++) {
 		var item = this[i];
 		if (!item.isListenable) { continue; }
-		item.stopListening(type);
+		item.stopListening.apply(item, type);
 	}
 	return this;
 };

@@ -27,4 +27,5 @@ JAX.ListenerArray.prototype.unregister = function() {
 		this[i].unregister();
 		delete this[i];
 	}
+	this.length = 0;
 };
