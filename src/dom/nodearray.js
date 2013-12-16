@@ -57,6 +57,8 @@ JAX.NodeArray.prototype.find = function(selector) {
 
 JAX.NodeArray.prototype.findAll = function(selector) {
 	var foundElms = [];
+	var parentNodes = [];
+	var documentFragments = [];
 
 	for (var i=0; i<this.length; i++) {
 		var item = this[i];
@@ -68,27 +70,55 @@ JAX.NodeArray.prototype.findAll = function(selector) {
 		if (!parentNode) {
 			parentNode = document.createDocumentFragment();
 			parentNode.appendChild(node);
-
-			var items = JAX(parentNode).findAll(selector);
-
-			parentNode.removeChild(node);
+			documentFragments.push(parentNode);
 		} else {
-			var items = JAX(parentNode).findAll(selector);
-		}
-
-		if (!items.length) { continue; }
-		foundElms = foundElms.concat(items.items());
-	}
-
-	var uniqueElms = [];
-	for (var i=0, len=foundElms.length; i<len; i++) {
-		var elm = foundElms[i].n;
-		if (uniqueElms.indexOf(elm) == -1) {
-			uniqueElms.push(elm);
+			if (parentNodes.indexOf(parentNode) == -1) {
+				parentNodes.push(parentNode);
+			}
 		}
 	}
 
-	return JAX.all(uniqueElms);
+	for (var i=0, len=parentNodes.length; i<len; i++) {
+		var parentNode = parentNodes[i];
+		var elms = parentNode.querySelectorAll(selector);
+
+		for (var j=0, len2=elms.length; j<len2; j++) {
+			var elm = elms[j];
+			var found = false;
+
+			for(var k=0, len3=foundElms.length; k<len3; k++) {
+				if (foundElms[k] == elm || foundElms[--len3] == elm) { 
+					found = true; 
+					break; 
+				}
+			}
+
+			if (!found) { foundElms.push(elm); }
+		}
+	}
+
+	for (var i=0, len=documentFragments.length; i<len; i++) {
+		var parentNode = documentFragments[i];
+		var elms = parentNode.querySelectorAll(selector);
+
+		for (var j=0, len2=elms.length; j<len2; j++) {
+			var elm = elms[j];
+			var found = false;
+
+			for(var k=0, len3=foundElms.length; k<len3; k++) {
+				if (foundElms[k] == elm || foundElms[--len3] == elm) { 
+					found = true; 
+					break; 
+				}
+			}
+
+			if (!found) { foundElms.push(elm); }
+		}
+
+		parentNode.removeChild(parentNode.firstChild);
+	}
+
+	return new JAX.NodeArray(foundElms);
 };
 
 /**
