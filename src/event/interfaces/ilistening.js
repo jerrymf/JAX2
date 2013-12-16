@@ -1,11 +1,11 @@
 /**
  * @fileOverview ilistening.js - JAX - JAk eXtended
  * @author <a href="mailto:jerrymf@gmail.com">Marek Fojtl</a>
- * @version 1.0
+ * @version 2.0
  */
 
 /**
- * Rozhrani implementujici praci s navesovani a odvesovani udalosti
+ * Rozhrani implementujici praci s navesovanim a odvesovanim udalosti
  * @class JAX.IListening
  */
 JAX.IListening = JAK.ClassMaker.makeInterface({
