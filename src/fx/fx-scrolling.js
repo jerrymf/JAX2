@@ -13,7 +13,6 @@ JAX.FX.Scrolling = JAK.ClassMaker.makeClass({
 	VERSION: "1.0"
 });
 
-
 JAX.FX.Scrolling.prototype.$constructor = function(jaxElm) {
 	this._jaxElm = JAX(jaxElm);
 	this._settings = [];
@@ -32,9 +31,15 @@ JAX.FX.Scrolling.prototype.$constructor = function(jaxElm) {
 
 JAX.FX.Scrolling.prototype.addProperty = function(property, value, duration) {
 	if (property != "left" && property != "top") {
-		console.error("You are trying to use unsupported property: " + property + ".", this._jaxElm.node());
-		return;
+		console.error("JAX.FX.Scrolling: You are trying to use unsupported property: " + property + ".", this._jaxElm.node());
+		return this;
 	}
+
+	if (!isFinite(parseFloat(duration))) {
+		console.error("JAX.FX.Scrolling: Duration must be number! You gave me " + typeof(duration) + ".", this._jaxElm.node());
+		return this;
+	}
+
 	this._settings.push({property:property, defValue: null, value:value, duration:duration});
 	this._maxDuration = Math.max(this._maxDuration, duration);
 	return this;
