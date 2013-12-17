@@ -125,7 +125,7 @@ JAX.IListening.prototype.stopListening = function(listener) {
 		this._node.removeEventListener(type, listener.method());
 
 		var listeners = JAX.IListening._listeners[type] || [];
-		var deleteIndex = listeners.indexOf(listeners);
+		var deleteIndex = listeners.indexOf(listener);
 
 		if (deleteIndex > -1) {
 			listeners.splice(deleteIndex, 1);
