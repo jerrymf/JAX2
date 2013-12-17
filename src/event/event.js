@@ -16,7 +16,7 @@ JAX.Event = JAK.ClassMaker.makeClass({
 /**
  * @method $constructor
  *
- * @param {window.Event} e událost
+ * @param {object} e událost window.Event
  */
 JAX.Event.prototype.$constructor = function(e) {
 	this._e = e;
@@ -25,7 +25,7 @@ JAX.Event.prototype.$constructor = function(e) {
 /**
  * @method vrací event object
  *
- * @returns {window.Event}
+ * @returns {object} window.Event
  */
 JAX.Event.prototype.event = function() {
 	return this._e;
@@ -34,7 +34,7 @@ JAX.Event.prototype.event = function() {
 /**
  * @method zruší výchozí provedení události
  *
- * @returns {JAX.Event}
+ * @returns {object} JAX.Event
  */
 JAX.Event.prototype.prevent= function() {
 	JAK.Events.cancelDef(this._e);
@@ -44,7 +44,7 @@ JAX.Event.prototype.prevent= function() {
 /**
  * @method stopne probublávání
  *
- * @returns {JAX.Event}
+ * @returns {object} JAX.Event
  */
 JAX.Event.prototype.stop = function() {
 	JAK.Events.stopEvent(this._e);
@@ -54,7 +54,7 @@ JAX.Event.prototype.stop = function() {
 /**
  * @method vrací cílový element
  *
- * @returns {JAX.Node}
+ * @returns {object} JAX.Node
  */
 JAX.Event.prototype.target = function() {
 	return JAX(JAK.Events.getTarget(this._e));
@@ -63,7 +63,7 @@ JAX.Event.prototype.target = function() {
 /**
  * @method vrací element, na který byla událost zavěšena
  *
- * @returns {JAX.Node}
+ * @returns {object} JAX.Node
  */
 JAX.Event.prototype.currentTarget = function() {
 	return JAX(this._e.currentTarget);
@@ -72,7 +72,7 @@ JAX.Event.prototype.currentTarget = function() {
 /**
  * @method vrací typ události
  *
- * @returns {String}
+ * @returns {string}
  */
 JAX.Event.prototype.type = function() {
 	return this._e.type;
