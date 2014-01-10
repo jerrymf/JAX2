@@ -38,28 +38,29 @@ var JAX = function(selector, srcElement) {
 		var foundElm = srcElement.querySelector(selector);
 		var nodeType = foundElm ? foundElm.nodeType : -1;
 	} else if (typeof(selector) == "object") {
+		var nodeType = -1;
+		var foundElm = null;
+
 		var isWindow = selector == window || (selector.Window && selector instanceof selector.Window) || (selector.constructor.toString().indexOf("DOMWindow") > -1); /* toString - fix pro Android */
-		
+
 		if (isWindow) { 
 			var nodeType = -2;
 			var foundElm = selector;	
 		} else {
 			var win = selector.defaultView || selector.parentWindow || (selector.ownerDocument ? (selector.ownerDocument.defaultView || selector.ownerDocument.parentWindow) : null);
 
-			if (win && 
-			   (win.HTMLElement && selector instanceof win.HTMLElement) || (win.Element && selector instanceof win.Element) || 
-			   (win.HTMLDocument && selector instanceof win.HTMLDocument) || (win.Document && selector instanceof win.Document) ||
-			   (win.DocumentFragment && selector instanceof win.DocumentFragment) || (win.Text && selector instanceof win.Text)) {
-				var nodeType = selector.nodeType;
-				var foundElm = selector;
-			} else {
-				var nodeType = -1;
-				var foundElm = null;		
+			if (win) {
+				var isElement = (win.HTMLElement && selector instanceof win.HTMLElement) || (win.Element && selector instanceof win.Element);
+				var isDocument = (win.HTMLDocument && selector instanceof win.HTMLDocument) || (win.Document && selector instanceof win.Document);
+				var isDocumentFragment = win.DocumentFragment && selector instanceof win.DocumentFragment;
+				var isText = win.Text && selector instanceof win.Text;
+
+				if (isElement || isDocument || isDocumentFragment || isText) {
+					var nodeType = selector.nodeType;
+					var foundElm = selector;
+				}
 			}
 		}
-	} else {
-		var nodeType = -1;
-		var foundElm = null;
 	}
 
 	switch(nodeType) {
@@ -113,7 +114,7 @@ JAX.all = function(selector, srcElement) {
 	} else if (selector.length && selector[0] && selector[selector.length - 1]) {
 		/* IE8 can't detect NodeList, so if we have something iterable we will pass it */
 		return new JAX.NodeArray(selector);
-	} else if (selector instanceof JAX.Node || JAX.isDOMElement(selector)) {
+	} else if (selector instanceof JAX.Node || (typeof(selector) == "object" && JAX(selector).n)) {
 		return new JAX.NodeArray([selector]);
 	}
 	
@@ -239,33 +240,6 @@ JAX.getTypeOf = function(value) {
 	}
 
 	return "object";
-};
-
-/**
- * @method Zjistí, jestli se jedná o podporovaný DOM element
- *
- * @param {} o testovaná hodnota
- * @returns {boolean}
- */
-JAX.isDOMElement = function(o) {
-	if (!o) { 
-		return false; 
-	}
-
-	if (o == window || (o.Window && o instanceof o.Window) || (o.constructor.toString().indexOf("DOMWindow") > -1)) { /* toString - fix pro Android */
-		return true;
-	}
-	
-	var win = o.defaultView || o.parentWindow || (o.ownerDocument ? (o.ownerDocument.defaultView || o.ownerDocument.parentWindow) : null);
-
-	return win && (
-		(win.HTMLElement && o instanceof win.HTMLElement) ||
-		(win.Element && o instanceof win.Element) || // IE
-		(win.HTMLDocument && o instanceof win.HTMLDocument) ||
-		(win.Document && o instanceof win.Document) || // IE 10
-		(win.DocumentFragment && o instanceof win.DocumentFragment) ||
-		(win.Text && o instanceof win.Text)
-	);
 };
 
 /**
