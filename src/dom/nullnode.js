@@ -11,14 +11,15 @@
 JAX.NullNode = JAK.ClassMaker.makeClass({
 	NAME: "JAX.NullNode",
 	VERSION: "1.0",
-	EXTEND: JAX.Node
+	EXTEND: JAX.Node,
+	IMPLEMENT: [JAX.IMoveableNode, JAX.INodeWithChildren, JAX.IListening]
 });
 
 JAX.NullNode.prototype.$constructor = function(selector) {
 	this.$super(null);
 	this._selector = selector || "";
 
-	this.jaxNodeType = -1;
+	this.jaxNodeType = JAX.NULL;
 	this._setFlags();
 };
 

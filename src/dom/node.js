@@ -130,12 +130,12 @@ JAX.Node.prototype._setFlags = function() {
 		return;
 	}
 
-	this.isWindow = this.jaxNodeType == -2;
-	this.isNull = this.jaxNodeType == -1;
-	this.isElement = this.jaxNodeType == 1;
-	this.isText = this.jaxNodeType == 3 || this.jaxNodeType == 8;
-	this.isDocument = this.jaxNodeType == 9;
-	this.isDocumentFragment = this.jaxNodeType == 11;
+	this.isWindow = this.jaxNodeType == JAX.WINDOW;
+	this.isNull = this.jaxNodeType == JAX.NULL;
+	this.isElement = this.jaxNodeType == JAX.HTML_ELEMENT;
+	this.isText = this.jaxNodeType == JAX.TEXT || this.jaxNodeType == JAX.COMMENT;
+	this.isDocument = this.jaxNodeType == JAX.DOCUMENT;
+	this.isDocumentFragment = this.jaxNodeType == JAX.DOCUMENT_FRAGMENT;
 
 	if (this._isNull) {
 		this.isSearchable = true;

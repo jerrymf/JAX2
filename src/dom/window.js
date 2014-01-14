@@ -17,7 +17,7 @@ JAX.Window = JAK.ClassMaker.makeClass({
 
 JAX.Window.prototype.$constructor = function(win) {
 	this.$super(win);
-	this.jaxNodeType = -2;
+	this.jaxNodeType = JAX.WINDOW;
 	this._setFlags();
 };
 

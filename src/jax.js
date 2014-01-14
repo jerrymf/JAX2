@@ -38,13 +38,13 @@ var JAX = function(selector, srcElement) {
 		var foundElm = srcElement.querySelector(selector);
 		var nodeType = foundElm ? foundElm.nodeType : -1;
 	} else if (typeof(selector) == "object") {
-		var nodeType = -1;
+		var nodeType = JAX.NULL;
 		var foundElm = null;
 
 		var isWindow = selector == window || (selector.Window && selector instanceof selector.Window) || (selector.constructor.toString().indexOf("DOMWindow") > -1); /* toString - fix pro Android */
 
 		if (isWindow) { 
-			var nodeType = -2;
+			var nodeType = JAX.WINDOW;
 			var foundElm = selector;	
 		} else {
 			var win = selector.defaultView || selector.parentWindow || (selector.ownerDocument ? (selector.ownerDocument.defaultView || selector.ownerDocument.parentWindow) : null);
@@ -64,21 +64,29 @@ var JAX = function(selector, srcElement) {
 	}
 
 	switch(nodeType) {
-		case -2:
+		case JAX.WINDOW:
 			return new JAX.Window(foundElm);
-		case -1:
+		case JAX.NULL:
 			return new JAX.NullNode(typeof(selector) == "string" ? selector : "");
-		case 1:
+		case JAX.HTML_ELEMENT:
 			return new JAX.Element(foundElm);
-		case 3:
-		case 8:
+		case JAX.TEXT:
+		case JAX.COMMENT:
 			return new JAX.TextNode(foundElm);
-		case 9:
+		case JAX.DOCUMENT:
 			return new JAX.Document(foundElm);
-		case 11:
+		case JAX.DOCUMENT_FRAGMENT:
 			return new JAX.DocumentFragment(foundElm);
 	}
 };
+
+JAX.WINDOW = -2; /* konstanta pro objekt window */
+JAX.NULL = -1; /* konstanta pro nulový objekt */
+JAX.HTML_ELEMENT = 1; /* konstanta pro nulový objekt */
+JAX.TEXT = 3; /* konstanta pro textový node */
+JAX.COMMENT = 8; /* konstanta pro komentářový node */
+JAX.DOCUMENT = 9; /* konstanta pro objekt document */
+JAX.DOCUMENT_FRAGMENT = 11; /* konstanta pro objekt document fragment */
 
 /**
  * @method Najde elementy, které odpovídají selectoru
