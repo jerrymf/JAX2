@@ -148,10 +148,10 @@ JAX.Node.prototype._setFlags = function() {
 		return;
 	}
 
-	this.isSearchable = this.isElement || this.isDocument || this.isDocumetFragment;
-	this.isListenable = this.isElement || this.isDocument || this._isWindow;
-	this.isScrollable = this.isListenable;
-	this.isMoveable = this.isElement || this.isText || this.isDocumetFragment;
-	this.isRemoveable = this.isElement || this.isText;
-	this.canHaveChildren = this.isElement || this.isDocumentFragment;
+	this.isSearchable = !!(this.isElement || this.isDocument || this.isDocumetFragment);
+	this.isListenable = !!(this.isElement || this.isDocument || this._isWindow);
+	this.isScrollable = !!this.isListenable;
+	this.isMoveable = !!(this.isElement || this.isText || this.isDocumetFragment);
+	this.isRemoveable = !!(this.isElement || this.isText);
+	this.canHaveChildren = !!(this.isElement || this.isDocumentFragment);
 };

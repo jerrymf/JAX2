@@ -213,8 +213,8 @@ JAX.IMoveableNode.prototype.isIn = function(node) {
 /**
  * @method bez zadaného parametru vrací přímo rodiče; se zadaným zjednodušeným css selectorem vrací rodiče, který jako první odpovídá pravidlu
  *
- * @param {string || object} selector řetězec splňující pravidla: tag#id.trida, kde id a třída mohou být zadány vícenásobně nebo vůbec | HTMLElement | JAX.Node
- * @returns {boolean}
+ * @param {string || undefined} selector řetězec splňující pravidla: tag#id.trida, kde id a třída mohou být zadány vícenásobně nebo vůbec | HTMLElement | JAX.Node
+ * @returns {object}
  */
 JAX.IMoveableNode.prototype.parent = function(selector) {
 	if (selector && typeof(selector) == "string") {
@@ -231,19 +231,89 @@ JAX.IMoveableNode.prototype.parent = function(selector) {
 /** 
  * @method vrací následující node
  *
+ * @param {string || number || undefined} selector řetězec splňující pravidla: tag#id.trida (lze zada více id i tříd) || požadovaný nodeType
  * @returns {object || null} JAX.Node
  */
-JAX.IMoveableNode.prototype.next = function() {
-	var jaxNode = JAX(this._node.nextSibling)
+JAX.IMoveableNode.prototype.next = function(selector) {
+	var n = this._node.nextSibling;
+
+	if (typeof(selector) == "number") {
+		while(n) {
+			if (n.nodeType == selector) {
+				return JAX(n);
+			}
+			n = n.nextSibling;
+		}
+		return null;
+	} else if (typeof(selector) == "string") {
+		if (/^[#.a-z0-9_-]+$/ig.test(selector)) {
+			while(n) { 
+				if (n.nodeType == JAX.HTML_ELEMENT && this._matches(n, selector)) {
+					return JAX(n);
+				}
+				n = n.nextSibling;
+			}
+		}
+		return null;
+	}
+
+	var jaxNode = JAX(n);
 	return jaxNode.n ? jaxNode : null;
 };
 
 /** 
  * @method vrací předchazející node
  *
+ * @param {string || number || undefined} selector řetězec splňující pravidla: tag#id.trida (lze zada více id i tříd) || požadovaný nodeType
  * @returns {object || null} JAX.Node
  */
-JAX.IMoveableNode.prototype.previous = function() {
-	var jaxNode = JAX(this._node.previousSibling);
+JAX.IMoveableNode.prototype.previous = function(selector) {
+	var n = this._node.previousSibling;
+
+	if (typeof(selector) == "number") {
+		while(n) {
+			if (n.nodeType == selector) {
+				return JAX(n);
+			}
+			n = n.previousSibling;
+		}
+		return null;
+	} else if (typeof(selector) == "string") {
+		if (/^[#.a-z0-9_-]+$/ig.test(selector)) {
+			while(n) { 
+				if (n.nodeType == JAX.HTML_ELEMENT && this._matches(n, selector)) {
+					return JAX(n);
+				}
+				n = n.previousSibling;
+			}
+		}
+		return null;
+	}
+
+	var jaxNode = JAX(n);
 	return jaxNode.n ? jaxNode : null;
 };
+
+JAX.IMoveableNode.prototype._matches = function(n, selector) {
+	var parts = (selector || "").match(/[#.]?[a-z0-9_-]+/ig) || [];
+	var ok = true;
+
+	for (var i=0;i<parts.length;i++) {
+		var part = parts[i];
+		switch (part.charAt(0)) {
+			case "#":
+				if (n.id != part.substring(1)) { ok = false; }
+			break;
+			case ".":
+				if (!JAK.DOM.hasClass(n, part.substring(1))) { ok = false; }
+			break;
+			default:
+				if (n.nodeName.toLowerCase() != part.toLowerCase()) { ok = false; }
+			break;
+		}
+	}
+	
+
+	return ok;
+};
+
