@@ -212,7 +212,7 @@ JAX.Element.prototype.html = function(innerHTML) {
  * @returns {object || string}
  */
 JAX.Element.prototype.text = function(text) {
-	if (typeof(innerHTML) != "string" && typeof(innerHTML) != "number") {
+	if (text && typeof(text) != "string" && typeof(text) != "number") {
 		console.error("JAX.Element.text: For my argument I expected string or number.", this._node);
 	}
 
