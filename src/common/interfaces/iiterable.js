@@ -174,25 +174,6 @@ JAX.IIterable.prototype.forEachItem = function(func, obj) {
 };
 
 /**
- * @method iteruje pouze HTML elementy v poli a volá nad nimi zadanou funkci
- *
- * @param {function} func zadaná funkce
- * @param {object} obj object, v jehož kontextu bude funkce volána
- * @returns {number}
- */
-JAX.IIterable.prototype.forEachElm = function(func, obj) {
-	var func = obj ? func.bind(obj) : func;
-
-	for (var i=0; i<this.length; i++) {
-		var elm = this[i];
-		if (!elm.isElement) { continue; }
-		func(elm, i, this);
-	}
-
-	return this;
-};
-
-/**
  * @method pomocí zadané funkce vrací vyfiltrované pole. Do funkce jsou prvky v každé iteraci jednotlivě předány a pokud splní podmínku, prvek se do vráceného filtrovaného pole zařadí.
  *
  * @param {function} func zadaná funkce
@@ -206,28 +187,6 @@ JAX.IIterable.prototype.filterItems = function(func, obj) {
 	for (var i=0; i<this.length; i++) {
 		if (func(this[i], i, this)) {
 			filtered.push(this[i]);
-		}
-	}
-
-	return JAX.all(filtered);
-};
-
-/**
- * @method pomocí zadané funkce vrací vyfiltrované pole. Prochází pouze HTML elementy, které jsou do funkce v každé iteraci jednotilvě předány a pokud splní podmínku, element se do vráceného filtrovaného pole zařadí.
- *
- * @param {function} func zadaná funkce
- * @param {object} obj object, v jehož kontextu bude funkce volána
- * @returns {object} JAX.NodeArray
- */
-JAX.IIterable.prototype.filterElms = function(func, obj) {
-	var func = obj ? func.bind(obj) : func;
-	var filtered = [];
-
-	for (var i=0; i<this.length; i++) {
-		var elm = this[i];
-		if (!elm.isElement) { continue; }
-		if (func(elm, i, this)) {
-			filtered.push(elm);
 		}
 	}
 

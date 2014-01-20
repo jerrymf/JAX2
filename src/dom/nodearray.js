@@ -180,6 +180,47 @@ JAX.NodeArray.prototype.index = function(node) {
 };
 
 /**
+ * @method iteruje pouze HTML elementy v poli a volá nad nimi zadanou funkci
+ *
+ * @param {function} func zadaná funkce
+ * @param {object} obj object, v jehož kontextu bude funkce volána
+ * @returns {number}
+ */
+JAX.NodeArray.prototype.forEachElm = function(func, obj) {
+	var func = obj ? func.bind(obj) : func;
+
+	for (var i=0; i<this.length; i++) {
+		var elm = this[i];
+		if (!elm.isElement) { continue; }
+		func(elm, i, this);
+	}
+
+	return this;
+};
+
+/**
+ * @method pomocí zadané funkce vrací vyfiltrované pole. Prochází pouze HTML elementy, které jsou do funkce v každé iteraci jednotilvě předány a pokud splní podmínku, element se do vráceného filtrovaného pole zařadí.
+ *
+ * @param {function} func zadaná funkce
+ * @param {object} obj object, v jehož kontextu bude funkce volána
+ * @returns {object} JAX.NodeArray
+ */
+JAX.NodeArray.prototype.filterElms = function(func, obj) {
+	var func = obj ? func.bind(obj) : func;
+	var filtered = [];
+
+	for (var i=0; i<this.length; i++) {
+		var elm = this[i];
+		if (!elm.isElement) { continue; }
+		if (func(elm, i, this)) {
+			filtered.push(elm);
+		}
+	}
+
+	return JAX.all(filtered);
+};
+
+/**
  * @method nastaví elementům classname
  *
  * @param {String} classNames třída nebo třídy oddělené mezerou
@@ -448,7 +489,7 @@ JAX.NodeArray.prototype.animate = function(type, duration, start, end) {
 
 	for (var i=0; i<this.length; i++) {
 		var item = this[i];
-		if (item.isElement) { continue; }
+		if (!item.isElement) { continue; }
 		fxs[i] = item.animate.apply(item, arguments);
 	}
 	return new JAX.FXArray(fxs);
@@ -470,7 +511,7 @@ JAX.NodeArray.prototype.fade = function(type, duration) {
 
 	for (var i=0; i<this.length; i++) {
 		var item = this[i];
-		if (item.isElement) { continue; }
+		if (!item.isElement) { continue; }
 		fxs[i] = item.fade.apply(item, arguments);
 	}
 	return new JAX.FXArray(fxs);
@@ -492,7 +533,7 @@ JAX.NodeArray.prototype.fadeTo = function(opacityValue, duration) {
 
 	for (var i=0; i<this.length; i++) {
 		var item = this[i];
-		if (item.isElement) { continue; }
+		if (!item.isElement) { continue; }
 		fxs[i] = item.fadeTo.apply(item, arguments);
 	}
 	return new JAX.FXArray(fxs);
@@ -514,7 +555,7 @@ JAX.NodeArray.prototype.slide = function(type, duration) {
 
 	for (var i=0; i<this.length; i++) {
 		var item = this[i];
-		if (item.isElement) { continue; }
+		if (!item.isElement) { continue; }
 		fxs[i] = item.slide.apply(item, arguments);
 	}
 	return new JAX.FXArray(fxs);
@@ -526,7 +567,7 @@ JAX.NodeArray.prototype.scroll = function(type, value, duration) {
 
 	for (var i=0; i<this.length; i++) {
 		var item = this[i];
-		if (item.isScrollable) { continue; }
+		if (!item.isScrollable) { continue; }
 		fxs[i] = item.scroll.apply(item, arguments);
 	}
 	return new JAX.FXArray(fxs);
