@@ -109,7 +109,7 @@ JAX.Node.prototype.prop = function(property, value) {
 		}
 	}
 
-	if (argLength == 2) {
+	if (argLength == 2 && (value || value === "")) {
 		if (typeof(property) == "string") {
 			this._node[property] = value;
 			return this;

@@ -288,10 +288,14 @@ JAX.NodeArray.prototype.removeClass = function(classNames) {
  * @returns {Object} JAX.NodeArray
  */
 JAX.NodeArray.prototype.attr = function(property, value) {
+	if (!value && value !== "") {
+		return this;
+	}
+
 	for (var i=0; i<this.length; i++) {
 		var item = this[i];
 		if (!item.isElement) { continue; }
-		item.attr.apply(item, arguments);
+		item.attr(property, value);
 	}
 	return this;
 };
@@ -319,10 +323,14 @@ JAX.NodeArray.prototype.removeAttr = function(properties) {
  * @returns {Object} JAX.NodeArray
  */
 JAX.NodeArray.prototype.css = function(property, value) {
+	if (!value && value !== "") {
+		return this;
+	}
+
 	for (var i=0; i<this.length; i++) {
 		var item = this[i];
 		if (!item.isElement) { continue; }
-		item.css.apply(item, arguments);
+		item.css(property, value);
 	}
 	return this;
 };
@@ -335,9 +343,13 @@ JAX.NodeArray.prototype.css = function(property, value) {
  * @returns {Object} JAX.NodeArray
  */
 JAX.NodeArray.prototype.prop = function(property, value) {
+	if (!value && value !== "") {
+		return this;
+	}
+
 	for (var i=0; i<this.length; i++) {
 		var item = this[i];
-		item.prop.apply(item, arguments);
+		item.prop(property, value);
 	}
 	return this;
 };
@@ -439,7 +451,7 @@ JAX.NodeArray.prototype.stopListening = function(type) {
 	for (var i=0; i<this.length; i++) {
 		var item = this[i];
 		if (!item.isListenable) { continue; }
-		item.stopListening.apply(item, type);
+		item.stopListening(type);
 	}
 	return this;
 };

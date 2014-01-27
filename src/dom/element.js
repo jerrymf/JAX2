@@ -262,7 +262,7 @@ JAX.Element.prototype.attr = function(property, value) {
 		}
 	}
 
-	if (argLength == 2) {
+	if (argLength == 2 && (value || value === "")) {
 		if (typeof(property) == "string") {
 			this._node.setAttribute(property, value + "");
 			return this;
@@ -339,7 +339,7 @@ JAX.Element.prototype.css = function(property, value) {
 		}
 	}
 
-	if (argLength == 2) {
+	if (argLength == 2 && (value || value === "")) {
 		if (!property) { return this; }
 		
 		if (typeof(property) == "string") {
