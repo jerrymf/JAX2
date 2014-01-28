@@ -12,19 +12,11 @@ JAX.Document = JAK.ClassMaker.makeClass({
 	NAME: "JAX.Document",
 	VERSION: "1.0",
 	EXTEND: JAX.Node,
-	IMPLEMENT: [JAX.IListening]
+	IMPLEMENT: [JAX.IListening, JAX.ISearchableNode]
 });
 
 JAX.Document.prototype.$constructor = function(doc) {
 	this.$super(doc);
-};
-
-JAX.Document.prototype.find = function(selector) {
-	return JAX(selector, this._node);
-};
-
-JAX.Document.prototype.findAll = function(selector) {
-	return JAX.all(selector, this._node);
 };
 
 JAX.Document.prototype.contains = function(node) {

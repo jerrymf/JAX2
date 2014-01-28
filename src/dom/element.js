@@ -12,7 +12,7 @@ JAX.Element = JAK.ClassMaker.makeClass({
 	NAME: "JAX.Element",
 	VERSION: "1.0",
 	EXTEND: JAX.Node,
-	IMPLEMENT: [JAX.IListening, JAX.INodeWithChildren, JAX.IMoveableNode]
+	IMPLEMENT: [JAX.IListening, JAX.INodeWithChildren, JAX.IMoveableNode, JAX.ISearchableNode]
 });
 
 JAX.Element._OPACITY_REGEXP = /alpha\(opacity=['"]?([0-9]+)['"]?\)/i;
@@ -44,26 +44,6 @@ JAX.Element.prototype.$constructor = function(node) {
 JAX.Element.prototype.$destructor = function() {
 	this.stopListening();
 	this.$super();
-};
-
-/**
- * @method najde element odpovídající selectoru v rámci tohoto elementu
- *
- * @param {string || object} selector řetězec splňující pravidla css3 (pro IE8 css2.1) selectoru | HTMLElement | Text | HTMLDocument | Window | JAX.Node
- * @returns {object}
- */
-JAX.Element.prototype.find = function(selector) {
-	return JAX(selector, this._node);
-};
-
-/**
- * @method najde elementy odpovídají selectoru v rámci tohoto elementu
- *
- * @param {string || object || array} selector řetězec splňující pravidla css3 (pro IE8 css2.1) selectoru | Array of (HTMLElement | Text | HTMLDocument | Window | object
- * @returns {object}
- */
-JAX.Element.prototype.findAll = function(selector) {
-	return JAX.all(selector, this._node);
 };
 
 /**
