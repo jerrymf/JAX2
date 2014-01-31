@@ -137,7 +137,7 @@ JAX.Node.prototype._setFlags = function() {
 	this.isDocument = this.jaxNodeType == JAX.DOCUMENT;
 	this.isDocumentFragment = this.jaxNodeType == JAX.DOCUMENT_FRAGMENT;
 
-	if (this._isNull) {
+	if (this.isNull) {
 		this.isSearchable = true;
 		this.isListenable = true;
 		this.isScrollable = true;
