@@ -149,7 +149,7 @@ JAX.Node.prototype._setFlags = function() {
 	}
 
 	this.isSearchable = !!(this.isElement || this.isDocument || this.isDocumetFragment);
-	this.isListenable = !!(this.isElement || this.isDocument || this._isWindow);
+	this.isListenable = !!(this.isElement || this.isDocument || this.isWindow);
 	this.isScrollable = !!this.isListenable;
 	this.isMoveable = !!(this.isElement || this.isText || this.isDocumetFragment);
 	this.isRemoveable = !!(this.isElement || this.isText);
