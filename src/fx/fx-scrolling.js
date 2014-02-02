@@ -35,7 +35,7 @@ JAX.FX.Scrolling.prototype.$constructor = function(jaxElm) {
 };
 
 /**
- * @method přidá atribut scrollování, který se bude animovat. Pro každou vlastnost lze zadat různou délku animace.
+ * @method přidá atribut pro scrollování, který se bude animovat. Pro každou vlastnost lze zadat různou délku animace.
  * @param {string} property "left" nebo "top" pro scrollLeft respektive scrollTop
  * @param {number} value koncová hodnota v px
  * @param {number} duration délka animace v ms
