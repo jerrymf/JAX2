@@ -5,7 +5,7 @@
  */
 
 /**
- * Třída reprezentující text node a comment node (nodeType == 3 || nodeType == 8)
+ * Třída reprezentující text node a comment node (elm.nodeType == 3 || elm.nodeType == 8)
  * @class JAX.TextNode
  */
 JAX.TextNode = JAK.ClassMaker.makeClass({
