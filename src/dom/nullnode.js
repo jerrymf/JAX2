@@ -7,6 +7,13 @@
 /**
  * Třída reprezentující nullový node - návrhový vzor Null object
  * @class JAX.NullNode
+ *
+ * @see JAX.ISearchableNode
+ * @see JAX.IMoveableNode
+ * @see JAX.INodeWithChildren
+ * @see JAX.IListening
+ * @see JAX.IAnimateableNode
+ * @see JAX.IScrollableNode
  */
 JAX.NullNode = JAK.ClassMaker.makeClass({
 	NAME: "JAX.NullNode",
@@ -31,43 +38,43 @@ JAX.NullNode.prototype.$constructor = function(selector) {
 	this.canHaveChildren = false;
 };
 
-JAX.NullNode.prototype.find = function(selector) {
+JAX.NullNode.prototype.find = function() {
 	this._showMessage("find");
 
 	return JAX(null);
 };
 
-JAX.NullNode.prototype.findAll = function(selector) {
+JAX.NullNode.prototype.findAll = function() {
 	this._showMessage("findAll");
 
 	return new JAX.NodeArray([]);
 };
 
-JAX.NullNode.prototype.addClass = function(classNames) {
+JAX.NullNode.prototype.addClass = function() {
 	this._showMessage("addClass");
 
 	return this;
 };
 
-JAX.NullNode.prototype.removeClass = function(classNames) {
+JAX.NullNode.prototype.removeClass = function() {
 	this._showMessage("removeClass");
 
 	return this;
 };
 
-JAX.NullNode.prototype.hasClass = function(className) {
+JAX.NullNode.prototype.hasClass = function() {
 	this._showMessage("hasClass");
 
 	return false;
 };
 
-JAX.NullNode.prototype.toggleClass = function(className) {
+JAX.NullNode.prototype.toggleClass = function() {
 	this._showMessage("toggleClass");
 
 	return this;
 }
 
-JAX.NullNode.prototype.id = function(id) {
+JAX.NullNode.prototype.id = function() {
 	this._showMessage("id");
 
 	if (arguments.length) {
@@ -77,7 +84,7 @@ JAX.NullNode.prototype.id = function(id) {
 	return "";
 };
 
-JAX.NullNode.prototype.html = function(innerHTML) {
+JAX.NullNode.prototype.html = function() {
 	this._showMessage("html");
 
 	if (arguments.length) {
@@ -87,7 +94,7 @@ JAX.NullNode.prototype.html = function(innerHTML) {
 	return "";
 };
 
-JAX.NullNode.prototype.text = function(text) {
+JAX.NullNode.prototype.text = function() {
 	this._showMessage("text");
 
 	if (arguments.length) {
@@ -97,55 +104,55 @@ JAX.NullNode.prototype.text = function(text) {
 	return "";
 };
 
-JAX.NullNode.prototype.add = function(nodes) {
+JAX.NullNode.prototype.add = function() {
 	this._showMessage("add");
 
 	return this;
 };
 
-JAX.NullNode.prototype.insertFirst = function(node) {
+JAX.NullNode.prototype.insertFirst = function() {
 	this._showMessage("inserFirst");
 
 	return this;
 };
 
-JAX.NullNode.prototype.insertFirstTo = function(node) {
+JAX.NullNode.prototype.insertFirstTo = function() {
 	this._showMessage("inserFirstTo");
 
 	return this;
 };
 
-JAX.NullNode.prototype.addBefore = function(node, nodeBefore) {
+JAX.NullNode.prototype.addBefore = function() {
 	this._showMessage("addBefore");
 
 	return this;
 };
 
-JAX.NullNode.prototype.appendTo = function(node) {
+JAX.NullNode.prototype.appendTo = function() {
 	this._showMessage("appendTo");
 
 	return this;
 };
 
-JAX.NullNode.prototype.before = function(node) {
+JAX.NullNode.prototype.before = function() {
 	this._showMessage("before");
 
 	return this;
 };
 
-JAX.NullNode.prototype.after = function(node) {
+JAX.NullNode.prototype.after = function() {
 	this._showMessage("after");
 
 	return this;
 };
 
-JAX.NullNode.prototype.replaceWith = function(node) {
+JAX.NullNode.prototype.replaceWith = function() {
 	this._showMessage("replaceWith");
 
 	return this;
 };
 
-JAX.NullNode.prototype.swapPlaceWith = function(node) {
+JAX.NullNode.prototype.swapPlaceWith = function() {
 	this._showMessage("swapPlaceWith");
 
 	return this;
@@ -157,25 +164,25 @@ JAX.NullNode.prototype.remove = function() {
 	return this;
 };
 
-JAX.NullNode.prototype.clone = function(withContent) {
+JAX.NullNode.prototype.clone = function() {
 	this._showMessage("clone");
 
 	return this;
 };
 
-JAX.NullNode.prototype.listen = function(type, obj, funcMethod, bindData) {
+JAX.NullNode.prototype.listen = function() {
 	this._showMessage("listen");
 
-	return new JAX.Listener(this, null, type, funcMethod);
+	return new JAX.Listener(this, null, arguments[0], arguments[2]);
 };
 
-JAX.NullNode.prototype.stopListening = function(listener) {
+JAX.NullNode.prototype.stopListening = function() {
 	this._showMessage("stopListening");
 
 	return this;
 };
 
-JAX.NullNode.prototype.prop = function(property, value) {
+JAX.NullNode.prototype.prop = function() {
 	this._showMessage("prop");
 
 	if (typeof(arguments[0]) == "string") { return ""; }
@@ -183,7 +190,7 @@ JAX.NullNode.prototype.prop = function(property, value) {
 	return this;
 };
 
-JAX.NullNode.prototype.attr = function(property, value) {
+JAX.NullNode.prototype.attr = function() {
 	this._showMessage("attr");
 
 	if (typeof(arguments[0]) == "string") { return ""; }
@@ -191,7 +198,7 @@ JAX.NullNode.prototype.attr = function(property, value) {
 	return this;
 };
 
-JAX.NullNode.prototype.css = function(property, value) {
+JAX.NullNode.prototype.css = function() {
 	this._showMessage("css");
 
 	if (typeof(arguments[0]) == "string") { return ""; }
@@ -199,19 +206,19 @@ JAX.NullNode.prototype.css = function(property, value) {
 	return this;
 };
 
-JAX.NullNode.prototype.computedCss = function(properties) {
+JAX.NullNode.prototype.computedCss = function() {
 	this._showMessage("computedCss");
 
-	return typeof(properties) ? "" : {};
+	return typeof(arguments[0]) ? "" : {};
 };
 
-JAX.NullNode.prototype.fullSize = function(sizeType, value) {
+JAX.NullNode.prototype.fullSize = function() {
 	this._showMessage("fullSize");
 
 	return arguments.length == 1 ? 0 : this;
 };
 
-JAX.NullNode.prototype.size = function(sizeType, value) {
+JAX.NullNode.prototype.size = function() {
 	this._showMessage("size");
 
 	return arguments.length == 1 ? 0 : this;
@@ -235,10 +242,10 @@ JAX.NullNode.prototype.previous = function() {
 	return null;
 };
 
-JAX.NullNode.prototype.children = function(index) {
+JAX.NullNode.prototype.children = function() {
 	this._showMessage("children");
 
-	return arguments.length ? new this.constructor() : new JAX.NodeArray([]);
+	return arguments.length ? null : new JAX.NodeArray([]);
 };
 
 JAX.NullNode.prototype.first = function() {
@@ -259,52 +266,52 @@ JAX.NullNode.prototype.clear = function() {
 	return null;
 };
 
-JAX.NullNode.prototype.eq = function(node) {
+JAX.NullNode.prototype.eq = function() {
 	this._showMessage("eq");
 
 	return false;
 };
 
-JAX.NullNode.prototype.contains = function(node) {
+JAX.NullNode.prototype.contains = function() {
 	this._showMessage("contains");
 
 	return false;
 };
 
-JAX.NullNode.prototype.isIn = function(node) {
+JAX.NullNode.prototype.isIn = function() {
 	this._showMessage("isIn");
 
 	return false;
 };
 
-JAX.NullNode.prototype.animate = function(property, duration, start, end) {
+JAX.NullNode.prototype.animate = function() {
 	this._showMessage("animate");
 
-	return new JAK.Promise().reject(this._node);
+	return new JAX.FX(null);
 };
 
-JAX.NullNode.prototype.fade = function(type, duration) {
+JAX.NullNode.prototype.fade = function() {
 	this._showMessage("fade");
 
-	return new JAK.Promise().reject(this._node);
+	return new JAX.FX(null);
 };
 
-JAX.NullNode.prototype.fadeTo = function(opacityValue, duration) {
+JAX.NullNode.prototype.fadeTo = function() {
 	this._showMessage("fadeTo");
 
-	return new JAK.Promise().reject(this._node);
+	return new JAX.FX(null);
 };
 
-JAX.NullNode.prototype.slide = function(type, duration) {
+JAX.NullNode.prototype.slide = function() {
 	this._showMessage("slide");
 
-	return new JAK.Promise().reject(this._node);
+	return new JAX.FX(null);
 };
 
-JAX.NullNode.prototype.scroll = function(type, value, duration) {
+JAX.NullNode.prototype.scroll = function() {
 	this._showMessage("scroll");
 
-	return new JAK.Promise().reject(this._node);
+	return  new JAX.FX.Scrolling(null);
 };
 
 JAX.NullNode.prototype._showMessage = function(method) {

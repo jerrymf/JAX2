@@ -7,6 +7,9 @@
 /**
  * Třída reprezentující object Window
  * @class JAX.Window
+ *
+ * @see JAX.IListening
+ * @see JAX.IScrollableNode
  */
 JAX.Window = JAK.ClassMaker.makeClass({
 	NAME: "JAX.Window",

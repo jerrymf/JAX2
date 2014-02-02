@@ -7,6 +7,13 @@
 /**
  * Třída reprezentující prvek v DOMu a poskytující rozšířené metody pro práci s ním
  * @class JAX.Node
+ *
+ * @see JAX.ISearchableNode
+ * @see JAX.IMoveableNode
+ * @see JAX.INodeWithChildren
+ * @see JAX.IListening
+ * @see JAX.IAnimateableNode
+ * @see JAX.IScrollableNode
  */
 JAX.Element = JAK.ClassMaker.makeClass({
 	NAME: "JAX.Element",

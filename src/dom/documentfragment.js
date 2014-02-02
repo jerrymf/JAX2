@@ -7,6 +7,10 @@
 /**
  * Třída reprezentující instanci window.DocumentFragment
  * @class JAX.DocumentFragment
+ *
+ * @see JAX.ISearchableNode
+ * @see JAX.IMoveableNode
+ * @see JAX.INodeWithChildren
  */
 JAX.DocumentFragment = JAK.ClassMaker.makeClass({
 	NAME: "JAX.DocumentFragment",

@@ -7,6 +7,10 @@
 /**
  * Třída reprezentující instanci window.Document
  * @class JAX.Document
+ *
+ * @see JAX.ISearchableNode
+ * @see JAX.IListening
+ * @see JAX.IScrollableNode
  */
 JAX.Document = JAK.ClassMaker.makeClass({
 	NAME: "JAX.Document",
