@@ -20,7 +20,15 @@ JAX.NullNode.prototype.$constructor = function(selector) {
 	this._selector = selector || "";
 
 	this.jaxNodeType = JAX.NULL;
-	this._setFlags();
+	
+	this.isNull = true;
+	
+	this.isSearchable = true;
+	this.isListenable = true;
+	this.isScrollable = true;
+	this.isMoveable = true;
+	this.isRemoveable = true;
+	this.canHaveChildren = true;
 };
 
 JAX.NullNode.prototype.find = function(selector) {

@@ -22,8 +22,12 @@ JAX.Window = JAK.ClassMaker.makeClass({
  */
 JAX.Window.prototype.$constructor = function(win) {
 	this.$super(win);
+
 	this.jaxNodeType = JAX.WINDOW;
-	this._setFlags();
+
+	this.isWindow = true;
+	this.isListenable = true;
+	this.isScrollable = true;
 };
 
 /**

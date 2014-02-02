@@ -22,6 +22,12 @@ JAX.DocumentFragment = JAK.ClassMaker.makeClass({
  */
 JAX.DocumentFragment.prototype.$constructor = function(doc) {
 	this.$super(doc);
+
+	this.isDocumentFragment = true;
+
+	this.canHaveChildren = true;
+	this.isMoveable = true;
+	this.isSearchable = true;
 };
 
 /** 

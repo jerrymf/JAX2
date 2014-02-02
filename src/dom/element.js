@@ -34,6 +34,15 @@ JAX.Element._BOX_SIZING = null;
 
 JAX.Element.prototype.$constructor = function(node) {
 	this.$super(node);
+
+	this.isElement = true;
+
+	this.isSearchable = true;
+	this.isListenable = true;
+	this.isScrollable = true;
+	this.isMoveable = true;
+	this.isRemoveable = true;
+	this.canHaveChildren = true;
 };
 
 /**

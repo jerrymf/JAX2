@@ -17,6 +17,11 @@ JAX.TextNode = JAK.ClassMaker.makeClass({
 
 JAX.TextNode.prototype.$constructor = function(node) {
 	this.$super(node);
+
+	this.isText = true;
+
+	this.isMoveable = true;
+	this.isRemoveable = true;
 };
 
 JAX.TextNode.prototype.text = function(text) {

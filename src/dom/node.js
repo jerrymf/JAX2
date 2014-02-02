@@ -37,9 +37,6 @@ JAX.Node.prototype.$constructor = function(node) {
 
 	// privatni atribut
 	this._node = node;
-
-	// nastavime flagy podle nodeType
-	this._setFlags();
 };
 
 JAX.Node.prototype.$destructor = function() {
@@ -123,35 +120,4 @@ JAX.Node.prototype.prop = function(property, value) {
 
 	console.error("JAX.MoveableNode.prop: Unsupported arguments: ", arguments);
 	return this;
-};
-
-JAX.Node.prototype._setFlags = function() {
-	if (!this.jaxNodeType) {
-		return;
-	}
-
-	this.isWindow = this.jaxNodeType == JAX.WINDOW;
-	this.isNull = this.jaxNodeType == JAX.NULL;
-	this.isElement = this.jaxNodeType == JAX.HTML_ELEMENT;
-	this.isText = this.jaxNodeType == JAX.TEXT || this.jaxNodeType == JAX.COMMENT;
-	this.isDocument = this.jaxNodeType == JAX.DOCUMENT;
-	this.isDocumentFragment = this.jaxNodeType == JAX.DOCUMENT_FRAGMENT;
-
-	if (this.isNull) {
-		this.isSearchable = true;
-		this.isListenable = true;
-		this.isScrollable = true;
-		this.isMoveable = true;
-		this.isRemoveable = true;
-		this.canHaveChildren = true;
-
-		return;
-	}
-
-	this.isSearchable = !!(this.isElement || this.isDocument || this.isDocumetFragment);
-	this.isListenable = !!(this.isElement || this.isDocument || this.isWindow);
-	this.isScrollable = !!this.isListenable;
-	this.isMoveable = !!(this.isElement || this.isText || this.isDocumetFragment);
-	this.isRemoveable = !!(this.isElement || this.isText);
-	this.canHaveChildren = !!(this.isElement || this.isDocumentFragment);
 };

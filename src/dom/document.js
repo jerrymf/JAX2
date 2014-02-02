@@ -22,6 +22,12 @@ JAX.Document = JAK.ClassMaker.makeClass({
  */
 JAX.Document.prototype.$constructor = function(doc) {
 	this.$super(doc);
+
+	this.isDocument = true;
+
+	this.isListenable = true;
+	this.isSearchable = true;
+	this.isScrollable = true;
 };
 
 /** 
