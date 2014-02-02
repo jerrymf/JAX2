@@ -25,7 +25,7 @@ JAX.Event.prototype.$constructor = function(e) {
 /**
  * @method vrací event object
  *
- * @returns {object} window.Event
+ * @returns {object.<window.Event>}
  */
 JAX.Event.prototype.event = function() {
 	return this._e;
@@ -34,7 +34,7 @@ JAX.Event.prototype.event = function() {
 /**
  * @method zruší výchozí provedení události
  *
- * @returns {object} JAX.Event
+ * @returns {object.<JAX.Event>}
  */
 JAX.Event.prototype.prevent= function() {
 	this._e.preventDefault();
@@ -44,7 +44,7 @@ JAX.Event.prototype.prevent= function() {
 /**
  * @method stopne probublávání
  *
- * @returns {object} JAX.Event
+ * @returns {object.<JAX.Event>}
  */
 JAX.Event.prototype.stop = function() {
 	this._e.stopPropagation();
@@ -54,7 +54,7 @@ JAX.Event.prototype.stop = function() {
 /**
  * @method vrací cílový element
  *
- * @returns {object} JAX.Node
+ * @returns {object.<JAX.Node>}
  */
 JAX.Event.prototype.target = function() {
 	return JAX(this._e.target);
@@ -63,7 +63,7 @@ JAX.Event.prototype.target = function() {
 /**
  * @method vrací element, na který byla událost zavěšena
  *
- * @returns {object} JAX.Node
+ * @returns {object.<JAX.Node>}
  */
 JAX.Event.prototype.currentTarget = function() {
 	return JAX(this._e.currentTarget);

@@ -29,7 +29,7 @@ JAX.Listener.prototype.$constructor = function(jaxElm, type, method) {
 /**
  * @method odvěsí posluchač
  *
- * @returns {object} JAX.Listener
+ * @returns {object.<JAX.Listener>}
  */ 
 JAX.Listener.prototype.unregister = function() {
 	if (!this._method) { return; }
@@ -41,7 +41,7 @@ JAX.Listener.prototype.unregister = function() {
 /**
  * @method vrací element, na kterém je událost navěšena
  *
- * @returns {object} JAX.Node
+ * @returns {object.<JAX.Node>}
  */ 
 JAX.Listener.prototype.jaxElm = function() {
 	return this._jaxElm;

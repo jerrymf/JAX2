@@ -22,7 +22,7 @@ JAX.IListening._listeners = {};
  * @param {object || function} obj objekt, ve kterém se metoda nachází nebo připravená funkce
  * @param {string || function} func název metody nebo instance funkce, která se má zavolat po té ,co je událost vyvolána
  * @param {boolean} useCapture hodnata použitá jako argument capture pro DOM zachytávání
- * @returns {object} JAX.Listener
+ * @returns {object.<JAX.Listener>}
  */
 JAX.IListening.prototype.listen = function(type, obj, func, useCapture) {
 	var eventFunc = null;
@@ -82,7 +82,7 @@ JAX.IListening.prototype.listen = function(type, obj, func, useCapture) {
  * @method odvěsí posluchač na základě parametru, což může být typ události ("click", "mousedown", ...), případně lze předat instanci JAX.Listener, kterou vrátila metoda listen nebo metodu zavolat bez parametrů a tím se odvěsí všechny posluchaču na elementu navěšené
  *
  * @param {string || object} listener typ události nebo instance JAX.Listener
- * @returns {object} JAX.Node
+ * @returns {object.<JAX.Node>}
  */
 JAX.IListening.prototype.stopListening = function(listener) {
 	if (!listener && arguments.length) {

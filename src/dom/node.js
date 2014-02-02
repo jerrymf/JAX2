@@ -83,7 +83,7 @@ JAX.Node.prototype.exists = function() {
  *
  * @param {string || array || object} property název vlastnosti | pole názvů vlastností | asociativní pole, např. {id:"mojeId", checked:true}
  * @param {} value nastavená hodnota
- * @returns {string || object}
+ * @returns {string || object.<JAX.Node> || object}
  */
 JAX.Node.prototype.prop = function(property, value) {
 	if (!property) { 

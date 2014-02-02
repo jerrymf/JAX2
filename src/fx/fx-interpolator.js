@@ -52,7 +52,7 @@ JAX.FX.Interpolator.prototype.set = function(settings) {
 /**
  * @method spustí interpolátor
  *
- * @returns {object} JAK.Promise
+ * @returns {object.<JAK.Promise>}
  */
 JAX.FX.Interpolator.prototype.run = function() {
 	this._promise.finished = new JAK.Promise();

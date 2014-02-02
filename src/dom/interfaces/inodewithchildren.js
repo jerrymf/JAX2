@@ -17,7 +17,7 @@ JAX.INodeWithChildren = JAK.ClassMaker.makeInterface({
  * @method přidává do elementu další uzly vždy na konec, lze zadat i jako html string, který se následně připne
  *
  * @param {string || object || array} nodes HTML string || HTMLElement || Text || HTMLDocumetFragment || pole elementů || instance JAX.NodeArray
- * @returns {object} JAX.Node
+ * @returns {object.<JAX.Node>}
  */
 JAX.INodeWithChildren.prototype.add = function(nodes) {
 	if (!this._node.childNodes) {
@@ -44,7 +44,7 @@ JAX.INodeWithChildren.prototype.add = function(nodes) {
  * @method vloží zadané uzly před první uzel v elementu, lze zadat i jako html string, který se následně připne před první element
  *
  * @param {string || object || array}
- * @returns {object} JAX.Node
+ * @returns {object.<JAX.Node>}
  */
 JAX.INodeWithChildren.prototype.insertFirst = function(nodes) {
 	if (!this._node.childNodes) {
@@ -87,7 +87,7 @@ JAX.INodeWithChildren.prototype.insertFirst = function(nodes) {
  *
  * @param {object || string} node element nebo css selector, jak se k elementu dostat
  * @param {object || string} nodeBefore element nebo css selector, jak se k elementu dostat
- * @returns {object} JAX.Node
+ * @returns {object.<JAX.Node>}
  */
 JAX.INodeWithChildren.prototype.addBefore = function(node, nodeBefore) {
 	if (!this._node.childNodes) {
@@ -148,7 +148,7 @@ JAX.INodeWithChildren.prototype.contains = function(nodes) {
  * @method vrací JAXové pole (JAX.NodeArray) přímých potomků; pokud je ale zadán parametr index, vrací právě jeden JAXový node
  *
  * @param {number || undefined} index číselný index požadovaného potomku
- * @returns {object || null} JAX.Node || JAX.NodeArray
+ * @returns {object.<JAX.Node> || object.<JAX.NodeArray> || null}
  */
 JAX.INodeWithChildren.prototype.children = function(index) {
 	if (!this._node.childNodes) {
@@ -176,7 +176,7 @@ JAX.INodeWithChildren.prototype.children = function(index) {
 /** 
  * @method vrací první HTMLElement jako JAXový node
  *
- * @returns {object || null} JAX.Node
+ * @returns {object.<JAX.Node> || null}
  */
 JAX.INodeWithChildren.prototype.first = function() {
 	if (!this._node.childNodes) {
@@ -201,7 +201,7 @@ JAX.INodeWithChildren.prototype.first = function() {
 /** 
  * @method vrací poslední HTMLElement jako JAXový node
  *
- * @returns {object || null} JAX.Node
+ * @returns {object.<JAX.Node> || null}
  */
 JAX.INodeWithChildren.prototype.last = function() {
 	if (!this._node.childNodes) {
@@ -226,7 +226,7 @@ JAX.INodeWithChildren.prototype.last = function() {
 /** 
  * @method promaže element, odstraní jeho přímé potomky
  *
- * @returns {object} JAX.Node
+ * @returns {object.<JAX.Node>}
  */
 JAX.INodeWithChildren.prototype.clear = function() {
 	if (!this._node.childNodes) {

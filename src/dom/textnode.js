@@ -35,7 +35,7 @@ JAX.TextNode.prototype.$constructor = function(node) {
  * @method nastaví nebo vrátí textovou hodnotu uzlu
  *
  * @param {string || undefined} text textový řetězec
- * @returns {object || string} JAX.Node
+ * @returns {object.<JAX.Node> || string} JAX.Node
  */
 JAX.TextNode.prototype.text = function(text) {
 	if (!arguments.length) { 
@@ -50,7 +50,7 @@ JAX.TextNode.prototype.text = function(text) {
 /**
  * @method nastaví textovou hodnotu na prázdný řetězec
  *
- * @returns {object} JAX.Node
+ * @returns {object.<JAX.Node>}
  */
 JAX.TextNode.prototype.clear = function() {
 	this._node.nodeValue = "";

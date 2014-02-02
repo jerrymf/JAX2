@@ -39,7 +39,7 @@ JAX.FX.Scrolling.prototype.$constructor = function(jaxElm) {
  * @param {string} property "left" nebo "top" pro scrollLeft respektive scrollTop
  * @param {number} value koncová hodnota v px
  * @param {number} duration délka animace v ms
- * @returns {object} JAX.FX.Scrolling
+ * @returns {object.<JAX.FX.Scrolling>}
  */
 JAX.FX.Scrolling.prototype.addProperty = function(property, value, duration) {
 	if (property != "left" && property != "top") {
@@ -60,7 +60,7 @@ JAX.FX.Scrolling.prototype.addProperty = function(property, value, duration) {
 /**
  * @method spustí animaci
  *
- * @returns {object} JAK.Promise
+ * @returns {object.<JAK.Promise>}
  */
 JAX.FX.Scrolling.prototype.run = function() {
 	if (this._promises.animationFinished) { 
@@ -89,7 +89,7 @@ JAX.FX.Scrolling.prototype.run = function() {
  *
  * @param {function} onFulfill funkce, která se zavolá po úspěšném ukončení animace
  * @param {function} onReject funkce, která se zavolá, pokud se animaci nepodaří provést
- * @returns {object} JAK.Promise
+ * @returns {object.<JAK.Promise>}
  */ 
 JAX.FX.Scrolling.prototype.then = function(onFulfill, onReject) {
 	return this._promises.animationFinished.then(onFulfill, onReject);
@@ -98,7 +98,7 @@ JAX.FX.Scrolling.prototype.then = function(onFulfill, onReject) {
 /**
  * @method stopne animaci, hodnoty zůstanou nastavené v takovém stavu, v jakém se momentálně nacházejí při zavolání metody
  * 
- * @returns {object} JAX.FX.Scrolling
+ * @returns {object.<JAX.FX.Scrolling>}
  */
 JAX.FX.Scrolling.prototype.stop = function() {
 	if (!this._isRunning) { return this; }
@@ -113,7 +113,7 @@ JAX.FX.Scrolling.prototype.stop = function() {
 /**
  * @method stopne animaci a spustí její zpětný chod
  *
- * @returns {object} JAK.Promise
+ * @returns {object.<JAK.Promise>}
  */
 JAX.FX.Scrolling.prototype.reverse = function() {
 	if (this._isRunning) {

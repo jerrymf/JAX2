@@ -18,7 +18,7 @@ JAX.IScrollableNode = JAK.ClassMaker.makeInterface({
  * @param {string} type "top" nebo "left", podle toho, jestli chceme hýbat s vertikálním nebo horizontálním posuvníkem
  * @param {number} value hodnota v px, kam se má scrollbar posunout
  * @param {string || number} duration délka animace; pokud není zadáno, neanimuje se
- * @returns {object} JAX.Node || JAX.FX.Scrolling
+ * @returns {object.<JAX.Node> || object.<JAX.FX.Scrolling}
  */
 JAX.IScrollableNode.prototype.scroll = function(type, value, duration) {
 	if (typeof(type) != "string") {

@@ -10,7 +10,7 @@
  *
  * @param {string || object} selector řetězec splňující pravidla css3 (pro IE8 css2.1) selectoru | HTMLElement | Text | HTMLDocument | Window | JAX.Node
  * @param {string || object} [srcElement=window.document] element, ve kterém se má hledat
- * @returns {object} JAX.Node
+ * @returns {object.<JAX.Node>}
  */
 var JAX = function(selector, srcElement) {
 	if (!selector) {
@@ -93,7 +93,7 @@ JAX.DOCUMENT_FRAGMENT = 11; /* konstanta pro objekt document fragment */
  *
  * @param {string || object || array} selector řetězec splňující pravidla css3 (pro IE8 css2.1) selectoru | Array of (HTMLElement | Text | HTMLDocument | Window | JAX.Node) | JAX.NodeArray
  * @param {object || string} [srcElement=window.document] CSS3 (CSS2.1) selector nebo element, ve kterém se má hledat
- * @returns {object} JAX.NodeArray
+ * @returns {object.<JAX.NodeArray>}
  */
 JAX.all = function(selector, srcElement) {
 	if (!selector) {
@@ -136,7 +136,7 @@ JAX.all = function(selector, srcElement) {
  * @param {object} attrs asociativní pole atributů tagu
  * @param {object} styles asociativní pole stylů, které se mají přiřadit do node.style
  * @param {object} [srcDocument=window.document] documentElement, ve kterém se má vytvářet
- * @returns {object} instance JAX.Node
+ * @returns {object.<JAX.Node>}
  */
 JAX.make = function(tagString, attrs, styles, srcDocument) {
 	var attrs = attrs || {};
@@ -196,7 +196,7 @@ JAX.make = function(tagString, attrs, styles, srcDocument) {
  * @method Vytvoří z HTML stringu elementy - *zhmotní* html string.
  *
  * @param {string} html html string, který má být transformováno na uzly
- * @returns {object} JAX.NodeArray
+ * @returns {object.<JAX.NodeArray>}
  */
 JAX.makeFromHTML = function(html) {
 	if (!html) { return new JAX.NodeArray([]); }
@@ -212,7 +212,7 @@ JAX.makeFromHTML = function(html) {
  *
  * @param {string} text text, který má uzel obsahovat
  * @param {object} [srcDocument=window.document] documentElement node, ve kterém se má vytvářet
- * @returns {object} JAX.Node
+ * @returns {object.<JAX.Node>}
  */
 JAX.makeText = function(text, srcDocument) {
 	return new JAX.TextNode((srcDocument || document).createTextNode(text));
@@ -253,8 +253,8 @@ JAX.getTypeOf = function(value) {
 /**
  * @method Najde platnou CSS vlasnost. Lze použít při hledání platné CSS hodnoty s vendor prefixem. Zadávají se oddělené mezerou.
  *
- * @param {String} property CSS vlasnosti oddělené mezereou
- * @returns {String}
+ * @param {string} property CSS vlasnosti oddělené mezereou
+ * @returns {string}
  */
 JAX.findCSSProperty = function(property) {
 	var properties = property.trim().split(" ");

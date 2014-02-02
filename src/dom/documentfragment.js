@@ -38,7 +38,7 @@ JAX.DocumentFragment.prototype.$constructor = function(doc) {
  * @method nepodporováno u window.DocumentFragment
  * @see JAX.IMoveableNode#remove
  *
- * @returns {object} JAX.Node
+ * @returns {object.<JAX.Node>}
  */
 JAX.DocumentFragment.prototype.remove = function() {
 	console.error("You can not remove documentFragment node.")
@@ -49,7 +49,7 @@ JAX.DocumentFragment.prototype.remove = function() {
 /**
  * @method nepodporováno u window.DocumentFragment
  * @see JAX.IMoveableNode#swapPlaceWith
- * @returns {object} JAX.Node
+ * @returns {object.<JAX.Node>}
  */
 JAX.DocumentFragment.prototype.swapPlaceWith = function() {
 	console.error("You can not switch place with documentFragment node. Use replaceWith() method instead this.")

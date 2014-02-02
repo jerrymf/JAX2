@@ -119,7 +119,7 @@ JAX.FX.prototype.$constructor = function(elm) {
  * @param {string || number} start počáteční hodnota - je dobré k ní uvést vždy i jednotky (pokud jde o číselnou hodnotu) a jako výchozí se používají px
  * @param {string || number} end koncová hodnota - je dobré k ní uvést vždy i jednotky (pokud jde o číselnou hodnotu) a jako výchozí se používají px
  * @param {string} method css transformační metoda (ease, linear, ease-in, ease-out, ... ) více na <a href="http://www.w3.org/TR/2009/WD-css3-transitions-20090320/#transition-timing-function_tag">webu W3C</a>, pozn.: pokud prohlížeč neumí transitions, je použito js řešení a metoda je vždy LINEAR
- * @returns {object} JAX.FX
+ * @returns {object.<JAX.FX>}
  */
 JAX.FX.prototype.addProperty = function(property, duration, start, end, method) {
 	if (!this._canBeAnimated) { return this; }
@@ -206,7 +206,7 @@ JAX.FX.prototype.addProperty = function(property, duration, start, end, method) 
  * @param {number || string} end.y hodnota translateY - lze zadat i jednotky (px, %, ...), def. px
  * @param {number || string} end.z hodnota translateZ - lze zadat i jednotky (px, %, ...), def. px
  * @param {string} method css transformační metoda (ease, linear, ease-in, ease-out, ... ) více na <a href="http://www.w3.org/TR/2009/WD-css3-transitions-20090320/#transition-timing-function_tag">webu W3C</a>, pozn.: pokud prohlížeč neumí transitions, je použito js řešení a metoda je vždy LINEAR
- * @returns {object} JAX.FX
+ * @returns {object.<JAX.FX>}
  */
 JAX.FX.prototype.addTranslateProperty = function(duration, start, end, method) {
 	if (!this._canBeAnimated) { return this; }
@@ -274,7 +274,7 @@ JAX.FX.prototype.addTranslateProperty = function(duration, start, end, method) {
 /**
  * @method spustí animaci
  *
- * @returns {object} JAK.Promise
+ * @returns {object.<JAK.Promise>}
  */
 JAX.FX.prototype.run = function() {
 	if (!this._canBeAnimated) { return new JAK.Promise.reject(this._jaxElm); }
@@ -305,7 +305,7 @@ JAX.FX.prototype.run = function() {
  *
  * @param {function} onfulfill funkce, která se zavolá po úspěšném ukončení animace
  * @param {function} onreject funkce, která se zavolá, pokud se animaci nepodaří provést
- * @returns {object} JAK.Promise
+ * @returns {object.<JAK.Promise>}
  */ 
 JAX.FX.prototype.then = function(onfulfill, onreject) {
 	return this._promise.finished.then(onfulfill, onreject);
@@ -314,7 +314,7 @@ JAX.FX.prototype.then = function(onfulfill, onreject) {
 /**
  * @method stopne animaci a spustí její zpětný chod
  *
- * @returns {object} JAK.Promise
+ * @returns {object.<JAK.Promise>}
  */
 JAX.FX.prototype.reverse = function() {
 	if (!this._canBeAnimated) { return new JAK.Promise.reject(this._jaxElm); }
@@ -390,7 +390,7 @@ JAX.FX.prototype.isRunning = function() {
 /**
  * @method stopne animaci, hodnoty zůstanou nastavené v takovém stavu, v jakém se momentálně nacházejí při zavolání metody
  * 
- * @returns {object} JAX.FX
+ * @returns {object.<JAX.FX>}
  */
 JAX.FX.prototype.stop = function() {
 	if (this._running) { 

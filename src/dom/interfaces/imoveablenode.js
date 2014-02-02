@@ -17,7 +17,7 @@ JAX.IMoveableNode = JAK.ClassMaker.makeInterface({
  * @method přesune element na konec zadaného elementu
  *
  * @param {string || object} node řetězec splňující pravidla css3 (pro IE8 css2.1) selectoru | HTMLElement | Text | HTMLDocument | Window | JAX.Node
- * @returns {object} JAX.Node
+ * @returns {object.<JAX.Node>}
  */
 JAX.IMoveableNode.prototype.appendTo = function(node) {
 	var jaxNode = node instanceof JAX.Node ? node : JAX(node);
@@ -35,7 +35,7 @@ JAX.IMoveableNode.prototype.appendTo = function(node) {
  * @method přesune element před zadaný element
  *
  * @param {string || object} node řetězec splňující pravidla css3 (pro IE8 css2.1) selectoru | HTMLElement | Text | HTMLDocument | Window | JAX.Node
- * @returns {object} JAX.Node
+ * @returns {object.<JAX.Node>}
  */
 JAX.IMoveableNode.prototype.before = function(node) {
 	var jaxNode = node instanceof JAX.Node ? node : JAX(node);
@@ -54,7 +54,7 @@ JAX.IMoveableNode.prototype.before = function(node) {
  * @method přesune element za zadaný element
  *
  * @param {string || object} node řetězec splňující pravidla css3 (pro IE8 css2.1) selectoru | HTMLElement | Text | HTMLDocument | Window | JAX.Node
- * @returns {object} JAX.Node
+ * @returns {object.<JAX.Node>}
  */
 JAX.IMoveableNode.prototype.after = function(node) {
 	var jaxNode = node instanceof JAX.Node ? node : JAX(node);
@@ -79,7 +79,7 @@ JAX.IMoveableNode.prototype.after = function(node) {
  * @method vloží element do zadaného elementu na první místo
  *
  * @param {string || object} node řetězec splňující pravidla css3 (pro IE8 css2.1) selectoru | HTMLElement | Text | HTMLDocument | Window | JAX.Node
- * @returns {object} JAX.Node
+ * @returns {object.<JAX.Node>}
  */
 JAX.IMoveableNode.prototype.insertFirstTo = function(node) {
 	var jaxNode = node instanceof JAX.Node ? node : JAX(node);
@@ -106,7 +106,7 @@ JAX.IMoveableNode.prototype.insertFirstTo = function(node) {
  * @method vymění element za zadaný element v DOMu a původní element z DOMu smaže
  *
  * @param {string || object} node řetězec splňující pravidla css3 (pro IE8 css2.1) selectoru | HTMLElement | Text | HTMLDocument | Window | JAX.Node
- * @returns {object} JAX.Node
+ * @returns {object.<JAX.Node>}
  */
 JAX.IMoveableNode.prototype.replaceWith = function(node) {
 	var jaxNode = node instanceof JAX.Node ? node : JAX(node);
@@ -125,7 +125,7 @@ JAX.IMoveableNode.prototype.replaceWith = function(node) {
  * @method vymění element za zadaný element v DOMu, prohodí si místa
  *
  * @param {string || object} node řetězec splňující pravidla css3 (pro IE8 css2.1) selectoru | HTMLElement | Text | HTMLDocument | Window | JAX.Node
- * @returns {object} JAX.Node
+ * @returns {object.<JAX.Node>}
  */
 JAX.IMoveableNode.prototype.swapPlaceWith = function(node) {
 	var jaxNode = node instanceof JAX.Node ? node : JAX(node);
@@ -166,7 +166,7 @@ JAX.IMoveableNode.prototype.swapPlaceWith = function(node) {
 /**
  * @method odstraní element z DOMu
  *
- * @returns {object} JAX.Node
+ * @returns {object.<JAX.Node>}
  */
 JAX.IMoveableNode.prototype.remove = function() {
 	if (this._node.parentNode && this._node.parentNode.nodeType != 11) {
@@ -182,7 +182,7 @@ JAX.IMoveableNode.prototype.remove = function() {
  * @method naklonuje element a vrátí ho jako JAXový node
  *
  * @param {boolean} withContent mám naklonovat včet obsahu včetně obsahu
- * @returns {object} JAX.Node
+ * @returns {object.<JAX.Node>}
  */
 JAX.IMoveableNode.prototype.clone = function(withContent) {
 	var clone = this._node.cloneNode(!!withContent);
@@ -214,7 +214,7 @@ JAX.IMoveableNode.prototype.isIn = function(node) {
  * @method bez zadaného parametru vrací přímo rodiče; se zadaným zjednodušeným css selectorem vrací rodiče, který jako první odpovídá pravidlu
  *
  * @param {string || undefined} selector řetězec splňující pravidla: tag#id.trida, kde id a třída mohou být zadány vícenásobně nebo vůbec | HTMLElement | JAX.Node
- * @returns {object}
+ * @returns {object.<JAX.Node> || null}
  */
 JAX.IMoveableNode.prototype.parent = function(selector) {
 	if (selector && typeof(selector) == "string") {
@@ -232,7 +232,7 @@ JAX.IMoveableNode.prototype.parent = function(selector) {
  * @method vrací následující node
  *
  * @param {string || number || undefined} selector řetězec splňující pravidla: tag#id.trida (lze zada více id i tříd) || požadovaný nodeType
- * @returns {object || null} JAX.Node
+ * @returns {object.<JAX.Node> || null}
  */
 JAX.IMoveableNode.prototype.next = function(selector) {
 	var n = this._node.nextSibling;
@@ -265,7 +265,7 @@ JAX.IMoveableNode.prototype.next = function(selector) {
  * @method vrací předchazející node
  *
  * @param {string || number || undefined} selector řetězec splňující pravidla: tag#id.trida (lze zada více id i tříd) || požadovaný nodeType
- * @returns {object || null} JAX.Node
+ * @returns {object.<JAX.Node> || null}
  */
 JAX.IMoveableNode.prototype.previous = function(selector) {
 	var n = this._node.previousSibling;

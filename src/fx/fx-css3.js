@@ -71,7 +71,7 @@ JAX.FX.CSS3.prototype.set = function(settings) {
 /**
  * @method spustí CSS3 transition
  *
- * @returns {object} JAK.Promise
+ * @returns {object.<JAK.Promise>}
  */
 JAX.FX.CSS3.prototype.run = function() {
 	this._promise.finished = new JAK.Promise();

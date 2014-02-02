@@ -33,7 +33,7 @@ JAX.NodeArray.prototype.$constructor = function(nodes) {
  * @method najde element odpovídající selectoru v rámci tohoto pole elementů
  *
  * @param {string || object} selector řetězec splňující pravidla css3 (pro IE8 css2.1) selectoru | HTMLElement | Text | HTMLDocument | Window | JAX.Node
- * @returns {object}
+ * @returns {object.<JAX.Node>}
  */
 JAX.NodeArray.prototype.find = function(selector) {
 	for (var i=0; i<this.length; i++) {
@@ -65,7 +65,7 @@ JAX.NodeArray.prototype.find = function(selector) {
  * @method najde elementy odpovídají selectoru v rámci tohoto pole elementů
  *
  * @param {string || object || array} selector řetězec splňující pravidla css3 (pro IE8 css2.1) selectoru | Array of (HTMLElement | Text | HTMLDocument | Window | object)
- * @returns {object}
+ * @returns {object.<JAX.NodeArray>}
  */
 JAX.NodeArray.prototype.findAll = function(selector) {
 	var foundElms = [];
@@ -137,7 +137,7 @@ JAX.NodeArray.prototype.findAll = function(selector) {
  * @method přidá prvek do pole
  *
  * @param {object} node uzel || JAX.Node
- * @returns {object} JAX.NodeArray
+ * @returns {object.<JAX.NodeArray>}
  */
 JAX.NodeArray.prototype.pushItem = function(node) {
 	var jaxNode = node instanceof JAX.Node ? node : JAX(node);
@@ -150,7 +150,7 @@ JAX.NodeArray.prototype.pushItem = function(node) {
  * @method vloží prvek na začátek pole
  *
  * @param {object} node uzel || JAX.Node
- * @returns {object} JAX.NodeArray
+ * @returns {object.<JAX.NodeArray>}
  */
 JAX.NodeArray.prototype.unshiftItem = function(node) {
 	var jaxNode = node instanceof JAX.Node ? node : JAX(node);
@@ -169,7 +169,7 @@ JAX.NodeArray.prototype.unshiftItem = function(node) {
  *
  * @param {number} from od indexu - včetně
  * @param {number} to po index - včetně
- * @returns {object} JAX.NodeArray
+ * @returns {object.<JAX.NodeArray>}
  */
 JAX.NodeArray.prototype.limit = function(from, to) {
 	return new JAX.NodeArray(this.items.apply(this, arguments));
@@ -217,7 +217,7 @@ JAX.NodeArray.prototype.forEachElm = function(func, obj) {
  *
  * @param {function} func zadaná funkce
  * @param {object} obj object, v jehož kontextu bude funkce volána
- * @returns {object} JAX.NodeArray
+ * @returns {object.<JAX.NodeArray>}
  */
 JAX.NodeArray.prototype.filterElms = function(func, obj) {
 	var func = obj ? func.bind(obj) : func;
@@ -238,7 +238,7 @@ JAX.NodeArray.prototype.filterElms = function(func, obj) {
  * @method nastaví elementům classname
  *
  * @param {string} classNames třída nebo třídy oddělené mezerou
- * @returns {object} JAX.NodeArray
+ * @returns {object.<JAX.NodeArray>}
  */
 JAX.NodeArray.prototype.addClass = function(classNames) {
 	for (var i=0; i<this.length; i++) {
@@ -268,7 +268,7 @@ JAX.NodeArray.prototype.haveClass = function(className) {
  * @method pokud element classname má, tak jej odebere, jinak jej přidá
  *
  * @param {string} className jméno třídy nebo jména tříd oddělená mezerou
- * @returns {object} JAX.NodeArray
+ * @returns {object.<JAX.NodeArray>}
  */
 JAX.NodeArray.prototype.toggleClass = function(className) {
 	for (var i=0; i<this.length; i++) {
@@ -283,7 +283,7 @@ JAX.NodeArray.prototype.toggleClass = function(className) {
  * @method odebere všem prvkům zadaný classname
  *
  * @param {string} classNames třída nebo třídy oddělené mezerou
- * @returns {object} JAX.NodeArray
+ * @returns {object.<JAX.NodeArray>}
  */
 JAX.NodeArray.prototype.removeClass = function(classNames) {
 	for (var i=0; i<this.length; i++) {
@@ -299,7 +299,7 @@ JAX.NodeArray.prototype.removeClass = function(classNames) {
  *
  * @param {string || array || object} property název atributu || pole názvů atributů || asociativní pole, např. {id:"mojeId", checked:"checked"}
  * @param {string || undefined} value nastaví hodnotu atributu; v případě že první parametr je pole, potom tuto hodnotu nastaví všem atributům v poli
- * @returns {string || object}
+ * @returns {string || object.<JAX.NodeArray> || object}
  */
 JAX.NodeArray.prototype.attr = function(property, value) {
 	var arrLength = arguments.length;
@@ -330,7 +330,7 @@ JAX.NodeArray.prototype.attr = function(property, value) {
  * @method odstraní html atribut(y)
  *
  * @param {string || array} property název atributu nebo pole názvů atributů
- * @returns {object} JAX.NodeArray
+ * @returns {object.<JAX.NodeArray>}
  */
 JAX.NodeArray.prototype.removeAttr = function(properties) {
 	for (var i=0; i<this.length; i++) {
@@ -346,7 +346,7 @@ JAX.NodeArray.prototype.removeAttr = function(properties) {
  *
  * @param {string || array || object} property název vlastnosti || pole názvů vlastností || asociativní pole, např. {display:"block", color:"red"}
  * @param {string} value nastaví hodnotu vlastnosti; v případě že první parametr je pole, potom tuto hodnotu nastaví všem vlastnostem v poli
- * @returns {object} JAX.NodeArray
+ * @returns {object.<JAX.NodeArray>}
  */
 JAX.NodeArray.prototype.css = function(property, value) {
 	var arrLength = arguments.length;
@@ -378,7 +378,7 @@ JAX.NodeArray.prototype.css = function(property, value) {
  *
  * @param {string || array || object} property název vlastnosti || pole názvů vlastností || asociativní pole, např. {id:"mojeId", checked:true}
  * @param {string} value nastavení příslušné vlastnosti na určitou hodnotu
- * @returns {object} JAX.NodeArray
+ * @returns {object.<JAX.NodeArray>}
  */
 JAX.NodeArray.prototype.prop = function(property, value) {
 	var arrLength = arguments.length;
@@ -409,7 +409,7 @@ JAX.NodeArray.prototype.prop = function(property, value) {
  * @method připne všechny prvky do zadaného nodu na konec
  *
  * @param {object} node element || JAX.Node, do kterého se mají elementy připnout
- * @returns {object} JAX.NodeArray
+ * @returns {object.<JAX.NodeArray>}
  */
 JAX.NodeArray.prototype.appendTo = function(node) {
 	for (var i=0; i<this.length; i++) {
@@ -424,7 +424,7 @@ JAX.NodeArray.prototype.appendTo = function(node) {
  * @method vloží všechny prvky do zadaného nodu na začátek
  *
  * @param {object} node element || JAX.Node, do kterého se mají elementy připnout
- * @returns {object} JAX.NodeArray
+ * @returns {object.<JAX.NodeArray>}
  */
 JAX.NodeArray.prototype.insertFirstTo = function(node) {
 	for (var i=this.length - 1; i>=0; i--) {
@@ -439,7 +439,7 @@ JAX.NodeArray.prototype.insertFirstTo = function(node) {
  * @method vloží všechny prvky před zadaný node
  *
  * @param {object} node element || JAX.Node, před který se mají elementy připnout
- * @returns {object} JAX.NodeArray
+ * @returns {object.<JAX.NodeArray>}
  */
 JAX.NodeArray.prototype.before = function(node) {
 	for (var i=0; i<this.length; i++) {
@@ -453,7 +453,7 @@ JAX.NodeArray.prototype.before = function(node) {
 /**
  * @method odebere všechny prvky z DOMu
  *
- * @returns {object} JAX.NodeArray
+ * @returns {object.<JAX.NodeArray>}
  */
 JAX.NodeArray.prototype.remove = function() {
 	for (var i=0; i<this.length; i++) {
@@ -468,7 +468,7 @@ JAX.NodeArray.prototype.remove = function() {
  * @method zjistí, jestli všechny prvky jsou přímým nebo nepřímým potomkem zadaného elementu
  *
  * @param {object} node element || JAX.Node, který se bude testovat, jestli obsahuje pole prvků
- * @returns {object} JAX.NodeArray
+ * @returns {object.<JAX.NodeArray>}
  */
 JAX.NodeArray.prototype.areIn = function(node) {
 	for (var i=0; i<this.length; i++) {
@@ -517,7 +517,7 @@ JAX.NodeArray.prototype.listen = function(type, obj, funcMethod, useCapture) {
  * @method odvěsí posluchače na základě typu události ("click", "mousedown", ...)
  *
  * @param {string} listener typ události
- * @returns {object} JAX.NodeArray
+ * @returns {object.<JAX.NodeArray>}
  */
 JAX.NodeArray.prototype.stopListening = function(type) {
 	for (var i=0; i<this.length; i++) {
@@ -533,7 +533,7 @@ JAX.NodeArray.prototype.stopListening = function(type) {
  *
  * @param {function} func funkce, která se má provádět. Jako parametr je předána instance JAX.Node
  * @param {object} obj context, ve kterém se má fce provést
- * @returns {object} JAX.NodeArray
+ * @returns {object.<JAX.NodeArray>}
  */
 JAX.NodeArray.prototype.filterItems = function(func, obj) {
 	var func = obj ? func.bind(obj) : func;
@@ -551,7 +551,7 @@ JAX.NodeArray.prototype.filterItems = function(func, obj) {
 /**
  * @method vrátí první element (tedy s node.nodeType == 1) v poli
  *
- * @returns {object} JAX.Node
+ * @returns {object.<JAX.Node>}
  */
 JAX.NodeArray.prototype.firstElement = function() {
 	for (var i=0; i<this.length; i++) {
@@ -564,7 +564,7 @@ JAX.NodeArray.prototype.firstElement = function() {
 /**
  * @method vrátí poslední element (tedy s node.nodeType == 1) v poli
  *
- * @returns {object} JAX.Node
+ * @returns {object.<JAX.Node>}
  */
 JAX.NodeArray.prototype.lastElement = function() {
 	for (var i=this.length - 1; i>=0; i--) {
@@ -582,7 +582,7 @@ JAX.NodeArray.prototype.lastElement = function() {
  * @param {string || number} start počáteční hodnota - je dobré k ní uvést vždy i jednotky (pokud jde o číselnou hodnotu) a jako výchozí se používají px
  * @param {string || number} end koncová hodnota - je dobré k ní uvést vždy i jednotky (pokud jde o číselnou hodnotu) a jako výchozí se používají px
  * @param {string} method css transformační metoda (ease, linear, ease-in, ease-out, ... ) více na <a href="http://www.w3.org/TR/2009/WD-css3-transitions-20090320/#transition-timing-function_tag">webu W3C</a>, pozn.: pokud prohlížeč neumí transitions, je použito js řešení a metoda je vždy LINEAR
- * @returns {object} JAX.FXArray
+ * @returns {object.<JAX.FXArray>}
  */
 JAX.NodeArray.prototype.animate = function(type, duration, start, end) {
 	var count = this.length;
@@ -601,7 +601,7 @@ JAX.NodeArray.prototype.animate = function(type, duration, start, end) {
  * @param {string} type "in" (od 0 do 1) nebo "out" (od 1 do 0)
  * @param {string || number} duration délka animace - lze zadat i jednotky s nebo ms (výchozí jsou ms)
  * @param {string} method css transformační metoda (ease, linear, ease-in, ease-out, ... ) více na <a href="http://www.w3.org/TR/2009/WD-css3-transitions-20090320/#transition-timing-function_tag">webu W3C</a>, pozn.: pokud prohlížeč neumí transitions, je použito js řešení a metoda je vždy LINEAR
- * @returns {object} JAX.FXArray
+ * @returns {object.<JAX.FXArray>}
  */
 JAX.NodeArray.prototype.fade = function(type, duration) {
 	var count = this.length;
@@ -620,7 +620,7 @@ JAX.NodeArray.prototype.fade = function(type, duration) {
  * @param {string || number} opacityValue hodnota průhlednosti, do které se má animovat. Jako výchozí se bere aktuální hodnota
  * @param {string || number} duration délka animace - lze zadat i jednotky s nebo ms (výchozí jsou ms)
  * @param {string} method css transformační metoda (ease, linear, ease-in, ease-out, ... ) více na <a href="http://www.w3.org/TR/2009/WD-css3-transitions-20090320/#transition-timing-function_tag">webu W3C</a>, pozn.: pokud prohlížeč neumí transitions, je použito js řešení a metoda je vždy LINEAR
- * @returns {object} JAX.FXArray
+ * @returns {object.<JAX.FXArray>}
  */
 JAX.NodeArray.prototype.fadeTo = function(opacityValue, duration) {
 	var count = this.length;
@@ -639,7 +639,7 @@ JAX.NodeArray.prototype.fadeTo = function(opacityValue, duration) {
  * @param {string} type "down" nebo "up" pro animaci výšky nebo "left", "right" pro animaci šířky
  * @param {string || number} duration délka animace - lze zadat i jednotky s nebo ms (výchozí jsou ms)
  * @param {string} method css transformační metoda (ease, linear, ease-in, ease-out, ... ) více na <a href="http://www.w3.org/TR/2009/WD-css3-transitions-20090320/#transition-timing-function_tag">webu W3C</a>, pozn.: pokud prohlížeč neumí transitions, je použito js řešení a metoda je vždy LINEAR
- * @returns {object} JAX.FXArray
+ * @returns {object.<JAX.FXArray>}
  */
 JAX.NodeArray.prototype.slide = function(type, duration) {
 	var count = this.length;
@@ -658,7 +658,7 @@ JAX.NodeArray.prototype.slide = function(type, duration) {
  * @param {string} type "top" nebo "left", podle toho, jestli chceme hýbat s vertikálním nebo horizontálním posuvníkem
  * @param {number} value hodnota v px, kam se má scrollbar posunout
  * @param {string || number} duration délka animace; pokud není zadáno, neanimuje se
- * @returns {object} JAX.FXArray
+ * @returns {object.<JAX.FXArray>}
  */
 JAX.NodeArray.prototype.scroll = function(type, value, duration) {
 	var count = this.length;

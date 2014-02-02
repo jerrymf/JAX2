@@ -178,7 +178,7 @@ JAX.IIterable.prototype.forEachItem = function(func, obj) {
  *
  * @param {function} func zadaná funkce
  * @param {object} obj object, v jehož kontextu bude funkce volána
- * @returns {object} JAX.NodeArray
+ * @returns {object.<JAX.NodeArray>}
  */
 JAX.IIterable.prototype.filterItems = function(func, obj) {
 	var func = obj ? func.bind(obj) : func;

@@ -31,7 +31,7 @@ JAX.ListenerArray.prototype.$constructor = function(listeners) {
 /**
  * @method odregistruje všechny posluchače v poli a z pole je odstraní.
  * 
- * returns {object} JAX.ListenerArray
+ * returns {object.<JAX.ListenerArray>}
  */ 
 JAX.ListenerArray.prototype.unregister = function() {
 	var item = null;
