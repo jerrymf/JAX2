@@ -29,7 +29,7 @@ JAX.IAnimateableNode.prototype.animate = function(property, duration, start, end
 	}
 
 	var fx = new JAX.FX(this);
-	fx.addProperty(property, duration, start, end, method);
+	fx.addProperty.apply(this, arguments);
 	fx.run();
 
 	return fx;
@@ -39,9 +39,10 @@ JAX.IAnimateableNode.prototype.animate = function(property, duration, start, end
  * @method animuje průhlednost
  * @param {string} type "in" (od 0 do 1) nebo "out" (od 1 do 0)
  * @param {string || number} duration délka animace - lze zadat i jednotky s nebo ms (výchozí jsou ms)
+ * @param {string} method css transformační metoda (ease, linear, ease-in, ease-out, ... ) více na <a href="http://www.w3.org/TR/2009/WD-css3-transitions-20090320/#transition-timing-function_tag">webu W3C</a>, pozn.: pokud prohlížeč neumí transitions, je použito js řešení a metoda je vždy LINEAR
  * @return {object} JAX.FX
  */
-JAX.IAnimateableNode.prototype.fade = function(type, duration) {
+JAX.IAnimateableNode.prototype.fade = function(type, duration, method) {
 	if (typeof(type) != "string") {
 		type += "";
 		console.error("For first argument I expected string.", this._node); 
@@ -49,10 +50,10 @@ JAX.IAnimateableNode.prototype.fade = function(type, duration) {
 
 	switch(type) {
 		case "in":
-			return this.animate("opacity", duration, 0, 1);
+			return this.animate("opacity", duration, 0, 1, method);
 		break;
 		case "out":
-			return this.animate("opacity", duration, 1, 0);
+			return this.animate("opacity", duration, 1, 0, method);
 		break;
 		default:
 			console.error("I got unsupported type '" + type + "'.", this._node);
@@ -66,9 +67,10 @@ JAX.IAnimateableNode.prototype.fade = function(type, duration) {
  * @method animuje průhlednost do určité hodnoty
  * @param {string || number} opacityValue hodnota průhlednosti, do které se má animovat. Jako výchozí se bere aktuální hodnota
  * @param {string || number} duration délka animace - lze zadat i jednotky s nebo ms (výchozí jsou ms)
+ * @param {string} method css transformační metoda (ease, linear, ease-in, ease-out, ... ) více na <a href="http://www.w3.org/TR/2009/WD-css3-transitions-20090320/#transition-timing-function_tag">webu W3C</a>, pozn.: pokud prohlížeč neumí transitions, je použito js řešení a metoda je vždy LINEAR
  * @return {object} JAX.FX
  */
-JAX.IAnimateableNode.prototype.fadeTo = function(opacityValue, duration) {
+JAX.IAnimateableNode.prototype.fadeTo = function(opacityValue, duration, method) {
 	var opacityValue = parseFloat(opacityValue) || 0;
 
 	if (opacityValue<0) {
@@ -76,16 +78,17 @@ JAX.IAnimateableNode.prototype.fadeTo = function(opacityValue, duration) {
 		console.error("For first argument I expected positive number, but I got negative. I set zero value.", this._node); 
 	}
 
-	return this.animate("opacity", duration, null, opacityValue);
+	return this.animate("opacity", duration, null, opacityValue, method);
 };
 
 /**
  * @method zobrazí element pomocí animace výšky nebo šířky
  * @param {string} type "down" nebo "up" pro animaci výšky nebo "left", "right" pro animaci šířky
  * @param {string || number} duration délka animace - lze zadat i jednotky s nebo ms (výchozí jsou ms)
+ * @param {string} method css transformační metoda (ease, linear, ease-in, ease-out, ... ) více na <a href="http://www.w3.org/TR/2009/WD-css3-transitions-20090320/#transition-timing-function_tag">webu W3C</a>, pozn.: pokud prohlížeč neumí transitions, je použito js řešení a metoda je vždy LINEAR
  * @returns {object} JAX.FX
  */
-JAX.IAnimateableNode.prototype.slide = function(type, duration) {
+JAX.IAnimateableNode.prototype.slide = function(type, duration, method) {
 	if (typeof(type) != "string") {
 		type += "";
 		console.error("For first argument I expected string.", this._node);
@@ -125,7 +128,7 @@ JAX.IAnimateableNode.prototype.slide = function(type, duration) {
 	this.css("overflow", "hidden");
 
 	var func = function() { this.css(backupStyles); }.bind(this);
-	var fx = this.animate(property, duration, start, end);
+	var fx = this.animate(property, duration, start, end, method);
 	fx.then(func);
 
 	return fx;
