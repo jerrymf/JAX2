@@ -37,7 +37,7 @@ JAX.Event.prototype.event = function() {
  * @returns {object} JAX.Event
  */
 JAX.Event.prototype.prevent= function() {
-	JAK.Events.cancelDef(this._e);
+	this._e.preventDefault();
 	return this;
 };
 
@@ -47,7 +47,7 @@ JAX.Event.prototype.prevent= function() {
  * @returns {object} JAX.Event
  */
 JAX.Event.prototype.stop = function() {
-	JAK.Events.stopEvent(this._e);
+	this._e.stopPropagation();
 	return this;
 };
 
@@ -57,7 +57,7 @@ JAX.Event.prototype.stop = function() {
  * @returns {object} JAX.Node
  */
 JAX.Event.prototype.target = function() {
-	return JAX(JAK.Events.getTarget(this._e));
+	return JAX(this._e.target);
 };
 
 /**
