@@ -12,7 +12,7 @@ JAX.Element = JAK.ClassMaker.makeClass({
 	NAME: "JAX.Element",
 	VERSION: "1.0",
 	EXTEND: JAX.Node,
-	IMPLEMENT: [JAX.IListening, JAX.INodeWithChildren, JAX.IMoveableNode, JAX.ISearchableNode, JAX.IAnimateableNode]
+	IMPLEMENT: [JAX.IListening, JAX.INodeWithChildren, JAX.IMoveableNode, JAX.ISearchableNode, JAX.IAnimateableNode, JAX.IScrollableNode]
 });
 
 JAX.Element._OPACITY_REGEXP = /alpha\(opacity=['"]?([0-9]+)['"]?\)/i;
@@ -458,65 +458,6 @@ JAX.Element.prototype.eq = function(node) {
 
 	var jaxNode = node instanceof JAX.Node ? node : JAX(node);
 	return jaxNode.n == this._node;
-};
-
-JAX.Element.prototype.scroll = function(type, value, duration) {
-	if (typeof(type) != "string") {
-		console.error("I expected String for my first argument.", this._node);
-		type += "";
-	}
-
-	var left = this._node.scrollLeft;
-	var top = this._node.scrollTop;
-
-	if (arguments.length == 1) {
-		switch(type.toLowerCase()) {
-			case "top":
-				var retValue = top;
-			break;
-			case "left":
-				var retValue = left;
-			break;
-			default:
-				console.error("You gave me an unsupported type. I expected 'x' or 'y'.", this._node);
-				var retValue = 0;
-		}
-
-		return retValue;
-	}
-
-	var targetValue = parseFloat(value);
-
-	if (!isFinite(targetValue)) {
-		console.error("I expected Number or string with number for my second argument.", this._node);
-		targetValue = 0;
-	}
-
-	var type = type.toLowerCase();
-
-	if (!duration) {
-		switch(type) {
-			case "top":
-				this._node.scrollTop = value;
-			break;
-			case "left":
-				this._node.scrollLeft = value;
-			break;
-		}
-		return this;
-	}
-
-	var duration = parseFloat(duration);
-	if (!isFinite(duration)) {
-		console.error("I expected Number or string with number for my third argument.", this._node);
-		duration = 1;
-	}
-
-	var fx = new JAX.FX.Scrolling(this);
-		fx.addProperty(type, value, duration);
-		fx.run();
-		
-	return fx;
 };
 
 JAX.Element.prototype._setOpacity = function(value) {

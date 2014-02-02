@@ -12,7 +12,7 @@ JAX.Document = JAK.ClassMaker.makeClass({
 	NAME: "JAX.Document",
 	VERSION: "1.0",
 	EXTEND: JAX.Node,
-	IMPLEMENT: [JAX.IListening, JAX.ISearchableNode]
+	IMPLEMENT: [JAX.IListening, JAX.ISearchableNode, JAX.IScrollableNode]
 });
 
 JAX.Document.prototype.$constructor = function(doc) {
@@ -68,64 +68,4 @@ JAX.Document.prototype.fullSize = function(sizeType) {
 	}
 
 	return this.size(sizeType);
-};
-
-JAX.Document.prototype.scroll = function(type, value, duration) {
-	if (typeof(type) != "string") {
-		console.error("I expected String for my first argument.", this._node);
-		type += "";
-	}
-
-	var scrollPos = JAK.DOM.getScrollPos();
-	var left = scrollPos.x;
-	var top = scrollPos.y;
-
-	if (arguments.length == 1) {
-		switch(type.toLowerCase()) {
-			case "top":
-				var retValue = top;
-			break;
-			case "left":
-				var retValue = left;
-			break;
-			default:
-				console.error("You gave me an unsupported type. I expected 'x' or 'y'.", this._node);
-				var retValue = 0;
-		}
-
-		return retValue;
-	}
-
-	var targetValue = parseFloat(value);
-
-	if (!isFinite(targetValue)) {
-		console.error("I expected Number or string with number for my second argument.", this._node);
-		targetValue = 0;
-	}
-
-	var type = type.toLowerCase();
-
-	if (!duration) {
-		switch(type) {
-			case "top":
-				this._node.documentElement.scrollTop = value;
-			break;
-			case "left":
-				this._node.documentElement.scrollLeft = value;
-			break;
-		}
-		return this;
-	}
-
-	var duration = parseFloat(duration);
-	if (!isFinite(duration)) {
-		console.error("I expected Number or string with number for my third argument.", this._node);
-		duration = 1;
-	}
-
-	var fx = new JAX.FX.Scrolling(this);
-		fx.addProperty(type, value, duration);
-		fx.run();
-
-	return fx;
 };
