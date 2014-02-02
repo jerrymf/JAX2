@@ -86,6 +86,10 @@ JAX.Node.prototype.exists = function() {
  * @returns {string || object}
  */
 JAX.Node.prototype.prop = function(property, value) {
+	if (!property) { 
+		return this; 
+	}
+
 	var argLength = arguments.length;
 
 	if (argLength == 1) {

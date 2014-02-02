@@ -223,15 +223,15 @@ JAX.Element.prototype.text = function(text) {
 /**
  * @method nastaví nebo získá hodnoty vlastností html atributů (ekvivaletní s metodou elm.setAttribute)
  *
- * @param {string || array || object} property název atributu || pole názvů atributů || asociativní pole, např. {id:"mojeId", checked:"checked"}
- * @param {string} value nastaví hodnotu atributu; v případě že první parametr je pole, potom tuto hodnotu nastaví všem atributům v poli
+ * @param {string || array || object} property název atributu (pokud není zadán druhý parametr, vrátí hodnotu atributu) || pole názvů atributů || asociativní pole, např. {id:"mojeId", checked:"checked"}
+ * @param {string || undefined} value nastaví hodnotu atributu; v případě že první parametr je pole, potom tuto hodnotu nastaví všem atributům v poli
  * @returns {string || object}
  */
 JAX.Element.prototype.attr = function(property, value) {
 	if (!property) { 
 		return this; 
 	}
-	
+
 	var argLength = arguments.length;
 
 	if (argLength == 1) {
@@ -271,7 +271,7 @@ JAX.Element.prototype.attr = function(property, value) {
 /**
  * @method odstraní atribut(y)
  *
- * @param {string || array } property název atributu || pole názvů atributů
+ * @param {string || array} property název atributu || pole názvů atributů
  * @returns {object} JAX.Node
  */
 JAX.Element.prototype.removeAttr = function(properties) {
