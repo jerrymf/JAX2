@@ -1,3 +1,13 @@
+/**
+ * @fileOverview fx-interpolator.js - JAX - JAk eXtended
+ * @author <a href="mailto:jerrymf@gmail.com">Marek Fojtl</a>
+ * @version 1.0
+ */
+
+/**
+ * Pomocník pro animaci pomocí interpolátoru
+ * @class JAX.FX.Interpolator
+ */
 JAX.FX.Interpolator = JAK.ClassMaker.makeClass({
 	NAME:"JAX.FX.Interpolator",
 	VERSION:"1.0",
@@ -7,6 +17,11 @@ JAX.FX.Interpolator = JAK.ClassMaker.makeClass({
 	}]
 });
 
+/**
+ * @constructor
+ *
+ * @param {object} jaxElm JAX.Node
+ */
 JAX.FX.Interpolator.prototype.$constructor = function(jaxElm) {
 	this._jaxElm = jaxElm;
 	this._interpolators = [];
@@ -17,10 +32,28 @@ JAX.FX.Interpolator.prototype.$constructor = function(jaxElm) {
 	};
 };
 
+/**
+ * @method očekává pole objektů s nastavením jednotlivých animací
+ *
+ * @param {array} settings
+ * @param {string} settings.property
+ * @param {number || string} settings.startValue
+ * @param {string} settings.startUnit
+ * @param {number} settings.endValue
+ * @param {string} settings.endUnit
+ * @param {number} settings.durationValue
+ * @param {string} settings.durationUnit
+ * @param {string} settings.method
+ */
 JAX.FX.Interpolator.prototype.set = function(settings) {
 	this._settings = settings;
 };
 
+/**
+ * @method spustí interpolátor
+ *
+ * @returns {object} JAK.Promise
+ */
 JAX.FX.Interpolator.prototype.run = function() {
 	this._promise.finished = new JAK.Promise();
 	this._interpolators = [];
@@ -28,6 +61,10 @@ JAX.FX.Interpolator.prototype.run = function() {
 	return this._promise.finished;
 };
 
+/**
+ * @method stopne interpolátor
+ *
+ */
 JAX.FX.Interpolator.prototype.stop = function() {
 	for (var i=0, len=this._interpolators.length; i<len; i++) { this._destroyInterpolator(i); }
 	this._promise.finished.reject(this._jaxElm);

@@ -1,7 +1,7 @@
 /**
  * @fileOverview fx-scrolling.js - JAX - JAk eXtended
  * @author <a href="mailto:jerrymf@gmail.com">Marek Fojtl</a>
- * @version 1.05
+ * @version 1.0
  */
 
 /**

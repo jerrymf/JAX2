@@ -1,3 +1,13 @@
+/**
+ * @fileOverview fx-css3.js - JAX - JAk eXtended
+ * @author <a href="mailto:jerrymf@gmail.com">Marek Fojtl</a>
+ * @version 1.0
+ */
+
+/**
+ * Pomocník pro animaci pomocí CSS3 transitions
+ * @class JAX.FX.CSS3
+ */
 JAX.FX.CSS3 = JAK.ClassMaker.makeClass({
 	NAME:"JAX.FX.CSS3",
 	VERSION:"1.0"
@@ -24,6 +34,11 @@ JAX.FX.CSS3._TRANSITION_EVENT = "";
 	}
 })();
 
+/**
+ * @constructor
+ *
+ * @param {object} jaxElm JAX.Node
+ */
 JAX.FX.CSS3.prototype.$constructor = function(jaxElm) {
 	this._jaxElm = jaxElm;
 	this._settings = [];
@@ -36,10 +51,28 @@ JAX.FX.CSS3.prototype.$constructor = function(jaxElm) {
 	this._timeout = null;
 };
 
+/**
+ * @method očekává pole objektů s nastavením jednotlivých animací
+ *
+ * @param {array} settings
+ * @param {string} settings.property
+ * @param {number || string} settings.startValue
+ * @param {string} settings.startUnit
+ * @param {number} settings.endValue
+ * @param {string} settings.endUnit
+ * @param {number} settings.durationValue
+ * @param {string} settings.durationUnit
+ * @param {string} settings.method
+ */
 JAX.FX.CSS3.prototype.set = function(settings) {
 	this._settings = settings;
 };
 
+/**
+ * @method spustí CSS3 transition
+ *
+ * @returns {object} JAK.Promise
+ */
 JAX.FX.CSS3.prototype.run = function() {
 	this._promise.finished = new JAK.Promise();
 
@@ -77,6 +110,10 @@ JAX.FX.CSS3.prototype.run = function() {
 	return this._promise.finished;
 };
 
+/**
+ * @method stopne transition
+ *
+ */
 JAX.FX.CSS3.prototype.stop = function() {
 	var node = this._jaxElm.node();
 	var style = node.style;
