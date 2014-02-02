@@ -29,7 +29,7 @@ JAX.IAnimateableNode.prototype.animate = function(property, duration, start, end
 	}
 
 	var fx = new JAX.FX(this);
-	fx.addProperty.apply(this, arguments);
+	fx.addProperty.apply(fx, arguments);
 	fx.run();
 
 	return fx;
