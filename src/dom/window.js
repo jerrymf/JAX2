@@ -15,12 +15,23 @@ JAX.Window = JAK.ClassMaker.makeClass({
 	IMPLEMENT: [JAX.IListening, JAX.IScrollableNode]
 });
 
+/** 
+ * @constructor
+ *
+ * @param {object} win window
+ */
 JAX.Window.prototype.$constructor = function(win) {
 	this.$super(win);
 	this.jaxNodeType = JAX.WINDOW;
 	this._setFlags();
 };
 
+/**
+ * @method zjistí velikost okna dle zadaného typu, tedy šířku nebo výšku
+ *
+ * @param {string} sizeType "width" nebo "height"
+ * @returns {number}
+ */
 JAX.Window.prototype.size = function(sizeType) {
 	if (arguments.length > 1) {
 		console.error("I am so sorry, but you can not set " + sizeType + " of document node.", this._node);

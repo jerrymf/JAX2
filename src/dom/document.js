@@ -1,11 +1,11 @@
 /**
- * @fileOverview documentnode.js - JAX - JAk eXtended
+ * @fileOverview document.js - JAX - JAk eXtended
  * @author <a href="mailto:jerrymf@gmail.com">Marek Fojtl</a>
  * @version 1.0
  */
 
 /**
- * Třída reprezentující document node
+ * Třída reprezentující instanci window.Document
  * @class JAX.Document
  */
 JAX.Document = JAK.ClassMaker.makeClass({
@@ -15,10 +15,21 @@ JAX.Document = JAK.ClassMaker.makeClass({
 	IMPLEMENT: [JAX.IListening, JAX.ISearchableNode, JAX.IScrollableNode]
 });
 
+/** 
+ * @constructor
+ *
+ * @param {object} doc objekt typu window.Document
+ */
 JAX.Document.prototype.$constructor = function(doc) {
 	this.$super(doc);
 };
 
+/** 
+ * @method zjistí, jestli element obsahuje nody podle zadaných kritérií
+ *
+ * @param {object || string} node HTMLElement || Text ||  CSS 3 (CSS 2.1 pro IE8) selector
+ * @returns {boolean}
+ */
 JAX.Document.prototype.contains = function(node) {
 	if (!node) { return false; }
 
@@ -36,6 +47,12 @@ JAX.Document.prototype.contains = function(node) {
 	return false;
 };
 
+/**
+ * @method zjistí velikost dokumentu dle zadaného typu, tedy šířku nebo výšku
+ *
+ * @param {string} sizeType "width" nebo "height"
+ * @returns {number}
+ */
 JAX.Document.prototype.size = function(sizeType) {
 	if (arguments.length > 1) {
 		console.error("I am so sorry, but you can not set " + sizeType + " of document node.", this._node);
@@ -59,13 +76,4 @@ JAX.Document.prototype.size = function(sizeType) {
 			console.error("You gave me an unsupported size type. I expected 'width' or 'height'.", this._node);
 			return 0;
 	}
-};
-
-JAX.Document.prototype.fullSize = function(sizeType) {
-	if (arguments.length > 1) {
-		console.error("I am so sorry, but you can not set " + sizeType + " of document node.", this._node);
-		return this;
-	}
-
-	return this.size(sizeType);
 };
