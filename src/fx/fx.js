@@ -125,7 +125,7 @@ JAX.FX.prototype.$constructor = function(elm) {
  * fx.addProperty("height", 3, 0, 100);
  * fx.run();
  *
- * @param {String} setting css vlastnost, která se má animovat
+ * @param {String} property css vlastnost, která se má animovat
  * @param {Number | String} duration délka animace - lze zadat i jednotky s nebo ms
  * @param {String} start počáteční hodnota - je dobré k ní uvést vždy i jednotky, pokud jde o číselnou hodnotu, jako výchozí se používají px
  * @param {String} end koncová hodnota - je dobré k ní uvést vždy i jednotky, pokud jde o číselnou hodnotu, jako výchozí se používají px

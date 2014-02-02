@@ -12,7 +12,7 @@ JAX.NullNode = JAK.ClassMaker.makeClass({
 	NAME: "JAX.NullNode",
 	VERSION: "1.0",
 	EXTEND: JAX.Node,
-	IMPLEMENT: [JAX.IMoveableNode, JAX.INodeWithChildren, JAX.IListening, JAX.ISearchableNode]
+	IMPLEMENT: [JAX.IMoveableNode, JAX.INodeWithChildren, JAX.IListening, JAX.ISearchableNode, JAX.IAnimateableNode]
 });
 
 JAX.NullNode.prototype.$constructor = function(selector) {
