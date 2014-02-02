@@ -13,6 +13,11 @@ JAX.FX.Scrolling = JAK.ClassMaker.makeClass({
 	VERSION: "1.0"
 });
 
+/**
+ * @constructor
+ *
+ * @param {object} elm HTMLElement || JAX.Node
+ */
 JAX.FX.Scrolling.prototype.$constructor = function(jaxElm) {
 	this._jaxElm = JAX(jaxElm);
 	this._settings = [];
@@ -29,6 +34,13 @@ JAX.FX.Scrolling.prototype.$constructor = function(jaxElm) {
 	this._onScrollingFinished = this._onScrollingFinished.bind(this);
 };
 
+/**
+ * @method přidá atribut scrollování, který se bude animovat. Pro každou vlastnost lze zadat různou délku animace.
+ * @param {string} property "left" nebo "top" pro scrollLeft respektive scrollTop
+ * @param {number} value koncová hodnota v px
+ * @param {number} duration délka animace v ms
+ * @returns {object} JAX.FX.Scrolling
+ */
 JAX.FX.Scrolling.prototype.addProperty = function(property, value, duration) {
 	if (property != "left" && property != "top") {
 		console.error("JAX.FX.Scrolling: You are trying to use unsupported property: " + property + ".", this._jaxElm.node());
@@ -45,6 +57,11 @@ JAX.FX.Scrolling.prototype.addProperty = function(property, value, duration) {
 	return this;
 };
 
+/**
+ * @method spustí animaci
+ *
+ * @returns {object} JAK.Promise
+ */
 JAX.FX.Scrolling.prototype.run = function() {
 	if (this._promises.animationFinished) { 
 		return this._promises.animationFinished; 
@@ -67,10 +84,22 @@ JAX.FX.Scrolling.prototype.run = function() {
 	return this._promises.animationFinished;
 };
 
+/**
+ * @method funkce, která se zavolá, jakmile animace skončí. V případě prvního parametru se jedná o úspěšné dokončení, v případě druhého o chybu.
+ *
+ * @param {function} onFulfill funkce, která se zavolá po úspěšném ukončení animace
+ * @param {function} onReject funkce, která se zavolá, pokud se animaci nepodaří provést
+ * @returns {object} JAK.Promise
+ */ 
 JAX.FX.Scrolling.prototype.then = function(onFulfill, onReject) {
 	return this._promises.animationFinished.then(onFulfill, onReject);
 };
 
+/**
+ * @method stopne animaci, hodnoty zůstanou nastavené v takovém stavu, v jakém se momentálně nacházejí při zavolání metody
+ * 
+ * @returns {object} JAX.FX.Scrolling
+ */
 JAX.FX.Scrolling.prototype.stop = function() {
 	if (!this._isRunning) { return this; }
 
@@ -81,6 +110,11 @@ JAX.FX.Scrolling.prototype.stop = function() {
 	return this;
 };
 
+/**
+ * @method stopne animaci a spustí její zpětný chod
+ *
+ * @returns {object} JAK.Promise
+ */
 JAX.FX.Scrolling.prototype.reverse = function() {
 	if (this._isRunning) {
 		this.stop();
@@ -102,6 +136,11 @@ JAX.FX.Scrolling.prototype.reverse = function() {
 	return this._promises.animationFinished;
 };
 
+/**
+ * @method zjistí, jestli animace právě běží
+ * 
+ * @returns {boolean}
+ */
 JAX.FX.Scrolling.prototype.isRunning = function() {
 	return this._isRunning;
 };
