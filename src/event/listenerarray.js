@@ -16,7 +16,7 @@ JAX.ListenerArray = JAK.ClassMaker.makeClass({
 });
 
 /**
- * @method konstruktor
+ * @constructor
  * 
  * @param {array} listeners pole instanci JAX.Listener
  */ 
