@@ -37,9 +37,7 @@ JAX.IListening.prototype.listen = function(type, obj, func, useCapture) {
 		eventFunc = function() {};
 	}
 
-	if (typeof(obj) == "function") {
-		eventFunc = obj;
-	} else if (typeof(obj) == "object" && !func) {
+	if (typeof(obj) == "function" || (typeof(obj) == "object" && !func)) {
 		eventFunc = obj;
 	} else if (typeof(obj) == "object" && typeof(func) == "string") {
 		eventFunc = obj[func];
