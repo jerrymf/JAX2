@@ -32,6 +32,11 @@ JAX.Element._BOX_SIZING = null;
 	}
 })();
 
+/** 
+ * @constructor
+ *
+ * @param {object} node objekt typu window.HTMLElement
+ */
 JAX.Element.prototype.$constructor = function(node) {
 	this.$super(node);
 
@@ -46,9 +51,7 @@ JAX.Element.prototype.$constructor = function(node) {
 };
 
 /**
- * @method destructor - odvěsí všechny události a odstraní všechny reference na něj z JAXu. Voláme, pokud víme, že uzel už se do DOMu nikdy více nepřipne.
- * @example
- * JAX("#nejakeId").$destructor();
+ * @destructor - odvěsí všechny události a odstraní všechny reference na svůj node uvnitř instance. Voláme, pokud víme, že s touto instancí nechceme už více pracovat.
  */
 JAX.Element.prototype.$destructor = function() {
 	this.stopListening();
@@ -218,19 +221,17 @@ JAX.Element.prototype.text = function(text) {
 };
 
 /**
- * @method nastaví nebo získá html atributy
- * @example
- * var jaxElm = JAX(document.body);
- * jaxElm.attr("id","mojeId"); // nastavi id
- * jaxElm.attr({"data-word":"demo"}); // nastavi attribut data-word
- * console.log(jaxElm.attr("id")); // ziska, jak je nastaven atribut id
- * console.log(jaxElm.attr(["id", "data-word"])); // vraci pole ["mojeId", "demo"]
+ * @method nastaví nebo získá hodnoty vlastností html atributů (ekvivaletní s metodou elm.setAttribute)
  *
- * @param {String | Array | Object} property název atributu | pole názvů atributů | asociativní pole, např. {id:"mojeId", checked:"checked"}
- * @param {value} value pokud je uvedena a první argument je string, provede se nastavení příslušného atributu na určitou hodnotu
- * @returns {String | Object | JAX.Node}
+ * @param {string || array || object} property název atributu || pole názvů atributů || asociativní pole, např. {id:"mojeId", checked:"checked"}
+ * @param {string} value nastaví hodnotu atributu; v případě že první parametr je pole, potom tuto hodnotu nastaví všem atributům v poli
+ * @returns {string || object}
  */
 JAX.Element.prototype.attr = function(property, value) {
+	if (!property) { 
+		return this; 
+	}
+	
 	var argLength = arguments.length;
 
 	if (argLength == 1) {
@@ -267,6 +268,12 @@ JAX.Element.prototype.attr = function(property, value) {
 	return this;
 };
 
+/**
+ * @method odstraní atribut(y)
+ *
+ * @param {string || array } property název atributu || pole názvů atributů
+ * @returns {object} JAX.Node
+ */
 JAX.Element.prototype.removeAttr = function(properties) {
 	if (typeof(properties) == "string") { 
 		this._node.removeAttribute(properties);
@@ -282,20 +289,18 @@ JAX.Element.prototype.removeAttr = function(properties) {
 	return this;
 }
 
-/** 
- * @method nastaví nebo získá style vlastnosti u elementu
- * @example
- * var jaxElm = JAX(document.body);
- * jaxElm.css("width","100%"); // nastavi document.body.style.width = "100%";
- * jaxElm.css({"display":"block"}); // nastavi document.body.style.dsiplay = "block";
- * console.log(jaxElm.css("display")); // ziska, jak je nastavena vlastnost display
- * console.log(jaxElm.css(["display", "width"])); // vraci pole ["block", "100%"]
+/**
+ * @method nastaví nebo získá hodnoty vlastností atributu elm.style
  *
- * @param {String | Array | Object} property název vlastnosti | pole názvů vlastností | asociativní pole, např. {display:"none", width:"100%"}
- * @param {value} value pokud je tento argument uveden a první argument je string, provede se nastavení příslušné vlastnosti na danou hodnotu
- * @returns {String | Object | JAX.Node}
+ * @param {string || array || object} property název vlasnosti || pole názvů vlastností || asociativní pole, např. {display:"none", width:"100px"}
+ * @param {string} value nastaví hodnotu vlastnosti; v případě že první parametr je pole, potom tuto hodnotu nastaví všem vlastnostem v poli
+ * @returns {string || object}
  */
 JAX.Element.prototype.css = function(property, value) {
+	if (!property) { 
+		return this; 
+	}
+
 	var argLength = arguments.length;
 
 	if (argLength == 1) {
@@ -329,8 +334,6 @@ JAX.Element.prototype.css = function(property, value) {
 	}
 
 	if (argLength == 2 && (value || value === "")) {
-		if (!property) { return this; }
-		
 		if (typeof(property) == "string") {
 			if (property == "opacity") {
 				this._setOpacity(value);
@@ -358,43 +361,41 @@ JAX.Element.prototype.css = function(property, value) {
 	return this;
 };
 
-/** 
- * @method vrátí aktuální platné hodnoty požadovaných css vlastností u elementu bez ohledu na to, jestli jsou nastaveny přes css pravidlo nebo object style
- * @example
- * <style> .trida { padding-top:100px; } </style>
- * var jaxElm = JAX(document.body).addClass("trida");
- * jaxElm.computedCss("padding-top"); // vraci "100px"
- * jaxElm.css("paddingTop", "200px");
- * jaxElm.computedCss("padding-top"); // vraci "200px"
+/**
+ * @method ekvivalent k window.getComputedStyle (<a href="https://developer.mozilla.org/en-US/docs/Web/API/Window.getComputedStyle">https://developer.mozilla.org/en-US/docs/Web/API/Window.getComputedStyle</a>)
  *
- * @param {String | Array} properties název vlastnosti | pole názvů vlastností
- * @returns {String | Object | JAX.Node}
+ * @param {string || array} property název vlasnosti || pole názvů vlastností
+ * @returns {string || object}
  */
 JAX.Element.prototype.computedCss = function(properties) {
+	if (!properties) {
+		return "";
+	}
+
 	if (typeof(properties) == "string") {
 		var value = JAX.Element.getComputedStyle(this._node).getPropertyValue(properties);
 		return value;
 	}
 
-	var css = {};
-	for (var i=0, len=properties.length; i<len; i++) {
-		var p = properties[i];
-		var value = JAX.Element.getComputedStyle(this._node).getPropertyValue(p);
-		css[p] = value;
+	if (properties instanceof Array) {
+		var css = {};
+		for (var i=0, len=properties.length; i<len; i++) {
+			var p = properties[i];
+			var value = JAX.Element.getComputedStyle(this._node).getPropertyValue(p);
+			css[p] = value;
+		}
+		return css;
 	}
-	return css;
+
+	return "";
 };
 
 /** 
  * @method zjistí nebo nastaví skutečnou výšku nebo šířku elementu včetně paddingu a borderu
- * @example
- * <style> .trida { padding:20px; width:100px; } </style>
- * var jaxElm = JAX(document.body).addClass("trida");
- * console.log(jaxElm.fullSize("width")); // vraci 140
  *
- * @param {String} sizeType "width" nebo "height"
- * @param {Number} value hodnota (v px)
- * @returns {Number | JAX.Node}
+ * @param {string} sizeType "width" nebo "height"
+ * @param {number} value hodnota (v px)
+ * @returns {number || object}
  */
 JAX.Element.prototype.fullSize = function(sizeType, value) {
 	if (arguments.length == 1) {
@@ -408,15 +409,11 @@ JAX.Element.prototype.fullSize = function(sizeType, value) {
 };
 
 /** 
- * @method zjistí nebo nastaví vlastnost width nebo height. V případě, že width nebo height nejsou nijak nastaveny, tak při zjišťování spočítá velikost obsahu na základě vlastnosti box-sizing.
- * @example
- * <style> .trida { padding:20px; width:100px; } </style>
- * var jaxElm = JAX(document.body).addClass("trida");
- * console.log(jaxElm.size("width")); // vraci 100
+ * @method zjistí nebo nastaví style vlastnost width nebo height. V případě, že width nebo height nejsou nijak nastaveny, tak při zjišťování spočítá velikost obsahu na základě vlastnosti box-sizing.
  *
- * @param {String} sizeType "width" nebo "height"
- * @param {Number} value hodnota (v px)
- * @returns {Number | JAX.Node}
+ * @param {string} sizeType "width" nebo "height"
+ * @param {number} value hodnota (v px)
+ * @returns {number || object}
  */
 JAX.Element.prototype.size = function(sizeType, value) {
 	if (arguments.length == 1) { 
@@ -434,11 +431,8 @@ JAX.Element.prototype.size = function(sizeType, value) {
 
 /** 
  * @method promaže element
- * @example
- * var body = JAX("body").html("<span>Ahoj svete!</span><em>Takze dobry vecer!</em>");
- * body.clear();
  *
- * @returns {JAX.Element}
+ * @returns {object} JAX.Node
  */
 JAX.Element.prototype.clear = function() {
 	if ("innerHTML" in this._node) {
@@ -450,12 +444,9 @@ JAX.Element.prototype.clear = function() {
 
 /** 
  * @method porovná, jestli element odpovídá zadaným kritériím
- * @example
- * document.body.innerHTML = "<span>1</span><span>2</span><em>3</em>";
- * if (JAX("body").first().eq("span")) { alert("span je prvni"); }
  *
- * @param {Node | JAX.Node | String} node uzel | instance JAX.Node | CSS3 (2.1) selector
- * @returns {Boolean}
+ * @param {string || object} node DOM uzel || instance JAX.Node || CSS3 (2.1 pro IE8) selector
+ * @returns {boolean}
  */
 JAX.Element.prototype.eq = function(node) {
 	if (!node) { return false; }
