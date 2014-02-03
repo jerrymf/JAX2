@@ -106,7 +106,7 @@
 			var suffix = value.split(/\d/)[0];
 			var rootSize = 0;
 
-			rootSize = getFirstNonStaticElementSize(element, property == "left" || property == "right" ? "clientWidth" : "clientHeight"); 
+			rootSize = getFirstNonStaticElementSize(element, property == "left" || property == "right" ? "clientWidth" : "clientHeight");
 
 			return sizeToPixels(size, suffix, rootSize, fontSize);
 		};
@@ -127,12 +127,12 @@
 				paddingX = parseFloat(style[paddingPropertyX]);
 				paddingY = parseFloat(style[paddingPropertyY]);
 			}
-			
+
 			if (boxSizing != "border-box") {
 				borderX = parseFloat(style[borderPropertyX]);
 				borderY = parseFloat(style[borderPropertyY]);
 			}
-			
+
 			if (paddingX && isFinite(paddingX)) { value -= paddingX; }
 			if (paddingY && isFinite(paddingY)) { value -= paddingY; }
 			if (borderX && isFinite(borderX)) { value -= borderX; }
@@ -150,40 +150,44 @@
 			var sides = ["left","right","top","bottom"];
 
 			for (property in currentStyle) {
-				/*this[count] = denormalize(property);*/
+				this[count] = denormalize(property);
 				var value = currentStyle[property];
 
 				if (regexMeasureable.test(property) && value != "auto") {
 					this[property] = getSizeInPixels(element, currentStyle, property, baseFontSize) + "px";
 				} else if (property == "styleFloat") {
 					this["float"] = value;
-				} else if (property == "height" || property == "width") {
-					var valueLower = value.toLowerCase();
-					var isMeasurable = value != "auto";
-					var isInPixels = valueLower.indexOf("px") > -1;
-
-					if (!isMeasurable || isInPixels) {
-						this[property] = value;
-					} else {
-						this[property] = getSizeInPixelsWH(property, this, baseFontSize, element.offsetWidth) + "px";
-					}
 				} else if (sides.indexOf(property) > -1 && positions.indexOf(currentStyle["position"]) > -1 && value != "auto") {
 					this[property] = getPositionInPixels(element, currentStyle, property, baseFontSize) + "px";
 				} else {
 					try {
-						/* IE8 crashes in case of getting some properties (outline, outlineWidth, ...) */
 						this[property] = value;
 					} catch(e) {
-						this[property] = "";
+						alert(property + ": " + value);
 					}
 				}
 
 				count++;
 			}
 
-			this.length = count;
+			var sizes = ["height", "width"];
+
+			while(sizes.length) {
+				var property = sizes.pop();
+				var valueLower = value.toLowerCase();
+				var isMeasurable = value != "auto";
+				var isInPixels = isMeasurable && valueLower.indexOf("px") > -1;
+
+				if (!isMeasurable || isInPixels) {
+					this[property] = value;
+				} else {
+					this[property] = getSizeInPixelsWH(property, this, baseFontSize, property == "height" ? element.offsetHeight : element.offsetWidth) + "px";
+				}
+			}
 
 			this["opacity"] = getOpacity(currentStyle);
+
+			this.length = count;
 		};
 
 		CSSStyleDeclaration.prototype.getPropertyPriority =  function () {
@@ -195,8 +199,7 @@
 		};
 
 		CSSStyleDeclaration.prototype.item = function(index) {
-			throw new Error('NoModificationAllowedError: DOM Exception 7');
-			/*return this[index];*/
+			return this[index];
 		};
 
 		CSSStyleDeclaration.prototype.removeProperty =  function () {
@@ -214,7 +217,7 @@
 		JAX.Element.getComputedStyle = function(element) {
 			return new CSSStyleDeclaration(element);
 		}
-	} else {	
+	} else {
 		JAX.Element.getComputedStyle = function(element) {
 			return element.ownerDocument.defaultView.getComputedStyle(element, "");
 		}
