@@ -1,13 +1,12 @@
 /**
  * @fileOverview fxarray.js - JAX - JAk eXtended
- * @author <a href="mailto:jerrymf@gmail.com">Marek Fojtl</a>
+ * @author <a href="mailto:marek.fojtl@firma.seznam.cz">Marek Fojtl</a>
  * @version 1.0
  */
 
 /**
- * Třída rezrezentující pole JAX.FX instancí
  * @class JAX.FXArray
- * @see JAX.IIterable
+ * je třída rezrezentující pole JAX.FX instancí
  */ 
 JAX.FXArray = JAK.ClassMaker.makeClass({
 	NAME: "JAX.FXArray",
@@ -16,8 +15,8 @@ JAX.FXArray = JAK.ClassMaker.makeClass({
 });
 
 /**
- * @constructor
- * 
+ * @see JAX.IIterable
+ *
  * @param {array} fxArray pole instancí JAX.FX
  */ 
 JAX.FXArray.prototype.$constructor = function(fxArray) {
@@ -29,9 +28,9 @@ JAX.FXArray.prototype.$constructor = function(fxArray) {
 };
 
 /**
- * @method spustí animace
+ * spustí animace
  * 
- * @returns {object.<JAX.FXArray>}
+ * @returns {JAX.FXArray}
  */ 
 JAX.FXArray.prototype.run = function() {
 	for (var i=0; i<this.length; i++) {
@@ -42,11 +41,11 @@ JAX.FXArray.prototype.run = function() {
 };
 
 /**
- * @method funkce, která se zavolá, jakmile animace skončí. V případě prvního parametru se jedná o úspěšné dokončení, v případě druhého o chybu.
+ * funkce, která se zavolá, jakmile animace skončí. V případě prvního parametru se jedná o úspěšné dokončení, v případě druhého o chybu.
  *
  * @param {function} onFulFill funkce, která se zavolá po úspěšném ukončení animace
  * @param {function} onReject funkce, která se zavolá, pokud se animaci nepodaří provést
- * @returns {object.<JAK.Promise>}
+ * @returns {JAK.Promise}
  */ 
 JAX.FXArray.prototype.then = function(onFulfill, onReject) {
 	var fxPromises = new Array(this.length);
@@ -73,9 +72,9 @@ JAX.FXArray.prototype.then = function(onFulfill, onReject) {
 };
 
 /**
- * @method stopne animaci, hodnoty zůstanou nastavené v takovém stavu, v jakém se momentálně nacházejí při zavolání metody
+ * stopne animaci, hodnoty zůstanou nastavené v takovém stavu, v jakém se momentálně nacházejí při zavolání metody
  *
- * @returns {object.<JAX.FXArray>}
+ * @returns {JAX.FXArray}
  */
 JAX.FXArray.prototype.stop = function() {
 	for (var i=0; i<this.length; i++) {
@@ -86,9 +85,9 @@ JAX.FXArray.prototype.stop = function() {
 };
 
 /**
- * @method stopne animaci a spustí její zpětný chod
+ * stopne animaci a spustí její zpětný chod
  *
- * @returns {object.<JAX.FXArray>}
+ * @returns {JAX.FXArray}
  */
 JAX.FXArray.prototype.reverse = function() {
 	for (var i=0; i<this.length; i++) {

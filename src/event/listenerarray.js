@@ -1,13 +1,12 @@
 /**
  * @fileOverview listenerarray.js - JAX - JAk eXtended
- * @author <a href="mailto:jerrymf@gmail.com">Marek Fojtl</a>
+ * @author <a href="mailto:marek.fojtl@firma.seznam.cz">Marek Fojtl</a>
  * @version 1.0
  */
 
 /**
- * Třída rezrezentující pole posluchačů
  * @class JAX.ListenerArray
- * @see JAX.IIterable
+ * je třída rezrezentující pole posluchačů
  */ 
 JAX.ListenerArray = JAK.ClassMaker.makeClass({
 	NAME: "JAX.ListenerArray",
@@ -16,8 +15,8 @@ JAX.ListenerArray = JAK.ClassMaker.makeClass({
 });
 
 /**
- * @constructor
- * 
+ * @see JAX.IIterable
+ *
  * @param {array} listeners pole instanci JAX.Listener
  */ 
 JAX.ListenerArray.prototype.$constructor = function(listeners) {
@@ -29,9 +28,9 @@ JAX.ListenerArray.prototype.$constructor = function(listeners) {
 };
 
 /**
- * @method odregistruje všechny posluchače v poli a z pole je odstraní.
+ * odregistruje všechny posluchače v poli a z pole je odstraní.
  * 
- * returns {object.<JAX.ListenerArray>}
+ * returns {JAX.ListenerArray}
  */ 
 JAX.ListenerArray.prototype.unregister = function() {
 	var item = null;

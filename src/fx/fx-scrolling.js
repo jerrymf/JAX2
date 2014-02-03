@@ -1,12 +1,12 @@
 /**
  * @fileOverview fx-scrolling.js - JAX - JAk eXtended
- * @author <a href="mailto:jerrymf@gmail.com">Marek Fojtl</a>
+ * @author <a href="mailto:marek.fojtl@firma.seznam.cz">Marek Fojtl</a>
  * @version 1.0
  */
 
 /**
- * Pomocník pro animaci scrollování
- * @class JAX.FX
+ * @class JAX.FX.Scrolling
+ * je pomocník pro animaci scrollování
  */ 
 JAX.FX.Scrolling = JAK.ClassMaker.makeClass({
 	NAME: "JAX.FX.Scrolling",
@@ -14,7 +14,6 @@ JAX.FX.Scrolling = JAK.ClassMaker.makeClass({
 });
 
 /**
- * @constructor
  *
  * @param {object} elm HTMLElement || JAX.Node
  */
@@ -35,11 +34,11 @@ JAX.FX.Scrolling.prototype.$constructor = function(jaxElm) {
 };
 
 /**
- * @method přidá atribut pro scrollování, který se bude animovat. Pro každou vlastnost lze zadat různou délku animace.
+ * přidá atribut pro scrollování, který se bude animovat. Pro každou vlastnost lze zadat různou délku animace.
  * @param {string} property "left" nebo "top" pro scrollLeft respektive scrollTop
  * @param {number} value koncová hodnota v px
  * @param {number} duration délka animace v ms
- * @returns {object.<JAX.FX.Scrolling>}
+ * @returns {JAX.FX.Scrolling}
  */
 JAX.FX.Scrolling.prototype.addProperty = function(property, value, duration) {
 	if (property != "left" && property != "top") {
@@ -58,9 +57,9 @@ JAX.FX.Scrolling.prototype.addProperty = function(property, value, duration) {
 };
 
 /**
- * @method spustí animaci
+ * spustí animaci
  *
- * @returns {object.<JAK.Promise>}
+ * @returns {JAK.Promise}
  */
 JAX.FX.Scrolling.prototype.run = function() {
 	if (this._promises.animationFinished) { 
@@ -85,20 +84,20 @@ JAX.FX.Scrolling.prototype.run = function() {
 };
 
 /**
- * @method funkce, která se zavolá, jakmile animace skončí. V případě prvního parametru se jedná o úspěšné dokončení, v případě druhého o chybu.
+ * funkce, která se zavolá, jakmile animace skončí. V případě prvního parametru se jedná o úspěšné dokončení, v případě druhého o chybu.
  *
  * @param {function} onFulfill funkce, která se zavolá po úspěšném ukončení animace
  * @param {function} onReject funkce, která se zavolá, pokud se animaci nepodaří provést
- * @returns {object.<JAK.Promise>}
+ * @returns {JAK.Promise}
  */ 
 JAX.FX.Scrolling.prototype.then = function(onFulfill, onReject) {
 	return this._promises.animationFinished.then(onFulfill, onReject);
 };
 
 /**
- * @method stopne animaci, hodnoty zůstanou nastavené v takovém stavu, v jakém se momentálně nacházejí při zavolání metody
+ * stopne animaci, hodnoty zůstanou nastavené v takovém stavu, v jakém se momentálně nacházejí při zavolání metody
  * 
- * @returns {object.<JAX.FX.Scrolling>}
+ * @returns {JAX.FX.Scrolling}
  */
 JAX.FX.Scrolling.prototype.stop = function() {
 	if (!this._isRunning) { return this; }
@@ -111,9 +110,9 @@ JAX.FX.Scrolling.prototype.stop = function() {
 };
 
 /**
- * @method stopne animaci a spustí její zpětný chod
+ * stopne animaci a spustí její zpětný chod
  *
- * @returns {object.<JAK.Promise>}
+ * @returns {JAK.Promise}
  */
 JAX.FX.Scrolling.prototype.reverse = function() {
 	if (this._isRunning) {
@@ -137,7 +136,7 @@ JAX.FX.Scrolling.prototype.reverse = function() {
 };
 
 /**
- * @method zjistí, jestli animace právě běží
+ * zjistí, jestli animace právě běží
  * 
  * @returns {boolean}
  */

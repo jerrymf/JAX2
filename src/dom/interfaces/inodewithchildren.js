@@ -1,12 +1,12 @@
 /**
  * @fileOverview inodewithchildren.js - JAX - JAk eXtended
- * @author <a href="mailto:jerrymf@gmail.com">Marek Fojtl</a>
+ * @author <a href="mailto:marek.fojtl@firma.seznam.cz">Marek Fojtl</a>
  * @version 1.0
  */
 
 /**
- * Rozhraní pro nody, které mohou mít potomky
- * @class
+ * @class JAX.INodeWithChildren
+ * tvoří rozhraní pro nody, které mohou mít potomky
  */
 JAX.INodeWithChildren = JAK.ClassMaker.makeInterface({
 	NAME: "JAX.INodeWithChildren",
@@ -14,10 +14,10 @@ JAX.INodeWithChildren = JAK.ClassMaker.makeInterface({
 });
 
 /**
- * @method přidává do elementu další uzly vždy na konec, lze zadat i jako html string, který se následně připne
+ * přidává do elementu další uzly vždy na konec, lze zadat i jako html string, který se následně připne
  *
  * @param {string || object || array} nodes HTML string || HTMLElement || Text || HTMLDocumetFragment || pole elementů || instance JAX.NodeArray
- * @returns {object.<JAX.Node>}
+ * @returns {JAX.Node}
  */
 JAX.INodeWithChildren.prototype.add = function(nodes) {
 	if (!this._node.childNodes) {
@@ -41,10 +41,10 @@ JAX.INodeWithChildren.prototype.add = function(nodes) {
 };
 
 /**
- * @method vloží zadané uzly před první uzel v elementu, lze zadat i jako html string, který se následně připne před první element
+ * vloží zadané uzly před první uzel v elementu, lze zadat i jako html string, který se následně připne před první element
  *
- * @param {string || object || array}
- * @returns {object.<JAX.Node>}
+ * @param {string || object || array} nodes HTML string || HTMLElement || Text || HTMLDocumetFragment || pole elementů || instance JAX.NodeArray
+ * @returns {JAX.Node}
  */
 JAX.INodeWithChildren.prototype.insertFirst = function(nodes) {
 	if (!this._node.childNodes) {
@@ -83,11 +83,11 @@ JAX.INodeWithChildren.prototype.insertFirst = function(nodes) {
 };
 
 /**
- * @method vloží uzel před jiný
+ * vloží uzel před jiný
  *
  * @param {object || string} node element nebo css selector, jak se k elementu dostat
  * @param {object || string} nodeBefore element nebo css selector, jak se k elementu dostat
- * @returns {object.<JAX.Node>}
+ * @returns {JAX.Node}
  */
 JAX.INodeWithChildren.prototype.addBefore = function(node, nodeBefore) {
 	if (!this._node.childNodes) {
@@ -112,7 +112,7 @@ JAX.INodeWithChildren.prototype.addBefore = function(node, nodeBefore) {
 };
 
 /** 
- * @method zjistí, jestli element obsahuje nody podle zadaných kritérií
+ * zjistí, jestli element obsahuje nody podle zadaných kritérií
  *
  * @param {object || string} nodes HTMLElement || Text || pole elementů || instance JAX.NodeArray || CSS 3 (CSS 2.1 pro IE8) selector
  * @returns {boolean}
@@ -145,10 +145,10 @@ JAX.INodeWithChildren.prototype.contains = function(nodes) {
 };
 
 /** 
- * @method vrací JAXové pole (JAX.NodeArray) přímých potomků; pokud je ale zadán parametr index, vrací právě jeden JAXový node
+ * vrací JAXové pole (JAX.NodeArray) přímých potomků; pokud je ale zadán parametr index, vrací právě jeden JAXový node
  *
  * @param {number || undefined} index číselný index požadovaného potomku
- * @returns {object.<JAX.Node> || object.<JAX.NodeArray> || null}
+ * @returns {JAX.Node || JAX.NodeArray || null}
  */
 JAX.INodeWithChildren.prototype.children = function(index) {
 	if (!this._node.childNodes) {
@@ -174,9 +174,9 @@ JAX.INodeWithChildren.prototype.children = function(index) {
 };
 
 /** 
- * @method vrací první HTMLElement jako JAXový node
+ * vrací první HTMLElement jako JAXový node
  *
- * @returns {object.<JAX.Node> || null}
+ * @returns {JAX.Node || null}
  */
 JAX.INodeWithChildren.prototype.first = function() {
 	if (!this._node.childNodes) {
@@ -199,9 +199,9 @@ JAX.INodeWithChildren.prototype.first = function() {
 };
 
 /** 
- * @method vrací poslední HTMLElement jako JAXový node
+ * vrací poslední HTMLElement jako JAXový node
  *
- * @returns {object.<JAX.Node> || null}
+ * @returns {JAX.Node || null}
  */
 JAX.INodeWithChildren.prototype.last = function() {
 	if (!this._node.childNodes) {
@@ -224,9 +224,9 @@ JAX.INodeWithChildren.prototype.last = function() {
 };
 
 /** 
- * @method promaže element, odstraní jeho přímé potomky
+ * promaže element, odstraní jeho přímé potomky
  *
- * @returns {object.<JAX.Node>}
+ * @returns {JAX.Node}
  */
 JAX.INodeWithChildren.prototype.clear = function() {
 	if (!this._node.childNodes) {

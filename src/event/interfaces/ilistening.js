@@ -1,12 +1,12 @@
 /**
  * @fileOverview ilistening.js - JAX - JAk eXtended
- * @author <a href="mailto:jerrymf@gmail.com">Marek Fojtl</a>
+ * @author <a href="mailto:marek.fojtl@firma.seznam.cz">Marek Fojtl</a>
  * @version 2.0
  */
 
 /**
- * Rozhrani implementujici praci s navesovanim a odvesovanim udalosti
  * @class JAX.IListening
+ * tvoří rozhrani implementujicí práci s navěšováním a odvěšováním událostí
  */
 JAX.IListening = JAK.ClassMaker.makeInterface({
 	NAME: "JAX.IListening",
@@ -16,13 +16,13 @@ JAX.IListening = JAK.ClassMaker.makeInterface({
 JAX.IListening._listeners = {};
 
 /**
- * @method navěsí posluchač události na element a vrátí instanci JAX.Listener. Při vyvolání události pak do funkce předává jako parametr instanci JAX.Event.
+ * navěsí posluchač události na element a vrátí instanci JAX.Listener. Při vyvolání události pak do funkce předává jako parametr instanci JAX.Event.
  *
  * @param {string} type typ události ("click", "mousedown", ...)
  * @param {object || function} obj objekt, ve kterém se metoda nachází nebo připravená funkce
  * @param {string || function} func název metody nebo instance funkce, která se má zavolat po té ,co je událost vyvolána
- * @param {boolean} useCapture hodnata použitá jako argument capture pro DOM zachytávání
- * @returns {object.<JAX.Listener>}
+ * @param {boolean} useCapture hodnota použitá jako argument capture pro DOM zachytávání
+ * @returns {JAX.Listener}
  */
 JAX.IListening.prototype.listen = function(type, obj, func, useCapture) {
 	var eventFunc = null;
@@ -79,10 +79,10 @@ JAX.IListening.prototype.listen = function(type, obj, func, useCapture) {
 };
 
 /**
- * @method odvěsí posluchač na základě parametru, což může být typ události ("click", "mousedown", ...), případně lze předat instanci JAX.Listener, kterou vrátila metoda listen nebo metodu zavolat bez parametrů a tím se odvěsí všechny posluchaču na elementu navěšené
+ * odvěsí posluchač na základě parametru, což může být jednak typ události ("click", "mousedown", ...) nebo lze předat instanci JAX.Listener. Metodu lze také zavolat bez parametrů a tím se odvěsí všechny posluchače na elementu.
  *
  * @param {string || object} listener typ události nebo instance JAX.Listener
- * @returns {object.<JAX.Node>}
+ * @returns {JAX.Node}
  */
 JAX.IListening.prototype.stopListening = function(listener) {
 	if (!listener && arguments.length) {

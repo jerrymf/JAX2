@@ -1,15 +1,13 @@
 /**
  * @fileOverview window.js - JAX - JAk eXtended
- * @author <a href="mailto:jerrymf@gmail.com">Marek Fojtl</a>
+ * @author <a href="mailto:marek.fojtl@firma.seznam.cz">Marek Fojtl</a>
  * @version 1.0
  */
 
 /**
- * Třída reprezentující object Window
  * @class JAX.Window
+ * je třída reprezentující object Window
  *
- * @see JAX.IListening
- * @see JAX.IScrollableNode
  */
 JAX.Window = JAK.ClassMaker.makeClass({
 	NAME: "JAX.Window",
@@ -19,7 +17,8 @@ JAX.Window = JAK.ClassMaker.makeClass({
 });
 
 /** 
- * @constructor
+ * @see JAX.IListening
+ * @see JAX.IScrollableNode
  *
  * @param {object} win window
  */
@@ -34,7 +33,7 @@ JAX.Window.prototype.$constructor = function(win) {
 };
 
 /**
- * @method zjistí velikost okna dle zadaného typu, tedy šířku nebo výšku
+ * zjistí velikost okna dle zadaného typu, tedy šířku nebo výšku
  *
  * @param {string} sizeType "width" nebo "height"
  * @returns {number}

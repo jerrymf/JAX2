@@ -5,8 +5,8 @@
  */
 
 /**
- * Obecná třída reprezentující základ JAXovských elementů
  * @class JAX.Node
+ * je obecná třída reprezentující základ JAXovských elementů
  */
 JAX.Node = JAK.ClassMaker.makeClass({
 	NAME: "JAX.Node",
@@ -61,7 +61,7 @@ JAX.Node.prototype.$destructor = function() {
 };
 
 /**
- * @method vrací uzel, který si instance drží
+ * vrací uzel, který si instance drží
  *
  * @returns {object} HTMLElement | Text | HTMLDocument | Window
  */
@@ -70,7 +70,7 @@ JAX.Node.prototype.node = function() {
 };
 
 /**
- * @method zjišťuje, zda-li je obsah platný nebo nikoliv.
+ * zjišťuje, zda-li je obsah platný nebo nikoliv.
  *
  * @returns {boolean}
  */
@@ -79,11 +79,11 @@ JAX.Node.prototype.exists = function() {
 };
 
 /**
- * @method získá nebo nastaví vlastnost nodu
+ * získá nebo nastaví vlastnost nodu
  *
  * @param {string || array || object} property název vlastnosti | pole názvů vlastností | asociativní pole, např. {id:"mojeId", checked:true}
  * @param {} value nastavená hodnota
- * @returns {string || object.<JAX.Node> || object}
+ * @returns {string || JAX.Node || object}
  */
 JAX.Node.prototype.prop = function(property, value) {
 	if (!property) { 

@@ -1,19 +1,13 @@
 /**
- * @fileOverview node.js - JAX - JAk eXtended
- * @author <a href="mailto:jerrymf@gmail.com">Marek Fojtl</a>
+ * @fileOverview element.js - JAX - JAk eXtended
+ * @author <a href="mailto:marek.fojtl@firma.seznam.cz">Marek Fojtl</a>
  * @version 1.0
  */
 
 /**
- * Třída reprezentující prvek v DOMu a poskytující rozšířené metody pro práci s ním
- * @class JAX.Node
+ * @class JAX.Element
+ * je třída reprezentující HTML Element
  *
- * @see JAX.ISearchableNode
- * @see JAX.IMoveableNode
- * @see JAX.INodeWithChildren
- * @see JAX.IListening
- * @see JAX.IAnimateableNode
- * @see JAX.IScrollableNode
  */
 JAX.Element = JAK.ClassMaker.makeClass({
 	NAME: "JAX.Element",
@@ -39,8 +33,13 @@ JAX.Element._BOX_SIZING = null;
 	}
 })();
 
-/** 
- * @constructor
+/**
+ * @see JAX.ISearchableNode
+ * @see JAX.IMoveableNode
+ * @see JAX.INodeWithChildren
+ * @see JAX.IListening
+ * @see JAX.IAnimateableNode
+ * @see JAX.IScrollableNode
  *
  * @param {object} node objekt typu window.HTMLElement
  */
@@ -66,10 +65,10 @@ JAX.Element.prototype.$destructor = function() {
 };
 
 /**
- * @method přidá zadané css třídu nebo třídy k elementu
+ * přidá zadané css třídu nebo třídy k elementu
  *
  * @param {string} classNames css třída nebo třídy oddělené mezerou (píše se bez tečky na začátku)
- * @returns {object.<JAX.Node>}
+ * @returns {JAX.Node}
  */
 JAX.Element.prototype.addClass = function(classNames) {
 	var classNames = classNames.trim();
@@ -92,10 +91,10 @@ JAX.Element.prototype.addClass = function(classNames) {
 };
 
 /**
- * @method odstraní zadané css třídu nebo třídy z elementu
+ * odstraní zadané css třídu nebo třídy z elementu
  *
  * @param {string} classNames css třída nebo třídy oddělené mezerou (píše se bez tečky na začátku)
- * @returns {object.<JAX.Node>}
+ * @returns {JAX.Node}
  */
 JAX.Element.prototype.removeClass = function(classNames) {
 	var classNames = classNames.trim();
@@ -118,7 +117,7 @@ JAX.Element.prototype.removeClass = function(classNames) {
 };
 
 /**
- * @method zjistí, jestli element má nastavenu zadanou css třídu
+ * zjistí, jestli element má nastavenu zadanou css třídu
  *
  * @param {string} className css třída (píše se bez tečky na začátku)
  * @returns {boolean}
@@ -145,10 +144,10 @@ JAX.Element.prototype.hasClass = function(className) {
 };
 
 /**
- * @method pokud má element css třídu již nastavenu, tak ji odebere, pokud nikoliv, tak ji přidá
+ * pokud má element css třídu již nastavenu, tak ji odebere, pokud nikoliv, tak ji přidá
  *
  * @param {string} className css třída (píše se bez tečky na začátku)
- * @returns {object.<JAX.Node>}
+ * @returns {JAX.Node}
  */
 JAX.Element.prototype.toggleClass = function(className) {
 	var className = className.trim();
@@ -166,10 +165,10 @@ JAX.Element.prototype.toggleClass = function(className) {
 };
 
 /**
- * @method volání bez parametru zjistíme, jaké id má element nastaveno, voláním s parametrem ho nastavíme
+ * volání bez parametru zjistíme, jaké id má element nastaveno, voláním s parametrem ho nastavíme
  *
  * @param {string || undefined} id id elementu
- * @returns {string || object.<JAX.Node>}
+ * @returns {string || JAX.Node}
  */
 JAX.Element.prototype.id = function(id) {
 	if (!arguments.length) { 
@@ -186,10 +185,10 @@ JAX.Element.prototype.id = function(id) {
 };
 
 /**
- * @method volání bez parametru zjistíme, jaké innerHTML má element nastaveno, voláním s parametrem ho nastavíme
+ * volání bez parametru zjistíme, jaké innerHTML má element nastaveno, voláním s parametrem ho nastavíme
  *
  * @param {string || undefined} id innerHTML elementu
- * @returns {string || object.<JAX.Node>}
+ * @returns {string || JAX.Node}
  */
 JAX.Element.prototype.html = function(innerHTML) {
 	if (!arguments.length) { 
@@ -205,10 +204,10 @@ JAX.Element.prototype.html = function(innerHTML) {
 };
 
 /**
- * @method volání bez parametru zjistíme, jaký čistý text element obsahuje (bez html tagů), voláním s parametrem ho nastavíme; pozn.: při získávání textu je zahrnut veškerý text, tedy i ten, který není na stránce vidět
+ * volání bez parametru zjistíme, jaký čistý text element obsahuje (bez html tagů), voláním s parametrem ho nastavíme; pozn.: při získávání textu je zahrnut veškerý text, tedy i ten, který není na stránce vidět
  *
  * @param {string || undefined} text text, který chceme nastavit
- * @returns {object.<JAX.Node> || string}
+ * @returns {JAX.Node || string}
  */
 JAX.Element.prototype.text = function(text) {
 	if (text && typeof(text) != "string" && typeof(text) != "number") {
@@ -228,11 +227,11 @@ JAX.Element.prototype.text = function(text) {
 };
 
 /**
- * @method nastaví nebo získá hodnoty vlastností html atributů (ekvivaletní s metodou elm.setAttribute)
+ * nastaví nebo získá hodnoty vlastností html atributů (ekvivaletní s metodou elm.setAttribute)
  *
  * @param {string || array || object} property název atributu (pokud není zadán druhý parametr, vrátí hodnotu atributu) || pole názvů atributů || asociativní pole, např. {id:"mojeId", checked:"checked"}
  * @param {string || undefined} value nastaví hodnotu atributu; v případě že první parametr je pole, potom tuto hodnotu nastaví všem atributům v poli
- * @returns {string || object.<JAX.Node> || object}
+ * @returns {string || JAX.Node || object}
  */
 JAX.Element.prototype.attr = function(property, value) {
 	if (!property) { 
@@ -276,10 +275,10 @@ JAX.Element.prototype.attr = function(property, value) {
 };
 
 /**
- * @method odstraní atribut(y)
+ * odstraní atribut(y)
  *
  * @param {string || array} property název atributu || pole názvů atributů
- * @returns {object.<JAX.Node>}
+ * @returns {JAX.Node}
  */
 JAX.Element.prototype.removeAttr = function(properties) {
 	if (typeof(properties) == "string") { 
@@ -297,11 +296,11 @@ JAX.Element.prototype.removeAttr = function(properties) {
 }
 
 /**
- * @method nastaví nebo získá hodnoty vlastností atributu elm.style
+ * nastaví nebo získá hodnoty vlastností atributu elm.style
  *
  * @param {string || array || object} property název vlasnosti || pole názvů vlastností || asociativní pole, např. {display:"none", width:"100px"}
  * @param {string} value nastaví hodnotu vlastnosti; v případě že první parametr je pole, potom tuto hodnotu nastaví všem vlastnostem v poli
- * @returns {string || object.<JAX.Node> || object}
+ * @returns {string || JAX.Node || object}
  */
 JAX.Element.prototype.css = function(property, value) {
 	if (!property) { 
@@ -369,7 +368,7 @@ JAX.Element.prototype.css = function(property, value) {
 };
 
 /**
- * @method ekvivalent k window.getComputedStyle (<a href="https://developer.mozilla.org/en-US/docs/Web/API/Window.getComputedStyle">https://developer.mozilla.org/en-US/docs/Web/API/Window.getComputedStyle</a>)
+ * ekvivalent k window.getComputedStyle (<a href="https://developer.mozilla.org/en-US/docs/Web/API/Window.getComputedStyle">https://developer.mozilla.org/en-US/docs/Web/API/Window.getComputedStyle</a>)
  *
  * @param {string || array} property název vlasnosti || pole názvů vlastností
  * @returns {string || object}
@@ -398,11 +397,11 @@ JAX.Element.prototype.computedCss = function(properties) {
 };
 
 /** 
- * @method zjistí nebo nastaví skutečnou výšku nebo šířku elementu včetně paddingu a borderu
+ * zjistí nebo nastaví skutečnou výšku nebo šířku elementu včetně paddingu a borderu
  *
  * @param {string} sizeType "width" nebo "height"
  * @param {number} value hodnota (v px)
- * @returns {number || object.<JAX.Node>}
+ * @returns {number || JAX.Node}
  */
 JAX.Element.prototype.fullSize = function(sizeType, value) {
 	if (arguments.length == 1) {
@@ -416,11 +415,11 @@ JAX.Element.prototype.fullSize = function(sizeType, value) {
 };
 
 /** 
- * @method zjistí nebo nastaví style vlastnost width nebo height. V případě, že width nebo height nejsou nijak nastaveny, tak při zjišťování spočítá velikost obsahu na základě vlastnosti box-sizing.
+ * zjistí nebo nastaví style vlastnost width nebo height. V případě, že width nebo height nejsou nijak nastaveny, tak při zjišťování spočítá velikost obsahu na základě vlastnosti box-sizing.
  *
  * @param {string} sizeType "width" nebo "height"
  * @param {number} value hodnota (v px)
- * @returns {number || object.<JAX.Node>}
+ * @returns {number || JAX.Node}
  */
 JAX.Element.prototype.size = function(sizeType, value) {
 	if (arguments.length == 1) { 
@@ -437,9 +436,9 @@ JAX.Element.prototype.size = function(sizeType, value) {
 };
 
 /** 
- * @method promaže element
+ * promaže element
  *
- * @returns {object.<JAX.Node>}
+ * @returns {JAX.Node}
  */
 JAX.Element.prototype.clear = function() {
 	if ("innerHTML" in this._node) {
@@ -450,7 +449,7 @@ JAX.Element.prototype.clear = function() {
 };
 
 /** 
- * @method porovná, jestli element odpovídá zadaným kritériím
+ * porovná, jestli element odpovídá zadaným kritériím
  *
  * @param {string || object} node DOM uzel || instance JAX.Node || CSS3 (2.1 pro IE8) selector
  * @returns {boolean}

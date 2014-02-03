@@ -1,16 +1,13 @@
 /**
  * @fileOverview documentfragment.js - JAX - JAk eXtended
- * @author <a href="mailto:jerrymf@gmail.com">Marek Fojtl</a>
+ * @author <a href="mailto:marek.fojtl@firma.seznam.cz">Marek Fojtl</a>
  * @version 1.0
  */
 
 /**
- * Třída reprezentující instanci window.DocumentFragment
  * @class JAX.DocumentFragment
+ * je třída reprezentující instanci window.DocumentFragment
  *
- * @see JAX.ISearchableNode
- * @see JAX.IMoveableNode
- * @see JAX.INodeWithChildren
  */
 JAX.DocumentFragment = JAK.ClassMaker.makeClass({
 	NAME: "JAX.DocumentFragment",
@@ -20,7 +17,9 @@ JAX.DocumentFragment = JAK.ClassMaker.makeClass({
 });
 
 /** 
- * @constructor
+ * @see JAX.ISearchableNode
+ * @see JAX.IMoveableNode
+ * @see JAX.INodeWithChildren
  *
  * @param {object} doc objekt typu window.DocumentFragment
  */
@@ -35,10 +34,10 @@ JAX.DocumentFragment.prototype.$constructor = function(doc) {
 };
 
 /** 
- * @method nepodporováno u window.DocumentFragment
+ * nepodporováno u window.DocumentFragment
  * @see JAX.IMoveableNode#remove
  *
- * @returns {object.<JAX.Node>}
+ * @returns {JAX.Node}
  */
 JAX.DocumentFragment.prototype.remove = function() {
 	console.error("You can not remove documentFragment node.")
@@ -47,9 +46,9 @@ JAX.DocumentFragment.prototype.remove = function() {
 };
 
 /**
- * @method nepodporováno u window.DocumentFragment
+ * nepodporováno u window.DocumentFragment
  * @see JAX.IMoveableNode#swapPlaceWith
- * @returns {object.<JAX.Node>}
+ * @returns {JAX.Node}
  */
 JAX.DocumentFragment.prototype.swapPlaceWith = function() {
 	console.error("You can not switch place with documentFragment node. Use replaceWith() method instead this.")
@@ -58,7 +57,7 @@ JAX.DocumentFragment.prototype.swapPlaceWith = function() {
 };
 
 /** 
- * @method nepodporováno u window.DocumentFragment
+ * nepodporováno u window.DocumentFragment
  * @see JAX.IMoveableNode#isIn
  * @returns {boolean} false
  */
@@ -69,7 +68,7 @@ JAX.DocumentFragment.prototype.isIn = function() {
 };
 
 /** 
- * @method nepodporováno u window.DocumentFragment
+ * nepodporováno u window.DocumentFragment
  * @see JAX.IMoveableNode#parent
  *
  * @returns {object} null
@@ -81,7 +80,7 @@ JAX.DocumentFragment.prototype.parent = function() {
 };
 
 /** 
- * @method nepodporováno u window.DocumentFragment
+ * nepodporováno u window.DocumentFragment
  * @see JAX.IMoveableNode#next
  *
  * @returns {object} null
@@ -93,7 +92,7 @@ JAX.DocumentFragment.prototype.next = function() {
 };
 
 /** 
- * @method nepodporováno u window.DocumentFragment
+ * nepodporováno u window.DocumentFragment
  * @see JAX.IMoveableNode#previous
  *
  * @returns {object} null

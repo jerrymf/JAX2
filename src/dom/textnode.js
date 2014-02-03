@@ -1,14 +1,13 @@
 /**
  * @fileOverview textnode.js - JAX - JAk eXtended
- * @author <a href="mailto:jerrymf@gmail.com">Marek Fojtl</a>
+ * @author <a href="mailto:marek.fojtl@firma.seznam.cz">Marek Fojtl</a>
  * @version 1.0
  */
 
 /**
- * Třída reprezentující text node a comment node (elm.nodeType == 3 || elm.nodeType == 8)
  * @class JAX.TextNode
+ * je třída reprezentující text node a comment node (elm.nodeType == 3 || elm.nodeType == 8)
  *
- * @see JAX.IMoveableNode
  */
 JAX.TextNode = JAK.ClassMaker.makeClass({
 	NAME: "JAX.TextNode",
@@ -18,7 +17,7 @@ JAX.TextNode = JAK.ClassMaker.makeClass({
 });
 
 /** 
- * @constructor
+ * @see JAX.IMoveableNode
  *
  * @param {object} node objekt typu window.Text
  */
@@ -32,10 +31,10 @@ JAX.TextNode.prototype.$constructor = function(node) {
 };
 
 /**
- * @method nastaví nebo vrátí textovou hodnotu uzlu
+ * nastaví nebo vrátí textovou hodnotu uzlu
  *
  * @param {string || undefined} text textový řetězec
- * @returns {object.<JAX.Node> || string} JAX.Node
+ * @returns {JAX.Node || string} JAX.Node
  */
 JAX.TextNode.prototype.text = function(text) {
 	if (!arguments.length) { 
@@ -48,9 +47,9 @@ JAX.TextNode.prototype.text = function(text) {
 };
 
 /**
- * @method nastaví textovou hodnotu na prázdný řetězec
+ * nastaví textovou hodnotu na prázdný řetězec
  *
- * @returns {object.<JAX.Node>}
+ * @returns {JAX.Node}
  */
 JAX.TextNode.prototype.clear = function() {
 	this._node.nodeValue = "";
@@ -58,7 +57,7 @@ JAX.TextNode.prototype.clear = function() {
 };
 
 /**
- * @method porovná sama sebe se zadaným parametrem. Pokud se jedná o stejný node, vrátí true.
+ * porovná sama sebe se zadaným parametrem. Pokud se jedná o stejný node, vrátí true.
  *
  * @param {object} node DOM uzel nebo instance JAX.Node
  * @returns {boolean}

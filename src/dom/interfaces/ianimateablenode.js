@@ -1,12 +1,12 @@
 /**
  * @fileOverview ianimateablenode.js - JAX - JAk eXtended
- * @author <a href="mailto:jerrymf@gmail.com">Marek Fojtl</a>
+ * @author <a href="mailto:marek.fojtl@firma.seznam.cz">Marek Fojtl</a>
  * @version 1.0
  */
 
 /**
- * Rozhraní pro nody, které lze animovat
- * @class
+ * @class JAX.IAnimateableNode
+ * tvoří rozhraní pro nody, které lze animovat
  */
 JAX.IAnimateableNode = JAK.ClassMaker.makeInterface({
 	NAME: "JAX.IAnimateableNode",
@@ -14,13 +14,13 @@ JAX.IAnimateableNode = JAK.ClassMaker.makeInterface({
 });
 
 /**
- * @method animuje konkrétní css vlastnost
+ * animuje konkrétní css vlastnost
  * @param {string} property css vlastnost, která se má animovat
  * @param {string || number} duration délka animace - lze zadat i jednotky s nebo ms (výchozí jsou ms)
  * @param {string || number} start počáteční hodnota - je dobré k ní uvést vždy i jednotky (pokud jde o číselnou hodnotu) a jako výchozí se používají px
  * @param {string || number} end koncová hodnota - je dobré k ní uvést vždy i jednotky (pokud jde o číselnou hodnotu) a jako výchozí se používají px
  * @param {string} method css transformační metoda (ease, linear, ease-in, ease-out, ... ) více na <a href="http://www.w3.org/TR/2009/WD-css3-transitions-20090320/#transition-timing-function_tag">webu W3C</a>, pozn.: pokud prohlížeč neumí transitions, je použito js řešení a metoda je vždy LINEAR
- * @returns {object.<JAX.FX>}
+ * @returns {JAX.FX}
  */
 JAX.IAnimateableNode.prototype.animate = function(property, duration, start, end, method) {
 	if (typeof(property) != "string") {
@@ -36,11 +36,11 @@ JAX.IAnimateableNode.prototype.animate = function(property, duration, start, end
 };
 
 /**
- * @method animuje průhlednost
+ * animuje průhlednost
  * @param {string} type "in" (od 0 do 1) nebo "out" (od 1 do 0)
  * @param {string || number} duration délka animace - lze zadat i jednotky s nebo ms (výchozí jsou ms)
  * @param {string} method css transformační metoda (ease, linear, ease-in, ease-out, ... ) více na <a href="http://www.w3.org/TR/2009/WD-css3-transitions-20090320/#transition-timing-function_tag">webu W3C</a>, pozn.: pokud prohlížeč neumí transitions, je použito js řešení a metoda je vždy LINEAR
- * @returns {object.<JAX.FX>}
+ * @returns {JAX.FX}
  */
 JAX.IAnimateableNode.prototype.fade = function(type, duration, method) {
 	if (typeof(type) != "string") {
@@ -64,11 +64,11 @@ JAX.IAnimateableNode.prototype.fade = function(type, duration, method) {
 };
 
 /**
- * @method animuje průhlednost do určité hodnoty
+ * animuje průhlednost do určité hodnoty
  * @param {string || number} opacityValue hodnota průhlednosti, do které se má animovat. Jako výchozí se bere aktuální hodnota
  * @param {string || number} duration délka animace - lze zadat i jednotky s nebo ms (výchozí jsou ms)
  * @param {string} method css transformační metoda (ease, linear, ease-in, ease-out, ... ) více na <a href="http://www.w3.org/TR/2009/WD-css3-transitions-20090320/#transition-timing-function_tag">webu W3C</a>, pozn.: pokud prohlížeč neumí transitions, je použito js řešení a metoda je vždy LINEAR
- * @returns {object.<JAX.FX>}
+ * @returns {JAX.FX}
  */
 JAX.IAnimateableNode.prototype.fadeTo = function(opacityValue, duration, method) {
 	var opacityValue = parseFloat(opacityValue) || 0;
@@ -82,11 +82,11 @@ JAX.IAnimateableNode.prototype.fadeTo = function(opacityValue, duration, method)
 };
 
 /**
- * @method zobrazí element pomocí animace výšky nebo šířky
+ * zobrazí element pomocí animace výšky nebo šířky
  * @param {string} type "down" nebo "up" pro animaci výšky nebo "left", "right" pro animaci šířky
  * @param {string || number} duration délka animace - lze zadat i jednotky s nebo ms (výchozí jsou ms)
  * @param {string} method css transformační metoda (ease, linear, ease-in, ease-out, ... ) více na <a href="http://www.w3.org/TR/2009/WD-css3-transitions-20090320/#transition-timing-function_tag">webu W3C</a>, pozn.: pokud prohlížeč neumí transitions, je použito js řešení a metoda je vždy LINEAR
- * @returns {object.<JAX.FX>}
+ * @returns {JAX.FX}
  */
 JAX.IAnimateableNode.prototype.slide = function(type, duration, method) {
 	if (typeof(type) != "string") {

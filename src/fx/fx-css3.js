@@ -1,12 +1,12 @@
 /**
  * @fileOverview fx-css3.js - JAX - JAk eXtended
- * @author <a href="mailto:jerrymf@gmail.com">Marek Fojtl</a>
+ * @author <a href="mailto:marek.fojtl@firma.seznam.cz">Marek Fojtl</a>
  * @version 1.0
  */
 
 /**
- * Pomocník pro animaci pomocí CSS3 transitions
  * @class JAX.FX.CSS3
+ * je pomocník pro animaci pomocí CSS3 transitions
  */
 JAX.FX.CSS3 = JAK.ClassMaker.makeClass({
 	NAME:"JAX.FX.CSS3",
@@ -35,7 +35,6 @@ JAX.FX.CSS3._TRANSITION_EVENT = "";
 })();
 
 /**
- * @constructor
  *
  * @param {object} jaxElm JAX.Node
  */
@@ -52,7 +51,7 @@ JAX.FX.CSS3.prototype.$constructor = function(jaxElm) {
 };
 
 /**
- * @method očekává pole objektů s nastavením jednotlivých animací
+ * očekává pole objektů s nastavením jednotlivých animací
  *
  * @param {array} settings
  * @param {string} settings.property
@@ -69,9 +68,9 @@ JAX.FX.CSS3.prototype.set = function(settings) {
 };
 
 /**
- * @method spustí CSS3 transition
+ * spustí CSS3 transition
  *
- * @returns {object.<JAK.Promise>}
+ * @returns {JAK.Promise}
  */
 JAX.FX.CSS3.prototype.run = function() {
 	this._promise.finished = new JAK.Promise();
@@ -111,7 +110,7 @@ JAX.FX.CSS3.prototype.run = function() {
 };
 
 /**
- * @method stopne transition
+ * stopne transition
  *
  */
 JAX.FX.CSS3.prototype.stop = function() {

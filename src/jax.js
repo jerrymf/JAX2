@@ -6,11 +6,12 @@
  */
 
 /**
- * @method Najde element, který odpovídá selectoru
+ * @class JAX
+ * je jmenný prostor a také funkce, která najde element, který odpovídá selectoru nebo obalí zadaný objekt vlastní třídou (wrapperem)
  *
  * @param {string || object} selector řetězec splňující pravidla css3 (pro IE8 css2.1) selectoru | HTMLElement | Text | HTMLDocument | Window | JAX.Node
  * @param {string || object} [srcElement=window.document] element, ve kterém se má hledat
- * @returns {object.<JAX.Node>}
+ * @returns {JAX.Node}
  */
 var JAX = function(selector, srcElement) {
 	if (!selector) {
@@ -89,11 +90,11 @@ JAX.DOCUMENT = 9; /* konstanta pro objekt document */
 JAX.DOCUMENT_FRAGMENT = 11; /* konstanta pro objekt document fragment */
 
 /**
- * @method Najde elementy, které odpovídají selectoru
+ * najde elementy, které odpovídají selectoru
  *
  * @param {string || object || array} selector řetězec splňující pravidla css3 (pro IE8 css2.1) selectoru | Array of (HTMLElement | Text | HTMLDocument | Window | JAX.Node) | JAX.NodeArray
  * @param {object || string} [srcElement=window.document] CSS3 (CSS2.1) selector nebo element, ve kterém se má hledat
- * @returns {object.<JAX.NodeArray>}
+ * @returns {JAX.NodeArray}
  */
 JAX.all = function(selector, srcElement) {
 	if (!selector) {
@@ -130,13 +131,13 @@ JAX.all = function(selector, srcElement) {
 };
 
 /**
- * @method Vytvoří element na základě zadaných parametrů
+ * vytvoří element na základě zadaných parametrů
  *
  * @param {string} tagString řetězec definující název tagu (lze přidat i název tříd(y) a id, se kterými se má vytvořit)
  * @param {object} attrs asociativní pole atributů tagu
  * @param {object} styles asociativní pole stylů, které se mají přiřadit do node.style
  * @param {object} [srcDocument=window.document] documentElement, ve kterém se má vytvářet
- * @returns {object.<JAX.Node>}
+ * @returns {JAX.Node}
  */
 JAX.make = function(tagString, attrs, styles, srcDocument) {
 	var attrs = attrs || {};
@@ -193,10 +194,10 @@ JAX.make = function(tagString, attrs, styles, srcDocument) {
 };
 
 /**
- * @method Vytvoří z HTML stringu elementy - *zhmotní* html string.
+ * vytvoří z HTML stringu elementy - *zhmotní* html string.
  *
  * @param {string} html html string, který má být transformováno na uzly
- * @returns {object.<JAX.NodeArray>}
+ * @returns {JAX.NodeArray}
  */
 JAX.makeFromHTML = function(html) {
 	if (!html) { return new JAX.NodeArray([]); }
@@ -208,18 +209,18 @@ JAX.makeFromHTML = function(html) {
 };
 
 /**
- * @method Vytvoří textový uzel
+ * vytvoří textový uzel
  *
  * @param {string} text text, který má uzel obsahovat
  * @param {object} [srcDocument=window.document] documentElement node, ve kterém se má vytvářet
- * @returns {object.<JAX.Node>}
+ * @returns {JAX.Node}
  */
 JAX.makeText = function(text, srcDocument) {
 	return new JAX.TextNode((srcDocument || document).createTextNode(text));
 };
 
 /**
- * @method Zjistí, jakého typu je zadaný parametr
+ * zjistí, jakého typu je zadaný parametr
  *
  * @param {} value testovaná hodnota
  * @returns {string}
@@ -251,7 +252,7 @@ JAX.getTypeOf = function(value) {
 };
 
 /**
- * @method Najde platnou CSS vlasnost. Lze použít při hledání platné CSS hodnoty s vendor prefixem. Zadávají se oddělené mezerou.
+ * najde platnou CSS vlasnost. Lze použít při hledání platné CSS hodnoty s vendor prefixem. Zadávají se oddělené mezerou.
  *
  * @param {string} property CSS vlasnosti oddělené mezereou
  * @returns {string}

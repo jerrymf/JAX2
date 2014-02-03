@@ -1,12 +1,12 @@
 /**
  * @fileOverview fx-interpolator.js - JAX - JAk eXtended
- * @author <a href="mailto:jerrymf@gmail.com">Marek Fojtl</a>
+ * @author <a href="mailto:marek.fojtl@firma.seznam.cz">Marek Fojtl</a>
  * @version 1.0
  */
 
 /**
- * Pomocník pro animaci pomocí interpolátoru
  * @class JAX.FX.Interpolator
+ * je pomocník pro animaci pomocí interpolátoru
  */
 JAX.FX.Interpolator = JAK.ClassMaker.makeClass({
 	NAME:"JAX.FX.Interpolator",
@@ -18,7 +18,6 @@ JAX.FX.Interpolator = JAK.ClassMaker.makeClass({
 });
 
 /**
- * @constructor
  *
  * @param {object} jaxElm JAX.Node
  */
@@ -33,7 +32,7 @@ JAX.FX.Interpolator.prototype.$constructor = function(jaxElm) {
 };
 
 /**
- * @method očekává pole objektů s nastavením jednotlivých animací
+ * očekává pole objektů s nastavením jednotlivých animací
  *
  * @param {array} settings
  * @param {string} settings.property
@@ -50,9 +49,9 @@ JAX.FX.Interpolator.prototype.set = function(settings) {
 };
 
 /**
- * @method spustí interpolátor
+ * spustí interpolátor
  *
- * @returns {object.<JAK.Promise>}
+ * @returns {JAK.Promise}
  */
 JAX.FX.Interpolator.prototype.run = function() {
 	this._promise.finished = new JAK.Promise();
@@ -62,7 +61,7 @@ JAX.FX.Interpolator.prototype.run = function() {
 };
 
 /**
- * @method stopne interpolátor
+ * stopne interpolátor
  *
  */
 JAX.FX.Interpolator.prototype.stop = function() {

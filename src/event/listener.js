@@ -1,12 +1,12 @@
 /**
  * @fileOverview listener.js - JAX - JAk eXtended
- * @author <a href="mailto:jerrymf@gmail.com">Marek Fojtl</a>
+ * @author <a href="mailto:marek.fojtl@firma.seznam.cz">Marek Fojtl</a>
  * @version 1.0
  */
 
 /**
- * Třída rezrezentující posluchač události
  * @class JAX.Listener
+ * je třída rezrezentující posluchač události
  */ 
 JAX.Listener = JAK.ClassMaker.makeClass({
 	NAME: "JAX.Listener",
@@ -14,7 +14,6 @@ JAX.Listener = JAK.ClassMaker.makeClass({
 });
 
 /**
- * @method konstruktor
  *
  * @param {object} jaxElm instance JAX.Node
  * @param {string} type typ události
@@ -27,9 +26,9 @@ JAX.Listener.prototype.$constructor = function(jaxElm, type, method) {
 };
 
 /**
- * @method odvěsí posluchač
+ * odvěsí posluchač
  *
- * @returns {object.<JAX.Listener>}
+ * @returns {JAX.Listener}
  */ 
 JAX.Listener.prototype.unregister = function() {
 	if (!this._method) { return; }
@@ -39,16 +38,16 @@ JAX.Listener.prototype.unregister = function() {
 };
 
 /**
- * @method vrací element, na kterém je událost navěšena
+ * vrací element, na kterém je událost navěšena
  *
- * @returns {object.<JAX.Node>}
+ * @returns {JAX.Node}
  */ 
 JAX.Listener.prototype.jaxElm = function() {
 	return this._jaxElm;
 };
 
 /**
- * @method vrací funkci nebo object s metodou handleEvent, která se má po nastání události zavolat
+ * vrací funkci nebo object s metodou handleEvent, která se má po nastání události zavolat
  *
  * @returns {object || function}
  */ 
@@ -57,7 +56,7 @@ JAX.Listener.prototype.method = function() {
 };
 
 /**
- * @method vrací typ události
+ * vrací typ události
  *
  * @returns {string}
  */ 

@@ -1,16 +1,13 @@
 /**
  * @fileOverview document.js - JAX - JAk eXtended
- * @author <a href="mailto:jerrymf@gmail.com">Marek Fojtl</a>
+ * @author <a href="mailto:marek.fojtl@firma.seznam.cz">Marek Fojtl</a>
  * @version 1.0
  */
 
 /**
- * Třída reprezentující instanci window.Document
  * @class JAX.Document
+ * je třída reprezentující instanci window.Document
  *
- * @see JAX.ISearchableNode
- * @see JAX.IListening
- * @see JAX.IScrollableNode
  */
 JAX.Document = JAK.ClassMaker.makeClass({
 	NAME: "JAX.Document",
@@ -20,7 +17,9 @@ JAX.Document = JAK.ClassMaker.makeClass({
 });
 
 /** 
- * @constructor
+ * @see JAX.ISearchableNode
+ * @see JAX.IListening
+ * @see JAX.IScrollableNode
  *
  * @param {object} doc objekt typu window.Document
  */
@@ -35,7 +34,7 @@ JAX.Document.prototype.$constructor = function(doc) {
 };
 
 /** 
- * @method zjistí, jestli element obsahuje nody podle zadaných kritérií
+ * zjistí, jestli element obsahuje nody podle zadaných kritérií
  *
  * @param {object || string} node HTMLElement || Text ||  CSS 3 (CSS 2.1 pro IE8) selector
  * @returns {boolean}
@@ -58,7 +57,7 @@ JAX.Document.prototype.contains = function(node) {
 };
 
 /**
- * @method zjistí velikost dokumentu dle zadaného typu, tedy šířku nebo výšku
+ * zjistí velikost dokumentu dle zadaného typu, tedy šířku nebo výšku
  *
  * @param {string} sizeType "width" nebo "height"
  * @returns {number}
