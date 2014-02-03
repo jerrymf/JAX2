@@ -160,11 +160,7 @@
 				} else if (sides.indexOf(property) > -1 && positions.indexOf(currentStyle["position"]) > -1 && value != "auto") {
 					this[property] = getPositionInPixels(element, currentStyle, property, baseFontSize) + "px";
 				} else {
-					try {
-						this[property] = value;
-					} catch(e) {
-						alert(property + ": " + value);
-					}
+					this[property] = value;
 				}
 
 				count++;
