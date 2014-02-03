@@ -1,7 +1,7 @@
 /**
  * @fileOverview node-getcomputedstyle.js - JAX - JAk eXtended
- * @author <a href="mailto:jerrymf@gmail.com">Marek Fojtl</a>
- * @version 0.7
+ * @author <a href="mailto:marek.fojtl@firma.seznam.cz">Marek Fojtl</a>
+ * @version 1.0
  */
 
 /**
@@ -9,6 +9,16 @@
  */
 (function() {
 	if (!window.getComputedStyle) {
+
+		function getOpacity(currentStyle) {
+			var value = "";
+
+			currentStyle.filter.replace(/alpha\(opacity=['"]?([0-9]+)['"]?\)/i, function(match1, match2) {
+				value = match2;
+			});
+
+			return value ? (parseFloat(value)/100) + "" : value;
+		};
 
 		function normalize(property) {
 ﻿		 ﻿ return property.replace(/-([a-z])/g, function(match, letter) { return letter.toUpperCase(); });
@@ -18,96 +28,7 @@
 ﻿		 ﻿ return property.replace(/([A-Z])/g, function(match, letter) { return "-" + letter.toLowerCase(); });
 		};
 
-		function getBaseFontSize(element) {
-			if (!element) { return 16; }
-
-			var style = element.currentStyle;
-			var cssValue = style["fontSize"];
-			var size = parseFloat(cssValue);
-			var suffix = cssValue.split(/\d/)[0];
-			var isProportional = /%|em/.test(suffix);
-
-			if (isProportional) { 
-				return getBaseFontSize(element.parentElement); 
-			}
-
-			return getRecountedPixelSize(size, suffix);
-		};
-
-		function getFirstNonStaticElementSize(element, property) {
-			while(element.parentElement && element.parentElement.currentStyle) {
-				element = element.parentElement;
-				var position = element.currentStyle.position || "";
-				if (["absolute","relative","fixed"].indexOf(position) != -1) { return element[property]; }
-			}
-
-			return element.ownerDocument.documentElement[property];
-		};
-
-		function getPixelSize(element, style, property, fontSize) {
-			var value = style[property];
-			var size = parseFloat(value);
-			var suffix = value.split(/\d/)[0];
-
-			if (property == "fontSize") {
-				var rootSize = fontSize;
-			} else if (element.parentElement != element.ownerDocument) {
-				var parentElement = element.parentElement;
-				/* dirty trick, how to find out width of parent element */
-				var temp = document.createElement("jaxtemp");
-					temp.style.display = "block";
-					parentElement.appendChild(temp);
-				var rootSize = temp.offsetWidth;
-					parentElement.removeChild(temp);
-			} else {
-				var rootSize = element.parentElement.documentElement.clientWidth;
-			}
-
-			return getRecountedPixelSize(size, suffix, rootSize, fontSize);
-		};
-
-		function getPixelPosition(element, style, property, fontSize) {
-			var value = style[property];
-			var size = parseFloat(value);
-			var suffix = value.split(/\d/)[0];
-			var rootSize = 0;
-
-			rootSize = getFirstNonStaticElementSize(element, property == "left" || property == "right" ? "clientWidth" : "clientHeight"); 
-
-			return getRecountedPixelSize(size, suffix, rootSize, fontSize);
-		};
-
-		function getPixelSizeWH(property, style, fontSize, offsetLength) {
-			var boxSizing = style.boxSizing,
-				paddingX = 0,
-				paddingY = 0,
-				borderX = 0,
-				borderY = 0,
-				paddingPropertyX = "padding" + (property == "width" ? "Left" : "Top"),
-				paddingPropertyY = "padding" + (property == "width" ? "Right" : "Bottom"),
-				borderPropertyX = "border" + (property == "width" ? "LeftWidth" : "Top"),
-				borderPropertyY = "border" + (property == "width" ? "RightWidth" : "Bottom"),
-				value = offsetLength;
-
-			if (!boxSizing || boxSizing == "content-box") {
-				paddingX = parseFloat(style[paddingPropertyX]);
-				paddingY = parseFloat(style[paddingPropertyY]);
-			}
-			
-			if (boxSizing != "border-box") {
-				borderX = parseFloat(style[borderPropertyX]);
-				borderY = parseFloat(style[borderPropertyY]);
-			}
-			
-			if (paddingX && isFinite(paddingX)) { value -= paddingX; }
-			if (paddingY && isFinite(paddingY)) { value -= paddingY; }
-			if (borderX && isFinite(borderX)) { value -= borderX; }
-			if (borderY && isFinite(borderY)) { value -= borderY; }
-
-			return value;
-		};
-
-		function getRecountedPixelSize(size, suffix, rootSize, fontSize) {
+		function sizeToPixels(size, suffix, rootSize, fontSize) {
 			switch (suffix) {
 				case "em":
 					return size * fontSize;
@@ -128,29 +49,145 @@
 			}
 		};
 
-		function CSSStyleDeclaration(element) {
-			var currentStyle = element.currentStyle;
-			var fontSize = getBaseFontSize(element);
-			var index = 0;
+		function getBaseFontSize(element) {
+			do {
+				var style = element.currentStyle;
+				var cssValue = style["fontSize"];
+				var suffix = cssValue.split(/\d/)[0];
+				var isProportional = /%|em/.test(suffix);
+				var element = element.parentNode;
+			} while(isProportional && element && element.nodeType != 11);
 
-			for (property in currentStyle) {
-				this[index] = denormalize(property);
-				if (/margin.|padding.|border.+W|^fontSize$/.test(property) && currentStyle[property] != "auto") {
-					this[property] = getPixelSize(element, currentStyle, property, fontSize) + "px";
-				} else if (property == "styleFloat") {
-					this["float"] = currentStyle[property];
-				} else if (["left","right","top","bottom"].indexOf(property) != -1 && ["absolute","relative","fixed"].indexOf(currentStyle["position"]) != -1 && currentStyle[property] != "auto") {
-					this[property] = getPixelPosition(element, currentStyle, property, fontSize) + "px";
-				} else {
-					this[property] = currentStyle[property];
-				}
-				index++;
+			if (isProportional && (!element || element.nodeType == 11)) { 
+				return 16; 
 			}
 
-			this.length = index;
+			var size = parseFloat(cssValue);
+			return sizeToPixels(size, suffix);
+		};
 
-			this["width"] = currentStyle["width"].indexOf("px") != -1 ? currentStyle["width"] : getPixelSizeWH("width", this, fontSize, element.offsetWidth) + "px";
-			this["height"] = currentStyle["height"].indexOf("px") != -1 ? currentStyle["height"] : getPixelSizeWH("height", this, fontSize, element.offsetHeight) + "px";
+		function getFirstNonStaticElementSize(element, property) {
+			var positions = ["absolute","relative","fixed"];
+
+			while(element.parentElement && element.parentElement.currentStyle) {
+				element = element.parentElement;
+				var position = element.currentStyle.position || "";
+				if (positions.indexOf(position) != -1) { return element[property]; }
+			}
+
+			return element.ownerDocument.documentElement[property];
+		};
+
+		function getSizeInPixels(element, style, property, fontSize) {
+			var value = style[property];
+			var size = parseFloat(value);
+			var suffix = value.split(/\d/)[0];
+
+			if (property == "fontSize") {
+				var rootSize = fontSize;
+			} else if (element.parentElement != element.ownerDocument) {
+				var parentElement = element.parentElement;
+				/* dirty trick, how to quickly find out width of parent element */
+				var temp = document.createElement("jaxtempxyz");
+					temp.style.display = "block";
+					parentElement.appendChild(temp);
+				var rootSize = temp.offsetWidth;
+					parentElement.removeChild(temp);
+			} else {
+				var rootSize = element.parentElement.documentElement.clientWidth;
+			}
+
+			return sizeToPixels(size, suffix, rootSize, fontSize) || 0;
+		};
+
+		function getPositionInPixels(element, style, property, fontSize) {
+			var value = style[property];
+			var size = parseFloat(value);
+			var suffix = value.split(/\d/)[0];
+			var rootSize = 0;
+
+			rootSize = getFirstNonStaticElementSize(element, property == "left" || property == "right" ? "clientWidth" : "clientHeight");
+
+			return sizeToPixels(size, suffix, rootSize, fontSize);
+		};
+
+		function getSizeInPixelsWH(property, style, fontSize, offsetLength) {
+			var boxSizing = style.boxSizing,
+				paddingX = 0,
+				paddingY = 0,
+				borderX = 0,
+				borderY = 0,
+				paddingPropertyX = "padding" + (property == "width" ? "Left" : "Top"),
+				paddingPropertyY = "padding" + (property == "width" ? "Right" : "Bottom"),
+				borderPropertyX = "border" + (property == "width" ? "LeftWidth" : "Top"),
+				borderPropertyY = "border" + (property == "width" ? "RightWidth" : "Bottom"),
+				value = offsetLength;
+
+			if (!boxSizing || boxSizing == "content-box") {
+				paddingX = parseFloat(style[paddingPropertyX]);
+				paddingY = parseFloat(style[paddingPropertyY]);
+			}
+
+			if (boxSizing != "border-box") {
+				borderX = parseFloat(style[borderPropertyX]);
+				borderY = parseFloat(style[borderPropertyY]);
+			}
+
+			if (paddingX && isFinite(paddingX)) { value -= paddingX; }
+			if (paddingY && isFinite(paddingY)) { value -= paddingY; }
+			if (borderX && isFinite(borderX)) { value -= borderX; }
+			if (borderY && isFinite(borderY)) { value -= borderY; }
+
+			return value;
+		};
+
+		function CSSStyleDeclaration(element) {
+			var currentStyle = element.currentStyle;
+			var baseFontSize = getBaseFontSize(element);
+			var count = 0;
+			var regexMeasureable = /margin.|padding.|border.+W|^fontSize$/;
+			var positions = ["absolute","relative","fixed"];
+			var sides = ["left","right","top","bottom"];
+
+			for (property in currentStyle) {
+				this[count] = denormalize(property);
+				var value = currentStyle[property];
+
+				if (regexMeasureable.test(property) && value != "auto") {
+					this[property] = getSizeInPixels(element, currentStyle, property, baseFontSize) + "px";
+				} else if (property == "styleFloat") {
+					this["float"] = value;
+				} else if (sides.indexOf(property) > -1 && positions.indexOf(currentStyle["position"]) > -1 && value != "auto") {
+					this[property] = getPositionInPixels(element, currentStyle, property, baseFontSize) + "px";
+				} else {
+					try {
+						this[property] = value;
+					} catch(e) {
+						alert(property + ": " + value);
+					}
+				}
+
+				count++;
+			}
+
+			var sizes = ["height", "width"];
+
+			while(sizes.length) {
+				var property = sizes.pop();
+				var valueLower = value.toLowerCase();
+				var isMeasurable = value != "auto";
+				var isInPixels = isMeasurable && valueLower.indexOf("px") > -1;
+
+				if (!isMeasurable || isInPixels) {
+					this[property] = value;
+				} else {
+					this[property] = getSizeInPixelsWH(property, this, baseFontSize, property == "height" ? element.offsetHeight : element.offsetWidth) + "px";
+				}
+			}
+
+			this["opacity"] = getOpacity(currentStyle);
+
+			this.length = count;
 		};
 
 		CSSStyleDeclaration.prototype.getPropertyPriority =  function () {
@@ -177,11 +214,11 @@
 			throw new Error('NotSupportedError: DOM Exception 9');
 		};
 
-		JAX.Node.getComputedStyle = function(element) {
+		JAX.Element.getComputedStyle = function(element) {
 			return new CSSStyleDeclaration(element);
 		}
-	} else {	
-		JAX.Node.getComputedStyle = function(element) {
+	} else {
+		JAX.Element.getComputedStyle = function(element) {
 			return element.ownerDocument.defaultView.getComputedStyle(element, "");
 		}
 	}

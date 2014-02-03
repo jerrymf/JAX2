@@ -1,12 +1,12 @@
 /**
  * @fileOverview event.js - JAX - JAk eXtended
- * @author <a href="mailto:jerrymf@gmail.com">Marek Fojtl</a>
+ * @author <a href="mailto:marek.fojtl@firma.seznam.cz">Marek Fojtl</a>
  * @version 1.0
  */
 
 /**
- * Třída obalující window.Event pro snadnější práci se stavem událostí
  * @class JAX.Event
+ * je třída obalující window.Event pro snadnější práci se stavem událostí
  */ 
 JAX.Event = JAK.ClassMaker.makeClass({
 	NAME: "JAX.Event",
@@ -14,16 +14,15 @@ JAX.Event = JAK.ClassMaker.makeClass({
 });
 
 /**
- * @method $constructor
  *
- * @param {window.Event} e událost
+ * @param {object} e událost window.Event
  */
 JAX.Event.prototype.$constructor = function(e) {
 	this._e = e;
 };
 
 /**
- * @method vrací event object
+ * vrací event object
  *
  * @returns {window.Event}
  */
@@ -32,36 +31,36 @@ JAX.Event.prototype.event = function() {
 };
 
 /**
- * @method zruší výchozí provedení události
+ * zruší výchozí provedení události
  *
  * @returns {JAX.Event}
  */
 JAX.Event.prototype.prevent= function() {
-	JAK.Events.cancelDef(this._e);
+	this._e.preventDefault();
 	return this;
 };
 
 /**
- * @method stopne probublávání
+ * stopne probublávání
  *
  * @returns {JAX.Event}
  */
 JAX.Event.prototype.stop = function() {
-	JAK.Events.stopEvent(this._e);
+	this._e.stopPropagation();
 	return this;
 };
 
 /**
- * @method vrací cílový element
+ * vrací cílový element
  *
  * @returns {JAX.Node}
  */
 JAX.Event.prototype.target = function() {
-	return JAX(JAK.Events.getTarget(this._e));
+	return JAX(this._e.target);
 };
 
 /**
- * @method vrací element, na který byla událost zavěšena
+ * vrací element, na který byla událost zavěšena
  *
  * @returns {JAX.Node}
  */
@@ -70,9 +69,9 @@ JAX.Event.prototype.currentTarget = function() {
 };
 
 /**
- * @method vrací typ události
+ * vrací typ události
  *
- * @returns {String}
+ * @returns {string}
  */
 JAX.Event.prototype.type = function() {
 	return this._e.type;
