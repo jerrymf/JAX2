@@ -6,7 +6,7 @@ Legend: [+] - added, [*] - fixed or changed, [-] removed
 Version 2.2
 	+ JAX.makeFromHTML - creates JAX.NodeArray from given HTML string
 	+ Elements of JAX.NodeArray can be acessed by numeral index and iterated by for, while, ...
-	+ JAX.NodeArray - added methods: find, findAll, firstElement, lastElement, limit and index
+	+ JAX.NodeArray - added methods: find, findAll, firstElement, lastElement, limit, index, forEachElm and filterElms
 	+ JAX.FX - added methods: addTranslateProperty, then
 	+ Added scrolling methods (with FX) for elements
 	+ Added possibility to get holding node by public atribute 'n'
