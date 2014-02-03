@@ -5,7 +5,6 @@ Legend: [+] - added, [*] - fixed or changed, [-] removed
 
 Version 2.2
 	+ JAX.makeFromHTML - creates JAX.NodeArray from given HTML string
-	+ JAX.findCSSproperty - finds supported CSS property (for example JAX.findCSSproperty("boxSizing mozBoxSizing webkitBoxSizing") returns one property)
 	+ Elements of JAX.NodeArray can be acessed by numeral index and iterated by for, while, ...
 	+ JAX.NodeArray - added methods: find, findAll, firstElement, lastElement, limit and index
 	+ JAX.FX - added methods: addTranslateProperty, then
@@ -15,7 +14,9 @@ Version 2.2
 	+ Added insertFirst method for elements
 	+ Added support for JAX(window)
 	+ Added new JAK to JAX2 repository
-	* Huge internal refactoring
+	* !!! Huge internal refactoring !!!
+	* Bugfixes in getComputedStyle polyfill for IE8
+	* Possibility to use CSS1 selector in getting parent, next and previous element
 	* Lots of bug fixes
 	* Added some new bugs :-)
 
@@ -51,7 +52,7 @@ Version 2.05
 Version 2.04
 	* fix slide method in JAX.Node - returning right promise now
 	* fix in JAX.Node.add method in using html string as argument
-	
+
 Version 2.03
 	+ added JAX.Node.toggleClass
 	+ added JAX.NodeArray.animate
