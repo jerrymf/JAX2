@@ -3,7 +3,7 @@ JAX2
 
 JAX2 - JAK eXtended ver. 2
 
-JAX je knihovna, která rozšiřuje možnosti knihovny JAK (http://github.com/seznam/JAK) a je na ní přímo závislá. Vylepšuje práci s DOMem a přidává podporu animací i pro starší prohlížeče (IE8 a IE9). Jejím cílem není nahradit knihovnu JAK, nýbrž stavět rozšiřující funkcionalitu nad jejím low-level API.
+JAX je knihovna, která rozšiřuje možnosti knihovny JAK (http://github.com/seznam/JAK) a je na ní přímo závislá. Vylepšuje práci s DOMem a přidává podporu animací i pro starší prohlížeče (IE8 a IE9). Jejím cílem není nahradit knihovnu JAK, nýbrž stavět rozšiřující funkcionalitu nad jejím low-level API. Svým používáním silně připomíná knihovnu jQuery.
 
 
 Základní použití
