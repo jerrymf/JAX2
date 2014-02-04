@@ -445,7 +445,7 @@ JAX.Element.prototype.size = function(sizeType, value) {
  * @returns {JAX.Node}
  */
 JAX.Element.prototype.clear = function() {
-	if ("innerHTML" in this._node) {
+	if (this._node.firstChild) {
 		JAK.DOM.clear(this._node);
 	}
 

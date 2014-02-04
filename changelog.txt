@@ -3,6 +3,11 @@ Changelog
 --------------------------------------
 Legend: [+] - added, [*] - fixed or changed, [-] removed
 
+Version 2.21
+	+ added polyfills for firstElementChild, lastElementChild, nextElementSibling, previousElementSibling
+	* JAX.IMoveableNode.previous, JAX.IMoveableNode.next, JAX.INodeWithChildren.first and JAX.INodeWithChildren.last refactored
+	* JAX.Element.clear - fixed
+
 Version 2.2
 	+ JAX.makeFromHTML - creates JAX.NodeArray from given HTML string
 	+ Elements of JAX.NodeArray can be acessed by numeral index and iterated by for, while, ...
