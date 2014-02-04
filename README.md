@@ -27,7 +27,7 @@ Mějme HTML:
 pak, pokud aplikujeme:
 <pre>
   &lt;script type="text/javascript"&gt;
-    JAX(".greetings").addCLass("green").html("Ahoj světe").css("fontSize", "20px");
+    JAX(".greetings").addClass("green").html("Ahoj světe").css("fontSize", "20px");
   &lt;/script&gt;
 </pre>
 
@@ -41,7 +41,10 @@ Pro práci s více elementy najednou se používá JAX.all(selector), což nám 
 Pokud tedy na výše uvedené HTML aplikujeme:
 <pre>
  &lt;script type="text/javascript"&gt;
-    JAX.all("div").addCLass("green").html("Have a problem, make a point, take it easy, smoke a joint.").css("fontSize", "20px");
+    JAX.all("div")
+      .addClass("green")
+      .html("Have a problem, make a point, take it easy, smoke a joint.")
+      .css("fontSize", "20px");
   &lt;/script&gt;
 </pre>
 
