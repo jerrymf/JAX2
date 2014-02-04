@@ -1,5 +1,5 @@
 /**
- * @fileOverview node-getcomputedstyle.js - JAX - JAk eXtended
+ * @fileOverview getcomputedstyle.js - JAX - JAk eXtended
  * @author <a href="mailto:marek.fojtl@firma.seznam.cz">Marek Fojtl</a>
  * @version 1.0
  */
@@ -88,7 +88,7 @@
 			} else if (element.parentElement != element.ownerDocument) {
 				var parentElement = element.parentElement;
 				/* dirty trick, how to quickly find out width of parent element */
-				var temp = document.createElement("jaxtempxyz");
+				var temp = element.ownerDocument.createElement("jaxtempxyz");
 					temp.style.display = "block";
 					parentElement.appendChild(temp);
 				var rootSize = temp.offsetWidth;
@@ -210,12 +210,11 @@
 			throw new Error('NotSupportedError: DOM Exception 9');
 		};
 
-		JAX.Element.getComputedStyle = function(element) {
+		window.getComputedStyle = function(element, pseudoElt) {
+			if (pseudoElt) {
+				throw new Error("Optional argument pseudoElt is not allowed in getComputedStyle polyfill.");
+			}
 			return new CSSStyleDeclaration(element);
-		}
-	} else {
-		JAX.Element.getComputedStyle = function(element) {
-			return element.ownerDocument.defaultView.getComputedStyle(element, "");
-		}
+		};
 	}
 })();

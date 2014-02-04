@@ -379,7 +379,9 @@ JAX.Element.prototype.computedCss = function(properties) {
 	}
 
 	if (typeof(properties) == "string") {
-		var value = JAX.Element.getComputedStyle(this._node).getPropertyValue(properties);
+		var win = (this._node.ownerDocument.defaultView || this._node.ownerDocument.parentWindow);
+		var getComputedStyle = win.getComputedStyle || window.getComputedStyle;
+		var value = getComputedStyle(this._node).getPropertyValue(properties);
 		return value;
 	}
 
@@ -387,7 +389,9 @@ JAX.Element.prototype.computedCss = function(properties) {
 		var css = {};
 		for (var i=0, len=properties.length; i<len; i++) {
 			var p = properties[i];
-			var value = JAX.Element.getComputedStyle(this._node).getPropertyValue(p);
+			var win = (this._node.ownerDocument.defaultView || this._node.ownerDocument.parentWindow);
+			var getComputedStyle = win.getComputedStyle || window.getComputedStyle;
+			var value = getComputedStyle(this._node).getPropertyValue(p);
 			css[p] = value;
 		}
 		return css;

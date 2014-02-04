@@ -248,10 +248,10 @@ JAX.IMoveableNode.prototype.next = function(selector) {
 	} else if (typeof(selector) == "string") {
 		if (/^[#.a-z0-9_-]+$/ig.test(selector)) {
 			while(n) { 
-				if (n.nodeType == JAX.HTML_ELEMENT && this._matches(n, selector)) {
+				if (this._matches(n, selector)) {
 					return JAX(n);
 				}
-				n = n.nextSibling;
+				n = n.nextElementSibling;
 			}
 		}
 		return null;
@@ -281,10 +281,10 @@ JAX.IMoveableNode.prototype.previous = function(selector) {
 	} else if (typeof(selector) == "string") {
 		if (/^[#.a-z0-9_-]+$/ig.test(selector)) {
 			while(n) { 
-				if (n.nodeType == JAX.HTML_ELEMENT && this._matches(n, selector)) {
+				if (this._matches(n, selector)) {
 					return JAX(n);
 				}
-				n = n.previousSibling;
+				n = n.previousElementSibling;
 			}
 		}
 		return null;

@@ -184,18 +184,7 @@ JAX.INodeWithChildren.prototype.first = function() {
 		return null;
 	}
 
-	if ("firstElementChild" in this._node) {
-		return this._node.firstElementChild ? JAX(this._node.firstElementChild) : null;
-	}
-
-	if (!this._node.childNodes.length) { return null; }
-	
-	for (var i=0, len=this._node.childNodes.length; i<len; i++) {
-		var childNode = this._node.childNodes[i];
-		if (childNode.nodeType == 1) { return JAX(childNode); }
-	}
-
-	return null;
+	return this._node.firstElementChild ? JAX(this._node.firstElementChild) : null;
 };
 
 /** 
@@ -209,18 +198,7 @@ JAX.INodeWithChildren.prototype.last = function() {
 		return null;
 	}
 
-	if ("lastElementChild" in this._node) {
-		return this._node.lastElementChild ? JAX(this._node.lastElementChild) : null;
-	}
-
-	if (!this._node.childNodes || !this._node.childNodes.length) { return null; }
-	
-	for (var i=this._node.childNodes.length - 1; i>-1; i--) {
-		var childNode = this._node.childNodes[i];
-		if (childNode.nodeType == 1) { return JAX(childNode); }
-	}
-
-	return null;
+	return this._node.lastElementChild ? JAX(this._node.lastElementChild) : null;
 };
 
 /** 

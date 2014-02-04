@@ -3,6 +3,8 @@
 cd src
 
 cat jax.js > ../lib/jax.js
+cat polyfills/getcomputedstyle.js >> ../lib/jax.js
+cat polyfills/ie8-elements.js >> ../lib/jax.js
 cat common/interfaces/iiterable.js >> ../lib/jax.js
 cat event/interfaces/ilistening.js >> ../lib/jax.js
 cat event/event.js >> ../lib/jax.js
@@ -15,7 +17,6 @@ cat dom/interfaces/ianimateablenode.js >> ../lib/jax.js
 cat dom/interfaces/iscrollablenode.js >> ../lib/jax.js
 cat dom/node.js >> ../lib/jax.js
 cat dom/element.js >> ../lib/jax.js
-cat dom/element-getcomputedstyle.js >> ../lib/jax.js
 cat dom/textnode.js >> ../lib/jax.js
 cat dom/document.js >> ../lib/jax.js
 cat dom/documentfragment.js >> ../lib/jax.js
