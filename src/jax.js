@@ -49,35 +49,29 @@ var JAX = function(selector, srcElement) {
 			var foundElm = selector;	
 		} else {
 			var win = selector.defaultView || selector.parentWindow || (selector.ownerDocument ? (selector.ownerDocument.defaultView || selector.ownerDocument.parentWindow) : null);
+			var hasWindow = win && ((win.Window && win instanceof win.Window) || (win.constructor.toString().indexOf("DOMWindow") > -1)); /* toString - fix pro Android */
 
-			if (win) {
-				var isElement = (win.HTMLElement && selector instanceof win.HTMLElement) || (win.Element && selector instanceof win.Element);
-				var isDocument = (win.HTMLDocument && selector instanceof win.HTMLDocument) || (win.Document && selector instanceof win.Document);
-				var isDocumentFragment = win.DocumentFragment && selector instanceof win.DocumentFragment;
-				var isText = win.Text && selector instanceof win.Text;
-
-				if (isElement || isDocument || isDocumentFragment || isText) {
-					var nodeType = selector.nodeType;
-					var foundElm = selector;
-				}
+			if (hasWindow && selector.nodeType) {
+				var nodeType = selector.nodeType;
+				var foundElm = selector;
 			}
 		}
 	}
 
 	switch(nodeType) {
-		case JAX.WINDOW:
-			return new JAX.Window(foundElm);
-		case JAX.NULL:
-			return new JAX.NullNode(typeof(selector) == "string" ? selector : "");
 		case JAX.HTML_ELEMENT:
 			return new JAX.Element(foundElm);
+		case JAX.DOCUMENT:
+			return new JAX.Document(foundElm);
+		case JAX.WINDOW:
+			return new JAX.Window(foundElm);
+		case JAX.DOCUMENT_FRAGMENT:
+			return new JAX.DocumentFragment(foundElm);
 		case JAX.TEXT:
 		case JAX.COMMENT:
 			return new JAX.TextNode(foundElm);
-		case JAX.DOCUMENT:
-			return new JAX.Document(foundElm);
-		case JAX.DOCUMENT_FRAGMENT:
-			return new JAX.DocumentFragment(foundElm);
+		default: 
+			return new JAX.NullNode(typeof(selector) == "string" ? selector : "");
 	}
 };
 
