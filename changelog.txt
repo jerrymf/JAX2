@@ -3,6 +3,10 @@ Changelog
 --------------------------------------
 Legend: [+] - added, [*] - fixed or changed, [-] removed
 
+Version 2.21.1
+	* calling JAX(node) optimized
+	- remove JAX.NodeArray.destroyNodes
+
 Version 2.21
 	+ added polyfills for firstElementChild, lastElementChild, nextElementSibling, previousElementSibling
 	* JAX.IMoveableNode.previous, JAX.IMoveableNode.next, JAX.INodeWithChildren.first and JAX.INodeWithChildren.last refactored
