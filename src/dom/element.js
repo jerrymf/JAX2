@@ -57,10 +57,9 @@ JAX.Element.prototype.$constructor = function(node) {
 };
 
 /**
- * @destructor - odvěsí všechny události a odstraní všechny reference na svůj node uvnitř instance. Voláme, pokud víme, že s touto instancí nechceme už více pracovat.
+ * @destructor - odstraní všechny reference na svůj node uvnitř instance. Voláme, pokud víme, že s touto instancí nechceme už více pracovat.
  */
 JAX.Element.prototype.$destructor = function() {
-	this.stopListening();
 	this.$super();
 };
 

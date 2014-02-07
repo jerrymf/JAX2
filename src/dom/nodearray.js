@@ -480,21 +480,6 @@ JAX.NodeArray.prototype.areIn = function(node) {
 };
 
 /**
- * "zničí" všechny nody, které si drží. Odvěsí posluchače a zruší veškeré reference na uložené uzly v JAXu.
- *
- * @returns {undefined}
- */
-JAX.NodeArray.prototype.destroyNodes = function() {
-	var item = null;
-
-	while(item = this.popItem()) {
-		item.$destructor();
-	}
-
-	return;
-};
-
-/**
  * navěsí posluchač události na elementy a vrátí instanci JAX.ListenerArray, které obsahuje pole navěšených listenerů
  *
  * @param {string} type typ události ("click", "mousedown", ...)
