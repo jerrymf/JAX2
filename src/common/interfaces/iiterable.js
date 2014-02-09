@@ -13,6 +13,8 @@ JAX.IIterable = function() {};
 
 /**
  * vrací true v případě, že je pole nenulové
+ *
+ * @returns {boolean}
  */
 JAX.IIterable.prototype.exist = function() {
 	return !!this.length;
