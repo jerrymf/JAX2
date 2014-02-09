@@ -1,17 +1,29 @@
 /**
  * @fileOverview fx-css3.js - JAX - JAk eXtended
  * @author <a href="mailto:marek.fojtl@firma.seznam.cz">Marek Fojtl</a>
- * @version 1.0
+ * @version 1.1
  */
 
 /**
  * @class JAX.FX.CSS3
  * je pomocník pro animaci pomocí CSS3 transitions
  */
-JAX.FX.CSS3 = JAK.ClassMaker.makeClass({
-	NAME:"JAX.FX.CSS3",
-	VERSION:"1.0"
-});
+
+/**
+ *
+ * @param {object} elm HTMLElement || JAX.Node
+ */
+JAX.FX.CSS3 = function(elm) {
+	this._jaxElm = elm instanceof JAX.Node ? elm : JAX(elm);
+	this._settings = [];
+	this._maxDuration = 0;
+	this._transitionCount = 0;
+	this._ecTransition = null;
+	this._promise = {
+		finished: null
+	};
+	this._timeout = null;
+};
 
 JAX.FX.CSS3._TRANSITION_PROPERTY = "";
 JAX.FX.CSS3._TRANSITION_EVENT = "";
@@ -33,22 +45,6 @@ JAX.FX.CSS3._TRANSITION_EVENT = "";
 		}
 	}
 })();
-
-/**
- *
- * @param {object} jaxElm JAX.Node
- */
-JAX.FX.CSS3.prototype.$constructor = function(jaxElm) {
-	this._jaxElm = jaxElm;
-	this._settings = [];
-	this._maxDuration = 0;
-	this._transitionCount = 0;
-	this._ecTransition = null;
-	this._promise = {
-		finished: null
-	};
-	this._timeout = null;
-};
 
 /**
  * očekává pole objektů s nastavením jednotlivých animací

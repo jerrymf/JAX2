@@ -1,17 +1,14 @@
 /**
  * @fileOverview iscrollablenode.js - JAX - JAk eXtended
  * @author <a href="mailto:marek.fojtl@firma.seznam.cz">Marek Fojtl</a>
- * @version 1.0
+ * @version 1.1
  */
 
 /**
  * @class JAX.IScrollableNode
  * tvoří rozhraní pro nody, u který lze scrollovat obsahem
  */
-JAX.IScrollableNode = JAK.ClassMaker.makeInterface({
-	NAME: "JAX.IScrollableNode",
-	VERSION: "1.0"
-});
+JAX.IScrollableNode = function() {};
 
 /**
  * nascrolluje obsah na zadanou hodnotu. Lze zadat type "left" nebo "top", podle toho, kterým posuvníkem chceme hýbat. Pokud se zadá i duration, scrollování bude animované.

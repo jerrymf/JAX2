@@ -1,25 +1,20 @@
 /**
  * @fileOverview nodearray.js - JAX - JAk eXtended
  * @author <a href="mailto:marek.fojtl@firma.seznam.cz">Marek Fojtl</a>
- * @version 2.0
+ * @version 2.1
  */
 
 /**
  * @class JAX.NodeArray
  * je třída reprezentující pole instancí JAX.Node a poskytující metody pro hromadné zpracování
  */
-JAX.NodeArray = JAK.ClassMaker.makeClass({
-	NAME: "JAX.NodeArray",
-	VERSION: "2.1",
-	IMPLEMENT: [JAX.IIterable]
-});
 
 /**
  * @see JAX.IIterable
  *
  * @param {object || array} nodes Array of nodes || NodeList || JAX.NodeArray 
  */
-JAX.NodeArray.prototype.$constructor = function(nodes) {
+JAX.NodeArray = function(nodes) {
 	this.length = nodes.length;
 
 	for(var i=0; i<this.length; i++) {
@@ -28,6 +23,8 @@ JAX.NodeArray.prototype.$constructor = function(nodes) {
 		this[i] = jaxNode; 
 	}
 };
+
+JAX.mixin(JAX.IIterable, JAX.NodeArray);
 
 /**
  * najde element odpovídající selectoru v rámci tohoto pole elementů

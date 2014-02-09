@@ -1,23 +1,19 @@
 /**
  * @fileOverview event.js - JAX - JAk eXtended
  * @author <a href="mailto:marek.fojtl@firma.seznam.cz">Marek Fojtl</a>
- * @version 1.0
+ * @version 1.1
  */
 
 /**
  * @class JAX.Event
  * je třída obalující window.Event pro snadnější práci se stavem událostí
- */ 
-JAX.Event = JAK.ClassMaker.makeClass({
-	NAME: "JAX.Event",
-	VERSION: "1.0"
-});
+ */
 
 /**
  *
  * @param {object} e událost window.Event
  */
-JAX.Event.prototype.$constructor = function(e) {
+JAX.Event = function(e) {
 	this._e = e;
 };
 

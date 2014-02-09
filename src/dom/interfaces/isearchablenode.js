@@ -1,17 +1,14 @@
 /**
  * @fileOverview isearchablenode.js - JAX - JAk eXtended
  * @author <a href="mailto:marek.fojtl@firma.seznam.cz">Marek Fojtl</a>
- * @version 1.0
+ * @version 1.1
  */
 
 /**
  * @class JAX.ISearchableNode
  * tvoří rozhraní pro nody, které lze prohledávat pomocí querySelector a querySelectorAll
  */
-JAX.ISearchableNode = JAK.ClassMaker.makeInterface({
-	NAME: "JAX.ISearchableNode",
-	VERSION: "1.0"
-});
+JAX.ISearchableNode = function() {};
 
 /**
  * najde element odpovídající selectoru v rámci tohoto elementu

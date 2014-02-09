@@ -9,21 +9,15 @@
  * je třída reprezentující object Window
  *
  */
-JAX.Window = JAK.ClassMaker.makeClass({
-	NAME: "JAX.Window",
-	VERSION: "1.0",
-	EXTEND: JAX.Node,
-	IMPLEMENT: [JAX.IListening, JAX.IScrollableNode]
-});
 
-/** 
+/**
  * @see JAX.IListening
  * @see JAX.IScrollableNode
  *
  * @param {object} win window
  */
-JAX.Window.prototype.$constructor = function(win) {
-	this.$super(win);
+JAX.Window = function(win) {
+	this.__parent__.call(this, win);
 
 	this.jaxNodeType = JAX.WINDOW;
 
@@ -31,6 +25,9 @@ JAX.Window.prototype.$constructor = function(win) {
 	this.isListenable = true;
 	this.isScrollable = true;
 };
+
+JAX.extend(JAX.Node, JAX.Window);
+JAX.mixin(JAX.IMoveableNode, JAX.Window);
 
 /**
  * zjistí velikost okna dle zadaného typu, tedy šířku nebo výšku

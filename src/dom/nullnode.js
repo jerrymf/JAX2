@@ -1,7 +1,7 @@
 /**
  * @fileOverview nullnode.js - JAX - JAk eXtended
  * @author <a href="mailto:marek.fojtl@firma.seznam.cz">Marek Fojtl</a>
- * @version 1.0
+ * @version 1.1
  */
 
 /**
@@ -9,12 +9,6 @@
  * je třída reprezentující nullový node - návrhový vzor Null object
  *
  */
-JAX.NullNode = JAK.ClassMaker.makeClass({
-	NAME: "JAX.NullNode",
-	VERSION: "1.0",
-	EXTEND: JAX.Node,
-	IMPLEMENT: [JAX.IMoveableNode, JAX.INodeWithChildren, JAX.IListening, JAX.ISearchableNode, JAX.IAnimateableNode, JAX.IScrollableNode]
-});
 
 /**
  * @see JAX.ISearchableNode
@@ -24,8 +18,9 @@ JAX.NullNode = JAK.ClassMaker.makeClass({
  * @see JAX.IAnimateableNode
  * @see JAX.IScrollableNode
  */
-JAX.NullNode.prototype.$constructor = function(selector) {
-	this.$super(null);
+JAX.NullNode = function(selector) {
+	this.__parent__.call(this, null);
+
 	this._selector = selector || "";
 
 	this.jaxNodeType = JAX.NULL;
@@ -39,6 +34,9 @@ JAX.NullNode.prototype.$constructor = function(selector) {
 	this.isRemoveable = false;
 	this.canHaveChildren = false;
 };
+
+JAX.extend(JAX.Node, JAX.NullNode);
+JAX.mixin([JAX.IMoveableNode, JAX.INodeWithChildren, JAX.IListening, JAX.ISearchableNode, JAX.IAnimateableNode, JAX.IScrollableNode], JAX.NullNode);
 
 JAX.NullNode.prototype.find = function() {
 	this._showMessage("find");

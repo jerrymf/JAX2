@@ -8,15 +8,11 @@
  * @class JAX.Node
  * je obecná třída reprezentující základ JAXovských elementů
  */
-JAX.Node = JAK.ClassMaker.makeClass({
-	NAME: "JAX.Node",
-	VERSION: "2.0"
-});
 
 /**
  * @param {object} HTMLElement | Text | HTMLDocument | Window
  */
-JAX.Node.prototype.$constructor = function(node) {
+JAX.Node = function(node) {
 	// verejne atributy
 	this.n = node;	
 	this.jaxNodeType = node && node.nodeType ? node.nodeType : 0;
@@ -44,7 +40,7 @@ JAX.Node.prototype.$destructor = function() {
 	this.jaxNodeType = 0;
 	
 	this.isWindow = false;
-	this.isNull = false
+	this.isNull = true;
 	this.isElement = false;
 	this.isText = false;
 	this.isDocument = false;

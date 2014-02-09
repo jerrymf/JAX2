@@ -9,26 +9,23 @@
  * je třída reprezentující text node a comment node (elm.nodeType == 3 || elm.nodeType == 8)
  *
  */
-JAX.TextNode = JAK.ClassMaker.makeClass({
-	NAME: "JAX.TextNode",
-	VERSION: "1.0",
-	EXTEND: JAX.Node,
-	IMPLEMENT: [JAX.IMoveableNode]
-});
 
 /** 
  * @see JAX.IMoveableNode
  *
  * @param {object} node objekt typu window.Text
  */
-JAX.TextNode.prototype.$constructor = function(node) {
-	this.$super(node);
+JAX.TextNode = function(node) {
+	this.__parent__.call(this, node);
 
 	this.isText = true;
 
 	this.isMoveable = true;
 	this.isRemoveable = true;
 };
+
+JAX.extend(JAX.Node, JAX.TextNode);
+JAX.mixin(JAX.IMoveableNode, JAX.TextNode);
 
 /**
  * nastaví nebo vrátí textovou hodnotu uzlu

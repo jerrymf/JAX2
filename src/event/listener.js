@@ -1,17 +1,13 @@
 /**
  * @fileOverview listener.js - JAX - JAk eXtended
  * @author <a href="mailto:marek.fojtl@firma.seznam.cz">Marek Fojtl</a>
- * @version 1.0
+ * @version 1.1
  */
 
 /**
  * @class JAX.Listener
  * je třída rezrezentující posluchač události
- */ 
-JAX.Listener = JAK.ClassMaker.makeClass({
-	NAME: "JAX.Listener",
-	VERSION: "1.0"
-});
+ */
 
 /**
  *
@@ -19,7 +15,7 @@ JAX.Listener = JAK.ClassMaker.makeClass({
  * @param {string} type typ události
  * @param {function || object} method funkce nebo object, který byl předán jako reakce na událost
  */ 
-JAX.Listener.prototype.$constructor = function(jaxElm, type, method) {
+JAX.Listener = function(jaxElm, type, method) {
 	this._jaxElm = jaxElm;
 	this._type = type;
 	this._method = method;

@@ -1,31 +1,28 @@
 /**
  * @fileOverview fxarray.js - JAX - JAk eXtended
  * @author <a href="mailto:marek.fojtl@firma.seznam.cz">Marek Fojtl</a>
- * @version 1.0
+ * @version 1.1
  */
 
 /**
  * @class JAX.FXArray
  * je třída rezrezentující pole JAX.FX instancí
- */ 
-JAX.FXArray = JAK.ClassMaker.makeClass({
-	NAME: "JAX.FXArray",
-	VERSION: "1.0",
-	IMPLEMENT: [JAX.IIterable]
-});
+ */
 
 /**
  * @see JAX.IIterable
  *
  * @param {array} fxArray pole instancí JAX.FX
  */ 
-JAX.FXArray.prototype.$constructor = function(fxArray) {
+JAX.FXArray = function(fxArray) {
 	this.length = fxArray.length
 
 	for (var i=0; i<this.length; i++) {
 		this[i] = fxArray[i];
 	}
 };
+
+JAX.mixin(JAX.IIterable, JAX.FXArray);
 
 /**
  * spustí animace

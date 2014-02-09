@@ -1,7 +1,7 @@
 /**
  * @fileOverview iiterable.js - JAX - JAk eXtended
  * @author <a href="mailto:marek.fojtl@firma.seznam.cz">Marek Fojtl</a>
- * @version 1.0
+ * @version 1.1
  */
 
 /**
@@ -9,10 +9,7 @@
  * tvoří rozhraní pro iterovatelé prvky, které je svým chováním velice podobné datovému typu Array
  */
 
-JAX.IIterable = JAK.ClassMaker.makeInterface({
-	NAME: "JAX.IIterable",
-	VERSION: "1.0"
-});
+JAX.IIterable = function() {};
 
 /**
  * vrací true v případě, že je pole nenulové

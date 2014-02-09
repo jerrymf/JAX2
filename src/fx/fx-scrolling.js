@@ -7,18 +7,20 @@
 /**
  * @class JAX.FX.Scrolling
  * je pomocník pro animaci scrollování
- */ 
-JAX.FX.Scrolling = JAK.ClassMaker.makeClass({
-	NAME: "JAX.FX.Scrolling",
-	VERSION: "1.0"
-});
+ */
+
+(function() {
+	if (!JAK || !JAK.Interpolator || parseFloat(JAK.Interpolator.VERSION) < 2.1) {
+		throw new Error("Fatal error: JAK.Interpolator was not found.");
+	} 	
+})();
 
 /**
  *
  * @param {object} elm HTMLElement || JAX.Node
  */
-JAX.FX.Scrolling.prototype.$constructor = function(jaxElm) {
-	this._jaxElm = JAX(jaxElm);
+JAX.FX.Scrolling = function(elm) {
+	this._jaxElm = elm instanceof JAX.Node ? elm : JAX(elm);
 	this._settings = [];
 	this._promises = {
 		animationFinished: null

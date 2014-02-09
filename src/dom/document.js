@@ -1,7 +1,7 @@
 /**
  * @fileOverview document.js - JAX - JAk eXtended
  * @author <a href="mailto:marek.fojtl@firma.seznam.cz">Marek Fojtl</a>
- * @version 1.0
+ * @version 1.1
  */
 
 /**
@@ -9,22 +9,16 @@
  * je třída reprezentující instanci window.Document
  *
  */
-JAX.Document = JAK.ClassMaker.makeClass({
-	NAME: "JAX.Document",
-	VERSION: "1.0",
-	EXTEND: JAX.Node,
-	IMPLEMENT: [JAX.IListening, JAX.ISearchableNode, JAX.IScrollableNode]
-});
 
-/** 
- * @see JAX.ISearchableNode
- * @see JAX.IListening
- * @see JAX.IScrollableNode
- *
- * @param {object} doc objekt typu window.Document
- */
-JAX.Document.prototype.$constructor = function(doc) {
-	this.$super(doc);
+ /** 
+  * @see JAX.ISearchableNode
+  * @see JAX.IListening
+  * @see JAX.IScrollableNode
+  *
+  * @param {object} doc objekt typu window.Document
+  */
+JAX.Document = function(doc) {
+	this.__parent__.call(this, doc);
 
 	this.isDocument = true;
 
@@ -32,6 +26,9 @@ JAX.Document.prototype.$constructor = function(doc) {
 	this.isSearchable = true;
 	this.isScrollable = true;
 };
+
+JAX.extend(JAX.Node, JAX.Document);
+JAX.mixin([JAX.IListening, JAX.ISearchableNode, JAX.IScrollableNode], JAX.Document);
 
 /** 
  * zjistí, jestli element obsahuje nody podle zadaných kritérií

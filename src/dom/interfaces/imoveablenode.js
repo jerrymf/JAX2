@@ -1,17 +1,14 @@
 /**
  * @fileOverview imoveablenode.js - JAX - JAk eXtended
  * @author <a href="mailto:marek.fojtl@firma.seznam.cz">Marek Fojtl</a>
- * @version 1.0
+ * @version 1.1
  */
 
 /**
  * @class JAX.IMoveableNode
  * tvoří rozhraní pro nody, kterými jde manipulovat v rámci DOMu
  */
-JAX.IMoveableNode = JAK.ClassMaker.makeInterface({
-	NAME: "JAX.IMoveableNode",
-	VERSION: "1.0"
-});
+JAX.IMoveableNode = function() {};
 
 /**
  * přesune element na konec zadaného elementu

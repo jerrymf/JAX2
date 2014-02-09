@@ -1,28 +1,26 @@
 /**
  * @fileOverview fx-interpolator.js - JAX - JAk eXtended
  * @author <a href="mailto:marek.fojtl@firma.seznam.cz">Marek Fojtl</a>
- * @version 1.0
+ * @version 1.1
  */
 
 /**
  * @class JAX.FX.Interpolator
  * je pomocník pro animaci pomocí interpolátoru
  */
-JAX.FX.Interpolator = JAK.ClassMaker.makeClass({
-	NAME:"JAX.FX.Interpolator",
-	VERSION:"1.0",
-	DEPEND: [{
-		sClass: JAK.CSSInterpolator,
-		ver: "2.1"
-	}]
-});
+
+(function() {
+	if (!JAK || !JAK.CSSInterpolator || parseFloat(JAK.CSSInterpolator.VERSION) < 2.0) {
+		throw new Error("Fatal error: JAK.CSSInterpolator was not found.");
+	} 	
+})();
 
 /**
  *
- * @param {object} jaxElm JAX.Node
+ * @param {object} elm HTMLElement || JAX.Node
  */
-JAX.FX.Interpolator.prototype.$constructor = function(jaxElm) {
-	this._jaxElm = jaxElm;
+JAX.FX.Interpolator = function(elm) {
+	this._jaxElm = elm instanceof JAX.Node ? elm : JAX(elm);
 	this._interpolators = [];
 	this._interpolatorsCount = 0;
 	this._settings = [];

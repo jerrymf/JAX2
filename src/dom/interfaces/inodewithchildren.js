@@ -1,17 +1,14 @@
 /**
  * @fileOverview inodewithchildren.js - JAX - JAk eXtended
  * @author <a href="mailto:marek.fojtl@firma.seznam.cz">Marek Fojtl</a>
- * @version 1.0
+ * @version 1.1
  */
 
 /**
  * @class JAX.INodeWithChildren
  * tvoří rozhraní pro nody, které mohou mít potomky
  */
-JAX.INodeWithChildren = JAK.ClassMaker.makeInterface({
-	NAME: "JAX.INodeWithChildren",
-	VERSION: "1.0"
-});
+JAX.INodeWithChildren = function() {};
 
 /**
  * přidává do elementu další uzly vždy na konec, lze zadat i jako html string, který se následně připne

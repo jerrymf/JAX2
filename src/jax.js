@@ -244,3 +244,30 @@ JAX.getTypeOf = function(value) {
 
 	return "object";
 };
+
+JAX.extend = function(src, target) {
+	target.prototype = Object.create(src.prototype);
+
+	for (var p in src.prototype) {
+		if (typeof src.prototype[p] != "object") { continue; }
+		target.prototype[p] = JSON.parse(JSON.stringify(src.prototype[p]));
+	}
+
+	target.prototype.constructor = target;
+	target.prototype.__parent__ = src;
+};
+
+JAX.mixin = function(src, target) {
+	if (src instanceof Array) {
+		while(src.length) { JAX.mixin(src.pop(), target); }
+		return;
+	}
+	
+	for (var p in src.prototype) {
+		if (typeof src.prototype[p] == "object") {
+			target.prototype[p] = JSON.parse(JSON.stringify(src.prototype[p]));
+		} else {
+			target.prototype[p] = src.prototype[p];
+		}
+	}
+};

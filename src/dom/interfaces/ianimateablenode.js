@@ -1,17 +1,14 @@
 /**
  * @fileOverview ianimateablenode.js - JAX - JAk eXtended
  * @author <a href="mailto:marek.fojtl@firma.seznam.cz">Marek Fojtl</a>
- * @version 1.0
+ * @version 1.1
  */
 
 /**
  * @class JAX.IAnimateableNode
  * tvoří rozhraní pro nody, které lze animovat
  */
-JAX.IAnimateableNode = JAK.ClassMaker.makeInterface({
-	NAME: "JAX.IAnimateableNode",
-	VERSION: "1.0"
-});
+JAX.IAnimateableNode = function() {};
 
 /**
  * animuje konkrétní css vlastnost

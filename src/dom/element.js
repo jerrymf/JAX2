@@ -1,7 +1,7 @@
 /**
  * @fileOverview element.js - JAX - JAk eXtended
  * @author <a href="mailto:marek.fojtl@firma.seznam.cz">Marek Fojtl</a>
- * @version 1.0
+ * @version 1.1
  */
 
 /**
@@ -9,12 +9,32 @@
  * je třída reprezentující HTML Element
  *
  */
-JAX.Element = JAK.ClassMaker.makeClass({
-	NAME: "JAX.Element",
-	VERSION: "1.0",
-	EXTEND: JAX.Node,
-	IMPLEMENT: [JAX.IListening, JAX.INodeWithChildren, JAX.IMoveableNode, JAX.ISearchableNode, JAX.IAnimateableNode, JAX.IScrollableNode]
-});
+
+/**
+ * @see JAX.ISearchableNode
+ * @see JAX.IMoveableNode
+ * @see JAX.INodeWithChildren
+ * @see JAX.IListening
+ * @see JAX.IAnimateableNode
+ * @see JAX.IScrollableNode
+ *
+ * @param {object} node objekt typu window.HTMLElement
+ */
+JAX.Element = function(node) {
+	this.__parent__.call(this, node);
+
+	this.isElement = true;
+
+	this.isSearchable = true;
+	this.isListenable = true;
+	this.isScrollable = true;
+	this.isMoveable = true;
+	this.isRemoveable = true;
+	this.canHaveChildren = true;
+};
+
+JAX.extend(JAX.Node, JAX.Element);
+JAX.mixin([JAX.IListening, JAX.INodeWithChildren, JAX.IMoveableNode, JAX.ISearchableNode, JAX.IAnimateableNode, JAX.IScrollableNode], JAX.Element);
 
 JAX.Element._OPACITY_REGEXP = /alpha\(opacity=['"]?([0-9]+)['"]?\)/i;
 JAX.Element._BOX_SIZING = null;
@@ -32,36 +52,6 @@ JAX.Element._BOX_SIZING = null;
 		if (i in tempDiv.style) { JAX.Element._BOX_SIZING = boxSizing[i]; break; }
 	}
 })();
-
-/**
- * @see JAX.ISearchableNode
- * @see JAX.IMoveableNode
- * @see JAX.INodeWithChildren
- * @see JAX.IListening
- * @see JAX.IAnimateableNode
- * @see JAX.IScrollableNode
- *
- * @param {object} node objekt typu window.HTMLElement
- */
-JAX.Element.prototype.$constructor = function(node) {
-	this.$super(node);
-
-	this.isElement = true;
-
-	this.isSearchable = true;
-	this.isListenable = true;
-	this.isScrollable = true;
-	this.isMoveable = true;
-	this.isRemoveable = true;
-	this.canHaveChildren = true;
-};
-
-/**
- * @destructor - odstraní všechny reference na svůj node uvnitř instance. Voláme, pokud víme, že s touto instancí nechceme už více pracovat.
- */
-JAX.Element.prototype.$destructor = function() {
-	this.$super();
-};
 
 /**
  * přidá zadané css třídu nebo třídy k elementu

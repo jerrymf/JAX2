@@ -1,17 +1,45 @@
 /**
  * @fileOverview fx.js - JAX - JAk eXtended
  * @author <a href="mailto:marek.fojtl@firma.seznam.cz">Marek Fojtl</a>
- * @version 1.05
+ * @version 1.2
  */
 
 /**
  * @class JAX.FX
  * je pomocník pro snadnější tvorbu animací
  */ 
-JAX.FX = JAK.ClassMaker.makeClass({
-	NAME: "JAX.FX",
-	VERSION: "1.1"
-});
+
+/**
+ *
+ * @param {object} elm HTMLElement || JAX.Node
+ */
+JAX.FX = function(elm) {
+	this._jaxElm = elm instanceof JAX.Node ? elm : JAX(elm);
+	this._canBeAnimated = this._jaxElm.isElement;
+
+	if (!this._jaxElm.n) { 
+		console.error("JAX.FX: I got null node. Check your code please."); 
+	}
+
+	if (!this._jaxElm.isElement) {
+		console.error("JAX.FX: I got node that can not be animated."); 	
+	}
+
+	this._settings = [];
+	this._wasRun = false;
+	this._reversed = false;
+	this._running = false;
+
+	this._maxDuration = 0;
+	this._startTime = 0;
+	this._currentTime = 0;
+
+	this._promise = {
+		finished: null
+	};
+
+	this._processor = null;
+};
 
 JAX.FX.isCSS3Supported = null; 
 
@@ -78,38 +106,6 @@ JAX.FX._SUPPORTED_METHODS = [
 	"ease-in-out",
 	"cubic-bezier"
 ];
-
-/**
- *
- * @param {object} elm HTMLElement || JAX.Node
- */
-JAX.FX.prototype.$constructor = function(elm) {
-	this._jaxElm = JAX(elm);
-	this._canBeAnimated = this._jaxElm.isElement;
-
-	if (!this._jaxElm.n) { 
-		console.error("JAX.FX: I got null node. Check your code please."); 
-	}
-
-	if (!this._jaxElm.isElement) {
-		console.error("JAX.FX: I got node that can not be animated."); 	
-	}
-
-	this._settings = [];
-	this._wasRun = false;
-	this._reversed = false;
-	this._running = false;
-
-	this._maxDuration = 0;
-	this._startTime = 0;
-	this._currentTime = 0;
-
-	this._promise = {
-		finished: null
-	};
-
-	this._processor = null;
-};
 
 /**
  * Přidá css vlastnost, která se bude animovat. Pro každou vlastnost lze zadat různou délku animace a také hodnoty, od kterých se má začít a po které skončit.
