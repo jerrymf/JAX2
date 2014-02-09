@@ -22,17 +22,19 @@ describe("JAX Core", function() {
 
     it("should return instance of JAX.NullNode", function() {
 		var elmNull = JAX(null);
+		var elmUndefined = JAX(undefined);
+		var elmObject = JAX({});
 		var elmNumber = JAX(1);
 		var elmArray = JAX([]);
 		var elmBool = JAX(true);
-		var elmUndefined = JAX(undefined);
 		var elmNotExisting = JAX("#not-existing-element");
 
 		expect(elmNull instanceof JAX.NullNode).toEqual(true);
+		expect(elmUndefined instanceof JAX.NullNode).toEqual(true);
+		expect(elmObject instanceof JAX.NullNode).toEqual(true);
 		expect(elmNumber instanceof JAX.NullNode).toEqual(true);
 		expect(elmArray instanceof JAX.NullNode).toEqual(true);
 		expect(elmBool instanceof JAX.NullNode).toEqual(true);
-		expect(elmUndefined instanceof JAX.NullNode).toEqual(true);
 		expect(elmNotExisting instanceof JAX.NullNode).toEqual(true);
 	});
 
