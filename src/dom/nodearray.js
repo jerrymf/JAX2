@@ -292,6 +292,21 @@ JAX.NodeArray.prototype.removeClass = function(classNames) {
 };
 
 /**
+ * nastavuje innerHTML HTMLElementům v poli
+ *
+ * @param {string} innerHTML innerHTML elementu
+ * @returns {JAX.NodeArray}
+ */
+JAX.NodeArray.prototype.html = function(innerHTML) {
+	for (var i=0; i<this.length; i++) {
+		var item = this[i];
+		if (!item.isElement) { continue; }
+		this[i].html(innerHTML);
+	}
+	return this;
+};
+
+/**
  * nastaví nebo získá hodnoty vlastností html atributů (ekvivaletní s metodou elm.setAttribute)
  *
  * @param {string || array || object} property název atributu || pole názvů atributů || asociativní pole, např. {id:"mojeId", checked:"checked"}

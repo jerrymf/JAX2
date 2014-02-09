@@ -176,7 +176,7 @@ JAX.Element.prototype.id = function(id) {
 /**
  * volání bez parametru zjistíme, jaké innerHTML má element nastaveno, voláním s parametrem ho nastavíme
  *
- * @param {string || undefined} id innerHTML elementu
+ * @param {string || undefined} innerHTML innerHTML elementu
  * @returns {string || JAX.Node}
  */
 JAX.Element.prototype.html = function(innerHTML) {
