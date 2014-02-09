@@ -22,7 +22,7 @@ JAX.ListenerArray = function(listeners) {
 	}
 };
 
-JAX.mixin(JAX.IIterable, JAX.ListenerArray);
+JAX.mixin(JAX.ListenerArray, JAX.IIterable);
 
 /**
  * odregistruje všechny posluchače v poli a z pole je odstraní.

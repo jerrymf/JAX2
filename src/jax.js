@@ -245,7 +245,13 @@ JAX.getTypeOf = function(value) {
 	return "object";
 };
 
-JAX.extend = function(src, target) {
+/**
+ * rozšíří třídu potomka o metody rodiče
+ *
+ * @param {function} src rodič
+ * @param {function} target potomek
+ */
+JAX.extend = function(target, src) {
 	target.prototype = Object.create(src.prototype);
 
 	for (var p in src.prototype) {
@@ -257,7 +263,13 @@ JAX.extend = function(src, target) {
 	target.prototype.__parent__ = src;
 };
 
-JAX.mixin = function(src, target) {
+/**
+ * implementuje tzv. mixin nebo také lze říci rozhraní, kdy třídu obohatí o nové metody, ale nedědí je, nýbrž si vyrobí jejich kopie
+ *
+ * @param {function || array} src třída s metodami, které chceme implementovat || pole tříd
+ * @param {function} target třída, která metody získá
+ */
+JAX.mixin = function(target, src) {
 	if (src instanceof Array) {
 		while(src.length) { JAX.mixin(src.pop(), target); }
 		return;

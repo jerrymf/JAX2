@@ -27,8 +27,8 @@ JAX.Document = function(doc) {
 	this.isScrollable = true;
 };
 
-JAX.extend(JAX.Node, JAX.Document);
-JAX.mixin([JAX.IListening, JAX.ISearchableNode, JAX.IScrollableNode], JAX.Document);
+JAX.extend(JAX.Document, JAX.Node);
+JAX.mixin(JAX.Document, [JAX.IListening, JAX.ISearchableNode, JAX.IScrollableNode]);
 
 /** 
  * zjistí, jestli element obsahuje nody podle zadaných kritérií

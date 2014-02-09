@@ -24,7 +24,7 @@ JAX.NodeArray = function(nodes) {
 	}
 };
 
-JAX.mixin(JAX.IIterable, JAX.NodeArray);
+JAX.mixin(JAX.NodeArray, JAX.IIterable);
 
 /**
  * najde element odpovídající selectoru v rámci tohoto pole elementů

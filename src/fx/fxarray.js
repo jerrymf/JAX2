@@ -22,7 +22,7 @@ JAX.FXArray = function(fxArray) {
 	}
 };
 
-JAX.mixin(JAX.IIterable, JAX.FXArray);
+JAX.mixin(JAX.FXArray, JAX.IIterable);
 
 /**
  * spustí animace

@@ -26,8 +26,8 @@ JAX.Window = function(win) {
 	this.isScrollable = true;
 };
 
-JAX.extend(JAX.Node, JAX.Window);
-JAX.mixin(JAX.IMoveableNode, JAX.Window);
+JAX.extend(JAX.Window, JAX.Node);
+JAX.mixin(JAX.Window, JAX.IMoveableNode);
 
 /**
  * zjistí velikost okna dle zadaného typu, tedy šířku nebo výšku

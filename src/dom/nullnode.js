@@ -35,8 +35,8 @@ JAX.NullNode = function(selector) {
 	this.canHaveChildren = false;
 };
 
-JAX.extend(JAX.Node, JAX.NullNode);
-JAX.mixin([JAX.IMoveableNode, JAX.INodeWithChildren, JAX.IListening, JAX.ISearchableNode, JAX.IAnimateableNode, JAX.IScrollableNode], JAX.NullNode);
+JAX.extend(JAX.NullNode, JAX.Node);
+JAX.mixin(JAX.NullNode, [JAX.IMoveableNode, JAX.INodeWithChildren, JAX.IListening, JAX.ISearchableNode, JAX.IAnimateableNode, JAX.IScrollableNode]);
 
 JAX.NullNode.prototype.find = function() {
 	this._showMessage("find");

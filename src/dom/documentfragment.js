@@ -27,8 +27,8 @@ JAX.DocumentFragment = function(doc) {
 	this.isSearchable = true;
 };
 
-JAX.extend(JAX.Node, JAX.DocumentFragment);
-JAX.mixin([JAX.INodeWithChildren, JAX.IMoveableNode, JAX.ISearchableNode], JAX.DocumentFragment);
+JAX.extend(JAX.DocumentFragment, JAX.Node);
+JAX.mixin(JAX.DocumentFragment, [JAX.INodeWithChildren, JAX.IMoveableNode, JAX.ISearchableNode]);
 
 /** 
  * nepodporováno u window.DocumentFragment

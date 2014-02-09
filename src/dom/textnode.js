@@ -24,8 +24,8 @@ JAX.TextNode = function(node) {
 	this.isRemoveable = true;
 };
 
-JAX.extend(JAX.Node, JAX.TextNode);
-JAX.mixin(JAX.IMoveableNode, JAX.TextNode);
+JAX.extend(JAX.TextNode, JAX.Node);
+JAX.mixin(JAX.TextNode, JAX.IMoveableNode);
 
 /**
  * nastaví nebo vrátí textovou hodnotu uzlu

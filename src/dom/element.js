@@ -33,8 +33,8 @@ JAX.Element = function(node) {
 	this.canHaveChildren = true;
 };
 
-JAX.extend(JAX.Node, JAX.Element);
-JAX.mixin([JAX.IListening, JAX.INodeWithChildren, JAX.IMoveableNode, JAX.ISearchableNode, JAX.IAnimateableNode, JAX.IScrollableNode], JAX.Element);
+JAX.extend(JAX.Element, JAX.Node);
+JAX.mixin(JAX.Element, [JAX.IListening, JAX.INodeWithChildren, JAX.IMoveableNode, JAX.ISearchableNode, JAX.IAnimateableNode, JAX.IScrollableNode]);
 
 JAX.Element._OPACITY_REGEXP = /alpha\(opacity=['"]?([0-9]+)['"]?\)/i;
 JAX.Element._BOX_SIZING = null;
