@@ -6,17 +6,7 @@
 
 /**
  * @class JAX.Element
- * je třída reprezentující HTML Element
- *
- */
-
-/**
- * @see JAX.ISearchableNode
- * @see JAX.IMoveableNode
- * @see JAX.INodeWithChildren
- * @see JAX.IListening
- * @see JAX.IAnimateableNode
- * @see JAX.IScrollableNode
+ * je třída reprezentující HTML Element. Implementuje následující rozhraní: {@link JAX.INodeWithChildren}, {@link JAX.IMoveableNode}, {@link JAX.ISearchableNode}, {@link JAX.IListening}, {@link JAX.IAnimateableNode}, {@link JAX.IScrollableNode}
  *
  * @param {object} node objekt typu window.HTMLElement
  */

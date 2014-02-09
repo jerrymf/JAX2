@@ -7,9 +7,6 @@
 /**
  * @class JAX.Listener
  * je třída rezrezentující posluchač události
- */
-
-/**
  *
  * @param {object} jaxElm instance JAX.Node
  * @param {string} type typ události

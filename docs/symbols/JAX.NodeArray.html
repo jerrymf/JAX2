@@ -980,7 +980,7 @@ div.classDescription
 <!-- ============================== class summary ========================== -->			
 			<p class="description">
 				JAX.NodeArray
-je třída reprezentující pole instancí JAX.Node a poskytující metody pro hromadné zpracování
+je třída reprezentující pole instancí JAX.Node a poskytující metody pro hromadné zpracování. Implementuje rozhraní <a href="../symbols/JAX.IIterable.html">JAX.IIterable</a>
 
 				
 
@@ -1090,6 +1090,15 @@ je třída reprezentující pole instancí JAX.Node a poskytující metody pro h
 						<tr>
 							<td class="attributes"></td>
 							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/JAX.NodeArray.html#clear">clear</a></b>()
+								</div>
+								<div class="description">promaže nodům v poli jejich obsah (nepromazává samotné pole!)</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes"></td>
+							<td class="nameDescription">
 								<div class="fixedFont"><b><a href="../symbols/JAX.NodeArray.html#css">css</a></b>(property, value)
 								</div>
 								<div class="description">nastaví css (vlastnost elm.style) všem elementům v poli</div>
@@ -1174,6 +1183,15 @@ je třída reprezentující pole instancí JAX.Node a poskytující metody pro h
 								<div class="fixedFont"><b><a href="../symbols/JAX.NodeArray.html#haveClass">haveClass</a></b>(classNames)
 								</div>
 								<div class="description">vrací true, pokud všechny elementy mají nastavenu zadanou classname</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes"></td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/JAX.NodeArray.html#html">html</a></b>(innerHTML)
+								</div>
+								<div class="description">nastavuje innerHTML HTMLElementům v poli</div>
 							</td>
 						</tr>
 					
@@ -1355,13 +1373,6 @@ je třída reprezentující pole instancí JAX.Node a poskytující metody pro h
 					
 					
 					
-					
-						<dl class="detailList">
-						<dt class="heading">Viz též:</dt>
-						
-							<dd><a href="../symbols/JAX.IIterable.html">JAX.IIterable</a></dd>
-						
-						</dl>
 					
 
 			</div>
@@ -1647,6 +1658,38 @@ je třída reprezentující pole instancí JAX.Node a poskytující metody pro h
 								<dd>element || JAX.Node, před který se mají elementy připnout</dd>
 							
 							</dl>
+						
+						
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">Vrací:</dt>
+							
+								<dd><span class="light fixedFont">{<a href="../symbols/JAX.NodeArray.html">JAX.NodeArray</a>}</span> </dd>
+							
+							</dl>
+						
+						
+						
+
+					<hr />
+				
+					<a name="clear"> </a>
+					<div class="fixedFont">
+					
+					<span class="light">{<a href="../symbols/JAX.NodeArray.html">JAX.NodeArray</a>}</span>
+					<b>clear</b>()
+					
+					</div>
+					<div class="description">
+						promaže nodům v poli jejich obsah (nepromazává samotné pole!)
+						
+						
+					</div>
+					
+					
+					
 						
 						
 						
@@ -2123,6 +2166,49 @@ je třída reprezentující pole instancí JAX.Node a poskytující metody pro h
 							<dt class="heading">Vrací:</dt>
 							
 								<dd><span class="light fixedFont">{boolean}</span> </dd>
+							
+							</dl>
+						
+						
+						
+
+					<hr />
+				
+					<a name="html"> </a>
+					<div class="fixedFont">
+					
+					<span class="light">{<a href="../symbols/JAX.NodeArray.html">JAX.NodeArray</a>}</span>
+					<b>html</b>(innerHTML)
+					
+					</div>
+					<div class="description">
+						nastavuje innerHTML HTMLElementům v poli
+						
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parametry:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{string}</span> <b>innerHTML</b>
+									
+								</dt>
+								<dd>innerHTML elementu</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">Vrací:</dt>
+							
+								<dd><span class="light fixedFont">{<a href="../symbols/JAX.NodeArray.html">JAX.NodeArray</a>}</span> </dd>
 							
 							</dl>
 						
@@ -2816,7 +2902,7 @@ je třída reprezentující pole instancí JAX.Node a poskytující metody pro h
 <!-- ============================== footer ================================= -->
 		<div class="fineprint" style="clear:both">
 			
-			Dokumentace vygenerována nástrojem <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> 2.4.0, Fri Feb 07 2014 14:13:51 GMT+0100 (CET)
+			Dokumentace vygenerována nástrojem <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> 2.4.0, Sun Feb 09 2014 20:17:18 GMT+0100 (CET)
 		</div>
 	</body>
 </html>

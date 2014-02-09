@@ -6,11 +6,7 @@
 
 /**
  * @class JAX.FXArray
- * je třída rezrezentující pole JAX.FX instancí
- */
-
-/**
- * @see JAX.IIterable
+ * je třída rezrezentující pole JAX.FX instancí. Implementuje rozhraní {@link JAX.IIterable}
  *
  * @param {array} fxArray pole instancí JAX.FX
  */ 

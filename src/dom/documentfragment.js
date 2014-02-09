@@ -6,17 +6,10 @@
 
 /**
  * @class JAX.DocumentFragment
- * je třída reprezentující instanci window.DocumentFragment
+ * je třída reprezentující instanci window.DocumentFragment. Implementuje následující rozhraní: {@link JAX.INodeWithChildren}, {@link JAX.IMoveableNode}, {@link JAX.ISearchableNode}
  *
+ * @param {object} doc objekt typu window.DocumentFragment
  */
-
- /** 
-  * @see JAX.ISearchableNode
-  * @see JAX.IMoveableNode
-  * @see JAX.INodeWithChildren
-  *
-  * @param {object} doc objekt typu window.DocumentFragment
-  */
 JAX.DocumentFragment = function(doc) {
 	this.__parent__.call(this, doc);
 

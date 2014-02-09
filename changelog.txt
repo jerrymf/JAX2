@@ -3,6 +3,11 @@ Changelog
 --------------------------------------
 Legend: [+] - added, [*] - fixed or changed, [-] removed
 
+Version 2.22
+	+ added JAX.NodeArray.html and JAX.NodeArray.clear methods
+	* highly optimized calling JAX and JAX.all by replacing JAK.ClassMaker with pure JS solution for creating classes
+	* doc updated and fixed
+
 Version 2.21.1
 	* calling JAX(node) optimized
 	- remove JAX.NodeArray.destroyNodes

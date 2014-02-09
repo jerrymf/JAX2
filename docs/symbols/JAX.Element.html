@@ -980,7 +980,7 @@ div.classDescription
 <!-- ============================== class summary ========================== -->			
 			<p class="description">
 				JAX.Element
-je třída reprezentující HTML Element
+je třída reprezentující HTML Element. Implementuje následující rozhraní: <a href="../symbols/JAX.INodeWithChildren.html">JAX.INodeWithChildren</a>, <a href="../symbols/JAX.IMoveableNode.html">JAX.IMoveableNode</a>, <a href="../symbols/JAX.ISearchableNode.html">JAX.ISearchableNode</a>, <a href="../symbols/JAX.IListening.html">JAX.IListening</a>, <a href="../symbols/JAX.IAnimateableNode.html">JAX.IAnimateableNode</a>, <a href="../symbols/JAX.IScrollableNode.html">JAX.IScrollableNode</a>
 
 				
 
@@ -1032,15 +1032,6 @@ je třída reprezentující HTML Element
 						</tr>
 					</thead>
 					<tbody>
-					
-						<tr>
-							<td class="attributes"></td>
-							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/JAX.Element.html#$destructor">$destructor</a></b>()
-								</div>
-								<div class="description"></div>
-							</td>
-						</tr>
 					
 						<tr>
 							<td class="attributes"></td>
@@ -1117,7 +1108,7 @@ je třída reprezentující HTML Element
 						<tr>
 							<td class="attributes"></td>
 							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/JAX.Element.html#html">html</a></b>(id)
+								<div class="fixedFont"><b><a href="../symbols/JAX.Element.html#html">html</a></b>(innerHTML)
 								</div>
 								<div class="description">volání bez parametru zjistíme, jaké innerHTML má element nastaveno, voláním s parametrem ho nastavíme</div>
 							</td>
@@ -1221,23 +1212,6 @@ je třída reprezentující HTML Element
 					
 					
 					
-						<dl class="detailList">
-						<dt class="heading">Viz též:</dt>
-						
-							<dd><a href="../symbols/JAX.ISearchableNode.html">JAX.ISearchableNode</a></dd>
-						
-							<dd><a href="../symbols/JAX.IMoveableNode.html">JAX.IMoveableNode</a></dd>
-						
-							<dd><a href="../symbols/JAX.INodeWithChildren.html">JAX.INodeWithChildren</a></dd>
-						
-							<dd><a href="../symbols/JAX.IListening.html">JAX.IListening</a></dd>
-						
-							<dd><a href="../symbols/JAX.IAnimateableNode.html">JAX.IAnimateableNode</a></dd>
-						
-							<dd><a href="../symbols/JAX.IScrollableNode.html">JAX.IScrollableNode</a></dd>
-						
-						</dl>
-					
 
 			</div>
 			
@@ -1250,31 +1224,6 @@ je třída reprezentující HTML Element
 				<div class="sectionTitle">
 					Metody - detailně
 				</div>
-				
-					<a name="$destructor"> </a>
-					<div class="fixedFont">
-					
-					
-					<b>$destructor</b>()
-					
-					</div>
-					<div class="description">
-						
-						
-						
-					</div>
-					
-					
-					
-						
-						
-						
-						
-						
-						
-						
-
-					<hr />
 				
 					<a name="addClass"> </a>
 					<div class="fixedFont">
@@ -1631,7 +1580,7 @@ je třída reprezentující HTML Element
 					<div class="fixedFont">
 					
 					<span class="light">{string || JAX.Node}</span>
-					<b>html</b>(id)
+					<b>html</b>(innerHTML)
 					
 					</div>
 					<div class="description">
@@ -1647,7 +1596,7 @@ je třída reprezentující HTML Element
 							<dt class="heading">Parametry:</dt>
 							
 								<dt>
-									<span class="light fixedFont">{string || undefined}</span> <b>id</b>
+									<span class="light fixedFont">{string || undefined}</span> <b>innerHTML</b>
 									
 								</dt>
 								<dd>innerHTML elementu</dd>
@@ -1942,7 +1891,7 @@ je třída reprezentující HTML Element
 <!-- ============================== footer ================================= -->
 		<div class="fineprint" style="clear:both">
 			
-			Dokumentace vygenerována nástrojem <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> 2.4.0, Fri Feb 07 2014 14:13:50 GMT+0100 (CET)
+			Dokumentace vygenerována nástrojem <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> 2.4.0, Sun Feb 09 2014 20:17:18 GMT+0100 (CET)
 		</div>
 	</body>
 </html>

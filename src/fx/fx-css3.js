@@ -7,9 +7,6 @@
 /**
  * @class JAX.FX.CSS3
  * je pomocník pro animaci pomocí CSS3 transitions
- */
-
-/**
  *
  * @param {object} elm HTMLElement || JAX.Node
  */

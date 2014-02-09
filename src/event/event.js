@@ -7,9 +7,6 @@
 /**
  * @class JAX.Event
  * je třída obalující window.Event pro snadnější práci se stavem událostí
- */
-
-/**
  *
  * @param {object} e událost window.Event
  */

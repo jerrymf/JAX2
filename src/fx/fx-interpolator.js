@@ -4,11 +4,6 @@
  * @version 1.1
  */
 
-/**
- * @class JAX.FX.Interpolator
- * je pomocník pro animaci pomocí interpolátoru
- */
-
 (function() {
 	if (!JAK || !JAK.CSSInterpolator || parseFloat(JAK.CSSInterpolator.VERSION) < 2.0) {
 		throw new Error("Fatal error: JAK.CSSInterpolator was not found.");
@@ -16,6 +11,8 @@
 })();
 
 /**
+ * @class JAX.FX.Interpolator
+ * je pomocník pro animaci pomocí interpolátoru
  *
  * @param {object} elm HTMLElement || JAX.Node
  */

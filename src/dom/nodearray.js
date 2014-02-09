@@ -6,11 +6,7 @@
 
 /**
  * @class JAX.NodeArray
- * je třída reprezentující pole instancí JAX.Node a poskytující metody pro hromadné zpracování
- */
-
-/**
- * @see JAX.IIterable
+ * je třída reprezentující pole instancí JAX.Node a poskytující metody pro hromadné zpracování. Implementuje rozhraní {@link JAX.IIterable}
  *
  * @param {object || array} nodes Array of nodes || NodeList || JAX.NodeArray 
  */
@@ -575,7 +571,7 @@ JAX.NodeArray.prototype.lastElement = function() {
 };
 
 /** 
- * promaže nody v poli, jejich obsah
+ * promaže nodům v poli jejich obsah (nepromazává samotné pole!)
  *
  * @returns {JAX.NodeArray}
  */

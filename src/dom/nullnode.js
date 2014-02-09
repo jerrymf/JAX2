@@ -6,17 +6,16 @@
 
 /**
  * @class JAX.NullNode
- * je třída reprezentující nullový node - návrhový vzor Null object
+ * je třída reprezentující nullový node - návrhový vzor Null object. Implementuje následující rozhraní: {@link JAX.INodeWithChildren}, {@link JAX.IMoveableNode}, {@link JAX.ISearchableNode}, {@link JAX.IListening}, {@link JAX.IAnimateableNode}, {@link JAX.IScrollableNode}
  *
- */
-
-/**
  * @see JAX.ISearchableNode
  * @see JAX.IMoveableNode
  * @see JAX.INodeWithChildren
  * @see JAX.IListening
  * @see JAX.IAnimateableNode
  * @see JAX.IScrollableNode
+ *
+ * @param {string} selector CSS3 (CSS 2.1) selector, který selhal
  */
 JAX.NullNode = function(selector) {
 	this.__parent__.call(this, null);

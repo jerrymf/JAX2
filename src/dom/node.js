@@ -7,9 +7,7 @@
 /**
  * @class JAX.Node
  * je obecná třída reprezentující základ JAXovských elementů
- */
-
-/**
+ *
  * @param {object} HTMLElement | Text | HTMLDocument | Window
  */
 JAX.Node = function(node) {

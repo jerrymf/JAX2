@@ -7,9 +7,6 @@
 /**
  * @class JAX.FX
  * je pomocník pro snadnější tvorbu animací
- */ 
-
-/**
  *
  * @param {object} elm HTMLElement || JAX.Node
  */

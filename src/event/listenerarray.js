@@ -6,11 +6,7 @@
 
 /**
  * @class JAX.ListenerArray
- * je třída rezrezentující pole posluchačů
- */
-
-/**
- * @see JAX.IIterable
+ * je třída rezrezentující pole posluchačů. Implementuje rozhraní {@link JAX.IIterable}
  *
  * @param {array} listeners pole instanci JAX.Listener
  */ 

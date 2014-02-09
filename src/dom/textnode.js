@@ -6,12 +6,7 @@
 
 /**
  * @class JAX.TextNode
- * je třída reprezentující text node a comment node (elm.nodeType == 3 || elm.nodeType == 8)
- *
- */
-
-/** 
- * @see JAX.IMoveableNode
+ * je třída reprezentující text node a comment node (elm.nodeType == 3 || elm.nodeType == 8). Implementuje rozhraní {@link JAX.IMoveableNode}
  *
  * @param {object} node objekt typu window.Text
  */

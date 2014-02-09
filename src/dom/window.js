@@ -6,13 +6,7 @@
 
 /**
  * @class JAX.Window
- * je třída reprezentující object Window
- *
- */
-
-/**
- * @see JAX.IListening
- * @see JAX.IScrollableNode
+ * je třída reprezentující object Window. Implementuje následující rozhraní: {@link JAX.IListening}, {@link JAX.IScrollableNode}
  *
  * @param {object} win window
  */

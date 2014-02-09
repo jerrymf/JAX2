@@ -6,17 +6,10 @@
 
 /**
  * @class JAX.Document
- * je třída reprezentující instanci window.Document
+ * je třída reprezentující instanci window.Document. Implementuje následující rozhraní: {@link JAX.IListening}, {@link JAX.IScrollableNode}, {@link JAX.ISearchableNode}
  *
+ * @param {object} doc objekt typu window.Document
  */
-
- /** 
-  * @see JAX.ISearchableNode
-  * @see JAX.IListening
-  * @see JAX.IScrollableNode
-  *
-  * @param {object} doc objekt typu window.Document
-  */
 JAX.Document = function(doc) {
 	this.__parent__.call(this, doc);
 

@@ -4,11 +4,6 @@
  * @version 1.0
  */
 
-/**
- * @class JAX.FX.Scrolling
- * je pomocník pro animaci scrollování
- */
-
 (function() {
 	if (!JAK || !JAK.Interpolator || parseFloat(JAK.Interpolator.VERSION) < 2.1) {
 		throw new Error("Fatal error: JAK.Interpolator was not found.");
@@ -16,6 +11,8 @@
 })();
 
 /**
+ * @class JAX.FX.Scrolling
+ * je pomocník pro animaci scrollování
  *
  * @param {object} elm HTMLElement || JAX.Node
  */
