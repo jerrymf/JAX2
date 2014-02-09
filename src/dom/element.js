@@ -60,8 +60,6 @@ JAX.Element._BOX_SIZING = null;
  * @returns {JAX.Node}
  */
 JAX.Element.prototype.addClass = function(classNames) {
-	var classNames = classNames.trim();
-
 	if (classNames == "") { return this; }
 
 	if (typeof(classNames) != "string") {
@@ -73,6 +71,7 @@ JAX.Element.prototype.addClass = function(classNames) {
 	
 	for (var i=0, len=cNames.length; i<len; i++) {
 		var cName = cNames[i];
+		if (!cName) { continue; }
 		this._node.classList.add(cName);
 	}
 	
@@ -86,8 +85,6 @@ JAX.Element.prototype.addClass = function(classNames) {
  * @returns {JAX.Node}
  */
 JAX.Element.prototype.removeClass = function(classNames) {
-	var classNames = classNames.trim();
-
 	if (classNames == "") { return this; }
 
 	if (typeof(classNames) != "string") {
@@ -99,6 +96,7 @@ JAX.Element.prototype.removeClass = function(classNames) {
 	
 	for (var i=0, len=cNames.length; i<len; i++) {
 		var cName = cNames[i];
+		if (!cName) { continue; }
 		this._node.classList.remove(cName);
 	}
 	
@@ -111,22 +109,20 @@ JAX.Element.prototype.removeClass = function(classNames) {
  * @param {string} className css třída (píše se bez tečky na začátku)
  * @returns {boolean}
  */
-JAX.Element.prototype.hasClass = function(className) {
-	var className = className.trim();
-
-	if (className == "") { return true; }
+JAX.Element.prototype.hasClass = function(classNames) {
+	if (classNames == "") { return true; }
 
 	if (typeof(className) != "string") {
-		className += "";  
+		classNames += "";  
 		console.error("JAX.Element.hasClass: For my argument I expected string.", this._node);
 	}
 
-	if (className == "")  { return false; }
-	var names = className.split(" ");
+	var cNames = classNames.split(" ");
 
-	while(names.length) {
-		var name = names.shift();
-		if (!this._node.classList.contains(name)) { return false; }
+	for (var i=0, len=cNames.length; i<len; i++) {
+		var cName = cNames[i];
+		if (!cName) { continue; }
+		if (!this._node.classList.contains(cName)) { return false; }
 	}
 
 	return true;
@@ -138,17 +134,21 @@ JAX.Element.prototype.hasClass = function(className) {
  * @param {string} className css třída (píše se bez tečky na začátku)
  * @returns {JAX.Node}
  */
-JAX.Element.prototype.toggleClass = function(className) {
-	var className = className.trim();
+JAX.Element.prototype.toggleClass = function(classNames) {
+	if (classNames == "") { return this; }
 
-	if (className == "") { return this; }
-
-	if (typeof(className) != "string") {
+	if (typeof(classNames) != "string") {
 		className += "";
 		console.error("JAX.Element.toggleClass: For my argument I expected string.", this._node);
 	}
 
-	this._node.classList.toggle(className);
+	var cNames = classNames.split(" ");
+
+	for (var i=0, len=cNames.length; i<len; i++) {
+		var cName = cNames[i];
+		if (!cName) { continue; }
+		this._node.classList.toggle(cName);
+	}
 	
 	return this;
 };
@@ -169,7 +169,7 @@ JAX.Element.prototype.id = function(id) {
 		console.error("JAX.Element.id: For my argument I expected string.", this._node);
 	}
 
-	this.attr({id:id}); 
+	this._node.id = id;
 	return this;
 };
 
