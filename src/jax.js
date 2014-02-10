@@ -1,7 +1,7 @@
 /**
  * @fileOverview jax.js - JAX - JAk eXtended
  * @author <a href="mailto:marek.fojtl@firma.seznam.cz">Marek Fojtl</a>
- * @version 2.22.1
+ * @version 2.22.2
  * @group jak-util
  */
 
@@ -248,8 +248,8 @@ JAX.getTypeOf = function(value) {
 /**
  * rozšíří třídu potomka o metody rodiče
  *
- * @param {function} src rodič
  * @param {function} target potomek
+ * @param {function} src rodič
  */
 JAX.extend = function(target, src) {
 	target.prototype = Object.create(src.prototype);
@@ -266,12 +266,12 @@ JAX.extend = function(target, src) {
 /**
  * implementuje tzv. mixin nebo také lze říci rozhraní, kdy třídu obohatí o nové metody, ale nedědí je, nýbrž si vyrobí jejich kopie
  *
- * @param {function || array} src třída s metodami, které chceme implementovat || pole tříd
  * @param {function} target třída, která metody získá
+ * @param {function || array} src třída s metodami, které chceme implementovat || pole tříd
  */
 JAX.mixin = function(target, src) {
 	if (src instanceof Array) {
-		while(src.length) { JAX.mixin(src.pop(), target); }
+		while(src.length) { JAX.mixin(target, src.shift()); }
 		return;
 	}
 	

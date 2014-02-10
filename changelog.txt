@@ -3,6 +3,9 @@ Changelog
 --------------------------------------
 Legend: [+] - added, [*] - fixed or changed, [-] removed
 
+Version 2.22.2
+	* critical bugfixes caused by refactoring
+
 Version 2.22.1
 	* fix in JAX.Window
 
