@@ -4,6 +4,7 @@ Changelog
 Legend: [+] - added, [*] - fixed or changed, [-] removed
 
 Version 2.22
+	+ added JAX.extend and JAX.mixin
 	+ added JAX.NodeArray.html and JAX.NodeArray.clear methods
 	* highly optimized calling JAX and JAX.all by replacing JAK.ClassMaker with pure JS solution for creating classes
 	* doc updated and fixed
