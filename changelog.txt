@@ -3,6 +3,9 @@ Changelog
 --------------------------------------
 Legend: [+] - added, [*] - fixed or changed, [-] removed
 
+Version 2.22.1
+	* fix in JAX.Window
+
 Version 2.22
 	+ added JAX.extend and JAX.mixin
 	+ added JAX.NodeArray.html and JAX.NodeArray.clear methods
