@@ -6,7 +6,7 @@ cat polyfills/getcomputedstyle.js > ../lib/jax.js
 cat polyfills/ie8-elements.js >> ../lib/jax.js
 cat jax.js >> ../lib/jax.js
 cat common/interfaces/iiterable.js >> ../lib/jax.js
-cat common/promisechain.js >> ../lib/jax.js
+cat common/promisesequence.js >> ../lib/jax.js
 cat event/interfaces/ilistening.js >> ../lib/jax.js
 cat event/event.js >> ../lib/jax.js
 cat event/listener.js >> ../lib/jax.js

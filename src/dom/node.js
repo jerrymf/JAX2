@@ -57,7 +57,7 @@ JAX.Node.prototype.$destructor = function() {
 /**
  * vrací uzel, který si instance drží
  *
- * @returns {object} HTMLElement | Text | HTMLDocument | Window
+ * @returns {HTMLElement || Text || HTMLDocument || Window}
  */
 JAX.Node.prototype.node = function() {
 	return this._node;
