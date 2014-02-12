@@ -3,6 +3,9 @@ Changelog
 --------------------------------------
 Legend: [+] - added, [*] - fixed or changed, [-] removed
 
+Version 2.23
+	+ JAX.PromiseSequence
+
 Version 2.22.2
 	* critical bugfixes caused by refactoring
 
