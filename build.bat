@@ -1,13 +1,15 @@
 REM Zretezeni vsech knihoven do jedne
 @ECHO OFF
 
-type ".\src\jax.js" > ".\lib\jax.js"
-ECHO. >> ".\lib\jax.js"
-type ".\src\polyfills\getcomputedstyle.js" >> ".\lib\jax.js"
+type ".\src\polyfills\getcomputedstyle.js" > ".\lib\jax.js"
 ECHO. >> ".\lib\jax.js"
 type ".\src\polyfills\ie8-elements.js" >> ".\lib\jax.js"
 ECHO. >> ".\lib\jax.js"
+type ".\src\jax.js" >> ".\lib\jax.js"
+ECHO. >> ".\lib\jax.js"
 type ".\src\common\interfaces\iiterable.js" >> ".\lib\jax.js"
+ECHO. >> ".\lib\jax.js"
+type ".\src\common\promisechain.js" >> ".\lib\jax.js"
 ECHO. >> ".\lib\jax.js"
 type ".\src\event\interfaces\ilistening.js" >> ".\lib\jax.js"
 ECHO. >> ".\lib\jax.js"
