@@ -102,7 +102,7 @@ JAX.Element.prototype.removeClass = function(classNames) {
 JAX.Element.prototype.hasClass = function(classNames) {
 	if (classNames == "") { return true; }
 
-	if (typeof(className) != "string") {
+	if (typeof(classNames) != "string") {
 		classNames += "";  
 		console.error("JAX.Element.hasClass: For my argument I expected string.", this._node);
 	}
@@ -128,7 +128,7 @@ JAX.Element.prototype.toggleClass = function(classNames) {
 	if (classNames == "") { return this; }
 
 	if (typeof(classNames) != "string") {
-		className += "";
+		classNames += "";
 		console.error("JAX.Element.toggleClass: For my argument I expected string.", this._node);
 	}
 

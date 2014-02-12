@@ -5,7 +5,7 @@
 		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
 		<meta name="generator" content="JsDoc Toolkit" />
 		
-		<title>JsDoc Reference - JAX.INodeWithChildren</title>
+		<title>JsDoc Reference - JAX.PromiseSequence</title>
 
 		<style type="text/css">
 			/* default.css */
@@ -1000,13 +1000,13 @@ div.classDescription
 <!-- ============================== class title ============================ -->
 			<h1 class="classTitle">
 				
-				Třída JAX.INodeWithChildren
+				Třída JAX.PromiseSequence
 			</h1>
 
 <!-- ============================== class summary ========================== -->			
 			<p class="description">
-				JAX.INodeWithChildren
-tvoří rozhraní pro nody, které mohou mít potomky
+				JAX.PromiseSequence
+je třída, která umožňuje zpracovat sekvenci Promisů. Umožňuje tak vývojáři plnou kontrolu nad jejich synchronizací a správnou návazností.
 
 				
 
@@ -1020,7 +1020,7 @@ tvoří rozhraní pro nody, které mohou mít potomky
 <!-- ============================== constructor summary ==================== -->			
 			
 			
-			<table class="summaryTable" cellspacing="0" summary="Souhrn konstruktoru dokumentovaného ve třídě JAX.INodeWithChildren.">
+			<table class="summaryTable" cellspacing="0" summary="Souhrn konstruktoru dokumentovaného ve třídě JAX.PromiseSequence.">
 				<caption>Konstruktor - souhrn</caption>
 				<thead>
 					<tr>
@@ -1033,7 +1033,7 @@ tvoří rozhraní pro nody, které mohou mít potomky
 						<td class="attributes">&nbsp;</td>
 						<td class="nameDescription" >
 							<div class="fixedFont">
-								<b><a href="../symbols/JAX.INodeWithChildren.html#constructor">JAX.INodeWithChildren</a></b>()
+								<b><a href="../symbols/JAX.PromiseSequence.html#constructor">JAX.PromiseSequence</a></b>()
 							</div>
 							<div class="description"></div>
 						</td>
@@ -1049,7 +1049,7 @@ tvoří rozhraní pro nody, které mohou mít potomky
 			
 				
 				
-				<table class="summaryTable" cellspacing="0" summary="Souhrn metod dokumentovaných ve třídě JAX.INodeWithChildren.">
+				<table class="summaryTable" cellspacing="0" summary="Souhrn metod dokumentovaných ve třídě JAX.PromiseSequence.">
 					<caption>Metody - souhrn</caption>
 					<thead>
 						<tr>
@@ -1062,72 +1062,54 @@ tvoří rozhraní pro nody, které mohou mít potomky
 						<tr>
 							<td class="attributes"></td>
 							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/JAX.INodeWithChildren.html#add">add</a></b>(nodes)
+								<div class="fixedFont"><b><a href="../symbols/JAX.PromiseSequence.html#cancel">cancel</a></b>()
 								</div>
-								<div class="description">přidává do elementu další uzly vždy na konec, lze zadat i jako html string, který se následně připne</div>
+								<div class="description">zastaví celou proceduru. Asynchronní operace, které doposud nebyly dokončeny již nebudou dále vykonány.</div>
 							</td>
 						</tr>
 					
 						<tr>
 							<td class="attributes"></td>
 							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/JAX.INodeWithChildren.html#addBefore">addBefore</a></b>(node, nodeBefore)
+								<div class="fixedFont"><b><a href="../symbols/JAX.PromiseSequence.html#isCanceled">isCanceled</a></b>()
 								</div>
-								<div class="description">vloží uzel před jiný</div>
+								<div class="description">je sekvence zrušena?</div>
 							</td>
 						</tr>
 					
 						<tr>
 							<td class="attributes"></td>
 							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/JAX.INodeWithChildren.html#children">children</a></b>(index)
+								<div class="fixedFont"><b><a href="../symbols/JAX.PromiseSequence.html#isRunning">isRunning</a></b>()
 								</div>
-								<div class="description">vrací JAXové pole (JAX.NodeArray) přímých potomků; pokud je ale zadán parametr index, vrací právě jeden JAXový node</div>
+								<div class="description">je sekvence běžící?</div>
 							</td>
 						</tr>
 					
 						<tr>
 							<td class="attributes"></td>
 							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/JAX.INodeWithChildren.html#clear">clear</a></b>()
+								<div class="fixedFont"><b><a href="../symbols/JAX.PromiseSequence.html#run">run</a></b>()
 								</div>
-								<div class="description">promaže element, odstraní jeho přímé potomky</div>
+								<div class="description">spustí celou proceduru. Postupně se začnou provádět všechny asynchronní operace. Další operace začne běžet teprve, až se dokončí předchozí.</div>
 							</td>
 						</tr>
 					
 						<tr>
 							<td class="attributes"></td>
 							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/JAX.INodeWithChildren.html#contains">contains</a></b>(nodes)
+								<div class="fixedFont"><b><a href="../symbols/JAX.PromiseSequence.html#then">then</a></b>(onFulfill, onReject)
 								</div>
-								<div class="description">zjistí, jestli element obsahuje nody podle zadaných kritérií</div>
+								<div class="description">co se má stát po fulfillnutí a po rejectnutí poslední nastavované Promise. Týká se vždy naposledy předané Promise přes waitFor metodu.</div>
 							</td>
 						</tr>
 					
 						<tr>
 							<td class="attributes"></td>
 							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/JAX.INodeWithChildren.html#first">first</a></b>()
+								<div class="fixedFont"><b><a href="../symbols/JAX.PromiseSequence.html#waitFor">waitFor</a></b>(item)
 								</div>
-								<div class="description">vrací první HTMLElement jako JAXový node</div>
-							</td>
-						</tr>
-					
-						<tr>
-							<td class="attributes"></td>
-							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/JAX.INodeWithChildren.html#insertFirst">insertFirst</a></b>(nodes)
-								</div>
-								<div class="description">vloží zadané uzly před první uzel v elementu, lze zadat i jako html string, který se následně připne před první element</div>
-							</td>
-						</tr>
-					
-						<tr>
-							<td class="attributes"></td>
-							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/JAX.INodeWithChildren.html#last">last</a></b>()
-								</div>
-								<div class="description">vrací poslední HTMLElement jako JAXový node</div>
+								<div class="description">přidá Promise na konec fronty</div>
 							</td>
 						</tr>
 					
@@ -1146,7 +1128,7 @@ tvoří rozhraní pro nody, které mohou mít potomky
 				</div>
 				
 				<div class="fixedFont">
-						<b>JAX.INodeWithChildren</b>()
+						<b>JAX.PromiseSequence</b>()
 				</div>
 				
 				<div class="description">
@@ -1177,150 +1159,15 @@ tvoří rozhraní pro nody, které mohou mít potomky
 					Metody - detailně
 				</div>
 				
-					<a name="add"> </a>
+					<a name="cancel"> </a>
 					<div class="fixedFont">
 					
-					<span class="light">{<a href="../symbols/JAX.Node.html">JAX.Node</a>}</span>
-					<b>add</b>(nodes)
+					<span class="light">{<a href="../symbols/JAX.PromiseSequence.html">JAX.PromiseSequence</a>}</span>
+					<b>cancel</b>()
 					
 					</div>
 					<div class="description">
-						přidává do elementu další uzly vždy na konec, lze zadat i jako html string, který se následně připne
-						
-						
-					</div>
-					
-					
-					
-						
-							<dl class="detailList">
-							<dt class="heading">Parametry:</dt>
-							
-								<dt>
-									<span class="light fixedFont">{string || object || array}</span> <b>nodes</b>
-									
-								</dt>
-								<dd>HTML string || HTMLElement || Text || HTMLDocumetFragment || pole elementů || instance JAX.NodeArray</dd>
-							
-							</dl>
-						
-						
-						
-						
-						
-							<dl class="detailList">
-							<dt class="heading">Vrací:</dt>
-							
-								<dd><span class="light fixedFont">{<a href="../symbols/JAX.Node.html">JAX.Node</a>}</span> </dd>
-							
-							</dl>
-						
-						
-						
-
-					<hr />
-				
-					<a name="addBefore"> </a>
-					<div class="fixedFont">
-					
-					<span class="light">{<a href="../symbols/JAX.Node.html">JAX.Node</a>}</span>
-					<b>addBefore</b>(node, nodeBefore)
-					
-					</div>
-					<div class="description">
-						vloží uzel před jiný
-						
-						
-					</div>
-					
-					
-					
-						
-							<dl class="detailList">
-							<dt class="heading">Parametry:</dt>
-							
-								<dt>
-									<span class="light fixedFont">{object || string}</span> <b>node</b>
-									
-								</dt>
-								<dd>element nebo css selector, jak se k elementu dostat</dd>
-							
-								<dt>
-									<span class="light fixedFont">{object || string}</span> <b>nodeBefore</b>
-									
-								</dt>
-								<dd>element nebo css selector, jak se k elementu dostat</dd>
-							
-							</dl>
-						
-						
-						
-						
-						
-							<dl class="detailList">
-							<dt class="heading">Vrací:</dt>
-							
-								<dd><span class="light fixedFont">{<a href="../symbols/JAX.Node.html">JAX.Node</a>}</span> </dd>
-							
-							</dl>
-						
-						
-						
-
-					<hr />
-				
-					<a name="children"> </a>
-					<div class="fixedFont">
-					
-					<span class="light">{<a href="../symbols/JAX.Node.html">JAX.Node</a> || JAX.NodeArray || null}</span>
-					<b>children</b>(index)
-					
-					</div>
-					<div class="description">
-						vrací JAXové pole (JAX.NodeArray) přímých potomků; pokud je ale zadán parametr index, vrací právě jeden JAXový node
-						
-						
-					</div>
-					
-					
-					
-						
-							<dl class="detailList">
-							<dt class="heading">Parametry:</dt>
-							
-								<dt>
-									<span class="light fixedFont">{number || undefined}</span> <b>index</b>
-									
-								</dt>
-								<dd>číselný index požadovaného potomku</dd>
-							
-							</dl>
-						
-						
-						
-						
-						
-							<dl class="detailList">
-							<dt class="heading">Vrací:</dt>
-							
-								<dd><span class="light fixedFont">{<a href="../symbols/JAX.Node.html">JAX.Node</a> || JAX.NodeArray || null}</span> </dd>
-							
-							</dl>
-						
-						
-						
-
-					<hr />
-				
-					<a name="clear"> </a>
-					<div class="fixedFont">
-					
-					<span class="light">{<a href="../symbols/JAX.Node.html">JAX.Node</a>}</span>
-					<b>clear</b>()
-					
-					</div>
-					<div class="description">
-						promaže element, odstraní jeho přímé potomky
+						zastaví celou proceduru. Asynchronní operace, které doposud nebyly dokončeny již nebudou dále vykonány.
 						
 						
 					</div>
@@ -1335,7 +1182,7 @@ tvoří rozhraní pro nody, které mohou mít potomky
 							<dl class="detailList">
 							<dt class="heading">Vrací:</dt>
 							
-								<dd><span class="light fixedFont">{<a href="../symbols/JAX.Node.html">JAX.Node</a>}</span> </dd>
+								<dd><span class="light fixedFont">{<a href="../symbols/JAX.PromiseSequence.html">JAX.PromiseSequence</a>}</span> </dd>
 							
 							</dl>
 						
@@ -1344,32 +1191,21 @@ tvoří rozhraní pro nody, které mohou mít potomky
 
 					<hr />
 				
-					<a name="contains"> </a>
+					<a name="isCanceled"> </a>
 					<div class="fixedFont">
 					
 					<span class="light">{boolean}</span>
-					<b>contains</b>(nodes)
+					<b>isCanceled</b>()
 					
 					</div>
 					<div class="description">
-						zjistí, jestli element obsahuje nody podle zadaných kritérií
+						je sekvence zrušena?
 						
 						
 					</div>
 					
 					
 					
-						
-							<dl class="detailList">
-							<dt class="heading">Parametry:</dt>
-							
-								<dt>
-									<span class="light fixedFont">{object || string}</span> <b>nodes</b>
-									
-								</dt>
-								<dd>HTMLElement || Text || pole elementů || instance JAX.NodeArray || CSS 3 (CSS 2.1 pro IE8) selector</dd>
-							
-							</dl>
 						
 						
 						
@@ -1387,15 +1223,15 @@ tvoří rozhraní pro nody, které mohou mít potomky
 
 					<hr />
 				
-					<a name="first"> </a>
+					<a name="isRunning"> </a>
 					<div class="fixedFont">
 					
-					<span class="light">{<a href="../symbols/JAX.Node.html">JAX.Node</a> || null}</span>
-					<b>first</b>()
+					<span class="light">{boolean}</span>
+					<b>isRunning</b>()
 					
 					</div>
 					<div class="description">
-						vrací první HTMLElement jako JAXový node
+						je sekvence běžící?
 						
 						
 					</div>
@@ -1410,7 +1246,7 @@ tvoří rozhraní pro nody, které mohou mít potomky
 							<dl class="detailList">
 							<dt class="heading">Vrací:</dt>
 							
-								<dd><span class="light fixedFont">{<a href="../symbols/JAX.Node.html">JAX.Node</a> || null}</span> </dd>
+								<dd><span class="light fixedFont">{boolean}</span> </dd>
 							
 							</dl>
 						
@@ -1419,15 +1255,47 @@ tvoří rozhraní pro nody, které mohou mít potomky
 
 					<hr />
 				
-					<a name="insertFirst"> </a>
+					<a name="run"> </a>
 					<div class="fixedFont">
 					
-					<span class="light">{<a href="../symbols/JAX.Node.html">JAX.Node</a>}</span>
-					<b>insertFirst</b>(nodes)
+					<span class="light">{<a href="../symbols/JAX.PromiseSequence.html">JAX.PromiseSequence</a>}</span>
+					<b>run</b>()
 					
 					</div>
 					<div class="description">
-						vloží zadané uzly před první uzel v elementu, lze zadat i jako html string, který se následně připne před první element
+						spustí celou proceduru. Postupně se začnou provádět všechny asynchronní operace. Další operace začne běžet teprve, až se dokončí předchozí.
+						
+						
+					</div>
+					
+					
+					
+						
+						
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">Vrací:</dt>
+							
+								<dd><span class="light fixedFont">{<a href="../symbols/JAX.PromiseSequence.html">JAX.PromiseSequence</a>}</span> </dd>
+							
+							</dl>
+						
+						
+						
+
+					<hr />
+				
+					<a name="then"> </a>
+					<div class="fixedFont">
+					
+					<span class="light">{<a href="../symbols/JAX.PromiseSequence.html">JAX.PromiseSequence</a>}</span>
+					<b>then</b>(onFulfill, onReject)
+					
+					</div>
+					<div class="description">
+						co se má stát po fulfillnutí a po rejectnutí poslední nastavované Promise. Týká se vždy naposledy předané Promise přes waitFor metodu.
 						
 						
 					</div>
@@ -1439,10 +1307,16 @@ tvoří rozhraní pro nody, které mohou mít potomky
 							<dt class="heading">Parametry:</dt>
 							
 								<dt>
-									<span class="light fixedFont">{string || object || array}</span> <b>nodes</b>
+									<span class="light fixedFont">{function}</span> <b>onFulfill</b>
 									
 								</dt>
-								<dd>HTML string || HTMLElement || Text || HTMLDocumetFragment || pole elementů || instance JAX.NodeArray</dd>
+								<dd>fce se zavolá při fulfillnutí Promise</dd>
+							
+								<dt>
+									<span class="light fixedFont">{function}</span> <b>onReject</b>
+									
+								</dt>
+								<dd>fce se zavolá při rejectnutí Promise</dd>
 							
 							</dl>
 						
@@ -1453,7 +1327,7 @@ tvoří rozhraní pro nody, které mohou mít potomky
 							<dl class="detailList">
 							<dt class="heading">Vrací:</dt>
 							
-								<dd><span class="light fixedFont">{<a href="../symbols/JAX.Node.html">JAX.Node</a>}</span> </dd>
+								<dd><span class="light fixedFont">{<a href="../symbols/JAX.PromiseSequence.html">JAX.PromiseSequence</a>}</span> </dd>
 							
 							</dl>
 						
@@ -1462,21 +1336,32 @@ tvoří rozhraní pro nody, které mohou mít potomky
 
 					<hr />
 				
-					<a name="last"> </a>
+					<a name="waitFor"> </a>
 					<div class="fixedFont">
 					
-					<span class="light">{<a href="../symbols/JAX.Node.html">JAX.Node</a> || null}</span>
-					<b>last</b>()
+					<span class="light">{<a href="../symbols/JAX.PromiseSequence.html">JAX.PromiseSequence</a>}</span>
+					<b>waitFor</b>(item)
 					
 					</div>
 					<div class="description">
-						vrací poslední HTMLElement jako JAXový node
+						přidá Promise na konec fronty
 						
 						
 					</div>
 					
 					
 					
+						
+							<dl class="detailList">
+							<dt class="heading">Parametry:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{function || object}</span> <b>item</b>
+									
+								</dt>
+								<dd>nabindovaná funkce vracející instanci JAK.Promise || instance JAK.Promise || instance JAX.FX || instance JAK.PromiseSequence</dd>
+							
+							</dl>
 						
 						
 						
@@ -1485,7 +1370,7 @@ tvoří rozhraní pro nody, které mohou mít potomky
 							<dl class="detailList">
 							<dt class="heading">Vrací:</dt>
 							
-								<dd><span class="light fixedFont">{<a href="../symbols/JAX.Node.html">JAX.Node</a> || null}</span> </dd>
+								<dd><span class="light fixedFont">{<a href="../symbols/JAX.PromiseSequence.html">JAX.PromiseSequence</a>}</span> </dd>
 							
 							</dl>
 						

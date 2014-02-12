@@ -241,9 +241,8 @@ JAX.IMoveableNode.prototype.parent = function(selector) {
  * @returns {JAX.Node || null}
  */
 JAX.IMoveableNode.prototype.next = function(selector) {
-	var n = this._node.nextSibling;
-
 	if (typeof(selector) == "number") {
+		var n = this._node.nextSibling;
 		while(n) {
 			if (n.nodeType == selector) {
 				return JAX(n);
@@ -252,6 +251,7 @@ JAX.IMoveableNode.prototype.next = function(selector) {
 		}
 		return null;
 	} else if (typeof(selector) == "string") {
+		var n = this._node.nextElementSibling;
 		if (/^[#.a-z0-9_-]+$/ig.test(selector)) {
 			while(n) { 
 				if (this._matches(n, selector)) {
@@ -274,9 +274,8 @@ JAX.IMoveableNode.prototype.next = function(selector) {
  * @returns {JAX.Node || null}
  */
 JAX.IMoveableNode.prototype.previous = function(selector) {
-	var n = this._node.previousSibling;
-
 	if (typeof(selector) == "number") {
+		var n = this._node.previousSibling;
 		while(n) {
 			if (n.nodeType == selector) {
 				return JAX(n);
@@ -285,6 +284,7 @@ JAX.IMoveableNode.prototype.previous = function(selector) {
 		}
 		return null;
 	} else if (typeof(selector) == "string") {
+		var n = this._node.previousElementSibling;
 		if (/^[#.a-z0-9_-]+$/ig.test(selector)) {
 			while(n) { 
 				if (this._matches(n, selector)) {
