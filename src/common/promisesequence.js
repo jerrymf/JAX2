@@ -1,7 +1,7 @@
 /**
  * @fileOverview promisesequence.js - JAX - JAk eXtended
  * @author <a href="mailto:marek.fojtl@firma.seznam.cz">Marek Fojtl</a>
- * @version 1.0
+ * @version 1.1
  */
 
 /**
@@ -48,8 +48,6 @@ JAX.PromiseSequence.prototype.waitFor = function(item) {
  * @returns {JAX.PromiseSequence}
  */
 JAX.PromiseSequence.prototype.after = function(onFulfill, onReject) {
-	this._running = false;
-
 	var customOnFulfill = function(value) {
 		if (this._canceled) { return; }
 		if (typeof(onFulfill) == "function") {
@@ -81,12 +79,13 @@ JAX.PromiseSequence.prototype.after = function(onFulfill, onReject) {
  */
 JAX.PromiseSequence.prototype.run = function() {
 	if (this._running) { return this; }
+	this._canceled = false;
 	this._processWaiting();
 	return this;
 };
 
 /**
- * zastaví celou proceduru. Asynchronní operace, které doposud nebyly dokončeny již nebudou dále vykonány.
+ * zastaví celou proceduru. Asynchronní operace, které doposud nebyly vykonány již vykonány nebudou.
  *
  * @returns {JAX.PromiseSequence}
  */
@@ -101,8 +100,7 @@ JAX.PromiseSequence.prototype.cancel = function() {
  * @returns {boolean}
  */
 JAX.PromiseSequence.prototype.isRunning = function() {
-	this._canceled = true;
-	return this;
+	return this._running;
 };
 
 /**
@@ -111,11 +109,12 @@ JAX.PromiseSequence.prototype.isRunning = function() {
  * @returns {boolean}
  */
 JAX.PromiseSequence.prototype.isCanceled = function() {
-	this._canceled = true;
-	return this;
+	return this._canceled;
 };
 
 JAX.PromiseSequence.prototype._processWaiting = function() {
+	this._running = false;
+	
 	var waitingData = this._waitings.shift();
 	if (!waitingData) { return; }
 
@@ -125,6 +124,11 @@ JAX.PromiseSequence.prototype._processWaiting = function() {
 		var promise = item();
 	} else {
 		var promise = item;
+	}
+
+	if (!(promise instanceof JAK.Promise) && !(promise instanceof JAX.FX) && !(promise instanceof JAX.PromiseSequence)) {
+		console.error("JAX.PromiseSequence: when I tried to process next waiting Promise, I got unsupported stuff", promise);
+		return;
 	}
 
 	this._currentPromise = promise;
@@ -151,6 +155,7 @@ JAX.PromiseSequence.prototype._clear = function() {
 	this._waitings = [];
 	this._currentPromise = null;
 	this._promises = [];
+	this._running = false;
 };
 
 JAX.PromiseSequence.prototype._addAfterAction = function(onFulfill, onReject) {
