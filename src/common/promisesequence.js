@@ -47,7 +47,7 @@ JAX.PromiseSequence.prototype.waitFor = function(item) {
  *
  * @returns {JAX.PromiseSequence}
  */
-JAX.PromiseSequence.prototype.then = function(onFulfill, onReject) {
+JAX.PromiseSequence.prototype.after = function(onFulfill, onReject) {
 	this._running = false;
 
 	var customOnFulfill = function(value) {
@@ -134,15 +134,15 @@ JAX.PromiseSequence.prototype._processWaiting = function() {
 
 	for (var i=0, len=thenActions.length; i<len; i++) {
 		var thenAction = thenActions[i];
-		this._currentPromise.then(thenAction.onFulfill, thenAction.onReject);
+		this._addAfterAction(thenAction.onFulfill, thenAction.onReject);
 	}
-	
+
 	var finishingAction = function() {
 		if (this._canceled) { this._clear(); return; }
 		this._processWaiting();
 	}.bind(this);
 
-	this._currentPromise.then(finishingAction, finishingAction);
+	this._addAfterAction(finishingAction, finishingAction);
 
 	this._running = true;
 };
@@ -151,4 +151,12 @@ JAX.PromiseSequence.prototype._clear = function() {
 	this._waitings = [];
 	this._currentPromise = null;
 	this._promises = [];
+};
+
+JAX.PromiseSequence.prototype._addAfterAction = function(onFulfill, onReject) {
+	if (this._currentPromise instanceof JAX.PromiseSequence) {
+		this._currentPromise.after(onFulfill, onReject);
+		return;
+	}
+	this._currentPromise.then(onFulfill, onReject);
 };
