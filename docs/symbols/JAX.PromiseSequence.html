@@ -1062,6 +1062,15 @@ je třída, která umožňuje zpracovat sekvenci Promisů. Umožňuje tak vývoj
 						<tr>
 							<td class="attributes"></td>
 							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/JAX.PromiseSequence.html#after">after</a></b>(onFulfill, onReject)
+								</div>
+								<div class="description">co se má stát po fulfillnutí a po rejectnutí poslední nastavované Promise. Týká se vždy naposledy předané Promise přes waitFor metodu.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes"></td>
+							<td class="nameDescription">
 								<div class="fixedFont"><b><a href="../symbols/JAX.PromiseSequence.html#cancel">cancel</a></b>()
 								</div>
 								<div class="description">zastaví celou proceduru. Asynchronní operace, které doposud nebyly dokončeny již nebudou dále vykonány.</div>
@@ -1092,15 +1101,6 @@ je třída, která umožňuje zpracovat sekvenci Promisů. Umožňuje tak vývoj
 								<div class="fixedFont"><b><a href="../symbols/JAX.PromiseSequence.html#run">run</a></b>()
 								</div>
 								<div class="description">spustí celou proceduru. Postupně se začnou provádět všechny asynchronní operace. Další operace začne běžet teprve, až se dokončí předchozí.</div>
-							</td>
-						</tr>
-					
-						<tr>
-							<td class="attributes"></td>
-							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/JAX.PromiseSequence.html#then">then</a></b>(onFulfill, onReject)
-								</div>
-								<div class="description">co se má stát po fulfillnutí a po rejectnutí poslední nastavované Promise. Týká se vždy naposledy předané Promise přes waitFor metodu.</div>
 							</td>
 						</tr>
 					
@@ -1158,6 +1158,55 @@ je třída, která umožňuje zpracovat sekvenci Promisů. Umožňuje tak vývoj
 				<div class="sectionTitle">
 					Metody - detailně
 				</div>
+				
+					<a name="after"> </a>
+					<div class="fixedFont">
+					
+					<span class="light">{<a href="../symbols/JAX.PromiseSequence.html">JAX.PromiseSequence</a>}</span>
+					<b>after</b>(onFulfill, onReject)
+					
+					</div>
+					<div class="description">
+						co se má stát po fulfillnutí a po rejectnutí poslední nastavované Promise. Týká se vždy naposledy předané Promise přes waitFor metodu.
+						
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parametry:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{function}</span> <b>onFulfill</b>
+									
+								</dt>
+								<dd>fce se zavolá při fulfillnutí Promise</dd>
+							
+								<dt>
+									<span class="light fixedFont">{function}</span> <b>onReject</b>
+									
+								</dt>
+								<dd>fce se zavolá při rejectnutí Promise</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">Vrací:</dt>
+							
+								<dd><span class="light fixedFont">{<a href="../symbols/JAX.PromiseSequence.html">JAX.PromiseSequence</a>}</span> </dd>
+							
+							</dl>
+						
+						
+						
+
+					<hr />
 				
 					<a name="cancel"> </a>
 					<div class="fixedFont">
@@ -1287,55 +1336,6 @@ je třída, která umožňuje zpracovat sekvenci Promisů. Umožňuje tak vývoj
 
 					<hr />
 				
-					<a name="then"> </a>
-					<div class="fixedFont">
-					
-					<span class="light">{<a href="../symbols/JAX.PromiseSequence.html">JAX.PromiseSequence</a>}</span>
-					<b>then</b>(onFulfill, onReject)
-					
-					</div>
-					<div class="description">
-						co se má stát po fulfillnutí a po rejectnutí poslední nastavované Promise. Týká se vždy naposledy předané Promise přes waitFor metodu.
-						
-						
-					</div>
-					
-					
-					
-						
-							<dl class="detailList">
-							<dt class="heading">Parametry:</dt>
-							
-								<dt>
-									<span class="light fixedFont">{function}</span> <b>onFulfill</b>
-									
-								</dt>
-								<dd>fce se zavolá při fulfillnutí Promise</dd>
-							
-								<dt>
-									<span class="light fixedFont">{function}</span> <b>onReject</b>
-									
-								</dt>
-								<dd>fce se zavolá při rejectnutí Promise</dd>
-							
-							</dl>
-						
-						
-						
-						
-						
-							<dl class="detailList">
-							<dt class="heading">Vrací:</dt>
-							
-								<dd><span class="light fixedFont">{<a href="../symbols/JAX.PromiseSequence.html">JAX.PromiseSequence</a>}</span> </dd>
-							
-							</dl>
-						
-						
-						
-
-					<hr />
-				
 					<a name="waitFor"> </a>
 					<div class="fixedFont">
 					
@@ -1387,7 +1387,7 @@ je třída, která umožňuje zpracovat sekvenci Promisů. Umožňuje tak vývoj
 <!-- ============================== footer ================================= -->
 		<div class="fineprint" style="clear:both">
 			
-			Dokumentace vygenerována nástrojem <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> 2.4.0, Thu Feb 13 2014 00:18:34 GMT+0100 (CET)
+			Dokumentace vygenerována nástrojem <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> 2.4.0, Thu Feb 13 2014 14:34:17 GMT+0100 (CET)
 		</div>
 	</body>
 </html>
