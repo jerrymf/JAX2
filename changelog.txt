@@ -3,6 +3,9 @@ Changelog
 --------------------------------------
 Legend: [+] - added, [*] - fixed or changed, [-] removed
 
+Version 2.23.2
+	* bugfix in JAX.PromiseSequence
+
 Version 2.23.1
 	+ JAX.PromiseSequence.then -> JAX.PromiseSequence.after
 
