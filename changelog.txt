@@ -3,6 +3,9 @@ Changelog
 --------------------------------------
 Legend: [+] - added, [*] - fixed or changed, [-] removed
 
+Version 2.23.4
+	* removed timeout in JAX.FX.CSS3
+
 Version 2.23.3
 	* bugfix in JAX.IAnimateableNode
 

@@ -1,7 +1,7 @@
 /**
  * @fileOverview fx-css3.js - JAX - JAk eXtended
  * @author <a href="mailto:marek.fojtl@firma.seznam.cz">Marek Fojtl</a>
- * @version 1.1
+ * @version 1.1.1
  */
 
 /**
@@ -19,13 +19,21 @@ JAX.FX.CSS3 = function(elm) {
 	this._promise = {
 		finished: null
 	};
-	this._timeout = null;
 };
 
 JAX.FX.CSS3._TRANSITION_PROPERTY = "";
 JAX.FX.CSS3._TRANSITION_EVENT = "";
 
 (function() {
+	if (JAK.Browser.platform == "and") {
+		/* protoze nektere android browsery chybne poskytuji detekci transition bez prefixu, budeme preferovat tu s prefixem, ktera funguje korektne */
+		if ("WebkitTransition" in document.createElement("div").style) {
+			JAX.FX.CSS3._TRANSITION_PROPERTY = "WebkitTransition";
+			JAX.FX.CSS3._TRANSITION_EVENT = "webkitTransitionEnd";
+			return;
+		}
+	}
+
 	var transitions = {
 		"transition":"transitionend",
 		"WebkitTransition":"webkitTransitionEnd",
@@ -38,7 +46,7 @@ JAX.FX.CSS3._TRANSITION_EVENT = "";
 		if (p in document.createElement("div").style) {
 			JAX.FX.CSS3._TRANSITION_PROPERTY = p;
 			JAX.FX.CSS3._TRANSITION_EVENT = transitions[p];
-			break; 
+			return; 
 		}
 	}
 })();
@@ -95,8 +103,6 @@ JAX.FX.CSS3.prototype.run = function() {
 			var cssEndValue = setting.endValue + setting.endUnit;
 			style[setting.property] = cssEndValue;
 		}
-
-		this._timeout = setTimeout(this._fallback.bind(this), this._maxDuration + 50); /* sometimes transitioend is not fired, we must use fallback :-/ */
 	}.bind(this), 0);
 
 	return this._promise.finished;
@@ -117,8 +123,6 @@ JAX.FX.CSS3.prototype.stop = function() {
 	}
 
 	while(this._transitionCount) { this._endTransition(); }
-	clearTimeout(this._timeout);
-	this._timeout = null;
 	this._promise.finished.reject(this._jaxElm);
 };
 
@@ -137,8 +141,6 @@ JAX.FX.CSS3.prototype._finishTransitionAnimation = function() {
 		return;
 	}
 
-	clearTimeout(this._timeout);
-	this._timeout = null;
 	this._promise.finished.fulfill(this._jaxElm);
 };
 
