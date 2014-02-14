@@ -91,13 +91,14 @@ JAX.IAnimateableNode.prototype.slide = function(type, duration, method) {
 		console.error("For first argument I expected string.", this._node);
 	}
 
-	var backupStyles = {};
+	var backupStyles = null;
 	switch(type) {
 		case "down":
 			backupStyles = this.css(["overflow", "height"]);
 			var property = "height";
 			var start = 0;
 			var end = null;
+			this.css("overflow", "hidden");
 		break;
 		case "up":
 			var property = "height";
@@ -114,6 +115,7 @@ JAX.IAnimateableNode.prototype.slide = function(type, duration, method) {
 			var property = "width";
 			var start = 0;
 			var end = null;
+			this.css("overflow", "hidden");
 		break;
 		default:
 			console.error("I got unsupported type '" + type + "'.", this._node);
@@ -122,11 +124,12 @@ JAX.IAnimateableNode.prototype.slide = function(type, duration, method) {
 			return fx;
 	}
 
-	this.css("overflow", "hidden");
-
-	var func = function() { this.css(backupStyles); }.bind(this);
 	var fx = this.animate(property, duration, start, end, method);
-	fx.then(func);
+
+	if (backupStyles) {
+		var func = function() { this.css(backupStyles); }.bind(this);
+		fx.then(func);
+	}
 
 	return fx;
 };
