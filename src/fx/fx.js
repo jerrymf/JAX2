@@ -204,18 +204,7 @@ JAX.FX.prototype.addTranslateProperty = function(duration, start, end, method) {
 	if (!this._canBeAnimated) { return this; }
 
 	if (!JAX.FX.isCSS3Supported) {
-		var translates = {
-			"x":"left",
-			"y":"top",
-			"z":""
-		};
-
-		for (var i in start) {
-			var translate = translates[i];
-			if (!translate) { continue; }
-			this.addProperty(translate, duration, start[i], end[i], method);
-		};
-
+		this._addTranslateFallback.apply(this, arguments);
 		console.info("JAX.FX.addTranslateProperty: There is no CSS3 transition support. I will use top or left instead of transform attribute. Element should have non-static position.");
 		return this;
 	}
@@ -456,4 +445,23 @@ JAX.FX.prototype._finishAnimation = function() {
 
 JAX.FX.prototype._styleToCSSProperty = function(property) {
 ﻿	return property.replace(/([A-Z])/g, function(match, letter) { return "-" + letter.toLowerCase(); });
+};
+
+JAX.FX.prototype._addTranslateFallback = function(duration, start, end, method) {
+	if (["relative","absolute", "fixed"].indexOf(this._jaxElm.css("position")) == -1) {
+		this._jaxElm.css("position", "relative");
+	}
+
+	var translates = {
+		"x":"left",
+		"y":"top",
+		"z":""
+	};
+
+	for (var i in start) {
+		if (!(i in end)) { continue; }
+		var translate = translates[i];
+		if (!translate) { continue; }
+		this.addProperty(translate, duration, start[i], end[i], method);
+	};
 };
