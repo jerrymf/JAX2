@@ -205,7 +205,6 @@ JAX.FX.prototype.addTranslateProperty = function(duration, start, end, method) {
 
 	if (!JAX.FX.isCSS3Supported) {
 		this._addTranslateFallback.apply(this, arguments);
-		console.info("JAX.FX.addTranslateProperty: There is no CSS3 transition support. I will use top or left instead of transform attribute. Element should have non-static position.");
 		return this;
 	}
 
@@ -464,4 +463,6 @@ JAX.FX.prototype._addTranslateFallback = function(duration, start, end, method) 
 		if (!translate) { continue; }
 		this.addProperty(translate, duration, start[i], end[i], method);
 	};
+
+	console.info("JAX.FX.addTranslateProperty: There is no CSS3 transition support. I will use top or left instead of transform attribute. Element should have non-static position.");
 };
