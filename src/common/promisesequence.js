@@ -13,6 +13,7 @@
 JAX.PromiseSequence = function() {
 	this._running = false;
 	this._canceled = false;
+	this._pending = false;
 	this._waitings = [];
 	this._currentPromise = null;
 	this._promises = [];
@@ -25,6 +26,8 @@ JAX.PromiseSequence = function() {
  * @returns {JAX.PromiseSequence}
  */
 JAX.PromiseSequence.prototype.waitFor = function(item) {
+	if (this._canceled) { return this; }
+
 	var isSupported = item && (typeof(item) == "function" || item instanceof JAK.Promise || item instanceof JAX.FX || item instanceof JAX.PromiseSequence);
 	if (!isSupported) {
 		console.error("JAX.PromiseSequence: Sorry, but I got unsupported item: " + typeof(item) + ". I expected function, instance of JAK.Promise or instance of JAX.FX.");
@@ -35,6 +38,10 @@ JAX.PromiseSequence.prototype.waitFor = function(item) {
 		waiting: item,
 		thenActions: []
 	});
+
+	if (this._running && !this._pending) {
+		this._processWaiting();
+	}
 
 	return this;
 };
@@ -48,6 +55,8 @@ JAX.PromiseSequence.prototype.waitFor = function(item) {
  * @returns {JAX.PromiseSequence}
  */
 JAX.PromiseSequence.prototype.after = function(onFulfill, onReject) {
+	if (this._canceled) { return this; }
+
 	var customOnFulfill = function(value) {
 		if (this._canceled) { return; }
 		if (typeof(onFulfill) == "function") {
@@ -62,11 +71,14 @@ JAX.PromiseSequence.prototype.after = function(onFulfill, onReject) {
 		}
 	}.bind(this);
 
+	var afterAction = {onFulfill:customOnFulfill, onReject:customOnReject};
 	var length = this._waitings.length;
 
 	if (length) {
 		var lastWaiting = this._waitings[length - 1];
-		lastWaiting.thenActions.push({onFulfill:customOnFulfill, onReject:customOnReject});
+		lastWaiting.thenActions.push(afterAction);
+	} else if (this._currentPromise) {
+		this._processThenActions([afterAction]);
 	}
 
 	return this;
@@ -78,8 +90,10 @@ JAX.PromiseSequence.prototype.after = function(onFulfill, onReject) {
  * @returns {JAX.PromiseSequence}
  */
 JAX.PromiseSequence.prototype.run = function() {
-	if (this._running) { return this; }
+	if (this._running || this._canceled) { return this; }
 	this._canceled = false;
+	this._pending = false;
+	this._running = true;
 	this._processWaiting();
 	return this;
 };
@@ -112,9 +126,18 @@ JAX.PromiseSequence.prototype.isCanceled = function() {
 	return this._canceled;
 };
 
+/**
+ * čeká se na nějakou asynchronní akce?
+ *
+ * @returns {boolean}
+ */
+JAX.PromiseSequence.prototype.isPending = function() {
+	return this._pending;
+};
+
 JAX.PromiseSequence.prototype._processWaiting = function() {
-	this._running = false;
-	
+	this._pending = false;
+
 	var waitingData = this._waitings.shift();
 	if (!waitingData) { return; }
 
@@ -134,8 +157,12 @@ JAX.PromiseSequence.prototype._processWaiting = function() {
 	this._currentPromise = promise;
 	this._promises.push(promise);
 
-	var thenActions = waitingData.thenActions;
+	this._processThenActions(waitingData.thenActions);
 
+	this._pending = true;
+};
+
+JAX.PromiseSequence.prototype._processThenActions = function(thenActions) {
 	for (var i=0, len=thenActions.length; i<len; i++) {
 		var thenAction = thenActions[i];
 		this._addAfterAction(thenAction.onFulfill, thenAction.onReject);
@@ -147,8 +174,6 @@ JAX.PromiseSequence.prototype._processWaiting = function() {
 	}.bind(this);
 
 	this._addAfterAction(finishingAction, finishingAction);
-
-	this._running = true;
 };
 
 JAX.PromiseSequence.prototype._clear = function() {
@@ -156,6 +181,7 @@ JAX.PromiseSequence.prototype._clear = function() {
 	this._currentPromise = null;
 	this._promises = [];
 	this._running = false;
+	this._pending = false;
 };
 
 JAX.PromiseSequence.prototype._addAfterAction = function(onFulfill, onReject) {

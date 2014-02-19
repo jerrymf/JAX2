@@ -1,7 +1,7 @@
 /**
  * @fileOverview imoveablenode.js - JAX - JAk eXtended
  * @author <a href="mailto:marek.fojtl@firma.seznam.cz">Marek Fojtl</a>
- * @version 1.1
+ * @version 1.1.1
  */
 
 /**
@@ -263,11 +263,11 @@ JAX.IMoveableNode.prototype.next = function(selector) {
 		return null;
 	}
 
-	var jaxNode = JAX(n);
-	return jaxNode.n ? jaxNode : null;
+	var n = this._node.nextSibling;
+	return n ? JAX(n) : null;
 };
 
-/** 
+/**
  * vrací předchazející node
  *
  * @param {string || number || undefined} selector řetězec splňující pravidla: tag#id.trida (lze zada více id i tříd) || požadovaný nodeType
@@ -296,8 +296,8 @@ JAX.IMoveableNode.prototype.previous = function(selector) {
 		return null;
 	}
 
-	var jaxNode = JAX(n);
-	return jaxNode.n ? jaxNode : null;
+	var n = this._node.previousSibling;
+	return n ? JAX(n) : null;
 };
 
 JAX.IMoveableNode.prototype._matches = function(n, selector) {
