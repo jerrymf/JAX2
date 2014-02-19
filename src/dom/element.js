@@ -300,7 +300,7 @@ JAX.Element.prototype.css = function(property, value) {
 					continue; 
 				}
 				this._node.style[p] = value;
-			}	
+			}
 			return this;
 		} else if (property instanceof Array) {
 			var css = {};

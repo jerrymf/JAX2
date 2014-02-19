@@ -91,7 +91,7 @@ JAX.IAnimateableNode.prototype.slide = function(type, duration, method) {
 		console.error("For first argument I expected string.", this._node);
 	}
 
-	var backupStyles = {};
+	var backupStyles = null;
 	switch(type) {
 		case "down":
 			backupStyles = this.css(["overflow", "height"]);
@@ -100,11 +100,13 @@ JAX.IAnimateableNode.prototype.slide = function(type, duration, method) {
 			var end = null;
 		break;
 		case "up":
+			backupStyles = this.css(["overflow"]);
 			var property = "height";
 			var start = null
 			var end = 0;
 		break;
 		case "left":
+			backupStyles = this.css(["overflow"]);
 			var property = "width";
 			var start = null;
 			var end = 0;
@@ -122,11 +124,13 @@ JAX.IAnimateableNode.prototype.slide = function(type, duration, method) {
 			return fx;
 	}
 
+	var fx = this.animate(property, duration, start, end, method);
 	this.css("overflow", "hidden");
 
-	var func = function() { this.css(backupStyles); }.bind(this);
-	var fx = this.animate(property, duration, start, end, method);
-	fx.then(func);
+	if (backupStyles) {
+		var func = function() { this.css(backupStyles); }.bind(this);
+		fx.then(func);
+	}
 
 	return fx;
 };
