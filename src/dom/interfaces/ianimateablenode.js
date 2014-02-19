@@ -124,8 +124,8 @@ JAX.IAnimateableNode.prototype.slide = function(type, duration, method) {
 			return fx;
 	}
 
-	this.css("overflow", "hidden");
 	var fx = this.animate(property, duration, start, end, method);
+	this.css("overflow", "hidden");
 
 	if (backupStyles) {
 		var func = function() { this.css(backupStyles); }.bind(this);

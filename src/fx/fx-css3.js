@@ -127,6 +127,7 @@ JAX.FX.CSS3.prototype.stop = function() {
 };
 
 JAX.FX.CSS3.prototype._endTransition = function() {
+	if (!this._transitionCount) { return; }
 	this._transitionCount--;
 	if (this._transitionCount) { return; }
 
@@ -136,22 +137,13 @@ JAX.FX.CSS3.prototype._endTransition = function() {
 };
 
 JAX.FX.CSS3.prototype._finishTransitionAnimation = function() {
-	if (this._transitionCount) {
-		this._endTransition();
-		return;
-	}
+	this._endTransition();
+
+	if (this._transitionCount) { return; }
 
 	this._promise.finished.fulfill(this._jaxElm);
 };
 
 JAX.FX.CSS3.prototype._styleToCSSProperty = function(property) {
 ﻿	return property.replace(/([A-Z])/g, function(match, letter) { return "-" + letter.toLowerCase(); });
-};
-
-JAX.FX.CSS3.prototype._fallback = function() {
-	while(this._transitionCount) {
-		this._endTransition();
-	}
-
-	this._finishTransitionAnimation();
 };
