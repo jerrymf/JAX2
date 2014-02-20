@@ -3,6 +3,9 @@ Changelog
 --------------------------------------
 Legend: [+] - added, [*] - fixed or changed, [-] removed
 
+Version 2.23.8
+	* bugfix in node detection
+
 Version 2.23.7
 	* tuning JAX.PromiseSequence
 	* bugfix in JAX.FX

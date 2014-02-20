@@ -1,7 +1,7 @@
 /**
  * @fileOverview jax.js - JAX - JAk eXtended
  * @author <a href="mailto:marek.fojtl@firma.seznam.cz">Marek Fojtl</a>
- * @version 2.23.7
+ * @version 2.23.8
  * @group jak-util
  */
 
@@ -49,6 +49,21 @@ var JAX = function(selector, srcElement) {
 		if (hasWindow && selector.nodeType) {
 			var nodeType = selector.nodeType;
 			var foundElm = selector;
+		} else if (selector.nodeType) {
+			var htmlElementCtor = window.Element || window.HTMLElement;
+			var textCtor = window.Text;
+			var documentCtor = window.Document || window.DocumentElement;
+			var documentFragmentCtor = window.DocumentFragment;
+
+			var isElement = htmlElementCtor && selector instanceof htmlElementCtor;
+			var isText = textCtor && selector instanceof textCtor;
+			var isDocument = documentCtor && selector instanceof documentCtor;
+			var isDocumentFragment = documentFragmentCtor && selector instanceof documentFragmentCtor;
+
+			if (isElement || isText || isDocument || isDocumentFragment) {
+				var nodeType = selector.nodeType;
+				var foundElm = selector;
+			}
 		} else {
 			var isWindow = selector == window || (selector.Window && selector instanceof selector.Window) || (selector.constructor.toString().indexOf("DOMWindow") > -1); /* toString - fix pro Android */
 			if (isWindow) {
