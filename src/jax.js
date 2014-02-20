@@ -44,7 +44,7 @@ var JAX = function(selector, srcElement) {
 	} else if (typeof(selector) == "object") {
 		var doc = selector.ownerDocument || selector;
 		var win = doc.defaultView || doc.parentWindow || {};
-		var isInstanceOfWindow = win.Window && ((typeof(win.Window == "function") && win instanceof win.Window) || (typeof(win.Window) == "object" && win.Window == win)); /* testovani na rovnosti objektu pro IE8 */
+		var isInstanceOfWindow = win.Window && ((typeof(win.Window) == "function" && win instanceof win.Window) || (typeof(win.Window) == "object" && win.Window == win)); /* testovani na rovnosti objektu pro IE8 */
 		var hasWindow = isInstanceOfWindow || (win.constructor.toString().indexOf("DOMWindow") > -1); /* toString - fix pro Android */
 
 		if (hasWindow && selector.nodeType) {
