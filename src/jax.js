@@ -1,7 +1,7 @@
 /**
  * @fileOverview jax.js - JAX - JAk eXtended
  * @author <a href="mailto:marek.fojtl@firma.seznam.cz">Marek Fojtl</a>
- * @version 2.23.8
+ * @version 2.23.9
  * @group jak-util
  */
 

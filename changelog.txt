@@ -3,6 +3,9 @@ Changelog
 --------------------------------------
 Legend: [+] - added, [*] - fixed or changed, [-] removed
 
+Version 2.23.9
+	* bugfix for IE8 in Window detection
+
 Version 2.23.8
 	* bugfix in node detection
 
