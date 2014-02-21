@@ -3,6 +3,9 @@ Changelog
 --------------------------------------
 Legend: [+] - added, [*] - fixed or changed, [-] removed
 
+Version 2.23.10
+	* bugfix in JAX.IIterable.items
+
 Version 2.23.9
 	* bugfix for IE8 in Window detection
 
