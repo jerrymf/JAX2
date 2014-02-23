@@ -3,6 +3,10 @@ Changelog
 --------------------------------------
 Legend: [+] - added, [*] - fixed or changed, [-] removed
 
+Version 2.24
+	+ JAX.Promise
+	* JAX.PromiseSequence renamed to JAX.AsyncSequence
+
 Version 2.23.10
 	* bugfix in JAX.IIterable.items
 

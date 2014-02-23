@@ -5,7 +5,7 @@
 		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
 		<meta name="generator" content="JsDoc Toolkit" />
 		
-		<title>JsDoc Reference - JAX.FXArray</title>
+		<title>JsDoc Reference - JAX.AsyncSequence</title>
 
 		<style type="text/css">
 			/* default.css */
@@ -1026,13 +1026,13 @@ div.classDescription
 <!-- ============================== class title ============================ -->
 			<h1 class="classTitle">
 				
-				Třída JAX.FXArray
+				Třída JAX.AsyncSequence
 			</h1>
 
 <!-- ============================== class summary ========================== -->			
 			<p class="description">
-				JAX.FXArray
-je třída rezrezentující pole JAX.FX instancí. Implementuje rozhraní <a href="../symbols/JAX.IIterable.html">JAX.IIterable</a>
+				JAX.AsyncSequence
+je třída, která umožňuje zpracovat sekvenci nejen Promisů, ale i animací pomocí JAX.FX. Umožňuje tak vývojáři plnou kontrolu nad jejich synchronizací a správnou návazností.
 
 				
 
@@ -1046,7 +1046,7 @@ je třída rezrezentující pole JAX.FX instancí. Implementuje rozhraní <a hre
 <!-- ============================== constructor summary ==================== -->			
 			
 			
-			<table class="summaryTable" cellspacing="0" summary="Souhrn konstruktoru dokumentovaného ve třídě JAX.FXArray.">
+			<table class="summaryTable" cellspacing="0" summary="Souhrn konstruktoru dokumentovaného ve třídě JAX.AsyncSequence.">
 				<caption>Konstruktor - souhrn</caption>
 				<thead>
 					<tr>
@@ -1059,7 +1059,7 @@ je třída rezrezentující pole JAX.FX instancí. Implementuje rozhraní <a hre
 						<td class="attributes">&nbsp;</td>
 						<td class="nameDescription" >
 							<div class="fixedFont">
-								<b><a href="../symbols/JAX.FXArray.html#constructor">JAX.FXArray</a></b>(fxArray)
+								<b><a href="../symbols/JAX.AsyncSequence.html#constructor">JAX.AsyncSequence</a></b>()
 							</div>
 							<div class="description"></div>
 						</td>
@@ -1075,7 +1075,7 @@ je třída rezrezentující pole JAX.FX instancí. Implementuje rozhraní <a hre
 			
 				
 				
-				<table class="summaryTable" cellspacing="0" summary="Souhrn metod dokumentovaných ve třídě JAX.FXArray.">
+				<table class="summaryTable" cellspacing="0" summary="Souhrn metod dokumentovaných ve třídě JAX.AsyncSequence.">
 					<caption>Metody - souhrn</caption>
 					<thead>
 						<tr>
@@ -1088,36 +1088,63 @@ je třída rezrezentující pole JAX.FX instancí. Implementuje rozhraní <a hre
 						<tr>
 							<td class="attributes"></td>
 							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/JAX.FXArray.html#reverse">reverse</a></b>()
+								<div class="fixedFont"><b><a href="../symbols/JAX.AsyncSequence.html#after">after</a></b>(onFulfill, onReject)
 								</div>
-								<div class="description">stopne animaci a spustí její zpětný chod</div>
+								<div class="description">co se má stát po fulfillnutí a po rejectnutí poslední nastavované Promise. Týká se vždy naposledy předané Promise přes waitFor metodu.</div>
 							</td>
 						</tr>
 					
 						<tr>
 							<td class="attributes"></td>
 							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/JAX.FXArray.html#run">run</a></b>()
+								<div class="fixedFont"><b><a href="../symbols/JAX.AsyncSequence.html#cancel">cancel</a></b>()
 								</div>
-								<div class="description">spustí animace</div>
+								<div class="description">zastaví čekání na dokončení všech navěšených akcí. Asynchronní operace, které doposud nebyly vykonány již vykonány nebudou.</div>
 							</td>
 						</tr>
 					
 						<tr>
 							<td class="attributes"></td>
 							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/JAX.FXArray.html#stop">stop</a></b>()
+								<div class="fixedFont"><b><a href="../symbols/JAX.AsyncSequence.html#isCanceled">isCanceled</a></b>()
 								</div>
-								<div class="description">stopne animaci, hodnoty zůstanou nastavené v takovém stavu, v jakém se momentálně nacházejí při zavolání metody</div>
+								<div class="description">je sekvence zrušena?</div>
 							</td>
 						</tr>
 					
 						<tr>
 							<td class="attributes"></td>
 							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/JAX.FXArray.html#then">then</a></b>(onFulFill, onReject)
+								<div class="fixedFont"><b><a href="../symbols/JAX.AsyncSequence.html#isPending">isPending</a></b>()
 								</div>
-								<div class="description">funkce, která se zavolá, jakmile animace skončí. V případě prvního parametru se jedná o úspěšné dokončení, v případě druhého o chybu.</div>
+								<div class="description">čeká se na nějakou asynchronní akce?</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes"></td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/JAX.AsyncSequence.html#isRunning">isRunning</a></b>()
+								</div>
+								<div class="description">je sekvence běžící?</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes"></td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/JAX.AsyncSequence.html#run">run</a></b>()
+								</div>
+								<div class="description">spustí celou proceduru. Postupně se začnou provádět všechny asynchronní operace. Další operace začne běžet teprve, až se dokončí předchozí.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes"></td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/JAX.AsyncSequence.html#waitFor">waitFor</a></b>(item)
+								</div>
+								<div class="description">přidá Promise na konec fronty</div>
 							</td>
 						</tr>
 					
@@ -1136,7 +1163,7 @@ je třída rezrezentující pole JAX.FX instancí. Implementuje rozhraní <a hre
 				</div>
 				
 				<div class="fixedFont">
-						<b>JAX.FXArray</b>(fxArray)
+						<b>JAX.AsyncSequence</b>()
 				</div>
 				
 				<div class="description">
@@ -1147,17 +1174,6 @@ je třída rezrezentující pole JAX.FX instancí. Implementuje rozhraní <a hre
 				
 				
 				
-					
-						<dl class="detailList">
-						<dt class="heading">Parametry:</dt>
-						
-							<dt>
-								<span class="light fixedFont">{array}</span>  <b>fxArray</b>
-								
-							</dt>
-								<dd>pole instancí JAX.FX</dd>
-						
-						</dl>
 					
 					
 					
@@ -1178,111 +1194,15 @@ je třída rezrezentující pole JAX.FX instancí. Implementuje rozhraní <a hre
 					Metody - detailně
 				</div>
 				
-					<a name="reverse"> </a>
+					<a name="after"> </a>
 					<div class="fixedFont">
 					
-					<span class="light">{<a href="../symbols/JAX.FXArray.html">JAX.FXArray</a>}</span>
-					<b>reverse</b>()
+					<span class="light">{<a href="../symbols/JAX.AsyncSequence.html">JAX.AsyncSequence</a>}</span>
+					<b>after</b>(onFulfill, onReject)
 					
 					</div>
 					<div class="description">
-						stopne animaci a spustí její zpětný chod
-						
-						
-					</div>
-					
-					
-					
-						
-						
-						
-						
-						
-							<dl class="detailList">
-							<dt class="heading">Vrací:</dt>
-							
-								<dd><span class="light fixedFont">{<a href="../symbols/JAX.FXArray.html">JAX.FXArray</a>}</span> </dd>
-							
-							</dl>
-						
-						
-						
-
-					<hr />
-				
-					<a name="run"> </a>
-					<div class="fixedFont">
-					
-					<span class="light">{<a href="../symbols/JAX.FXArray.html">JAX.FXArray</a>}</span>
-					<b>run</b>()
-					
-					</div>
-					<div class="description">
-						spustí animace
-						
-						
-					</div>
-					
-					
-					
-						
-						
-						
-						
-						
-							<dl class="detailList">
-							<dt class="heading">Vrací:</dt>
-							
-								<dd><span class="light fixedFont">{<a href="../symbols/JAX.FXArray.html">JAX.FXArray</a>}</span> </dd>
-							
-							</dl>
-						
-						
-						
-
-					<hr />
-				
-					<a name="stop"> </a>
-					<div class="fixedFont">
-					
-					<span class="light">{<a href="../symbols/JAX.FXArray.html">JAX.FXArray</a>}</span>
-					<b>stop</b>()
-					
-					</div>
-					<div class="description">
-						stopne animaci, hodnoty zůstanou nastavené v takovém stavu, v jakém se momentálně nacházejí při zavolání metody
-						
-						
-					</div>
-					
-					
-					
-						
-						
-						
-						
-						
-							<dl class="detailList">
-							<dt class="heading">Vrací:</dt>
-							
-								<dd><span class="light fixedFont">{<a href="../symbols/JAX.FXArray.html">JAX.FXArray</a>}</span> </dd>
-							
-							</dl>
-						
-						
-						
-
-					<hr />
-				
-					<a name="then"> </a>
-					<div class="fixedFont">
-					
-					<span class="light">{JAK.Promise}</span>
-					<b>then</b>(onFulFill, onReject)
-					
-					</div>
-					<div class="description">
-						funkce, která se zavolá, jakmile animace skončí. V případě prvního parametru se jedná o úspěšné dokončení, v případě druhého o chybu.
+						co se má stát po fulfillnutí a po rejectnutí poslední nastavované Promise. Týká se vždy naposledy předané Promise přes waitFor metodu.
 						
 						
 					</div>
@@ -1294,16 +1214,16 @@ je třída rezrezentující pole JAX.FX instancí. Implementuje rozhraní <a hre
 							<dt class="heading">Parametry:</dt>
 							
 								<dt>
-									<span class="light fixedFont">{function}</span> <b>onFulFill</b>
+									<span class="light fixedFont">{function}</span> <b>onFulfill</b>
 									
 								</dt>
-								<dd>funkce, která se zavolá po úspěšném ukončení animace</dd>
+								<dd>fce se zavolá při fulfillnutí Promise</dd>
 							
 								<dt>
 									<span class="light fixedFont">{function}</span> <b>onReject</b>
 									
 								</dt>
-								<dd>funkce, která se zavolá, pokud se animaci nepodaří provést</dd>
+								<dd>fce se zavolá při rejectnutí Promise</dd>
 							
 							</dl>
 						
@@ -1314,7 +1234,210 @@ je třída rezrezentující pole JAX.FX instancí. Implementuje rozhraní <a hre
 							<dl class="detailList">
 							<dt class="heading">Vrací:</dt>
 							
-								<dd><span class="light fixedFont">{JAK.Promise}</span> </dd>
+								<dd><span class="light fixedFont">{<a href="../symbols/JAX.AsyncSequence.html">JAX.AsyncSequence</a>}</span> </dd>
+							
+							</dl>
+						
+						
+						
+
+					<hr />
+				
+					<a name="cancel"> </a>
+					<div class="fixedFont">
+					
+					<span class="light">{<a href="../symbols/JAX.AsyncSequence.html">JAX.AsyncSequence</a>}</span>
+					<b>cancel</b>()
+					
+					</div>
+					<div class="description">
+						zastaví čekání na dokončení všech navěšených akcí. Asynchronní operace, které doposud nebyly vykonány již vykonány nebudou.
+						
+						
+					</div>
+					
+					
+					
+						
+						
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">Vrací:</dt>
+							
+								<dd><span class="light fixedFont">{<a href="../symbols/JAX.AsyncSequence.html">JAX.AsyncSequence</a>}</span> </dd>
+							
+							</dl>
+						
+						
+						
+
+					<hr />
+				
+					<a name="isCanceled"> </a>
+					<div class="fixedFont">
+					
+					<span class="light">{boolean}</span>
+					<b>isCanceled</b>()
+					
+					</div>
+					<div class="description">
+						je sekvence zrušena?
+						
+						
+					</div>
+					
+					
+					
+						
+						
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">Vrací:</dt>
+							
+								<dd><span class="light fixedFont">{boolean}</span> </dd>
+							
+							</dl>
+						
+						
+						
+
+					<hr />
+				
+					<a name="isPending"> </a>
+					<div class="fixedFont">
+					
+					<span class="light">{boolean}</span>
+					<b>isPending</b>()
+					
+					</div>
+					<div class="description">
+						čeká se na nějakou asynchronní akce?
+						
+						
+					</div>
+					
+					
+					
+						
+						
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">Vrací:</dt>
+							
+								<dd><span class="light fixedFont">{boolean}</span> </dd>
+							
+							</dl>
+						
+						
+						
+
+					<hr />
+				
+					<a name="isRunning"> </a>
+					<div class="fixedFont">
+					
+					<span class="light">{boolean}</span>
+					<b>isRunning</b>()
+					
+					</div>
+					<div class="description">
+						je sekvence běžící?
+						
+						
+					</div>
+					
+					
+					
+						
+						
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">Vrací:</dt>
+							
+								<dd><span class="light fixedFont">{boolean}</span> </dd>
+							
+							</dl>
+						
+						
+						
+
+					<hr />
+				
+					<a name="run"> </a>
+					<div class="fixedFont">
+					
+					<span class="light">{<a href="../symbols/JAX.AsyncSequence.html">JAX.AsyncSequence</a>}</span>
+					<b>run</b>()
+					
+					</div>
+					<div class="description">
+						spustí celou proceduru. Postupně se začnou provádět všechny asynchronní operace. Další operace začne běžet teprve, až se dokončí předchozí.
+						
+						
+					</div>
+					
+					
+					
+						
+						
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">Vrací:</dt>
+							
+								<dd><span class="light fixedFont">{<a href="../symbols/JAX.AsyncSequence.html">JAX.AsyncSequence</a>}</span> </dd>
+							
+							</dl>
+						
+						
+						
+
+					<hr />
+				
+					<a name="waitFor"> </a>
+					<div class="fixedFont">
+					
+					<span class="light">{<a href="../symbols/JAX.AsyncSequence.html">JAX.AsyncSequence</a>}</span>
+					<b>waitFor</b>(item)
+					
+					</div>
+					<div class="description">
+						přidá Promise na konec fronty
+						
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parametry:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{function || object}</span> <b>item</b>
+									
+								</dt>
+								<dd>nabindovaná funkce vracející instanci JAK.Promise nebo JAX.Promise || instance JAK.Promise || instance JAX.Promise || instance JAX.FX || instance JAX.AsyncSequence</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">Vrací:</dt>
+							
+								<dd><span class="light fixedFont">{<a href="../symbols/JAX.AsyncSequence.html">JAX.AsyncSequence</a>}</span> </dd>
 							
 							</dl>
 						
@@ -1331,7 +1454,7 @@ je třída rezrezentující pole JAX.FX instancí. Implementuje rozhraní <a hre
 <!-- ============================== footer ================================= -->
 		<div class="fineprint" style="clear:both">
 			
-			Dokumentace vygenerována nástrojem <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> 2.4.0, Sun Feb 23 2014 02:20:19 GMT+0100 (CET)
+			Dokumentace vygenerována nástrojem <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> 2.4.0, Sun Feb 23 2014 02:20:18 GMT+0100 (CET)
 		</div>
 	</body>
 </html>
