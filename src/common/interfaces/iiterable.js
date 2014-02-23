@@ -42,7 +42,7 @@ JAX.IIterable.prototype.items = function(from, to) {
 	from = parseFloat(from);
 	from = !isFinite(from) ? 0 : from;
 	to = parseFloat(to);
-	to = !isFinite(to) ? this.length - 1 : to;
+	to = !isFinite(to) ? Math.max(this.length - 1, 0) : to;
 
 	var items = [];
 
