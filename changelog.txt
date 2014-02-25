@@ -3,6 +3,9 @@ Changelog
 --------------------------------------
 Legend: [+] - added, [*] - fixed or changed, [-] removed
 
+Version 2.24.1
+	* bugfix in JAX.Element.css
+
 Version 2.24
 	+ JAX.Promise
 	* JAX.PromiseSequence renamed to JAX.AsyncSequence
