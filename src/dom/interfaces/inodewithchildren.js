@@ -118,7 +118,7 @@ JAX.INodeWithChildren.prototype.contains = function(nodes) {
 	if (!nodes) { return false; }
 
 	if (typeof(nodes) == "string") {
-		return !!this.findAll(nodes).length;
+		return !!this.find(nodes).n;
 	}
 
 	var jaxNodes = JAX.all([].concat(nodes));
@@ -154,10 +154,12 @@ JAX.INodeWithChildren.prototype.children = function(index) {
 	}
 
 	if (!arguments.length) {
-		var nodes = [];
 		var childNodes = this._node.childNodes;
-		for (var i=0, len=childNodes.length; i<len; i++) {
-			nodes.push(JAX(childNodes[i]));
+		var length = childNodes.length;
+		var nodes = new Array(length);
+		
+		for (var i=0; i<length; i++) {
+			nodes[i] = JAX(childNodes[i]);
 		}
 		return new JAX.NodeArray(nodes);
 	}
@@ -165,6 +167,44 @@ JAX.INodeWithChildren.prototype.children = function(index) {
 	var child = this._node.childNodes[index];
 	if (child) {
 		return JAX(child);
+	}
+
+	return null;
+};
+
+/** 
+ * vrací JAXové pole (JAX.NodeArray) přímých elementů (node.nodeType == 1); pokud je ale zadán parametr index, vrací právě jeden JAXový element
+ *
+ * @param {number || undefined} index číselný index požadovaného elementu
+ * @returns {JAX.Node || JAX.NodeArray || null}
+ */
+JAX.INodeWithChildren.prototype.elements = function(index) {
+	if (!this._node.children && !this._node.childNodes) {
+		console.error("JAX.INodeWithChildren.elements: My element can not have any element.", this._node);
+		return new JAX.NodeArray([]);
+	}
+
+	var children = this._node.children || this._node.childNodes; /* IE8 - zahrnuje comment nody do children, Safari na mobilu nepodporuje u documentFragmentu children */
+	var length = children.length;
+
+	if (!arguments.length) {	
+		var elms = [];
+		
+		for (var i=0; i<length; i++) {
+			var child = children[i];
+			if (child.nodeType == 1) { elms.push(JAX(child)); }
+		}
+
+		return new JAX.NodeArray(elms);
+	}
+
+	var counter = 0;
+	for (var i=0; i<length; i++) {
+		var child = children[i];
+		if (counter == index) {
+			return JAX(child);
+		}
+		counter++;
 	}
 
 	return null;

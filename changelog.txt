@@ -3,6 +3,12 @@ Changelog
 --------------------------------------
 Legend: [+] - added, [*] - fixed or changed, [-] removed
 
+Version 2.24.2
+	+ JAX.Element.elements - it returns JAX.NodeArray only with HTMLElements
+	* bugfix in JAX.NullNode - added some missing methods
+	* JAX.NullNode's reporting is much more better
+	* bugfix in JAX.Element.attr
+
 Version 2.24.1
 	* bugfix in JAX.Element.css
 
