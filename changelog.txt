@@ -3,6 +3,10 @@ Changelog
 --------------------------------------
 Legend: [+] - added, [*] - fixed or changed, [-] removed
 
+Version 2.25
+	- JAX.Promise removed
+	* JAX.AsyncSequence renamed to JAX.Async
+
 Version 2.24.2
 	+ JAX.Element.elements - it returns JAX.NodeArray only with HTMLElements
 	* bugfix in JAX.NullNode - added some missing methods
