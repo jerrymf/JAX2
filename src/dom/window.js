@@ -1,7 +1,7 @@
 /**
  * @fileOverview window.js - JAX - JAk eXtended
  * @author <a href="mailto:marek.fojtl@firma.seznam.cz">Marek Fojtl</a>
- * @version 1.0
+ * @version 1.0.1
  */
 
 /**

@@ -3,6 +3,9 @@ Changelog
 --------------------------------------
 Legend: [+] - added, [*] - fixed or changed, [-] removed
 
+Version 2.25.1
+	* bugfix in JAX.Window scrolling
+
 Version 2.25
 	- JAX.Promise removed
 	* JAX.AsyncSequence renamed to JAX.Async
