@@ -3,6 +3,33 @@ Changelog
 --------------------------------------
 Legend: [+] - added, [*] - fixed or changed, [-] removed
 
+Version 2.25.1
+	* bugfix in JAX.Window scrolling
+
+Version 2.25
+	- JAX.Promise removed
+	* JAX.AsyncSequence renamed to JAX.Async
+
+Version 2.24.2
+	+ JAX.Element.elements - it returns JAX.NodeArray only with HTMLElements
+	* bugfix in JAX.NullNode - added some missing methods
+	* JAX.NullNode's reporting is much more better
+	* bugfix in JAX.Element.attr
+
+Version 2.24.1
+	* bugfix in JAX.Element.css
+
+Version 2.24
+	+ JAX.Promise
+	* JAX.PromiseSequence renamed to JAX.AsyncSequence
+	* bugfix in JAX.IIterable.items
+
+Version 2.23.9
+	* bugfix for IE8 in Window detection
+
+Version 2.23.8
+	* bugfix in node detection
+
 Version 2.23.7
 	* tuning JAX.PromiseSequence
 	* bugfix in JAX.FX

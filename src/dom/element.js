@@ -1,7 +1,7 @@
 /**
  * @fileOverview element.js - JAX - JAk eXtended
  * @author <a href="mailto:marek.fojtl@firma.seznam.cz">Marek Fojtl</a>
- * @version 1.1
+ * @version 1.1.1
  */
 
 /**
@@ -151,7 +151,7 @@ JAX.Element.prototype.toggleClass = function(classNames) {
  */
 JAX.Element.prototype.id = function(id) {
 	if (!arguments.length) { 
-		return this.attr("id"); 
+		return this._node.id;
 	}
 
 	if (typeof(id) != "string") {
@@ -237,7 +237,7 @@ JAX.Element.prototype.attr = function(property, value) {
 		}
 	}
 
-	if (argLength == 2 && (value || value === "")) {
+	if (argLength == 2 && (value || (typeof(value) == "string" || typeof(value) == "number"))) {
 		if (typeof(property) == "string") {
 			this._node.setAttribute(property, value + "");
 			return this;
@@ -318,13 +318,13 @@ JAX.Element.prototype.css = function(property, value) {
 		}
 	}
 
-	if (argLength == 2 && (value || value === "")) {
+	if (argLength == 2 && (value || (typeof(value) == "string" || typeof(value) == "number"))) {
 		if (typeof(property) == "string") {
 			if (property == "opacity") {
 				this._setOpacity(value);
 				return this;
 			}
-				
+
 			this._node.style[property] = value;
 
 			return this;

@@ -1,7 +1,7 @@
 /**
  * @fileOverview window.js - JAX - JAk eXtended
  * @author <a href="mailto:marek.fojtl@firma.seznam.cz">Marek Fojtl</a>
- * @version 1.0
+ * @version 1.0.1
  */
 
 /**
@@ -21,7 +21,7 @@ JAX.Window = function(win) {
 };
 
 JAX.extend(JAX.Window, JAX.Node);
-JAX.mixin(JAX.Window, JAX.IListening);
+JAX.mixin(JAX.Window, [JAX.IListening, JAX.IScrollableNode]);
 
 /**
  * zjistí velikost okna dle zadaného typu, tedy šířku nebo výšku

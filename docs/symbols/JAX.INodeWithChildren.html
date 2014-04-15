@@ -894,6 +894,10 @@ div.classDescription
 				
 			
 				
+					<li><a href="../symbols/JAX.Async.html">JAX.Async</a></li>
+				
+			
+				
 					<li><a href="../symbols/JAX.Document.html">JAX.Document</a></li>
 				
 			
@@ -975,10 +979,6 @@ div.classDescription
 			
 				
 					<li><a href="../symbols/JAX.NullNode.html">JAX.NullNode</a></li>
-				
-			
-				
-					<li><a href="../symbols/JAX.PromiseSequence.html">JAX.PromiseSequence</a></li>
 				
 			
 				
@@ -1101,6 +1101,15 @@ tvoří rozhraní pro nody, které mohou mít potomky
 								<div class="fixedFont"><b><a href="../symbols/JAX.INodeWithChildren.html#contains">contains</a></b>(nodes)
 								</div>
 								<div class="description">zjistí, jestli element obsahuje nody podle zadaných kritérií</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes"></td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/JAX.INodeWithChildren.html#elements">elements</a></b>(index)
+								</div>
+								<div class="description">vrací JAXové pole (JAX.NodeArray) přímých elementů (node.nodeType == 1); pokud je ale zadán parametr index, vrací právě jeden JAXový element</div>
 							</td>
 						</tr>
 					
@@ -1387,6 +1396,49 @@ tvoří rozhraní pro nody, které mohou mít potomky
 
 					<hr />
 				
+					<a name="elements"> </a>
+					<div class="fixedFont">
+					
+					<span class="light">{<a href="../symbols/JAX.Node.html">JAX.Node</a> || JAX.NodeArray || null}</span>
+					<b>elements</b>(index)
+					
+					</div>
+					<div class="description">
+						vrací JAXové pole (JAX.NodeArray) přímých elementů (node.nodeType == 1); pokud je ale zadán parametr index, vrací právě jeden JAXový element
+						
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parametry:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{number || undefined}</span> <b>index</b>
+									
+								</dt>
+								<dd>číselný index požadovaného elementu</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">Vrací:</dt>
+							
+								<dd><span class="light fixedFont">{<a href="../symbols/JAX.Node.html">JAX.Node</a> || JAX.NodeArray || null}</span> </dd>
+							
+							</dl>
+						
+						
+						
+
+					<hr />
+				
 					<a name="first"> </a>
 					<div class="fixedFont">
 					
@@ -1502,7 +1554,7 @@ tvoří rozhraní pro nody, které mohou mít potomky
 <!-- ============================== footer ================================= -->
 		<div class="fineprint" style="clear:both">
 			
-			Dokumentace vygenerována nástrojem <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> 2.4.0, Thu Feb 13 2014 14:34:17 GMT+0100 (CET)
+			Dokumentace vygenerována nástrojem <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> 2.4.0, Fri Feb 28 2014 13:04:00 GMT+0100 (CET)
 		</div>
 	</body>
 </html>

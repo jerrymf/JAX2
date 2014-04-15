@@ -5,7 +5,7 @@
 		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
 		<meta name="generator" content="JsDoc Toolkit" />
 		
-		<title>JsDoc Reference - JAX.IScrollableNode</title>
+		<title>JsDoc Reference - JAX.Async</title>
 
 		<style type="text/css">
 			/* default.css */
@@ -1000,13 +1000,13 @@ div.classDescription
 <!-- ============================== class title ============================ -->
 			<h1 class="classTitle">
 				
-				Třída JAX.IScrollableNode
+				Třída JAX.Async
 			</h1>
 
 <!-- ============================== class summary ========================== -->			
 			<p class="description">
-				JAX.IScrollableNode
-tvoří rozhraní pro nody, u který lze scrollovat obsahem
+				JAX.Async
+je třída, která umožňuje zpracovat sekvenci nejen Promisů, ale i animací pomocí JAX.FX. Umožňuje tak vývojáři plnou kontrolu nad jejich synchronizací a správnou návazností.
 
 				
 
@@ -1020,7 +1020,7 @@ tvoří rozhraní pro nody, u který lze scrollovat obsahem
 <!-- ============================== constructor summary ==================== -->			
 			
 			
-			<table class="summaryTable" cellspacing="0" summary="Souhrn konstruktoru dokumentovaného ve třídě JAX.IScrollableNode.">
+			<table class="summaryTable" cellspacing="0" summary="Souhrn konstruktoru dokumentovaného ve třídě JAX.Async.">
 				<caption>Konstruktor - souhrn</caption>
 				<thead>
 					<tr>
@@ -1033,7 +1033,7 @@ tvoří rozhraní pro nody, u který lze scrollovat obsahem
 						<td class="attributes">&nbsp;</td>
 						<td class="nameDescription" >
 							<div class="fixedFont">
-								<b><a href="../symbols/JAX.IScrollableNode.html#constructor">JAX.IScrollableNode</a></b>()
+								<b><a href="../symbols/JAX.Async.html#constructor">JAX.Async</a></b>()
 							</div>
 							<div class="description"></div>
 						</td>
@@ -1049,7 +1049,7 @@ tvoří rozhraní pro nody, u který lze scrollovat obsahem
 			
 				
 				
-				<table class="summaryTable" cellspacing="0" summary="Souhrn metod dokumentovaných ve třídě JAX.IScrollableNode.">
+				<table class="summaryTable" cellspacing="0" summary="Souhrn metod dokumentovaných ve třídě JAX.Async.">
 					<caption>Metody - souhrn</caption>
 					<thead>
 						<tr>
@@ -1062,9 +1062,63 @@ tvoří rozhraní pro nody, u který lze scrollovat obsahem
 						<tr>
 							<td class="attributes"></td>
 							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/JAX.IScrollableNode.html#scroll">scroll</a></b>(type, value, duration)
+								<div class="fixedFont"><b><a href="../symbols/JAX.Async.html#after">after</a></b>(onFulfill, onReject)
 								</div>
-								<div class="description">nascrolluje obsah na zadanou hodnotu. Lze zadat type "left" nebo "top", podle toho, kterým posuvníkem chceme hýbat. Pokud se zadá i duration, scrollování bude animované.</div>
+								<div class="description">co se má stát po fulfillnutí a po rejectnutí poslední nastavované Promise. Týká se vždy naposledy předané Promise přes waitFor metodu.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes"></td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/JAX.Async.html#cancel">cancel</a></b>()
+								</div>
+								<div class="description">zastaví čekání na dokončení všech navěšených akcí. Asynchronní operace, které doposud nebyly vykonány již vykonány nebudou.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes"></td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/JAX.Async.html#isCanceled">isCanceled</a></b>()
+								</div>
+								<div class="description">je sekvence zrušena?</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes"></td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/JAX.Async.html#isPending">isPending</a></b>()
+								</div>
+								<div class="description">čeká se na nějakou asynchronní akce?</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes"></td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/JAX.Async.html#isRunning">isRunning</a></b>()
+								</div>
+								<div class="description">je sekvence běžící?</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes"></td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/JAX.Async.html#run">run</a></b>()
+								</div>
+								<div class="description">spustí celou proceduru. Postupně se začnou provádět všechny asynchronní operace. Další operace začne běžet teprve, až se dokončí předchozí.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes"></td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/JAX.Async.html#waitFor">waitFor</a></b>(item)
+								</div>
+								<div class="description">přidá Promise na konec fronty</div>
 							</td>
 						</tr>
 					
@@ -1083,7 +1137,7 @@ tvoří rozhraní pro nody, u který lze scrollovat obsahem
 				</div>
 				
 				<div class="fixedFont">
-						<b>JAX.IScrollableNode</b>()
+						<b>JAX.Async</b>()
 				</div>
 				
 				<div class="description">
@@ -1114,15 +1168,15 @@ tvoří rozhraní pro nody, u který lze scrollovat obsahem
 					Metody - detailně
 				</div>
 				
-					<a name="scroll"> </a>
+					<a name="after"> </a>
 					<div class="fixedFont">
 					
-					<span class="light">{<a href="../symbols/JAX.Node.html">JAX.Node</a> || JAX.FX.Scrolling}</span>
-					<b>scroll</b>(type, value, duration)
+					<span class="light">{<a href="../symbols/JAX.Async.html">JAX.Async</a>}</span>
+					<b>after</b>(onFulfill, onReject)
 					
 					</div>
 					<div class="description">
-						nascrolluje obsah na zadanou hodnotu. Lze zadat type "left" nebo "top", podle toho, kterým posuvníkem chceme hýbat. Pokud se zadá i duration, scrollování bude animované.
+						co se má stát po fulfillnutí a po rejectnutí poslední nastavované Promise. Týká se vždy naposledy předané Promise přes waitFor metodu.
 						
 						
 					</div>
@@ -1134,22 +1188,16 @@ tvoří rozhraní pro nody, u který lze scrollovat obsahem
 							<dt class="heading">Parametry:</dt>
 							
 								<dt>
-									<span class="light fixedFont">{string}</span> <b>type</b>
+									<span class="light fixedFont">{function}</span> <b>onFulfill</b>
 									
 								</dt>
-								<dd>"top" nebo "left", podle toho, jestli chceme hýbat s vertikálním nebo horizontálním posuvníkem</dd>
+								<dd>fce se zavolá při fulfillnutí Promise</dd>
 							
 								<dt>
-									<span class="light fixedFont">{number}</span> <b>value</b>
+									<span class="light fixedFont">{function}</span> <b>onReject</b>
 									
 								</dt>
-								<dd>hodnota v px, kam se má scrollbar posunout</dd>
-							
-								<dt>
-									<span class="light fixedFont">{string || number}</span> <b>duration</b>
-									
-								</dt>
-								<dd>délka animace; pokud není zadáno, neanimuje se</dd>
+								<dd>fce se zavolá při rejectnutí Promise</dd>
 							
 							</dl>
 						
@@ -1160,7 +1208,210 @@ tvoří rozhraní pro nody, u který lze scrollovat obsahem
 							<dl class="detailList">
 							<dt class="heading">Vrací:</dt>
 							
-								<dd><span class="light fixedFont">{<a href="../symbols/JAX.Node.html">JAX.Node</a> || JAX.FX.Scrolling}</span> </dd>
+								<dd><span class="light fixedFont">{<a href="../symbols/JAX.Async.html">JAX.Async</a>}</span> </dd>
+							
+							</dl>
+						
+						
+						
+
+					<hr />
+				
+					<a name="cancel"> </a>
+					<div class="fixedFont">
+					
+					<span class="light">{<a href="../symbols/JAX.Async.html">JAX.Async</a>}</span>
+					<b>cancel</b>()
+					
+					</div>
+					<div class="description">
+						zastaví čekání na dokončení všech navěšených akcí. Asynchronní operace, které doposud nebyly vykonány již vykonány nebudou.
+						
+						
+					</div>
+					
+					
+					
+						
+						
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">Vrací:</dt>
+							
+								<dd><span class="light fixedFont">{<a href="../symbols/JAX.Async.html">JAX.Async</a>}</span> </dd>
+							
+							</dl>
+						
+						
+						
+
+					<hr />
+				
+					<a name="isCanceled"> </a>
+					<div class="fixedFont">
+					
+					<span class="light">{boolean}</span>
+					<b>isCanceled</b>()
+					
+					</div>
+					<div class="description">
+						je sekvence zrušena?
+						
+						
+					</div>
+					
+					
+					
+						
+						
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">Vrací:</dt>
+							
+								<dd><span class="light fixedFont">{boolean}</span> </dd>
+							
+							</dl>
+						
+						
+						
+
+					<hr />
+				
+					<a name="isPending"> </a>
+					<div class="fixedFont">
+					
+					<span class="light">{boolean}</span>
+					<b>isPending</b>()
+					
+					</div>
+					<div class="description">
+						čeká se na nějakou asynchronní akce?
+						
+						
+					</div>
+					
+					
+					
+						
+						
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">Vrací:</dt>
+							
+								<dd><span class="light fixedFont">{boolean}</span> </dd>
+							
+							</dl>
+						
+						
+						
+
+					<hr />
+				
+					<a name="isRunning"> </a>
+					<div class="fixedFont">
+					
+					<span class="light">{boolean}</span>
+					<b>isRunning</b>()
+					
+					</div>
+					<div class="description">
+						je sekvence běžící?
+						
+						
+					</div>
+					
+					
+					
+						
+						
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">Vrací:</dt>
+							
+								<dd><span class="light fixedFont">{boolean}</span> </dd>
+							
+							</dl>
+						
+						
+						
+
+					<hr />
+				
+					<a name="run"> </a>
+					<div class="fixedFont">
+					
+					<span class="light">{<a href="../symbols/JAX.Async.html">JAX.Async</a>}</span>
+					<b>run</b>()
+					
+					</div>
+					<div class="description">
+						spustí celou proceduru. Postupně se začnou provádět všechny asynchronní operace. Další operace začne běžet teprve, až se dokončí předchozí.
+						
+						
+					</div>
+					
+					
+					
+						
+						
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">Vrací:</dt>
+							
+								<dd><span class="light fixedFont">{<a href="../symbols/JAX.Async.html">JAX.Async</a>}</span> </dd>
+							
+							</dl>
+						
+						
+						
+
+					<hr />
+				
+					<a name="waitFor"> </a>
+					<div class="fixedFont">
+					
+					<span class="light">{<a href="../symbols/JAX.Async.html">JAX.Async</a>}</span>
+					<b>waitFor</b>(item)
+					
+					</div>
+					<div class="description">
+						přidá Promise na konec fronty
+						
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parametry:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{function || object}</span> <b>item</b>
+									
+								</dt>
+								<dd>nabindovaná funkce vracející instanci JAK.Promise || instance JAX.FX || instance JAX.Async</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">Vrací:</dt>
+							
+								<dd><span class="light fixedFont">{<a href="../symbols/JAX.Async.html">JAX.Async</a>}</span> </dd>
 							
 							</dl>
 						

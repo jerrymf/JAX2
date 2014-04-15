@@ -38,43 +38,43 @@ JAX.extend(JAX.NullNode, JAX.Node);
 JAX.mixin(JAX.NullNode, [JAX.IMoveableNode, JAX.INodeWithChildren, JAX.IListening, JAX.ISearchableNode, JAX.IAnimateableNode, JAX.IScrollableNode]);
 
 JAX.NullNode.prototype.find = function() {
-	this._showMessage("find");
+	this._showMessage("find", Array.prototype.slice.call(arguments));
 
 	return JAX(null);
 };
 
 JAX.NullNode.prototype.findAll = function() {
-	this._showMessage("findAll");
+	this._showMessage("findAll", Array.prototype.slice.call(arguments));
 
 	return new JAX.NodeArray([]);
 };
 
 JAX.NullNode.prototype.addClass = function() {
-	this._showMessage("addClass");
+	this._showMessage("addClass", Array.prototype.slice.call(arguments));
 
 	return this;
 };
 
 JAX.NullNode.prototype.removeClass = function() {
-	this._showMessage("removeClass");
+	this._showMessage("removeClass", Array.prototype.slice.call(arguments));
 
 	return this;
 };
 
 JAX.NullNode.prototype.hasClass = function() {
-	this._showMessage("hasClass");
+	this._showMessage("hasClass", Array.prototype.slice.call(arguments));
 
 	return false;
 };
 
 JAX.NullNode.prototype.toggleClass = function() {
-	this._showMessage("toggleClass");
+	this._showMessage("toggleClass", Array.prototype.slice.call(arguments));
 
 	return this;
 }
 
 JAX.NullNode.prototype.id = function() {
-	this._showMessage("id");
+	this._showMessage("id", Array.prototype.slice.call(arguments));
 
 	if (arguments.length) {
 		return this;
@@ -84,7 +84,7 @@ JAX.NullNode.prototype.id = function() {
 };
 
 JAX.NullNode.prototype.html = function() {
-	this._showMessage("html");
+	this._showMessage("html", Array.prototype.slice.call(arguments));
 
 	if (arguments.length) {
 		return this;
@@ -94,7 +94,7 @@ JAX.NullNode.prototype.html = function() {
 };
 
 JAX.NullNode.prototype.text = function() {
-	this._showMessage("text");
+	this._showMessage("text", Array.prototype.slice.call(arguments));
 
 	if (arguments.length) {
 		return this;
@@ -104,85 +104,85 @@ JAX.NullNode.prototype.text = function() {
 };
 
 JAX.NullNode.prototype.add = function() {
-	this._showMessage("add");
+	this._showMessage("add", Array.prototype.slice.call(arguments));
 
 	return this;
 };
 
 JAX.NullNode.prototype.insertFirst = function() {
-	this._showMessage("inserFirst");
+	this._showMessage("inserFirst", Array.prototype.slice.call(arguments));
 
 	return this;
 };
 
 JAX.NullNode.prototype.insertFirstTo = function() {
-	this._showMessage("inserFirstTo");
+	this._showMessage("inserFirstTo", Array.prototype.slice.call(arguments));
 
 	return this;
 };
 
 JAX.NullNode.prototype.addBefore = function() {
-	this._showMessage("addBefore");
+	this._showMessage("addBefore", Array.prototype.slice.call(arguments));
 
 	return this;
 };
 
 JAX.NullNode.prototype.appendTo = function() {
-	this._showMessage("appendTo");
+	this._showMessage("appendTo", Array.prototype.slice.call(arguments));
 
 	return this;
 };
 
 JAX.NullNode.prototype.before = function() {
-	this._showMessage("before");
+	this._showMessage("before", Array.prototype.slice.call(arguments));
 
 	return this;
 };
 
 JAX.NullNode.prototype.after = function() {
-	this._showMessage("after");
+	this._showMessage("after", Array.prototype.slice.call(arguments));
 
 	return this;
 };
 
 JAX.NullNode.prototype.replaceWith = function() {
-	this._showMessage("replaceWith");
+	this._showMessage("replaceWith", Array.prototype.slice.call(arguments));
 
 	return this;
 };
 
 JAX.NullNode.prototype.swapPlaceWith = function() {
-	this._showMessage("swapPlaceWith");
+	this._showMessage("swapPlaceWith", Array.prototype.slice.call(arguments));
 
 	return this;
 };
 
 JAX.NullNode.prototype.remove = function() {
-	this._showMessage("remove");
+	this._showMessage("remove", Array.prototype.slice.call(arguments));
 
 	return this;
 };
 
 JAX.NullNode.prototype.clone = function() {
-	this._showMessage("clone");
+	this._showMessage("clone", Array.prototype.slice.call(arguments));
 
 	return this;
 };
 
 JAX.NullNode.prototype.listen = function() {
-	this._showMessage("listen");
+	this._showMessage("listen", Array.prototype.slice.call(arguments));
 
 	return new JAX.Listener(this, null, arguments[0], arguments[2]);
 };
 
 JAX.NullNode.prototype.stopListening = function() {
-	this._showMessage("stopListening");
+	this._showMessage("stopListening", Array.prototype.slice.call(arguments));
 
 	return this;
 };
 
 JAX.NullNode.prototype.prop = function() {
-	this._showMessage("prop");
+	this._showMessage("prop", Array.prototype.slice.call(arguments));
 
 	if (typeof(arguments[0]) == "string") { return ""; }
 	if (arguments[0] instanceof Array) { return {}; }
@@ -190,15 +190,21 @@ JAX.NullNode.prototype.prop = function() {
 };
 
 JAX.NullNode.prototype.attr = function() {
-	this._showMessage("attr");
+	this._showMessage("attr", Array.prototype.slice.call(arguments));
 
 	if (typeof(arguments[0]) == "string") { return ""; }
 	if (arguments[0] instanceof Array) { return {}; }
 	return this;
 };
 
+JAX.NullNode.prototype.removeAttr = function() {
+	this._showMessage("removeAttr", Array.prototype.slice.call(arguments));
+
+	return this;
+};
+
 JAX.NullNode.prototype.css = function() {
-	this._showMessage("css");
+	this._showMessage("css", Array.prototype.slice.call(arguments));
 
 	if (typeof(arguments[0]) == "string") { return ""; }
 	if (arguments[0] instanceof Array) { return {}; }
@@ -206,117 +212,134 @@ JAX.NullNode.prototype.css = function() {
 };
 
 JAX.NullNode.prototype.computedCss = function() {
-	this._showMessage("computedCss");
+	this._showMessage("computedCss", Array.prototype.slice.call(arguments));
 
 	return typeof(arguments[0]) ? "" : {};
 };
 
 JAX.NullNode.prototype.fullSize = function() {
-	this._showMessage("fullSize");
+	this._showMessage("fullSize", Array.prototype.slice.call(arguments));
 
 	return arguments.length == 1 ? 0 : this;
 };
 
 JAX.NullNode.prototype.size = function() {
-	this._showMessage("size");
+	this._showMessage("size", Array.prototype.slice.call(arguments));
 
 	return arguments.length == 1 ? 0 : this;
 };
 
 JAX.NullNode.prototype.parent = function() {
-	this._showMessage("parent");
+	this._showMessage("parent", Array.prototype.slice.call(arguments));
 
 	return null;
 };
 
 JAX.NullNode.prototype.next = function() {
-	this._showMessage("next");
+	this._showMessage("next", Array.prototype.slice.call(arguments));
 
 	return null;
 };
 
 JAX.NullNode.prototype.previous = function() {
-	this._showMessage("previous");
+	this._showMessage("previous", Array.prototype.slice.call(arguments));
 
 	return null;
 };
 
 JAX.NullNode.prototype.children = function() {
-	this._showMessage("children");
+	this._showMessage("children", Array.prototype.slice.call(arguments));
+
+	return arguments.length ? null : new JAX.NodeArray([]);
+};
+
+JAX.NullNode.prototype.elements = function() {
+	this._showMessage("elements", Array.prototype.slice.call(arguments));
 
 	return arguments.length ? null : new JAX.NodeArray([]);
 };
 
 JAX.NullNode.prototype.first = function() {
-	this._showMessage("first");
+	this._showMessage("first", Array.prototype.slice.call(arguments));
 
 	return null;
 };
 
 JAX.NullNode.prototype.last = function() {
-	this._showMessage("last");
+	this._showMessage("last", Array.prototype.slice.call(arguments));
 
 	return null;
 };
 
 JAX.NullNode.prototype.clear = function() {
-	this._showMessage("clear");
+	this._showMessage("clear", Array.prototype.slice.call(arguments));
 
 	return null;
 };
 
 JAX.NullNode.prototype.eq = function() {
-	this._showMessage("eq");
+	this._showMessage("eq", Array.prototype.slice.call(arguments));
 
 	return false;
 };
 
 JAX.NullNode.prototype.contains = function() {
-	this._showMessage("contains");
+	this._showMessage("contains", Array.prototype.slice.call(arguments));
 
 	return false;
 };
 
 JAX.NullNode.prototype.isIn = function() {
-	this._showMessage("isIn");
+	this._showMessage("isIn", Array.prototype.slice.call(arguments));
 
 	return false;
 };
 
 JAX.NullNode.prototype.animate = function() {
-	this._showMessage("animate");
+	this._showMessage("animate", Array.prototype.slice.call(arguments));
 
 	return new JAX.FX(null);
 };
 
 JAX.NullNode.prototype.fade = function() {
-	this._showMessage("fade");
+	this._showMessage("fade", Array.prototype.slice.call(arguments));
 
 	return new JAX.FX(null);
 };
 
 JAX.NullNode.prototype.fadeTo = function() {
-	this._showMessage("fadeTo");
+	this._showMessage("fadeTo", Array.prototype.slice.call(arguments));
 
 	return new JAX.FX(null);
 };
 
 JAX.NullNode.prototype.slide = function() {
-	this._showMessage("slide");
+	this._showMessage("slide", Array.prototype.slice.call(arguments));
 
 	return new JAX.FX(null);
 };
 
 JAX.NullNode.prototype.scroll = function() {
-	this._showMessage("scroll");
+	this._showMessage("scroll", Array.prototype.slice.call(arguments));
 
 	return  new JAX.FX.Scrolling(null);
 };
 
-JAX.NullNode.prototype._showMessage = function(method) {
+JAX.NullNode.prototype._showMessage = function(method, args) {
+	var argsSerialized = "";
+	for (var i=0, len=args.length; i<len; i++) {
+		if (i) { argsSerialized += ", "; }
+		
+		try {
+			argsSerialized += JSON.stringify(args[i]);
+		} catch(e) {
+			argsSerialized += "probably cyclic object";
+		}
+	}
+
 	if (this._selector) {
-		console.error("You are trying to work with null node. There is no match for your selector: '" + this._selector + "'.");
+		console.error("Hey man! You are trying to call '" + method + "(" + argsSerialized + ")' for null node. There is no match for your selector: '" + this._selector + "'.");
 	} else {
-		console.error("Hello! I am null node. It means you are trying to work with not existing node. Be careful what you do. Try to use JAX.Node.exists method for checking if element is found.");
+		console.error("Shit, it's screwed up! You are trying to call '" + method + "(" + argsSerialized + ")' for object that is not node (probably it is null or undefined).");
 	}
 };

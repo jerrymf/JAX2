@@ -1,7 +1,7 @@
 /**
  * @fileOverview jax.js - JAX - JAk eXtended
  * @author <a href="mailto:marek.fojtl@firma.seznam.cz">Marek Fojtl</a>
- * @version 2.23.7
+ * @version 2.25.2
  * @group jak-util
  */
 
@@ -43,12 +43,28 @@ var JAX = function(selector, srcElement) {
 		var nodeType = foundElm ? foundElm.nodeType : nodeType;
 	} else if (typeof(selector) == "object") {
 		var doc = selector.ownerDocument || selector;
-		var win = doc.defaultView || doc.parentWindow;
-		var hasWindow = win && ((win.Window && win instanceof win.Window) || (win.constructor.toString().indexOf("DOMWindow") > -1)); /* toString - fix pro Android */
+		var win = doc.defaultView || doc.parentWindow || {};
+		var isInstanceOfWindow = win.Window && ((typeof(win.Window) == "function" && win instanceof win.Window) || (typeof(win.Window) == "object" && win.Window == win)); /* testovani na rovnosti objektu pro IE8 */
+		var hasWindow = isInstanceOfWindow || (win.constructor.toString().indexOf("DOMWindow") > -1); /* toString - fix pro Android */
 
 		if (hasWindow && selector.nodeType) {
 			var nodeType = selector.nodeType;
 			var foundElm = selector;
+		} else if (selector.nodeType) {
+			var htmlElementCtor = window.Element || window.HTMLElement;
+			var textCtor = window.Text;
+			var documentCtor = window.Document || window.HTMLDocument;
+			var documentFragmentCtor = window.DocumentFragment;
+
+			var isElement = htmlElementCtor && selector instanceof htmlElementCtor;
+			var isText = textCtor && selector instanceof textCtor;
+			var isDocument = documentCtor && selector instanceof documentCtor;
+			var isDocumentFragment = documentFragmentCtor && selector instanceof documentFragmentCtor;
+
+			if (isElement || isText || isDocument || isDocumentFragment) {
+				var nodeType = selector.nodeType;
+				var foundElm = selector;
+			}
 		} else {
 			var isWindow = selector == window || (selector.Window && selector instanceof selector.Window) || (selector.constructor.toString().indexOf("DOMWindow") > -1); /* toString - fix pro Android */
 			if (isWindow) {
@@ -158,7 +174,7 @@ JAX.make = function(tagString, attrs, styles, srcDocument) {
 	var parts = tagString.match(/[#.]?[a-z0-9_-]+/ig) || [];
 	var tagName = parts[0];
 
-	if (!tagName || !/^[a-z0-9]+$/ig.test(tagName)) {
+	if (!tagName || !/^[a-z0-9]+$/i.test(tagName)) {
 		console.error("JAX.make: Tagname must be first in element definition.");
 		return JAX(null);
 	}
