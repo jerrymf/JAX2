@@ -3,6 +3,10 @@ Changelog
 --------------------------------------
 Legend: [+] - added, [*] - fixed or changed, [-] removed
 
+Version 2.25.2
+	* bugfix in JAX.make for Android 2.3
+	* bugfix in JAX.Element.css (thx to firlaj)
+
 Version 2.25.1
 	* bugfix in JAX.Window scrolling
 
