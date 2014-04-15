@@ -292,16 +292,6 @@ JAX.Element.prototype.css = function(property, value) {
 		if (typeof(property) == "string") {
 			if (!property) { return ""; }
 			return property == "opacity" ? this._getOpacity() : this._node.style[property]; 
-		} else if (typeof(property) == "object") {
-			for (var p in property) {
-				var value = property[p];
-				if (p == "opacity") { 
-					this._setOpacity(value); 
-					continue; 
-				}
-				this._node.style[p] = value;
-			}
-			return this;
 		} else if (property instanceof Array) {
 			var css = {};
 
@@ -315,6 +305,16 @@ JAX.Element.prototype.css = function(property, value) {
 			}
 
 			return css;
+		} else if (typeof(property) == "object") {
+			for (var p in property) {
+				var value = property[p];
+				if (p == "opacity") { 
+					this._setOpacity(value); 
+					continue; 
+				}
+				this._node.style[p] = value;
+			}
+			return this;
 		}
 	}
 
