@@ -1,7 +1,7 @@
 /**
  * @fileOverview jax.js - JAX - JAk eXtended
  * @author <a href="mailto:marek.fojtl@firma.seznam.cz">Marek Fojtl</a>
- * @version 2.25.1
+ * @version 2.25.2
  * @group jak-util
  */
 
@@ -174,7 +174,7 @@ JAX.make = function(tagString, attrs, styles, srcDocument) {
 	var parts = tagString.match(/[#.]?[a-z0-9_-]+/ig) || [];
 	var tagName = parts[0];
 
-	if (!tagName || !/^[a-z0-9]+$/ig.test(tagName)) {
+	if (!tagName || !/^[a-z0-9]+$/i.test(tagName)) {
 		console.error("JAX.make: Tagname must be first in element definition.");
 		return JAX(null);
 	}
