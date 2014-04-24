@@ -11,7 +11,7 @@
  * @param {object} node objekt typu window.Text
  */
 JAX.TextNode = function(node) {
-	this.__parent__.call(this, node);
+	this.___parent___.call(this, node);
 
 	this.isText = true;
 

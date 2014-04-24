@@ -1,7 +1,7 @@
 /**
  * @fileOverview jax.js - JAX - JAk eXtended
  * @author <a href="mailto:marek.fojtl@firma.seznam.cz">Marek Fojtl</a>
- * @version 2.25.3
+ * @version 2.25.4
  * @group jak-util
  */
 
@@ -276,7 +276,7 @@ JAX.extend = function(target, src) {
 	}
 
 	target.prototype.constructor = target;
-	target.prototype.__parent__ = src;
+	target.prototype.___parent___ = src;
 };
 
 /**

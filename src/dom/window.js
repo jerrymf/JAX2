@@ -11,7 +11,7 @@
  * @param {object} win window
  */
 JAX.Window = function(win) {
-	this.__parent__.call(this, win);
+	this.___parent___.call(this, win);
 
 	this.jaxNodeType = JAX.WINDOW;
 

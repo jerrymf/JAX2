@@ -18,7 +18,7 @@
  * @param {string} selector CSS3 (CSS 2.1) selector, který selhal
  */
 JAX.NullNode = function(selector) {
-	this.__parent__.call(this, null);
+	this.___parent___.call(this, null);
 
 	this._selector = selector || "";
 
