@@ -102,7 +102,7 @@ JAX.IAnimateableNode.prototype.slide = function(type, duration, method) {
 		case "up":
 			backupStyles = this.css(["overflow"]);
 			var property = "height";
-			var start = null
+			var start = null;
 			var end = 0;
 		break;
 		case "left":

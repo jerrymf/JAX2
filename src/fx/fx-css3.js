@@ -94,18 +94,18 @@ JAX.FX.CSS3.prototype.run = function() {
 		this._transitionCount++;
 	}
 
-	var render = node.offsetHeight; /* trick pro prerenderovani */
+	setTimeout(function() {
+		node.style[tp] = tps.join(",");
+		this._ecTransition = this._jaxElm.listen(te, this, "_finishTransitionAnimation");
 
-	node.style[tp] = tps.join(",");
-	this._ecTransition = this._jaxElm.listen(te, this, "_finishTransitionAnimation");
+		for (i=0, len=this._settings.length; i<len; i++) {
+			var setting = this._settings[i];
+			var cssEndValue = setting.endValue + setting.endUnit;
+			style[setting.property] = cssEndValue;
+		}
 
-	for (i=0, len=this._settings.length; i<len; i++) {
-		setting = this._settings[i];
-		var cssEndValue = setting.endValue + setting.endUnit;
-		style[setting.property] = cssEndValue;
-	}
-
-	this._fallbackTimeout = setTimeout(this._endTransition.bind(this), this._maxDuration + 100);
+		this._fallbackTimeout = setTimeout(this._endTransition.bind(this), this._maxDuration + 100); /* fallback must be, because sometime css animation crash in FF */
+	}.bind(this), 0);
 
 	return this._promise.finished;
 };
