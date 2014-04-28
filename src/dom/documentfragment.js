@@ -11,7 +11,7 @@
  * @param {object} doc objekt typu window.DocumentFragment
  */
 JAX.DocumentFragment = function(doc) {
-	this.__parent__.call(this, doc);
+	this.___parent___.call(this, doc);
 
 	this.isDocumentFragment = true;
 

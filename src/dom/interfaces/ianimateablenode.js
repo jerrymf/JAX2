@@ -1,7 +1,7 @@
 /**
  * @fileOverview ianimateablenode.js - JAX - JAk eXtended
  * @author <a href="mailto:marek.fojtl@firma.seznam.cz">Marek Fojtl</a>
- * @version 1.1
+ * @version 1.1.1
  */
 
 /**
@@ -102,7 +102,7 @@ JAX.IAnimateableNode.prototype.slide = function(type, duration, method) {
 		case "up":
 			backupStyles = this.css(["overflow"]);
 			var property = "height";
-			var start = null
+			var start = null;
 			var end = 0;
 		break;
 		case "left":
