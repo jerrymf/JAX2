@@ -1,7 +1,7 @@
 /**
  * @fileOverview fx-css3.js - JAX - JAk eXtended
  * @author <a href="mailto:marek.fojtl@firma.seznam.cz">Marek Fojtl</a>
- * @version 1.1.2
+ * @version 1.1.3
  */
 
 /**
