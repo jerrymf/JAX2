@@ -199,9 +199,7 @@ JAX.Element.prototype.text = function(text) {
 
 	if ("innerHTML" in this._node) {
 		this.clear();
-		/* kvuli Safari, kde z neznamych duvodu this._node.ownerDocument.createTextNode deaktivovalo udalosti, se to resi takto */
-		this._node.innerHTML = " ";
-		this._node.firstChild.nodeValue = text + "";
+		this.node.appendChild(this._node.ownerDocument.createTextNode(text + ""));
 	}
 
 	return this;

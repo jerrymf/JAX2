@@ -3,6 +3,9 @@ Changelog
 --------------------------------------
 Legend: [+] - added, [*] - fixed or changed, [-] removed
 
+Version 2.25.7
+	* reverting changes from 2.25.6 release
+
 Version 2.25.6
 	* bugfix for Safari
 
