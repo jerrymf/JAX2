@@ -193,13 +193,15 @@ JAX.Element.prototype.text = function(text) {
 		console.error("JAX.Element.text: For my argument I expected string or number.", this._node);
 	}
 
-	if (!arguments.length && "innerHTML" in this._node) { 
+	if (!arguments.length && "innerHTML" in this._node) {
 		return this._getText(this._node);
 	}
 
 	if ("innerHTML" in this._node) {
 		this.clear();
-		this._node.appendChild(this._node.ownerDocument.createTextNode(text + ""));
+		/* kvuli Safari, kde z neznamych duvodu this._node.ownerDocument.createTextNode deaktivovalo udalosti, se to resi takto */
+		this._node.innerHTML = " ";
+		this._node.firstChild.nodeValue = text + "";
 	}
 
 	return this;
@@ -272,7 +274,7 @@ JAX.Element.prototype.removeAttr = function(properties) {
 
 	console.error("JAX.Element.removeAttr: For argument I expected string or array of strings.", this._node);
 	return this;
-}
+};
 
 /**
  * nastaví nebo získá hodnoty vlastností atributu elm.style
@@ -282,8 +284,8 @@ JAX.Element.prototype.removeAttr = function(properties) {
  * @returns {string || JAX.Node || object}
  */
 JAX.Element.prototype.css = function(property, value) {
-	if (!property) { 
-		return this; 
+	if (!property) {
+		return this;
 	}
 
 	var argLength = arguments.length;
