@@ -199,7 +199,7 @@ JAX.Element.prototype.text = function(text) {
 
 	if ("innerHTML" in this._node) {
 		this.clear();
-		this.node.appendChild(this._node.ownerDocument.createTextNode(text + ""));
+		this._node.appendChild(this._node.ownerDocument.createTextNode(text + ""));
 	}
 
 	return this;
