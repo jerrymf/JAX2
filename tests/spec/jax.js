@@ -7,7 +7,7 @@ describe("JAX Core", function() {
 			document.body.appendChild(div);
 		}
 	);
-	
+
 	afterEach(
 		function() {
 			var testBox = document.querySelector("#jax-element");
