@@ -1,7 +1,7 @@
 /**
  * @fileOverview jax.js - JAX - JAk eXtended
  * @author <a href="mailto:marek.fojtl@firma.seznam.cz">Marek Fojtl</a>
- * @version 2.25.7
+ * @version 2.25.8
  * @group jak-util
  */
 
@@ -86,7 +86,7 @@ var JAX = function(selector, srcElement) {
 		case JAX.TEXT:
 		case JAX.COMMENT:
 			return new JAX.TextNode(foundElm);
-		default: 
+		default:
 			return new JAX.NullNode(typeof(selector) == "string" ? selector : "");
 	}
 };
@@ -136,7 +136,7 @@ JAX.all = function(selector, srcElement) {
 	} else if (selector instanceof JAX.Node || (typeof(selector) == "object" && JAX(selector).n)) {
 		return new JAX.NodeArray([selector]);
 	}
-	
+
 	return new JAX.NodeArray([]);
 };
 
@@ -154,20 +154,20 @@ JAX.make = function(tagString, attrs, styles, srcDocument) {
 	var styles = styles || {};
 	var srcDocument = srcDocument || document;
 
-	if (!tagString || typeof(tagString) != "string") { 
+	if (!tagString || typeof(tagString) != "string") {
 		console.error("JAX.make: First argument must be string.");
-		return JAX(null); 
+		return JAX(null);
 	}
-	if (typeof(attrs) != "object") { 
-		console.error("JAX.make: Second argument must be associative array."); 
+	if (typeof(attrs) != "object") {
+		console.error("JAX.make: Second argument must be associative array.");
 		attrs = {};
 	}
-	if (typeof(styles) != "object") { 
-		console.error("JAX.make: Third argument must be associative array."); 
+	if (typeof(styles) != "object") {
+		console.error("JAX.make: Third argument must be associative array.");
 		styles = {};
 	}
-	if (typeof(srcDocument) != "object" || !srcDocument.nodeType && [9,11].indexOf(srcDocument.nodeType) == -1) { 
-		console.error("JAX.make: Fourth argument must be document element."); 
+	if (typeof(srcDocument) != "object" || !srcDocument.nodeType && [9,11].indexOf(srcDocument.nodeType) == -1) {
+		console.error("JAX.make: Fourth argument must be document element.");
 		srcDocument = document;
 	}
 
@@ -178,15 +178,15 @@ JAX.make = function(tagString, attrs, styles, srcDocument) {
 		console.error("JAX.make: Tagname must be first in element definition.");
 		return JAX(null);
 	}
-	
+
 	for (var i=0, len=parts.length; i<len; i++) {
 		var part = parts[i];
 		var ch = part.charAt(0);
 
-		if (ch == "#") { 
+		if (ch == "#") {
 			attrs["id"] = part.substring(1);
-		} else if (ch == ".") { 
-			if (attrs["className"]) { 
+		} else if (ch == ".") {
+			if (attrs["className"]) {
 				attrs["className"] += " ";
 				attrs["className"] += part.substring(1);
 			} else {
@@ -194,12 +194,12 @@ JAX.make = function(tagString, attrs, styles, srcDocument) {
 			}
 		}
 	}
-	
+
 	var createdNode = srcDocument.createElement(tagName);
 
 	for (var p in attrs) { createdNode[p] = attrs[p]; }
 	for (var p in styles) { createdNode.style[p] = styles[p]; }
-	
+
 	return new JAX.Element(createdNode);
 };
 
@@ -253,7 +253,7 @@ JAX.getTypeOf = function(value) {
 	var toStringResult = Object.prototype.toString.call(value);
 
 	if (toStringResult == "[object Array]") {
-		return "array";	
+		return "array";
 	} else if (toStringResult == "[object Date]") {
 		return "date";
 	}
@@ -290,7 +290,7 @@ JAX.mixin = function(target, src) {
 		while(src.length) { JAX.mixin(target, src.shift()); }
 		return;
 	}
-	
+
 	for (var p in src.prototype) {
 		if (typeof src.prototype[p] == "object") {
 			target.prototype[p] = JSON.parse(JSON.stringify(src.prototype[p]));
