@@ -22,7 +22,7 @@ JAX.Async = function() {
 /**
  * přidá Promise na konec fronty
  *
- * @param {function || object} item nabindovaná funkce vracející instanci JAK.Promise || instance JAX.FX || instance JAX.Async
+ * @param {function | object} item nabindovaná funkce vracející instanci JAK.Promise || instance JAX.FX || instance JAX.Async
  * @returns {JAX.Async}
  */
 JAX.Async.prototype.waitFor = function(item) {

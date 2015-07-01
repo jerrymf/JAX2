@@ -8,7 +8,7 @@
  * @class JAX.NodeArray
  * je třída reprezentující pole instancí JAX.Node a poskytující metody pro hromadné zpracování. Implementuje rozhraní {@link JAX.IIterable}
  *
- * @param {object || array} nodes Array of nodes || NodeList || JAX.NodeArray 
+ * @param {object | array} nodes Array of nodes || NodeList || JAX.NodeArray 
  */
 JAX.NodeArray = function(nodes) {
 	this.length = nodes.length;
@@ -25,7 +25,7 @@ JAX.mixin(JAX.NodeArray, JAX.IIterable);
 /**
  * najde element odpovídající selectoru v rámci tohoto pole elementů
  *
- * @param {string || object} selector řetězec splňující pravidla css3 (pro IE8 css2.1) selectoru | HTMLElement | Text | HTMLDocument | Window | JAX.Node
+ * @param {string | object} selector řetězec splňující pravidla css3 (pro IE8 css2.1) selectoru | HTMLElement | Text | HTMLDocument | Window | JAX.Node
  * @returns {JAX.Node}
  */
 JAX.NodeArray.prototype.find = function(selector) {
@@ -57,7 +57,7 @@ JAX.NodeArray.prototype.find = function(selector) {
 /**
  * najde elementy odpovídají selectoru v rámci tohoto pole elementů
  *
- * @param {string || object || array} selector řetězec splňující pravidla css3 (pro IE8 css2.1) selectoru | Array of (HTMLElement | Text | HTMLDocument | Window | object)
+ * @param {string | object | array} selector řetězec splňující pravidla css3 (pro IE8 css2.1) selectoru | Array of (HTMLElement | Text | HTMLDocument | Window | object)
  * @returns {JAX.NodeArray}
  */
 JAX.NodeArray.prototype.findAll = function(selector) {
@@ -326,9 +326,9 @@ JAX.NodeArray.prototype.html = function(innerHTML) {
 /**
  * nastaví nebo získá hodnoty vlastností html atributů (ekvivaletní s metodou elm.setAttribute)
  *
- * @param {string || array || object} property název atributu || pole názvů atributů || asociativní pole, např. {id:"mojeId", checked:"checked"}
- * @param {string || undefined} value nastaví hodnotu atributu; v případě že první parametr je pole, potom tuto hodnotu nastaví všem atributům v poli
- * @returns {string || JAX.NodeArray || object}
+ * @param {string | array | object} property název atributu || pole názvů atributů || asociativní pole, např. {id:"mojeId", checked:"checked"}
+ * @param {string | undefined} value nastaví hodnotu atributu; v případě že první parametr je pole, potom tuto hodnotu nastaví všem atributům v poli
+ * @returns {string | JAX.NodeArray | object}
  */
 JAX.NodeArray.prototype.attr = function(property, value) {
 	var arrLength = arguments.length;
@@ -358,7 +358,7 @@ JAX.NodeArray.prototype.attr = function(property, value) {
 /**
  * odstraní html atribut(y)
  *
- * @param {string || array} property název atributu nebo pole názvů atributů
+ * @param {string | array} property název atributu nebo pole názvů atributů
  * @returns {JAX.NodeArray}
  */
 JAX.NodeArray.prototype.removeAttr = function(properties) {
@@ -373,7 +373,7 @@ JAX.NodeArray.prototype.removeAttr = function(properties) {
 /**
  * nastaví css (vlastnost elm.style) všem elementům v poli
  *
- * @param {string || array || object} property název vlastnosti || pole názvů vlastností || asociativní pole, např. {display:"block", color:"red"}
+ * @param {string | array | object} property název vlastnosti || pole názvů vlastností || asociativní pole, např. {display:"block", color:"red"}
  * @param {string} value nastaví hodnotu vlastnosti; v případě že první parametr je pole, potom tuto hodnotu nastaví všem vlastnostem v poli
  * @returns {JAX.NodeArray}
  */
@@ -405,7 +405,7 @@ JAX.NodeArray.prototype.css = function(property, value) {
 /**
  * nastaví vlastnost(i) všem elementům v poli
  *
- * @param {string || array || object} property název vlastnosti || pole názvů vlastností || asociativní pole, např. {id:"mojeId", checked:true}
+ * @param {string | array | object} property název vlastnosti || pole názvů vlastností || asociativní pole, např. {id:"mojeId", checked:true}
  * @param {string} value nastavení příslušné vlastnosti na určitou hodnotu
  * @returns {JAX.NodeArray}
  */
@@ -512,8 +512,8 @@ JAX.NodeArray.prototype.areIn = function(node) {
  * navěsí posluchač události na elementy a vrátí instanci JAX.ListenerArray, které obsahuje pole navěšených listenerů
  *
  * @param {string} type typ události ("click", "mousedown", ...)
- * @param {object || function} obj objekt, ve kterém se metoda nachází nebo připravená funkce
- * @param {string || function} func název metody nebo instance funkce, která se má zavolat po té ,co je událost vyvolána
+ * @param {object | function} obj objekt, ve kterém se metoda nachází nebo připravená funkce
+ * @param {string | function} func název metody nebo instance funkce, která se má zavolat po té ,co je událost vyvolána
  * @param {boolean} useCapture hodnata použitá jako argument capture pro DOM zachytávání
  * @returns {object} JAX.ListenerArray
  */
@@ -588,9 +588,9 @@ JAX.NodeArray.prototype.clear = function() {
  * animuje konkrétní css vlastnost. Aplikuje se na všechny animovatelné prvky v poli.
  *
  * @param {string} property css vlastnost, která se má animovat
- * @param {string || number} duration délka animace - lze zadat i jednotky s nebo ms (výchozí jsou ms)
- * @param {string || number} start počáteční hodnota - je dobré k ní uvést vždy i jednotky (pokud jde o číselnou hodnotu) a jako výchozí se používají px
- * @param {string || number} end koncová hodnota - je dobré k ní uvést vždy i jednotky (pokud jde o číselnou hodnotu) a jako výchozí se používají px
+ * @param {string | number} duration délka animace - lze zadat i jednotky s nebo ms (výchozí jsou ms)
+ * @param {string | number} start počáteční hodnota - je dobré k ní uvést vždy i jednotky (pokud jde o číselnou hodnotu) a jako výchozí se používají px
+ * @param {string | number} end koncová hodnota - je dobré k ní uvést vždy i jednotky (pokud jde o číselnou hodnotu) a jako výchozí se používají px
  * @param {string} method css transformační metoda (ease, linear, ease-in, ease-out, ... ) více na <a href="http://www.w3.org/TR/2009/WD-css3-transitions-20090320/#transition-timing-function_tag">webu W3C</a>, pozn.: pokud prohlížeč neumí transitions, je použito js řešení a metoda je vždy LINEAR
  * @returns {JAX.FXArray}
  */
@@ -609,7 +609,7 @@ JAX.NodeArray.prototype.animate = function(type, duration, start, end) {
 /**
  * animuje průhlednost. Aplikuje se na všechny animovatelné prvky v poli.
  * @param {string} type "in" (od 0 do 1) nebo "out" (od 1 do 0)
- * @param {string || number} duration délka animace - lze zadat i jednotky s nebo ms (výchozí jsou ms)
+ * @param {string | number} duration délka animace - lze zadat i jednotky s nebo ms (výchozí jsou ms)
  * @param {string} method css transformační metoda (ease, linear, ease-in, ease-out, ... ) více na <a href="http://www.w3.org/TR/2009/WD-css3-transitions-20090320/#transition-timing-function_tag">webu W3C</a>, pozn.: pokud prohlížeč neumí transitions, je použito js řešení a metoda je vždy LINEAR
  * @returns {JAX.FXArray}
  */
@@ -627,8 +627,8 @@ JAX.NodeArray.prototype.fade = function(type, duration) {
 
 /**
  * animuje průhlednost do určité hodnoty. Aplikuje se na všechny animovatelné prvky v poli.
- * @param {string || number} opacityValue hodnota průhlednosti, do které se má animovat. Jako výchozí se bere aktuální hodnota
- * @param {string || number} duration délka animace - lze zadat i jednotky s nebo ms (výchozí jsou ms)
+ * @param {string | number} opacityValue hodnota průhlednosti, do které se má animovat. Jako výchozí se bere aktuální hodnota
+ * @param {string | number} duration délka animace - lze zadat i jednotky s nebo ms (výchozí jsou ms)
  * @param {string} method css transformační metoda (ease, linear, ease-in, ease-out, ... ) více na <a href="http://www.w3.org/TR/2009/WD-css3-transitions-20090320/#transition-timing-function_tag">webu W3C</a>, pozn.: pokud prohlížeč neumí transitions, je použito js řešení a metoda je vždy LINEAR
  * @returns {JAX.FXArray}
  */
@@ -647,7 +647,7 @@ JAX.NodeArray.prototype.fadeTo = function(opacityValue, duration) {
 /**
  * zobrazí element pomocí animace výšky nebo šířky. Aplikuje se na všechny animovatelné prvky v poli.
  * @param {string} type "down" nebo "up" pro animaci výšky nebo "left", "right" pro animaci šířky
- * @param {string || number} duration délka animace - lze zadat i jednotky s nebo ms (výchozí jsou ms)
+ * @param {string | number} duration délka animace - lze zadat i jednotky s nebo ms (výchozí jsou ms)
  * @param {string} method css transformační metoda (ease, linear, ease-in, ease-out, ... ) více na <a href="http://www.w3.org/TR/2009/WD-css3-transitions-20090320/#transition-timing-function_tag">webu W3C</a>, pozn.: pokud prohlížeč neumí transitions, je použito js řešení a metoda je vždy LINEAR
  * @returns {JAX.FXArray}
  */
@@ -667,7 +667,7 @@ JAX.NodeArray.prototype.slide = function(type, duration) {
  * nascrolluje obsah na zadanou hodnotu. Lze zadat type "left" nebo "top", podle toho, kterým posuvníkem chceme hýbat. Pokud se zadá i duration, scrollování bude animované. Aplikuje se na všechny scrollovatelné prvky v poli.
  * @param {string} type "top" nebo "left", podle toho, jestli chceme hýbat s vertikálním nebo horizontálním posuvníkem
  * @param {number} value hodnota v px, kam se má scrollbar posunout
- * @param {string || number} duration délka animace; pokud není zadáno, neanimuje se
+ * @param {string | number} duration délka animace; pokud není zadáno, neanimuje se
  * @returns {JAX.FXArray}
  */
 JAX.NodeArray.prototype.scroll = function(type, value, duration) {

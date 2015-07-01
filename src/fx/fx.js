@@ -107,9 +107,9 @@ JAX.FX._SUPPORTED_METHODS = [
 /**
  * Přidá css vlastnost, která se bude animovat. Pro každou vlastnost lze zadat různou délku animace a také hodnoty, od kterých se má začít a po které skončit.
  * @param {string} property css vlastnost, která se má animovat
- * @param {string || number} duration délka animace - lze zadat i jednotky s nebo ms (výchozí jsou ms)
- * @param {string || number} start počáteční hodnota - je dobré k ní uvést vždy i jednotky (pokud jde o číselnou hodnotu) a jako výchozí se používají px
- * @param {string || number} end koncová hodnota - je dobré k ní uvést vždy i jednotky (pokud jde o číselnou hodnotu) a jako výchozí se používají px
+ * @param {string | number} duration délka animace - lze zadat i jednotky s nebo ms (výchozí jsou ms)
+ * @param {string | number} start počáteční hodnota - je dobré k ní uvést vždy i jednotky (pokud jde o číselnou hodnotu) a jako výchozí se používají px
+ * @param {string | number} end koncová hodnota - je dobré k ní uvést vždy i jednotky (pokud jde o číselnou hodnotu) a jako výchozí se používají px
  * @param {string} method css transformační metoda (ease, linear, ease-in, ease-out, ... ) více na <a href="http://www.w3.org/TR/2009/WD-css3-transitions-20090320/#transition-timing-function_tag">webu W3C</a>, pozn.: pokud prohlížeč neumí transitions, je použito js řešení a metoda je vždy LINEAR
  * @returns {JAX.FX}
  */
@@ -188,15 +188,15 @@ JAX.FX.prototype.addProperty = function(property, duration, start, end, method) 
 
 /**
  * Přidá transformační vlastnost (translateX, translateY, translateZ). Používá fallback pro prohlížeče, které transformace neumí a to přes elm.style.top a elm.style.left.
- * @param {string || number} duration délka animace - lze zadat i jednotky s nebo ms (výchozí jsou ms)
+ * @param {string | number} duration délka animace - lze zadat i jednotky s nebo ms (výchozí jsou ms)
  * @param {object} start počáteční hodnoty
- * @param {number || string} start.x hodnota translateX - lze zadat i jednotky (px, %, ...), def. px
- * @param {number || string} start.y hodnota translateY - lze zadat i jednotky (px, %, ...), def. px
- * @param {number || string} start.z hodnota translateZ - lze zadat i jednotky (px, %, ...), def. px
+ * @param {number | string} start.x hodnota translateX - lze zadat i jednotky (px, %, ...), def. px
+ * @param {number | string} start.y hodnota translateY - lze zadat i jednotky (px, %, ...), def. px
+ * @param {number | string} start.z hodnota translateZ - lze zadat i jednotky (px, %, ...), def. px
  * @param {object} end koncové hodnoty
- * @param {number || string} end.x hodnota translateX - lze zadat i jednotky (px, %, ...), def. px
- * @param {number || string} end.y hodnota translateY - lze zadat i jednotky (px, %, ...), def. px
- * @param {number || string} end.z hodnota translateZ - lze zadat i jednotky (px, %, ...), def. px
+ * @param {number | string} end.x hodnota translateX - lze zadat i jednotky (px, %, ...), def. px
+ * @param {number | string} end.y hodnota translateY - lze zadat i jednotky (px, %, ...), def. px
+ * @param {number | string} end.z hodnota translateZ - lze zadat i jednotky (px, %, ...), def. px
  * @param {string} method css transformační metoda (ease, linear, ease-in, ease-out, ... ) více na <a href="http://www.w3.org/TR/2009/WD-css3-transitions-20090320/#transition-timing-function_tag">webu W3C</a>, pozn.: pokud prohlížeč neumí transitions, je použito js řešení a metoda je vždy LINEAR
  * @returns {JAX.FX}
  */

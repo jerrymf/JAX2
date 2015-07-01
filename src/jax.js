@@ -9,8 +9,8 @@
  * @class JAX
  * je jmenný prostor a také funkce, která najde element, který odpovídá selectoru nebo obalí zadaný objekt vlastní třídou (wrapperem)
  *
- * @param {string || object} selector řetězec splňující pravidla css3 (pro IE8 css2.1) selectoru | HTMLElement | Text | HTMLDocument | Window | JAX.Node
- * @param {string || object} [srcElement=window.document] element, ve kterém se má hledat
+ * @param {string | object} selector řetězec splňující pravidla css3 (pro IE8 css2.1) selectoru | HTMLElement | Text | HTMLDocument | Window | JAX.Node
+ * @param {string | object} [srcElement=window.document] element, ve kterém se má hledat
  * @returns {JAX.Node}
  */
 var JAX = function(selector, srcElement) {
@@ -102,8 +102,8 @@ JAX.DOCUMENT_FRAGMENT = 11; /* konstanta pro objekt document fragment */
 /**
  * najde elementy, které odpovídají selectoru
  *
- * @param {string || object || array} selector řetězec splňující pravidla css3 (pro IE8 css2.1) selectoru | Array of (HTMLElement | Text | HTMLDocument | Window | JAX.Node) | JAX.NodeArray
- * @param {object || string} [srcElement=window.document] CSS3 (CSS2.1) selector nebo element, ve kterém se má hledat
+ * @param {string | object | array} selector řetězec splňující pravidla css3 (pro IE8 css2.1) selectoru | Array of (HTMLElement | Text | HTMLDocument | Window | JAX.Node) | JAX.NodeArray
+ * @param {object | string} [srcElement=window.document] CSS3 (CSS2.1) selector nebo element, ve kterém se má hledat
  * @returns {JAX.NodeArray}
  */
 JAX.all = function(selector, srcElement) {
@@ -283,7 +283,7 @@ JAX.extend = function(target, src) {
  * implementuje tzv. mixin nebo také lze říci rozhraní, kdy třídu obohatí o nové metody, ale nedědí je, nýbrž si vyrobí jejich kopie
  *
  * @param {function} target třída, která metody získá
- * @param {function || array} src třída s metodami, které chceme implementovat || pole tříd
+ * @param {function | array} src třída s metodami, které chceme implementovat || pole tříd
  */
 JAX.mixin = function(target, src) {
 	if (src instanceof Array) {

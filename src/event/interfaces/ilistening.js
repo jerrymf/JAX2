@@ -16,8 +16,8 @@ JAX.IListening._listeners = {};
  * navěsí posluchač události na element a vrátí instanci JAX.Listener. Při vyvolání události pak do funkce předává jako parametr instanci JAX.Event.
  *
  * @param {string} type typ události ("click", "mousedown", ...)
- * @param {object || function} obj objekt, ve kterém se metoda nachází nebo připravená funkce
- * @param {string || function} func název metody nebo instance funkce, která se má zavolat po té ,co je událost vyvolána
+ * @param {object | function} obj objekt, ve kterém se metoda nachází nebo připravená funkce
+ * @param {string | function} func název metody nebo instance funkce, která se má zavolat po té ,co je událost vyvolána
  * @param {boolean} useCapture hodnota použitá jako argument capture pro DOM zachytávání
  * @returns {JAX.Listener}
  */
@@ -78,7 +78,7 @@ JAX.IListening.prototype.listen = function(type, obj, func, useCapture) {
 /**
  * odvěsí posluchač na základě parametru, což může být jednak typ události ("click", "mousedown", ...) nebo lze předat instanci JAX.Listener. Metodu lze také zavolat bez parametrů a tím se odvěsí všechny posluchače na elementu.
  *
- * @param {string || object} listener typ události nebo instance JAX.Listener
+ * @param {string | object} listener typ události nebo instance JAX.Listener
  * @returns {JAX.Node}
  */
 JAX.IListening.prototype.stopListening = function(listener) {

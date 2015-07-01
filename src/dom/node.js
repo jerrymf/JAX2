@@ -57,7 +57,7 @@ JAX.Node.prototype.$destructor = function() {
 /**
  * vrací uzel, který si instance drží
  *
- * @returns {HTMLElement || Text || HTMLDocument || Window}
+ * @returns {HTMLElement | Text | HTMLDocument | Window}
  */
 JAX.Node.prototype.node = function() {
 	return this._node;
@@ -75,9 +75,9 @@ JAX.Node.prototype.exists = function() {
 /**
  * získá nebo nastaví vlastnost nodu
  *
- * @param {string || array || object} property název vlastnosti | pole názvů vlastností | asociativní pole, např. {id:"mojeId", checked:true}
+ * @param {string | array | object} property název vlastnosti | pole názvů vlastností | asociativní pole, např. {id:"mojeId", checked:true}
  * @param {} value nastavená hodnota
- * @returns {string || JAX.Node || object}
+ * @returns {string | JAX.Node | object}
  */
 JAX.Node.prototype.prop = function(property, value) {
 	if (!property) { 

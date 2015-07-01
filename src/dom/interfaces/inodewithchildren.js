@@ -13,7 +13,7 @@ JAX.INodeWithChildren = function() {};
 /**
  * přidává do elementu další uzly vždy na konec, lze zadat i jako html string, který se následně připne
  *
- * @param {string || object || array} nodes HTML string || HTMLElement || Text || HTMLDocumetFragment || pole elementů || instance JAX.NodeArray
+ * @param {string | object | array} nodes HTML string || HTMLElement || Text || HTMLDocumetFragment || pole elementů || instance JAX.NodeArray
  * @returns {JAX.Node}
  */
 JAX.INodeWithChildren.prototype.add = function(nodes) {
@@ -40,7 +40,7 @@ JAX.INodeWithChildren.prototype.add = function(nodes) {
 /**
  * vloží zadané uzly před první uzel v elementu, lze zadat i jako html string, který se následně připne před první element
  *
- * @param {string || object || array} nodes HTML string || HTMLElement || Text || HTMLDocumetFragment || pole elementů || instance JAX.NodeArray
+ * @param {string | object | array} nodes HTML string || HTMLElement || Text || HTMLDocumetFragment || pole elementů || instance JAX.NodeArray
  * @returns {JAX.Node}
  */
 JAX.INodeWithChildren.prototype.insertFirst = function(nodes) {
@@ -82,8 +82,8 @@ JAX.INodeWithChildren.prototype.insertFirst = function(nodes) {
 /**
  * vloží uzel před jiný
  *
- * @param {object || string} node element nebo css selector, jak se k elementu dostat
- * @param {object || string} nodeBefore element nebo css selector, jak se k elementu dostat
+ * @param {object | string} node element nebo css selector, jak se k elementu dostat
+ * @param {object | string} nodeBefore element nebo css selector, jak se k elementu dostat
  * @returns {JAX.Node}
  */
 JAX.INodeWithChildren.prototype.addBefore = function(node, nodeBefore) {
@@ -111,7 +111,7 @@ JAX.INodeWithChildren.prototype.addBefore = function(node, nodeBefore) {
 /** 
  * zjistí, jestli element obsahuje nody podle zadaných kritérií
  *
- * @param {object || string} nodes HTMLElement || Text || pole elementů || instance JAX.NodeArray || CSS 3 (CSS 2.1 pro IE8) selector
+ * @param {object | string} nodes HTMLElement || Text || pole elementů || instance JAX.NodeArray || CSS 3 (CSS 2.1 pro IE8) selector
  * @returns {boolean}
  */
 JAX.INodeWithChildren.prototype.contains = function(nodes) {
@@ -144,8 +144,8 @@ JAX.INodeWithChildren.prototype.contains = function(nodes) {
 /** 
  * vrací JAXové pole (JAX.NodeArray) přímých potomků; pokud je ale zadán parametr index, vrací právě jeden JAXový node
  *
- * @param {number || undefined} index číselný index požadovaného potomku
- * @returns {JAX.Node || JAX.NodeArray || null}
+ * @param {number | undefined} index číselný index požadovaného potomku
+ * @returns {JAX.Node | JAX.NodeArray | null}
  */
 JAX.INodeWithChildren.prototype.children = function(index) {
 	if (!this._node.childNodes) {
@@ -175,8 +175,8 @@ JAX.INodeWithChildren.prototype.children = function(index) {
 /** 
  * vrací JAXové pole (JAX.NodeArray) přímých elementů (node.nodeType == 1); pokud je ale zadán parametr index, vrací právě jeden JAXový element
  *
- * @param {number || undefined} index číselný index požadovaného elementu
- * @returns {JAX.Node || JAX.NodeArray || null}
+ * @param {number | undefined} index číselný index požadovaného elementu
+ * @returns {JAX.Node | JAX.NodeArray | null}
  */
 JAX.INodeWithChildren.prototype.elements = function(index) {
 	if (!this._node.children && !this._node.childNodes) {
@@ -213,7 +213,7 @@ JAX.INodeWithChildren.prototype.elements = function(index) {
 /** 
  * vrací první HTMLElement jako JAXový node
  *
- * @returns {JAX.Node || null}
+ * @returns {JAX.Node | null}
  */
 JAX.INodeWithChildren.prototype.first = function() {
 	if (!this._node.childNodes) {
@@ -227,7 +227,7 @@ JAX.INodeWithChildren.prototype.first = function() {
 /** 
  * vrací poslední HTMLElement jako JAXový node
  *
- * @returns {JAX.Node || null}
+ * @returns {JAX.Node | null}
  */
 JAX.INodeWithChildren.prototype.last = function() {
 	if (!this._node.childNodes) {

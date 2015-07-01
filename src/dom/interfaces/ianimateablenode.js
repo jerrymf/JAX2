@@ -13,9 +13,9 @@ JAX.IAnimateableNode = function() {};
 /**
  * animuje konkrétní css vlastnost
  * @param {string} property css vlastnost, která se má animovat
- * @param {string || number} duration délka animace - lze zadat i jednotky s nebo ms (výchozí jsou ms)
- * @param {string || number} start počáteční hodnota - je dobré k ní uvést vždy i jednotky (pokud jde o číselnou hodnotu) a jako výchozí se používají px
- * @param {string || number} end koncová hodnota - je dobré k ní uvést vždy i jednotky (pokud jde o číselnou hodnotu) a jako výchozí se používají px
+ * @param {string | number} duration délka animace - lze zadat i jednotky s nebo ms (výchozí jsou ms)
+ * @param {string | number} start počáteční hodnota - je dobré k ní uvést vždy i jednotky (pokud jde o číselnou hodnotu) a jako výchozí se používají px
+ * @param {string | number} end koncová hodnota - je dobré k ní uvést vždy i jednotky (pokud jde o číselnou hodnotu) a jako výchozí se používají px
  * @param {string} method css transformační metoda (ease, linear, ease-in, ease-out, ... ) více na <a href="http://www.w3.org/TR/2009/WD-css3-transitions-20090320/#transition-timing-function_tag">webu W3C</a>, pozn.: pokud prohlížeč neumí transitions, je použito js řešení a metoda je vždy LINEAR
  * @returns {JAX.FX}
  */
@@ -35,7 +35,7 @@ JAX.IAnimateableNode.prototype.animate = function(property, duration, start, end
 /**
  * animuje průhlednost
  * @param {string} type "in" (od 0 do 1) nebo "out" (od 1 do 0)
- * @param {string || number} duration délka animace - lze zadat i jednotky s nebo ms (výchozí jsou ms)
+ * @param {string | number} duration délka animace - lze zadat i jednotky s nebo ms (výchozí jsou ms)
  * @param {string} method css transformační metoda (ease, linear, ease-in, ease-out, ... ) více na <a href="http://www.w3.org/TR/2009/WD-css3-transitions-20090320/#transition-timing-function_tag">webu W3C</a>, pozn.: pokud prohlížeč neumí transitions, je použito js řešení a metoda je vždy LINEAR
  * @returns {JAX.FX}
  */
@@ -62,8 +62,8 @@ JAX.IAnimateableNode.prototype.fade = function(type, duration, method) {
 
 /**
  * animuje průhlednost do určité hodnoty
- * @param {string || number} opacityValue hodnota průhlednosti, do které se má animovat. Jako výchozí se bere aktuální hodnota
- * @param {string || number} duration délka animace - lze zadat i jednotky s nebo ms (výchozí jsou ms)
+ * @param {string | number} opacityValue hodnota průhlednosti, do které se má animovat. Jako výchozí se bere aktuální hodnota
+ * @param {string | number} duration délka animace - lze zadat i jednotky s nebo ms (výchozí jsou ms)
  * @param {string} method css transformační metoda (ease, linear, ease-in, ease-out, ... ) více na <a href="http://www.w3.org/TR/2009/WD-css3-transitions-20090320/#transition-timing-function_tag">webu W3C</a>, pozn.: pokud prohlížeč neumí transitions, je použito js řešení a metoda je vždy LINEAR
  * @returns {JAX.FX}
  */
@@ -81,7 +81,7 @@ JAX.IAnimateableNode.prototype.fadeTo = function(opacityValue, duration, method)
 /**
  * zobrazí element pomocí animace výšky nebo šířky
  * @param {string} type "down" nebo "up" pro animaci výšky nebo "left", "right" pro animaci šířky
- * @param {string || number} duration délka animace - lze zadat i jednotky s nebo ms (výchozí jsou ms)
+ * @param {string | number} duration délka animace - lze zadat i jednotky s nebo ms (výchozí jsou ms)
  * @param {string} method css transformační metoda (ease, linear, ease-in, ease-out, ... ) více na <a href="http://www.w3.org/TR/2009/WD-css3-transitions-20090320/#transition-timing-function_tag">webu W3C</a>, pozn.: pokud prohlížeč neumí transitions, je použito js řešení a metoda je vždy LINEAR
  * @returns {JAX.FX}
  */
