@@ -14,8 +14,8 @@ JAX.IScrollableNode = function() {};
  * nascrolluje obsah na zadanou hodnotu. Lze zadat type "left" nebo "top", podle toho, kterým posuvníkem chceme hýbat. Pokud se zadá i duration, scrollování bude animované.
  * @param {string} type "top" nebo "left", podle toho, jestli chceme hýbat s vertikálním nebo horizontálním posuvníkem
  * @param {number} value hodnota v px, kam se má scrollbar posunout
- * @param {string || number} duration délka animace; pokud není zadáno, neanimuje se
- * @returns {JAX.Node || JAX.FX.Scrolling}
+ * @param {string | number} duration délka animace; pokud není zadáno, neanimuje se
+ * @returns {JAX.Node | JAX.FX.Scrolling}
  */
 JAX.IScrollableNode.prototype.scroll = function(type, value, duration) {
 	if (typeof(type) != "string") {

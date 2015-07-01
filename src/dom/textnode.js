@@ -25,8 +25,8 @@ JAX.mixin(JAX.TextNode, JAX.IMoveableNode);
 /**
  * nastaví nebo vrátí textovou hodnotu uzlu
  *
- * @param {string || undefined} text textový řetězec
- * @returns {JAX.Node || string} JAX.Node
+ * @param {string | undefined} text textový řetězec
+ * @returns {JAX.Node | string} JAX.Node
  */
 JAX.TextNode.prototype.text = function(text) {
 	if (!arguments.length) { 

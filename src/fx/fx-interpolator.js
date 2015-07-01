@@ -31,7 +31,7 @@ JAX.FX.Interpolator = function(elm) {
  *
  * @param {array} settings
  * @param {string} settings.property
- * @param {number || string} settings.startValue
+ * @param {number | string} settings.startValue
  * @param {string} settings.startUnit
  * @param {number} settings.endValue
  * @param {string} settings.endUnit

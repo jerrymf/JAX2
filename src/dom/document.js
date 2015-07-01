@@ -26,7 +26,7 @@ JAX.mixin(JAX.Document, [JAX.IListening, JAX.ISearchableNode, JAX.IScrollableNod
 /** 
  * zjistí, jestli element obsahuje nody podle zadaných kritérií
  *
- * @param {object || string} node HTMLElement || Text ||  CSS 3 (CSS 2.1 pro IE8) selector
+ * @param {object | string} node HTMLElement || Text ||  CSS 3 (CSS 2.1 pro IE8) selector
  * @returns {boolean}
  */
 JAX.Document.prototype.contains = function(node) {

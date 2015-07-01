@@ -13,7 +13,7 @@ JAX.IMoveableNode = function() {};
 /**
  * přesune element na konec zadaného elementu
  *
- * @param {string || object} node řetězec splňující pravidla css3 (pro IE8 css2.1) selectoru | HTMLElement | Text | HTMLDocument | Window | JAX.Node
+ * @param {string | object} node řetězec splňující pravidla css3 (pro IE8 css2.1) selectoru | HTMLElement | Text | HTMLDocument | Window | JAX.Node
  * @returns {JAX.Node}
  */
 JAX.IMoveableNode.prototype.appendTo = function(node) {
@@ -31,7 +31,7 @@ JAX.IMoveableNode.prototype.appendTo = function(node) {
 /**
  * přesune element před zadaný element
  *
- * @param {string || object} node řetězec splňující pravidla css3 (pro IE8 css2.1) selectoru | HTMLElement | Text | HTMLDocument | Window | JAX.Node
+ * @param {string | object} node řetězec splňující pravidla css3 (pro IE8 css2.1) selectoru | HTMLElement | Text | HTMLDocument | Window | JAX.Node
  * @returns {JAX.Node}
  */
 JAX.IMoveableNode.prototype.before = function(node) {
@@ -50,7 +50,7 @@ JAX.IMoveableNode.prototype.before = function(node) {
 /**
  * přesune element za zadaný element
  *
- * @param {string || object} node řetězec splňující pravidla css3 (pro IE8 css2.1) selectoru | HTMLElement | Text | HTMLDocument | Window | JAX.Node
+ * @param {string | object} node řetězec splňující pravidla css3 (pro IE8 css2.1) selectoru | HTMLElement | Text | HTMLDocument | Window | JAX.Node
  * @returns {JAX.Node}
  */
 JAX.IMoveableNode.prototype.after = function(node) {
@@ -75,7 +75,7 @@ JAX.IMoveableNode.prototype.after = function(node) {
 /**
  * vloží element do zadaného elementu na první místo
  *
- * @param {string || object} node řetězec splňující pravidla css3 (pro IE8 css2.1) selectoru | HTMLElement | Text | HTMLDocument | Window | JAX.Node
+ * @param {string | object} node řetězec splňující pravidla css3 (pro IE8 css2.1) selectoru | HTMLElement | Text | HTMLDocument | Window | JAX.Node
  * @returns {JAX.Node}
  */
 JAX.IMoveableNode.prototype.insertFirstTo = function(node) {
@@ -102,7 +102,7 @@ JAX.IMoveableNode.prototype.insertFirstTo = function(node) {
 /**
  * vymění element za zadaný element v DOMu a původní element z DOMu smaže
  *
- * @param {string || object} node řetězec splňující pravidla css3 (pro IE8 css2.1) selectoru | HTMLElement | Text | HTMLDocument | Window | JAX.Node
+ * @param {string | object} node řetězec splňující pravidla css3 (pro IE8 css2.1) selectoru | HTMLElement | Text | HTMLDocument | Window | JAX.Node
  * @returns {JAX.Node}
  */
 JAX.IMoveableNode.prototype.replaceWith = function(node) {
@@ -121,7 +121,7 @@ JAX.IMoveableNode.prototype.replaceWith = function(node) {
 /**
  * vymění element za zadaný element v DOMu, prohodí si místa
  *
- * @param {string || object} node řetězec splňující pravidla css3 (pro IE8 css2.1) selectoru | HTMLElement | Text | HTMLDocument | Window | JAX.Node
+ * @param {string | object} node řetězec splňující pravidla css3 (pro IE8 css2.1) selectoru | HTMLElement | Text | HTMLDocument | Window | JAX.Node
  * @returns {JAX.Node}
  */
 JAX.IMoveableNode.prototype.swapPlaceWith = function(node) {
@@ -190,7 +190,7 @@ JAX.IMoveableNode.prototype.clone = function(withContent) {
 /**
  * zjistí, jestli je element umístěn v zadaném elementu
  *
- * @param {string || object} node řetězec splňující pravidla css3 (pro IE8 css2.1) selectoru | HTMLElement | Text | HTMLDocument | Window | JAX.Node
+ * @param {string | object} node řetězec splňující pravidla css3 (pro IE8 css2.1) selectoru | HTMLElement | Text | HTMLDocument | Window | JAX.Node
  * @returns {boolean}
  */
 JAX.IMoveableNode.prototype.isIn = function(node) {
@@ -215,8 +215,8 @@ JAX.IMoveableNode.prototype.isIn = function(node) {
 /**
  * bez zadaného parametru vrací přímo rodiče; se zadaným zjednodušeným css selectorem vrací rodiče, který jako první odpovídá pravidlu
  *
- * @param {string || undefined} selector řetězec splňující pravidla: tag#id.trida, kde id a třída mohou být zadány vícenásobně nebo vůbec | HTMLElement | JAX.Node
- * @returns {JAX.Node || null}
+ * @param {string | undefined} selector řetězec splňující pravidla: tag#id.trida, kde id a třída mohou být zadány vícenásobně nebo vůbec | HTMLElement | JAX.Node
+ * @returns {JAX.Node | null}
  */
 JAX.IMoveableNode.prototype.parent = function(selector) {
 	if (selector && typeof(selector) == "string") {
@@ -237,8 +237,8 @@ JAX.IMoveableNode.prototype.parent = function(selector) {
 /** 
  * vrací následující node
  *
- * @param {string || number || undefined} selector řetězec splňující pravidla: tag#id.trida (lze zada více id i tříd) || požadovaný nodeType
- * @returns {JAX.Node || null}
+ * @param {string | number | undefined} selector řetězec splňující pravidla: tag#id.trida (lze zada více id i tříd) || požadovaný nodeType
+ * @returns {JAX.Node | null}
  */
 JAX.IMoveableNode.prototype.next = function(selector) {
 	if (typeof(selector) == "number") {
@@ -270,8 +270,8 @@ JAX.IMoveableNode.prototype.next = function(selector) {
 /**
  * vrací předchazející node
  *
- * @param {string || number || undefined} selector řetězec splňující pravidla: tag#id.trida (lze zada více id i tříd) || požadovaný nodeType
- * @returns {JAX.Node || null}
+ * @param {string | number | undefined} selector řetězec splňující pravidla: tag#id.trida (lze zada více id i tříd) || požadovaný nodeType
+ * @returns {JAX.Node | null}
  */
 JAX.IMoveableNode.prototype.previous = function(selector) {
 	if (typeof(selector) == "number") {

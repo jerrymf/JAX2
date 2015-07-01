@@ -20,7 +20,7 @@ JAK.Parser = JAK.ClassMaker.makeStatic({
 
 /**
  * @param {string} str retezec, jenz mame naparsovat
- * @returns {object || false} literalovy objekt, pokud lze. V opacnem pripade false
+ * @returns {object | false} literalovy objekt, pokud lze. V opacnem pripade false
  */
 JAK.Parser.date = function(str) {
 	var obj = {
@@ -112,7 +112,7 @@ JAK.Parser.date = function(str) {
 
 /**
  * @param {string} str retezec, jenz mame naparsovat
- * @returns {object || false} literalovy objekt, pokud lze. V opacnem pripade false
+ * @returns {object | false} literalovy objekt, pokud lze. V opacnem pripade false
  */
 JAK.Parser.color = function(str) {
 	var obj = {r:0, g:0, b:0};
@@ -147,7 +147,7 @@ JAK.Parser.color = function(str) {
 
 /**
  * @param {string} str retezec, jenz mame naparsovat
- * @returns {string || false} cast s validni emailovou adresou, pokud lze. V opacnem pripade false
+ * @returns {string | false} cast s validni emailovou adresou, pokud lze. V opacnem pripade false
  */
 JAK.Parser.email = function(str) {
 	var obj = {

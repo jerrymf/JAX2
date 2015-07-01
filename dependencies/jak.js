@@ -921,7 +921,7 @@ JAK.Events._domReadyCallbacks = [];
  * Metoda kterou použijeme, pokud chceme navěsit vlastní kód na událost, kdy je DOM strom připraven k použití.
  * Je možné navěsit libovolný počet volaných funkcí.   
  * @param {object} obj kontext, tj. "this" pro funkci
- * @param {function || string} func funkce, která se bude provádět jako posluchač  
+ * @param {function | string} func funkce, která se bude provádět jako posluchač  
  */ 
 JAK.Events.onDomReady = function(obj, func) {
 	var f = (typeof(func) == "function" ? func : obj[func]);
@@ -955,8 +955,8 @@ JAK.Events.onDomReady = function(obj, func) {
  *
  * @param {node} elm element, který událost zachytává
  * @param {string} type název události (bez předpony "on"); možno zadat víc událostí naráz oddělených mezerami
- * @param {object || function} obj 1) objekt, jehož metodu budeme volat, 2) objekt s metodou handleEvent, 3) funkce
- * @param {function || string} [func] funkce, která se bude provádět jako posluchač;
+ * @param {object | function} obj 1) objekt, jehož metodu budeme volat, 2) objekt s metodou handleEvent, 3) funkce
+ * @param {function | string} [func] funkce, která se bude provádět jako posluchač;
  * <em>string</em> pokud jde o metodu <em>obj</em> nebo reference na funkci, která se zavolá
  * jako metoda <em>obj</em>  
  * @param {boolean} [capture] hodnata použitá jako argument capture pro DOM zachytávání, pro IE je ignorována 
@@ -1004,7 +1004,7 @@ JAK.Events.addListener = function(elm, type, obj, func, capture) {
  * Vlastní zavěšení posluchače buď DOM kompatibilně, nebo přes attachEvent pro IE 
  * @param {node} elm element, který událost zachytává
  * @param {string} type typ události bez předpony "on"; možno zadat víc událostí naráz oddělených mezerami
- * @param {function || object} action funkce/metoda která se bude provádět
+ * @param {function | object} action funkce/metoda která se bude provádět
  * @param {boolean} capture hodnota použitá jako argument capture pro DOM zachytávání
  */    
 JAK.Events._addListener = function(elm, type, action, capture) {
@@ -1462,7 +1462,7 @@ JAK.ctext = function(str, doc) {
 /**
  * Zjednodušený přístup k metodě DOM document.getElementById.
  * Etymologie: gel = gET elEMENT
- * @param {string || node} id id HTML elementu, který chceme získat nebo element
+ * @param {string | node} id id HTML elementu, který chceme získat nebo element
  * @param {object} [doc] dokument, v jehož kontextu se node vyrobí (default: document)
  * @returns {node} HTML element s id = id, pokud existuje, NEBO element specifikovaný jako parametr
  */
@@ -2166,7 +2166,7 @@ JAK.Request.prototype.getHeaders = function() {
 /**
  * Odešle požadavek
  * @param {string} url Cílové URL
- * @param {string || object} [data] Data k odeslání
+ * @param {string | object} [data] Data k odeslání
  * @returns {JAK.Promise}
  */
 JAK.Request.prototype.send = function(url, data) {
@@ -2207,8 +2207,8 @@ JAK.Request.prototype.abort = function() {
 
 /**
  * Nastavení callbacku po dokončení požadavku
- * @param {object || null} obj
- * @param {function || string} method
+ * @param {object | null} obj
+ * @param {function | string} method
  */
 JAK.Request.prototype.setCallback = function(obj, method) {
 	this._setCallback(obj, method, this._DONE);
@@ -2554,7 +2554,7 @@ JAK.Signals.prototype.$constructor = function() {
  * @param {string} type	typ události, kterou chceme zachytit; možno zadat víc názvů naráz oddělených mezerami 
  * @param {string} funcOrString funkce/metoda posluchače, která má danou událost zpracovat
  * @param {object} sender objekt, jehož událost chceme poslouchat. Pokud není zadáno (nebo false), odesilatele nerozlišujeme
- * @returns {string || null} id události / null
+ * @returns {string | null} id události / null
  */
 JAK.Signals.prototype.addListener = function(owner, type, funcOrString, sender){
 	var newId = JAK.idGenerator(); /* identifikátor handlované události */
@@ -2656,7 +2656,7 @@ JAK.Signals.prototype._myEventHandler = function(myEvent) {
 		if (type == myEvent.type || type == "*") { /* shoda nazvu udalosti */
 			for (var p in this._myHandleFolder[type]) {
 				var item = this._myHandleFolder[type][p];
-				if (!item.eSender || item.eSender == myEvent.target) {
+				if (!item.eSender | item.eSender == myEvent.target) {
 					functionCache.push(item);
 				}
 			}
@@ -2941,7 +2941,7 @@ JAK.Timekeeper.prototype.$constructor = function() {
 /**
  * Přidání posluchače
  * @param {object} what Objekt žádající o notifikaci
- * @param {string || function} method Metoda k volání
+ * @param {string | function} method Metoda k volání
  * @param {int} [count=1] Počet tiknutí na jednu notifikaci
  */
 JAK.Timekeeper.prototype.addListener = function(what, method, count) {

@@ -10,7 +10,7 @@
  *
  * @param {object} jaxElm instance JAX.Node
  * @param {string} type typ události
- * @param {function || object} method funkce nebo object, který byl předán jako reakce na událost
+ * @param {function | object} method funkce nebo object, který byl předán jako reakce na událost
  */ 
 JAX.Listener = function(jaxElm, type, method) {
 	this._jaxElm = jaxElm;
@@ -42,7 +42,7 @@ JAX.Listener.prototype.jaxElm = function() {
 /**
  * vrací funkci nebo object s metodou handleEvent, která se má po nastání události zavolat
  *
- * @returns {object || function}
+ * @returns {object | function}
  */ 
 JAX.Listener.prototype.method = function() {
 	return this._method;

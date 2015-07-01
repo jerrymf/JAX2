@@ -298,8 +298,8 @@
 <span class='line'>291</span>  * @class JAX
 <span class='line'>292</span>  * je jmenný prostor a také funkce, která najde element, který odpovídá selectoru nebo obalí zadaný objekt vlastní třídou (wrapperem)
 <span class='line'>293</span>  *
-<span class='line'>294</span>  * @param {string || object} selector řetězec splňující pravidla css3 (pro IE8 css2.1) selectoru | HTMLElement | Text | HTMLDocument | Window | JAX.Node
-<span class='line'>295</span>  * @param {string || object} [srcElement=window.document] element, ve kterém se má hledat
+<span class='line'>294</span>  * @param {string | object} selector řetězec splňující pravidla css3 (pro IE8 css2.1) selectoru | HTMLElement | Text | HTMLDocument | Window | JAX.Node
+<span class='line'>295</span>  * @param {string | object} [srcElement=window.document] element, ve kterém se má hledat
 <span class='line'>296</span>  * @returns {JAX.Node}
 <span class='line'>297</span>  */</span><span class="WHIT">
 <span class='line'>298</span> </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">JAX</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">selector</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">srcElement</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
@@ -391,8 +391,8 @@
 <span class='line'>384</span> </span><span class="COMM">/**
 <span class='line'>385</span>  * najde elementy, které odpovídají selectoru
 <span class='line'>386</span>  *
-<span class='line'>387</span>  * @param {string || object || array} selector řetězec splňující pravidla css3 (pro IE8 css2.1) selectoru | Array of (HTMLElement | Text | HTMLDocument | Window | JAX.Node) | JAX.NodeArray
-<span class='line'>388</span>  * @param {object || string} [srcElement=window.document] CSS3 (CSS2.1) selector nebo element, ve kterém se má hledat
+<span class='line'>387</span>  * @param {string | object | array} selector řetězec splňující pravidla css3 (pro IE8 css2.1) selectoru | Array of (HTMLElement | Text | HTMLDocument | Window | JAX.Node) | JAX.NodeArray
+<span class='line'>388</span>  * @param {object | string} [srcElement=window.document] CSS3 (CSS2.1) selector nebo element, ve kterém se má hledat
 <span class='line'>389</span>  * @returns {JAX.NodeArray}
 <span class='line'>390</span>  */</span><span class="WHIT">
 <span class='line'>391</span> </span><span class="NAME">JAX.all</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">selector</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">srcElement</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
@@ -572,7 +572,7 @@
 <span class='line'>565</span>  * implementuje tzv. mixin nebo také lze říci rozhraní, kdy třídu obohatí o nové metody, ale nedědí je, nýbrž si vyrobí jejich kopie
 <span class='line'>566</span>  *
 <span class='line'>567</span>  * @param {function} target třída, která metody získá
-<span class='line'>568</span>  * @param {function || array} src třída s metodami, které chceme implementovat || pole tříd
+<span class='line'>568</span>  * @param {function | array} src třída s metodami, které chceme implementovat || pole tříd
 <span class='line'>569</span>  */</span><span class="WHIT">
 <span class='line'>570</span> </span><span class="NAME">JAX.mixin</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">target</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">src</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
 <span class='line'>571</span> </span><span class="WHIT">	</span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">src</span><span class="WHIT"> </span><span class="KEYW">instanceof</span><span class="WHIT"> </span><span class="NAME">Array</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
@@ -798,7 +798,7 @@
 <span class='line'>791</span> </span><span class="COMM">/**
 <span class='line'>792</span>  * přidá Promise na konec fronty
 <span class='line'>793</span>  *
-<span class='line'>794</span>  * @param {function || object} item nabindovaná funkce vracející instanci JAK.Promise || instance JAX.FX || instance JAX.Async
+<span class='line'>794</span>  * @param {function | object} item nabindovaná funkce vracející instanci JAK.Promise || instance JAX.FX || instance JAX.Async
 <span class='line'>795</span>  * @returns {JAX.Async}
 <span class='line'>796</span>  */</span><span class="WHIT">
 <span class='line'>797</span> </span><span class="NAME">JAX.Async.prototype.waitFor</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">item</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
@@ -985,8 +985,8 @@
 <span class='line'>978</span>  * navěsí posluchač události na element a vrátí instanci JAX.Listener. Při vyvolání události pak do funkce předává jako parametr instanci JAX.Event.
 <span class='line'>979</span>  *
 <span class='line'>980</span>  * @param {string} type typ události ("click", "mousedown", ...)
-<span class='line'>981</span>  * @param {object || function} obj objekt, ve kterém se metoda nachází nebo připravená funkce
-<span class='line'>982</span>  * @param {string || function} func název metody nebo instance funkce, která se má zavolat po té ,co je událost vyvolána
+<span class='line'>981</span>  * @param {object | function} obj objekt, ve kterém se metoda nachází nebo připravená funkce
+<span class='line'>982</span>  * @param {string | function} func název metody nebo instance funkce, která se má zavolat po té ,co je událost vyvolána
 <span class='line'>983</span>  * @param {boolean} useCapture hodnota použitá jako argument capture pro DOM zachytávání
 <span class='line'>984</span>  * @returns {JAX.Listener}
 <span class='line'>985</span>  */</span><span class="WHIT">
@@ -1047,7 +1047,7 @@
 <span class='line'>1040</span> </span><span class="COMM">/**
 <span class='line'>1041</span>  * odvěsí posluchač na základě parametru, což může být jednak typ události ("click", "mousedown", ...) nebo lze předat instanci JAX.Listener. Metodu lze také zavolat bez parametrů a tím se odvěsí všechny posluchače na elementu.
 <span class='line'>1042</span>  *
-<span class='line'>1043</span>  * @param {string || object} listener typ události nebo instance JAX.Listener
+<span class='line'>1043</span>  * @param {string | object} listener typ události nebo instance JAX.Listener
 <span class='line'>1044</span>  * @returns {JAX.Node}
 <span class='line'>1045</span>  */</span><span class="WHIT">
 <span class='line'>1046</span> </span><span class="NAME">JAX.IListening.prototype.stopListening</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">listener</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
@@ -1186,7 +1186,7 @@
 <span class='line'>1179</span>  *
 <span class='line'>1180</span>  * @param {object} jaxElm instance JAX.Node
 <span class='line'>1181</span>  * @param {string} type typ události
-<span class='line'>1182</span>  * @param {function || object} method funkce nebo object, který byl předán jako reakce na událost
+<span class='line'>1182</span>  * @param {function | object} method funkce nebo object, který byl předán jako reakce na událost
 <span class='line'>1183</span>  */</span><span class="WHIT"> 
 <span class='line'>1184</span> </span><span class="NAME">JAX.Listener</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">jaxElm</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">type</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">method</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
 <span class='line'>1185</span> </span><span class="WHIT">	</span><span class="NAME">this._jaxElm</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">jaxElm</span><span class="PUNC">;</span><span class="WHIT">
@@ -1218,7 +1218,7 @@
 <span class='line'>1211</span> </span><span class="COMM">/**
 <span class='line'>1212</span>  * vrací funkci nebo object s metodou handleEvent, která se má po nastání události zavolat
 <span class='line'>1213</span>  *
-<span class='line'>1214</span>  * @returns {object || function}
+<span class='line'>1214</span>  * @returns {object | function}
 <span class='line'>1215</span>  */</span><span class="WHIT"> 
 <span class='line'>1216</span> </span><span class="NAME">JAX.Listener.prototype.method</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
 <span class='line'>1217</span> </span><span class="WHIT">	</span><span class="KEYW">return</span><span class="WHIT"> </span><span class="NAME">this._method</span><span class="PUNC">;</span><span class="WHIT">
@@ -1283,7 +1283,7 @@
 <span class='line'>1276</span> </span><span class="COMM">/**
 <span class='line'>1277</span>  * přesune element na konec zadaného elementu
 <span class='line'>1278</span>  *
-<span class='line'>1279</span>  * @param {string || object} node řetězec splňující pravidla css3 (pro IE8 css2.1) selectoru | HTMLElement | Text | HTMLDocument | Window | JAX.Node
+<span class='line'>1279</span>  * @param {string | object} node řetězec splňující pravidla css3 (pro IE8 css2.1) selectoru | HTMLElement | Text | HTMLDocument | Window | JAX.Node
 <span class='line'>1280</span>  * @returns {JAX.Node}
 <span class='line'>1281</span>  */</span><span class="WHIT">
 <span class='line'>1282</span> </span><span class="NAME">JAX.IMoveableNode.prototype.appendTo</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">node</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
@@ -1301,7 +1301,7 @@
 <span class='line'>1294</span> </span><span class="COMM">/**
 <span class='line'>1295</span>  * přesune element před zadaný element
 <span class='line'>1296</span>  *
-<span class='line'>1297</span>  * @param {string || object} node řetězec splňující pravidla css3 (pro IE8 css2.1) selectoru | HTMLElement | Text | HTMLDocument | Window | JAX.Node
+<span class='line'>1297</span>  * @param {string | object} node řetězec splňující pravidla css3 (pro IE8 css2.1) selectoru | HTMLElement | Text | HTMLDocument | Window | JAX.Node
 <span class='line'>1298</span>  * @returns {JAX.Node}
 <span class='line'>1299</span>  */</span><span class="WHIT">
 <span class='line'>1300</span> </span><span class="NAME">JAX.IMoveableNode.prototype.before</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">node</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
@@ -1320,7 +1320,7 @@
 <span class='line'>1313</span> </span><span class="COMM">/**
 <span class='line'>1314</span>  * přesune element za zadaný element
 <span class='line'>1315</span>  *
-<span class='line'>1316</span>  * @param {string || object} node řetězec splňující pravidla css3 (pro IE8 css2.1) selectoru | HTMLElement | Text | HTMLDocument | Window | JAX.Node
+<span class='line'>1316</span>  * @param {string | object} node řetězec splňující pravidla css3 (pro IE8 css2.1) selectoru | HTMLElement | Text | HTMLDocument | Window | JAX.Node
 <span class='line'>1317</span>  * @returns {JAX.Node}
 <span class='line'>1318</span>  */</span><span class="WHIT">
 <span class='line'>1319</span> </span><span class="NAME">JAX.IMoveableNode.prototype.after</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">node</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
@@ -1345,7 +1345,7 @@
 <span class='line'>1338</span> </span><span class="COMM">/**
 <span class='line'>1339</span>  * vloží element do zadaného elementu na první místo
 <span class='line'>1340</span>  *
-<span class='line'>1341</span>  * @param {string || object} node řetězec splňující pravidla css3 (pro IE8 css2.1) selectoru | HTMLElement | Text | HTMLDocument | Window | JAX.Node
+<span class='line'>1341</span>  * @param {string | object} node řetězec splňující pravidla css3 (pro IE8 css2.1) selectoru | HTMLElement | Text | HTMLDocument | Window | JAX.Node
 <span class='line'>1342</span>  * @returns {JAX.Node}
 <span class='line'>1343</span>  */</span><span class="WHIT">
 <span class='line'>1344</span> </span><span class="NAME">JAX.IMoveableNode.prototype.insertFirstTo</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">node</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
@@ -1372,7 +1372,7 @@
 <span class='line'>1365</span> </span><span class="COMM">/**
 <span class='line'>1366</span>  * vymění element za zadaný element v DOMu a původní element z DOMu smaže
 <span class='line'>1367</span>  *
-<span class='line'>1368</span>  * @param {string || object} node řetězec splňující pravidla css3 (pro IE8 css2.1) selectoru | HTMLElement | Text | HTMLDocument | Window | JAX.Node
+<span class='line'>1368</span>  * @param {string | object} node řetězec splňující pravidla css3 (pro IE8 css2.1) selectoru | HTMLElement | Text | HTMLDocument | Window | JAX.Node
 <span class='line'>1369</span>  * @returns {JAX.Node}
 <span class='line'>1370</span>  */</span><span class="WHIT">
 <span class='line'>1371</span> </span><span class="NAME">JAX.IMoveableNode.prototype.replaceWith</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">node</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
@@ -1391,7 +1391,7 @@
 <span class='line'>1384</span> </span><span class="COMM">/**
 <span class='line'>1385</span>  * vymění element za zadaný element v DOMu, prohodí si místa
 <span class='line'>1386</span>  *
-<span class='line'>1387</span>  * @param {string || object} node řetězec splňující pravidla css3 (pro IE8 css2.1) selectoru | HTMLElement | Text | HTMLDocument | Window | JAX.Node
+<span class='line'>1387</span>  * @param {string | object} node řetězec splňující pravidla css3 (pro IE8 css2.1) selectoru | HTMLElement | Text | HTMLDocument | Window | JAX.Node
 <span class='line'>1388</span>  * @returns {JAX.Node}
 <span class='line'>1389</span>  */</span><span class="WHIT">
 <span class='line'>1390</span> </span><span class="NAME">JAX.IMoveableNode.prototype.swapPlaceWith</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">node</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
@@ -1460,7 +1460,7 @@
 <span class='line'>1453</span> </span><span class="COMM">/**
 <span class='line'>1454</span>  * zjistí, jestli je element umístěn v zadaném elementu
 <span class='line'>1455</span>  *
-<span class='line'>1456</span>  * @param {string || object} node řetězec splňující pravidla css3 (pro IE8 css2.1) selectoru | HTMLElement | Text | HTMLDocument | Window | JAX.Node
+<span class='line'>1456</span>  * @param {string | object} node řetězec splňující pravidla css3 (pro IE8 css2.1) selectoru | HTMLElement | Text | HTMLDocument | Window | JAX.Node
 <span class='line'>1457</span>  * @returns {boolean}
 <span class='line'>1458</span>  */</span><span class="WHIT">
 <span class='line'>1459</span> </span><span class="NAME">JAX.IMoveableNode.prototype.isIn</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">node</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
@@ -1485,8 +1485,8 @@
 <span class='line'>1478</span> </span><span class="COMM">/**
 <span class='line'>1479</span>  * bez zadaného parametru vrací přímo rodiče; se zadaným zjednodušeným css selectorem vrací rodiče, který jako první odpovídá pravidlu
 <span class='line'>1480</span>  *
-<span class='line'>1481</span>  * @param {string || undefined} selector řetězec splňující pravidla: tag#id.trida, kde id a třída mohou být zadány vícenásobně nebo vůbec | HTMLElement | JAX.Node
-<span class='line'>1482</span>  * @returns {JAX.Node || null}
+<span class='line'>1481</span>  * @param {string | undefined} selector řetězec splňující pravidla: tag#id.trida, kde id a třída mohou být zadány vícenásobně nebo vůbec | HTMLElement | JAX.Node
+<span class='line'>1482</span>  * @returns {JAX.Node | null}
 <span class='line'>1483</span>  */</span><span class="WHIT">
 <span class='line'>1484</span> </span><span class="NAME">JAX.IMoveableNode.prototype.parent</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">selector</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
 <span class='line'>1485</span> </span><span class="WHIT">	</span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">selector</span><span class="WHIT"> </span><span class="PUNC">&&</span><span class="WHIT"> </span><span class="KEYW">typeof</span><span class="PUNC">(</span><span class="NAME">selector</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">==</span><span class="WHIT"> </span><span class="STRN">"string"</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
@@ -1507,8 +1507,8 @@
 <span class='line'>1500</span> </span><span class="COMM">/** 
 <span class='line'>1501</span>  * vrací následující node
 <span class='line'>1502</span>  *
-<span class='line'>1503</span>  * @param {string || number || undefined} selector řetězec splňující pravidla: tag#id.trida (lze zada více id i tříd) || požadovaný nodeType
-<span class='line'>1504</span>  * @returns {JAX.Node || null}
+<span class='line'>1503</span>  * @param {string | number | undefined} selector řetězec splňující pravidla: tag#id.trida (lze zada více id i tříd) || požadovaný nodeType
+<span class='line'>1504</span>  * @returns {JAX.Node | null}
 <span class='line'>1505</span>  */</span><span class="WHIT">
 <span class='line'>1506</span> </span><span class="NAME">JAX.IMoveableNode.prototype.next</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">selector</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
 <span class='line'>1507</span> </span><span class="WHIT">	</span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="KEYW">typeof</span><span class="PUNC">(</span><span class="NAME">selector</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">==</span><span class="WHIT"> </span><span class="STRN">"number"</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
@@ -1540,8 +1540,8 @@
 <span class='line'>1533</span> </span><span class="COMM">/**
 <span class='line'>1534</span>  * vrací předchazející node
 <span class='line'>1535</span>  *
-<span class='line'>1536</span>  * @param {string || number || undefined} selector řetězec splňující pravidla: tag#id.trida (lze zada více id i tříd) || požadovaný nodeType
-<span class='line'>1537</span>  * @returns {JAX.Node || null}
+<span class='line'>1536</span>  * @param {string | number | undefined} selector řetězec splňující pravidla: tag#id.trida (lze zada více id i tříd) || požadovaný nodeType
+<span class='line'>1537</span>  * @returns {JAX.Node | null}
 <span class='line'>1538</span>  */</span><span class="WHIT">
 <span class='line'>1539</span> </span><span class="NAME">JAX.IMoveableNode.prototype.previous</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">selector</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
 <span class='line'>1540</span> </span><span class="WHIT">	</span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="KEYW">typeof</span><span class="PUNC">(</span><span class="NAME">selector</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">==</span><span class="WHIT"> </span><span class="STRN">"number"</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
@@ -1608,7 +1608,7 @@
 <span class='line'>1601</span> </span><span class="COMM">/**
 <span class='line'>1602</span>  * přidává do elementu další uzly vždy na konec, lze zadat i jako html string, který se následně připne
 <span class='line'>1603</span>  *
-<span class='line'>1604</span>  * @param {string || object || array} nodes HTML string || HTMLElement || Text || HTMLDocumetFragment || pole elementů || instance JAX.NodeArray
+<span class='line'>1604</span>  * @param {string | object | array} nodes HTML string || HTMLElement || Text || HTMLDocumetFragment || pole elementů || instance JAX.NodeArray
 <span class='line'>1605</span>  * @returns {JAX.Node}
 <span class='line'>1606</span>  */</span><span class="WHIT">
 <span class='line'>1607</span> </span><span class="NAME">JAX.INodeWithChildren.prototype.add</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">nodes</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
@@ -1635,7 +1635,7 @@
 <span class='line'>1628</span> </span><span class="COMM">/**
 <span class='line'>1629</span>  * vloží zadané uzly před první uzel v elementu, lze zadat i jako html string, který se následně připne před první element
 <span class='line'>1630</span>  *
-<span class='line'>1631</span>  * @param {string || object || array} nodes HTML string || HTMLElement || Text || HTMLDocumetFragment || pole elementů || instance JAX.NodeArray
+<span class='line'>1631</span>  * @param {string | object | array} nodes HTML string || HTMLElement || Text || HTMLDocumetFragment || pole elementů || instance JAX.NodeArray
 <span class='line'>1632</span>  * @returns {JAX.Node}
 <span class='line'>1633</span>  */</span><span class="WHIT">
 <span class='line'>1634</span> </span><span class="NAME">JAX.INodeWithChildren.prototype.insertFirst</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">nodes</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
@@ -1677,8 +1677,8 @@
 <span class='line'>1670</span> </span><span class="COMM">/**
 <span class='line'>1671</span>  * vloží uzel před jiný
 <span class='line'>1672</span>  *
-<span class='line'>1673</span>  * @param {object || string} node element nebo css selector, jak se k elementu dostat
-<span class='line'>1674</span>  * @param {object || string} nodeBefore element nebo css selector, jak se k elementu dostat
+<span class='line'>1673</span>  * @param {object | string} node element nebo css selector, jak se k elementu dostat
+<span class='line'>1674</span>  * @param {object | string} nodeBefore element nebo css selector, jak se k elementu dostat
 <span class='line'>1675</span>  * @returns {JAX.Node}
 <span class='line'>1676</span>  */</span><span class="WHIT">
 <span class='line'>1677</span> </span><span class="NAME">JAX.INodeWithChildren.prototype.addBefore</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">node</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">nodeBefore</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
@@ -1706,7 +1706,7 @@
 <span class='line'>1699</span> </span><span class="COMM">/** 
 <span class='line'>1700</span>  * zjistí, jestli element obsahuje nody podle zadaných kritérií
 <span class='line'>1701</span>  *
-<span class='line'>1702</span>  * @param {object || string} nodes HTMLElement || Text || pole elementů || instance JAX.NodeArray || CSS 3 (CSS 2.1 pro IE8) selector
+<span class='line'>1702</span>  * @param {object | string} nodes HTMLElement || Text || pole elementů || instance JAX.NodeArray || CSS 3 (CSS 2.1 pro IE8) selector
 <span class='line'>1703</span>  * @returns {boolean}
 <span class='line'>1704</span>  */</span><span class="WHIT">
 <span class='line'>1705</span> </span><span class="NAME">JAX.INodeWithChildren.prototype.contains</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">nodes</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
@@ -1739,8 +1739,8 @@
 <span class='line'>1732</span> </span><span class="COMM">/** 
 <span class='line'>1733</span>  * vrací JAXové pole (JAX.NodeArray) přímých potomků; pokud je ale zadán parametr index, vrací právě jeden JAXový node
 <span class='line'>1734</span>  *
-<span class='line'>1735</span>  * @param {number || undefined} index číselný index požadovaného potomku
-<span class='line'>1736</span>  * @returns {JAX.Node || JAX.NodeArray || null}
+<span class='line'>1735</span>  * @param {number | undefined} index číselný index požadovaného potomku
+<span class='line'>1736</span>  * @returns {JAX.Node | JAX.NodeArray | null}
 <span class='line'>1737</span>  */</span><span class="WHIT">
 <span class='line'>1738</span> </span><span class="NAME">JAX.INodeWithChildren.prototype.children</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">index</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
 <span class='line'>1739</span> </span><span class="WHIT">	</span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="PUNC">!</span><span class="NAME">this._node.childNodes</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
@@ -1770,8 +1770,8 @@
 <span class='line'>1763</span> </span><span class="COMM">/** 
 <span class='line'>1764</span>  * vrací JAXové pole (JAX.NodeArray) přímých elementů (node.nodeType == 1); pokud je ale zadán parametr index, vrací právě jeden JAXový element
 <span class='line'>1765</span>  *
-<span class='line'>1766</span>  * @param {number || undefined} index číselný index požadovaného elementu
-<span class='line'>1767</span>  * @returns {JAX.Node || JAX.NodeArray || null}
+<span class='line'>1766</span>  * @param {number | undefined} index číselný index požadovaného elementu
+<span class='line'>1767</span>  * @returns {JAX.Node | JAX.NodeArray | null}
 <span class='line'>1768</span>  */</span><span class="WHIT">
 <span class='line'>1769</span> </span><span class="NAME">JAX.INodeWithChildren.prototype.elements</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">index</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
 <span class='line'>1770</span> </span><span class="WHIT">	</span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="PUNC">!</span><span class="NAME">this._node.children</span><span class="WHIT"> </span><span class="PUNC">&&</span><span class="WHIT"> </span><span class="PUNC">!</span><span class="NAME">this._node.childNodes</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
@@ -1808,7 +1808,7 @@
 <span class='line'>1801</span> </span><span class="COMM">/** 
 <span class='line'>1802</span>  * vrací první HTMLElement jako JAXový node
 <span class='line'>1803</span>  *
-<span class='line'>1804</span>  * @returns {JAX.Node || null}
+<span class='line'>1804</span>  * @returns {JAX.Node | null}
 <span class='line'>1805</span>  */</span><span class="WHIT">
 <span class='line'>1806</span> </span><span class="NAME">JAX.INodeWithChildren.prototype.first</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
 <span class='line'>1807</span> </span><span class="WHIT">	</span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="PUNC">!</span><span class="NAME">this._node.childNodes</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
@@ -1822,7 +1822,7 @@
 <span class='line'>1815</span> </span><span class="COMM">/** 
 <span class='line'>1816</span>  * vrací poslední HTMLElement jako JAXový node
 <span class='line'>1817</span>  *
-<span class='line'>1818</span>  * @returns {JAX.Node || null}
+<span class='line'>1818</span>  * @returns {JAX.Node | null}
 <span class='line'>1819</span>  */</span><span class="WHIT">
 <span class='line'>1820</span> </span><span class="NAME">JAX.INodeWithChildren.prototype.last</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
 <span class='line'>1821</span> </span><span class="WHIT">	</span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="PUNC">!</span><span class="NAME">this._node.childNodes</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
@@ -1874,7 +1874,7 @@
 <span class='line'>1867</span> </span><span class="COMM">/**
 <span class='line'>1868</span>  * najde element odpovídající selectoru v rámci tohoto elementu
 <span class='line'>1869</span>  *
-<span class='line'>1870</span>  * @param {string || object} selector řetězec splňující pravidla css3 (pro IE8 css2.1) selectoru | HTMLElement | Text | HTMLDocument | Window | JAX.Node
+<span class='line'>1870</span>  * @param {string | object} selector řetězec splňující pravidla css3 (pro IE8 css2.1) selectoru | HTMLElement | Text | HTMLDocument | Window | JAX.Node
 <span class='line'>1871</span>  * @returns {JAX.Node}
 <span class='line'>1872</span>  */</span><span class="WHIT">
 <span class='line'>1873</span> </span><span class="NAME">JAX.ISearchableNode.prototype.find</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">selector</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
@@ -1884,7 +1884,7 @@
 <span class='line'>1877</span> </span><span class="COMM">/**
 <span class='line'>1878</span>  * najde elementy odpovídají selectoru v rámci tohoto elementu
 <span class='line'>1879</span>  *
-<span class='line'>1880</span>  * @param {string || object || array} selector řetězec splňující pravidla css3 (pro IE8 css2.1) selectoru | Array of (HTMLElement | Text | HTMLDocument | Window | object)
+<span class='line'>1880</span>  * @param {string | object | array} selector řetězec splňující pravidla css3 (pro IE8 css2.1) selectoru | Array of (HTMLElement | Text | HTMLDocument | Window | object)
 <span class='line'>1881</span>  * @returns {JAX.NodeArray}
 <span class='line'>1882</span>  */</span><span class="WHIT">
 <span class='line'>1883</span> </span><span class="NAME">JAX.ISearchableNode.prototype.findAll</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">selector</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
@@ -1904,9 +1904,9 @@
 <span class='line'>1897</span> </span><span class="COMM">/**
 <span class='line'>1898</span>  * animuje konkrétní css vlastnost
 <span class='line'>1899</span>  * @param {string} property css vlastnost, která se má animovat
-<span class='line'>1900</span>  * @param {string || number} duration délka animace - lze zadat i jednotky s nebo ms (výchozí jsou ms)
-<span class='line'>1901</span>  * @param {string || number} start počáteční hodnota - je dobré k ní uvést vždy i jednotky (pokud jde o číselnou hodnotu) a jako výchozí se používají px
-<span class='line'>1902</span>  * @param {string || number} end koncová hodnota - je dobré k ní uvést vždy i jednotky (pokud jde o číselnou hodnotu) a jako výchozí se používají px
+<span class='line'>1900</span>  * @param {string | number} duration délka animace - lze zadat i jednotky s nebo ms (výchozí jsou ms)
+<span class='line'>1901</span>  * @param {string | number} start počáteční hodnota - je dobré k ní uvést vždy i jednotky (pokud jde o číselnou hodnotu) a jako výchozí se používají px
+<span class='line'>1902</span>  * @param {string | number} end koncová hodnota - je dobré k ní uvést vždy i jednotky (pokud jde o číselnou hodnotu) a jako výchozí se používají px
 <span class='line'>1903</span>  * @param {string} method css transformační metoda (ease, linear, ease-in, ease-out, ... ) více na &lt;a href="http://www.w3.org/TR/2009/WD-css3-transitions-20090320/#transition-timing-function_tag">webu W3C&lt;/a>, pozn.: pokud prohlížeč neumí transitions, je použito js řešení a metoda je vždy LINEAR
 <span class='line'>1904</span>  * @returns {JAX.FX}
 <span class='line'>1905</span>  */</span><span class="WHIT">
@@ -1926,7 +1926,7 @@
 <span class='line'>1919</span> </span><span class="COMM">/**
 <span class='line'>1920</span>  * animuje průhlednost
 <span class='line'>1921</span>  * @param {string} type "in" (od 0 do 1) nebo "out" (od 1 do 0)
-<span class='line'>1922</span>  * @param {string || number} duration délka animace - lze zadat i jednotky s nebo ms (výchozí jsou ms)
+<span class='line'>1922</span>  * @param {string | number} duration délka animace - lze zadat i jednotky s nebo ms (výchozí jsou ms)
 <span class='line'>1923</span>  * @param {string} method css transformační metoda (ease, linear, ease-in, ease-out, ... ) více na &lt;a href="http://www.w3.org/TR/2009/WD-css3-transitions-20090320/#transition-timing-function_tag">webu W3C&lt;/a>, pozn.: pokud prohlížeč neumí transitions, je použito js řešení a metoda je vždy LINEAR
 <span class='line'>1924</span>  * @returns {JAX.FX}
 <span class='line'>1925</span>  */</span><span class="WHIT">
@@ -1953,8 +1953,8 @@
 <span class='line'>1946</span> 
 <span class='line'>1947</span> </span><span class="COMM">/**
 <span class='line'>1948</span>  * animuje průhlednost do určité hodnoty
-<span class='line'>1949</span>  * @param {string || number} opacityValue hodnota průhlednosti, do které se má animovat. Jako výchozí se bere aktuální hodnota
-<span class='line'>1950</span>  * @param {string || number} duration délka animace - lze zadat i jednotky s nebo ms (výchozí jsou ms)
+<span class='line'>1949</span>  * @param {string | number} opacityValue hodnota průhlednosti, do které se má animovat. Jako výchozí se bere aktuální hodnota
+<span class='line'>1950</span>  * @param {string | number} duration délka animace - lze zadat i jednotky s nebo ms (výchozí jsou ms)
 <span class='line'>1951</span>  * @param {string} method css transformační metoda (ease, linear, ease-in, ease-out, ... ) více na &lt;a href="http://www.w3.org/TR/2009/WD-css3-transitions-20090320/#transition-timing-function_tag">webu W3C&lt;/a>, pozn.: pokud prohlížeč neumí transitions, je použito js řešení a metoda je vždy LINEAR
 <span class='line'>1952</span>  * @returns {JAX.FX}
 <span class='line'>1953</span>  */</span><span class="WHIT">
@@ -1972,7 +1972,7 @@
 <span class='line'>1965</span> </span><span class="COMM">/**
 <span class='line'>1966</span>  * zobrazí element pomocí animace výšky nebo šířky
 <span class='line'>1967</span>  * @param {string} type "down" nebo "up" pro animaci výšky nebo "left", "right" pro animaci šířky
-<span class='line'>1968</span>  * @param {string || number} duration délka animace - lze zadat i jednotky s nebo ms (výchozí jsou ms)
+<span class='line'>1968</span>  * @param {string | number} duration délka animace - lze zadat i jednotky s nebo ms (výchozí jsou ms)
 <span class='line'>1969</span>  * @param {string} method css transformační metoda (ease, linear, ease-in, ease-out, ... ) více na &lt;a href="http://www.w3.org/TR/2009/WD-css3-transitions-20090320/#transition-timing-function_tag">webu W3C&lt;/a>, pozn.: pokud prohlížeč neumí transitions, je použito js řešení a metoda je vždy LINEAR
 <span class='line'>1970</span>  * @returns {JAX.FX}
 <span class='line'>1971</span>  */</span><span class="WHIT">
@@ -2041,8 +2041,8 @@
 <span class='line'>2034</span>  * nascrolluje obsah na zadanou hodnotu. Lze zadat type "left" nebo "top", podle toho, kterým posuvníkem chceme hýbat. Pokud se zadá i duration, scrollování bude animované.
 <span class='line'>2035</span>  * @param {string} type "top" nebo "left", podle toho, jestli chceme hýbat s vertikálním nebo horizontálním posuvníkem
 <span class='line'>2036</span>  * @param {number} value hodnota v px, kam se má scrollbar posunout
-<span class='line'>2037</span>  * @param {string || number} duration délka animace; pokud není zadáno, neanimuje se
-<span class='line'>2038</span>  * @returns {JAX.Node || JAX.FX.Scrolling}
+<span class='line'>2037</span>  * @param {string | number} duration délka animace; pokud není zadáno, neanimuje se
+<span class='line'>2038</span>  * @returns {JAX.Node | JAX.FX.Scrolling}
 <span class='line'>2039</span>  */</span><span class="WHIT">
 <span class='line'>2040</span> </span><span class="NAME">JAX.IScrollableNode.prototype.scroll</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">type</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">value</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">duration</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
 <span class='line'>2041</span> </span><span class="WHIT">	</span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="KEYW">typeof</span><span class="PUNC">(</span><span class="NAME">type</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">!=</span><span class="WHIT"> </span><span class="STRN">"string"</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
@@ -2206,7 +2206,7 @@
 <span class='line'>2199</span> </span><span class="COMM">/**
 <span class='line'>2200</span>  * vrací uzel, který si instance drží
 <span class='line'>2201</span>  *
-<span class='line'>2202</span>  * @returns {HTMLElement || Text || HTMLDocument || Window}
+<span class='line'>2202</span>  * @returns {HTMLElement | Text | HTMLDocument | Window}
 <span class='line'>2203</span>  */</span><span class="WHIT">
 <span class='line'>2204</span> </span><span class="NAME">JAX.Node.prototype.node</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
 <span class='line'>2205</span> </span><span class="WHIT">	</span><span class="KEYW">return</span><span class="WHIT"> </span><span class="NAME">this._node</span><span class="PUNC">;</span><span class="WHIT">
@@ -2224,9 +2224,9 @@
 <span class='line'>2217</span> </span><span class="COMM">/**
 <span class='line'>2218</span>  * získá nebo nastaví vlastnost nodu
 <span class='line'>2219</span>  *
-<span class='line'>2220</span>  * @param {string || array || object} property název vlastnosti | pole názvů vlastností | asociativní pole, např. {id:"mojeId", checked:true}
+<span class='line'>2220</span>  * @param {string | array | object} property název vlastnosti | pole názvů vlastností | asociativní pole, např. {id:"mojeId", checked:true}
 <span class='line'>2221</span>  * @param {} value nastavená hodnota
-<span class='line'>2222</span>  * @returns {string || JAX.Node || object}
+<span class='line'>2222</span>  * @returns {string | JAX.Node | object}
 <span class='line'>2223</span>  */</span><span class="WHIT">
 <span class='line'>2224</span> </span><span class="NAME">JAX.Node.prototype.prop</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">property</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">value</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
 <span class='line'>2225</span> </span><span class="WHIT">	</span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="PUNC">!</span><span class="NAME">property</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT"> 
@@ -2416,8 +2416,8 @@
 <span class='line'>2409</span> </span><span class="COMM">/**
 <span class='line'>2410</span>  * volání bez parametru zjistíme, jaké id má element nastaveno, voláním s parametrem ho nastavíme
 <span class='line'>2411</span>  *
-<span class='line'>2412</span>  * @param {string || undefined} id id elementu
-<span class='line'>2413</span>  * @returns {string || JAX.Node}
+<span class='line'>2412</span>  * @param {string | undefined} id id elementu
+<span class='line'>2413</span>  * @returns {string | JAX.Node}
 <span class='line'>2414</span>  */</span><span class="WHIT">
 <span class='line'>2415</span> </span><span class="NAME">JAX.Element.prototype.id</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">id</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
 <span class='line'>2416</span> </span><span class="WHIT">	</span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="PUNC">!</span><span class="NAME">arguments.length</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT"> 
@@ -2436,8 +2436,8 @@
 <span class='line'>2429</span> </span><span class="COMM">/**
 <span class='line'>2430</span>  * volání bez parametru zjistíme, jaké innerHTML má element nastaveno, voláním s parametrem ho nastavíme
 <span class='line'>2431</span>  *
-<span class='line'>2432</span>  * @param {string || undefined} innerHTML innerHTML elementu
-<span class='line'>2433</span>  * @returns {string || JAX.Node}
+<span class='line'>2432</span>  * @param {string | undefined} innerHTML innerHTML elementu
+<span class='line'>2433</span>  * @returns {string | JAX.Node}
 <span class='line'>2434</span>  */</span><span class="WHIT">
 <span class='line'>2435</span> </span><span class="NAME">JAX.Element.prototype.html</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">innerHTML</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
 <span class='line'>2436</span> </span><span class="WHIT">	</span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="PUNC">!</span><span class="NAME">arguments.length</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT"> 
@@ -2455,8 +2455,8 @@
 <span class='line'>2448</span> </span><span class="COMM">/**
 <span class='line'>2449</span>  * volání bez parametru zjistíme, jaký čistý text element obsahuje (bez html tagů), voláním s parametrem ho nastavíme; pozn.: při získávání textu je zahrnut veškerý text, tedy i ten, který není na stránce vidět
 <span class='line'>2450</span>  *
-<span class='line'>2451</span>  * @param {string || undefined} text text, který chceme nastavit
-<span class='line'>2452</span>  * @returns {JAX.Node || string}
+<span class='line'>2451</span>  * @param {string | undefined} text text, který chceme nastavit
+<span class='line'>2452</span>  * @returns {JAX.Node | string}
 <span class='line'>2453</span>  */</span><span class="WHIT">
 <span class='line'>2454</span> </span><span class="NAME">JAX.Element.prototype.text</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">text</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
 <span class='line'>2455</span> </span><span class="WHIT">	</span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">text</span><span class="WHIT"> </span><span class="PUNC">&&</span><span class="WHIT"> </span><span class="KEYW">typeof</span><span class="PUNC">(</span><span class="NAME">text</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">!=</span><span class="WHIT"> </span><span class="STRN">"string"</span><span class="WHIT"> </span><span class="PUNC">&&</span><span class="WHIT"> </span><span class="KEYW">typeof</span><span class="PUNC">(</span><span class="NAME">text</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">!=</span><span class="WHIT"> </span><span class="STRN">"number"</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
@@ -2478,9 +2478,9 @@
 <span class='line'>2471</span> </span><span class="COMM">/**
 <span class='line'>2472</span>  * nastaví nebo získá hodnoty vlastností html atributů (ekvivaletní s metodou elm.setAttribute)
 <span class='line'>2473</span>  *
-<span class='line'>2474</span>  * @param {string || array || object} property název atributu (pokud není zadán druhý parametr, vrátí hodnotu atributu) || pole názvů atributů || asociativní pole, např. {id:"mojeId", checked:"checked"}
-<span class='line'>2475</span>  * @param {string || undefined} value nastaví hodnotu atributu; v případě že první parametr je pole, potom tuto hodnotu nastaví všem atributům v poli
-<span class='line'>2476</span>  * @returns {string || JAX.Node || object}
+<span class='line'>2474</span>  * @param {string | array | object} property název atributu (pokud není zadán druhý parametr, vrátí hodnotu atributu) || pole názvů atributů || asociativní pole, např. {id:"mojeId", checked:"checked"}
+<span class='line'>2475</span>  * @param {string | undefined} value nastaví hodnotu atributu; v případě že první parametr je pole, potom tuto hodnotu nastaví všem atributům v poli
+<span class='line'>2476</span>  * @returns {string | JAX.Node | object}
 <span class='line'>2477</span>  */</span><span class="WHIT">
 <span class='line'>2478</span> </span><span class="NAME">JAX.Element.prototype.attr</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">property</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">value</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
 <span class='line'>2479</span> </span><span class="WHIT">	</span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="PUNC">!</span><span class="NAME">property</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT"> 
@@ -2526,7 +2526,7 @@
 <span class='line'>2519</span> </span><span class="COMM">/**
 <span class='line'>2520</span>  * odstraní atribut(y)
 <span class='line'>2521</span>  *
-<span class='line'>2522</span>  * @param {string || array} property název atributu || pole názvů atributů
+<span class='line'>2522</span>  * @param {string | array} property název atributu || pole názvů atributů
 <span class='line'>2523</span>  * @returns {JAX.Node}
 <span class='line'>2524</span>  */</span><span class="WHIT">
 <span class='line'>2525</span> </span><span class="NAME">JAX.Element.prototype.removeAttr</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">properties</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
@@ -2547,9 +2547,9 @@
 <span class='line'>2540</span> </span><span class="COMM">/**
 <span class='line'>2541</span>  * nastaví nebo získá hodnoty vlastností atributu elm.style
 <span class='line'>2542</span>  *
-<span class='line'>2543</span>  * @param {string || array || object} property název vlasnosti || pole názvů vlastností || asociativní pole, např. {display:"none", width:"100px"}
+<span class='line'>2543</span>  * @param {string | array | object} property název vlasnosti || pole názvů vlastností || asociativní pole, např. {display:"none", width:"100px"}
 <span class='line'>2544</span>  * @param {string} value nastaví hodnotu vlastnosti; v případě že první parametr je pole, potom tuto hodnotu nastaví všem vlastnostem v poli
-<span class='line'>2545</span>  * @returns {string || JAX.Node || object}
+<span class='line'>2545</span>  * @returns {string | JAX.Node | object}
 <span class='line'>2546</span>  */</span><span class="WHIT">
 <span class='line'>2547</span> </span><span class="NAME">JAX.Element.prototype.css</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">property</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">value</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
 <span class='line'>2548</span> </span><span class="WHIT">	</span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="PUNC">!</span><span class="NAME">property</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT"> 
@@ -2619,8 +2619,8 @@
 <span class='line'>2612</span> </span><span class="COMM">/**
 <span class='line'>2613</span>  * ekvivalent k window.getComputedStyle (&lt;a href="https://developer.mozilla.org/en-US/docs/Web/API/Window.getComputedStyle">https://developer.mozilla.org/en-US/docs/Web/API/Window.getComputedStyle&lt;/a>)
 <span class='line'>2614</span>  *
-<span class='line'>2615</span>  * @param {string || array} property název vlasnosti || pole názvů vlastností
-<span class='line'>2616</span>  * @returns {string || object}
+<span class='line'>2615</span>  * @param {string | array} property název vlasnosti || pole názvů vlastností
+<span class='line'>2616</span>  * @returns {string | object}
 <span class='line'>2617</span>  */</span><span class="WHIT">
 <span class='line'>2618</span> </span><span class="NAME">JAX.Element.prototype.computedCss</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">properties</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
 <span class='line'>2619</span> </span><span class="WHIT">	</span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="PUNC">!</span><span class="NAME">properties</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
@@ -2654,7 +2654,7 @@
 <span class='line'>2647</span>  *
 <span class='line'>2648</span>  * @param {string} sizeType "width" nebo "height"
 <span class='line'>2649</span>  * @param {number} value hodnota (v px)
-<span class='line'>2650</span>  * @returns {number || JAX.Node}
+<span class='line'>2650</span>  * @returns {number | JAX.Node}
 <span class='line'>2651</span>  */</span><span class="WHIT">
 <span class='line'>2652</span> </span><span class="NAME">JAX.Element.prototype.fullSize</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">sizeType</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">value</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
 <span class='line'>2653</span> </span><span class="WHIT">	</span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">arguments.length</span><span class="WHIT"> </span><span class="PUNC">==</span><span class="WHIT"> </span><span class="NUMB">1</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
@@ -2672,7 +2672,7 @@
 <span class='line'>2665</span>  *
 <span class='line'>2666</span>  * @param {string} sizeType "width" nebo "height"
 <span class='line'>2667</span>  * @param {number} value hodnota (v px)
-<span class='line'>2668</span>  * @returns {number || JAX.Node}
+<span class='line'>2668</span>  * @returns {number | JAX.Node}
 <span class='line'>2669</span>  */</span><span class="WHIT">
 <span class='line'>2670</span> </span><span class="NAME">JAX.Element.prototype.size</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">sizeType</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">value</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
 <span class='line'>2671</span> </span><span class="WHIT">	</span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">arguments.length</span><span class="WHIT"> </span><span class="PUNC">==</span><span class="WHIT"> </span><span class="NUMB">1</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT"> 
@@ -2704,7 +2704,7 @@
 <span class='line'>2697</span> </span><span class="COMM">/** 
 <span class='line'>2698</span>  * porovná, jestli element odpovídá zadaným kritériím
 <span class='line'>2699</span>  *
-<span class='line'>2700</span>  * @param {string || object} node DOM uzel || instance JAX.Node || CSS3 (2.1 pro IE8) selector
+<span class='line'>2700</span>  * @param {string | object} node DOM uzel || instance JAX.Node || CSS3 (2.1 pro IE8) selector
 <span class='line'>2701</span>  * @returns {boolean}
 <span class='line'>2702</span>  */</span><span class="WHIT">
 <span class='line'>2703</span> </span><span class="NAME">JAX.Element.prototype.eq</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">node</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
@@ -2820,8 +2820,8 @@
 <span class='line'>2813</span> </span><span class="COMM">/**
 <span class='line'>2814</span>  * nastaví nebo vrátí textovou hodnotu uzlu
 <span class='line'>2815</span>  *
-<span class='line'>2816</span>  * @param {string || undefined} text textový řetězec
-<span class='line'>2817</span>  * @returns {JAX.Node || string} JAX.Node
+<span class='line'>2816</span>  * @param {string | undefined} text textový řetězec
+<span class='line'>2817</span>  * @returns {JAX.Node | string} JAX.Node
 <span class='line'>2818</span>  */</span><span class="WHIT">
 <span class='line'>2819</span> </span><span class="NAME">JAX.TextNode.prototype.text</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">text</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
 <span class='line'>2820</span> </span><span class="WHIT">	</span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="PUNC">!</span><span class="NAME">arguments.length</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT"> 
@@ -2882,7 +2882,7 @@
 <span class='line'>2875</span> </span><span class="COMM">/** 
 <span class='line'>2876</span>  * zjistí, jestli element obsahuje nody podle zadaných kritérií
 <span class='line'>2877</span>  *
-<span class='line'>2878</span>  * @param {object || string} node HTMLElement || Text ||  CSS 3 (CSS 2.1 pro IE8) selector
+<span class='line'>2878</span>  * @param {object | string} node HTMLElement || Text ||  CSS 3 (CSS 2.1 pro IE8) selector
 <span class='line'>2879</span>  * @returns {boolean}
 <span class='line'>2880</span>  */</span><span class="WHIT">
 <span class='line'>2881</span> </span><span class="NAME">JAX.Document.prototype.contains</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">node</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
@@ -3433,7 +3433,7 @@
 <span class='line'>3426</span>  * @class JAX.NodeArray
 <span class='line'>3427</span>  * je třída reprezentující pole instancí JAX.Node a poskytující metody pro hromadné zpracování. Implementuje rozhraní {@link JAX.IIterable}
 <span class='line'>3428</span>  *
-<span class='line'>3429</span>  * @param {object || array} nodes Array of nodes || NodeList || JAX.NodeArray 
+<span class='line'>3429</span>  * @param {object | array} nodes Array of nodes || NodeList || JAX.NodeArray 
 <span class='line'>3430</span>  */</span><span class="WHIT">
 <span class='line'>3431</span> </span><span class="NAME">JAX.NodeArray</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">nodes</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
 <span class='line'>3432</span> </span><span class="WHIT">	</span><span class="NAME">this.length</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">nodes.length</span><span class="PUNC">;</span><span class="WHIT">
@@ -3450,7 +3450,7 @@
 <span class='line'>3443</span> </span><span class="COMM">/**
 <span class='line'>3444</span>  * najde element odpovídající selectoru v rámci tohoto pole elementů
 <span class='line'>3445</span>  *
-<span class='line'>3446</span>  * @param {string || object} selector řetězec splňující pravidla css3 (pro IE8 css2.1) selectoru | HTMLElement | Text | HTMLDocument | Window | JAX.Node
+<span class='line'>3446</span>  * @param {string | object} selector řetězec splňující pravidla css3 (pro IE8 css2.1) selectoru | HTMLElement | Text | HTMLDocument | Window | JAX.Node
 <span class='line'>3447</span>  * @returns {JAX.Node}
 <span class='line'>3448</span>  */</span><span class="WHIT">
 <span class='line'>3449</span> </span><span class="NAME">JAX.NodeArray.prototype.find</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">selector</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
@@ -3482,7 +3482,7 @@
 <span class='line'>3475</span> </span><span class="COMM">/**
 <span class='line'>3476</span>  * najde elementy odpovídají selectoru v rámci tohoto pole elementů
 <span class='line'>3477</span>  *
-<span class='line'>3478</span>  * @param {string || object || array} selector řetězec splňující pravidla css3 (pro IE8 css2.1) selectoru | Array of (HTMLElement | Text | HTMLDocument | Window | object)
+<span class='line'>3478</span>  * @param {string | object | array} selector řetězec splňující pravidla css3 (pro IE8 css2.1) selectoru | Array of (HTMLElement | Text | HTMLDocument | Window | object)
 <span class='line'>3479</span>  * @returns {JAX.NodeArray}
 <span class='line'>3480</span>  */</span><span class="WHIT">
 <span class='line'>3481</span> </span><span class="NAME">JAX.NodeArray.prototype.findAll</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">selector</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
@@ -3751,9 +3751,9 @@
 <span class='line'>3744</span> </span><span class="COMM">/**
 <span class='line'>3745</span>  * nastaví nebo získá hodnoty vlastností html atributů (ekvivaletní s metodou elm.setAttribute)
 <span class='line'>3746</span>  *
-<span class='line'>3747</span>  * @param {string || array || object} property název atributu || pole názvů atributů || asociativní pole, např. {id:"mojeId", checked:"checked"}
-<span class='line'>3748</span>  * @param {string || undefined} value nastaví hodnotu atributu; v případě že první parametr je pole, potom tuto hodnotu nastaví všem atributům v poli
-<span class='line'>3749</span>  * @returns {string || JAX.NodeArray || object}
+<span class='line'>3747</span>  * @param {string | array | object} property název atributu || pole názvů atributů || asociativní pole, např. {id:"mojeId", checked:"checked"}
+<span class='line'>3748</span>  * @param {string | undefined} value nastaví hodnotu atributu; v případě že první parametr je pole, potom tuto hodnotu nastaví všem atributům v poli
+<span class='line'>3749</span>  * @returns {string | JAX.NodeArray | object}
 <span class='line'>3750</span>  */</span><span class="WHIT">
 <span class='line'>3751</span> </span><span class="NAME">JAX.NodeArray.prototype.attr</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">property</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">value</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
 <span class='line'>3752</span> </span><span class="WHIT">	</span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">arrLength</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">arguments.length</span><span class="PUNC">;</span><span class="WHIT">
@@ -3783,7 +3783,7 @@
 <span class='line'>3776</span> </span><span class="COMM">/**
 <span class='line'>3777</span>  * odstraní html atribut(y)
 <span class='line'>3778</span>  *
-<span class='line'>3779</span>  * @param {string || array} property název atributu nebo pole názvů atributů
+<span class='line'>3779</span>  * @param {string | array} property název atributu nebo pole názvů atributů
 <span class='line'>3780</span>  * @returns {JAX.NodeArray}
 <span class='line'>3781</span>  */</span><span class="WHIT">
 <span class='line'>3782</span> </span><span class="NAME">JAX.NodeArray.prototype.removeAttr</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">properties</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
@@ -3798,7 +3798,7 @@
 <span class='line'>3791</span> </span><span class="COMM">/**
 <span class='line'>3792</span>  * nastaví css (vlastnost elm.style) všem elementům v poli
 <span class='line'>3793</span>  *
-<span class='line'>3794</span>  * @param {string || array || object} property název vlastnosti || pole názvů vlastností || asociativní pole, např. {display:"block", color:"red"}
+<span class='line'>3794</span>  * @param {string | array | object} property název vlastnosti || pole názvů vlastností || asociativní pole, např. {display:"block", color:"red"}
 <span class='line'>3795</span>  * @param {string} value nastaví hodnotu vlastnosti; v případě že první parametr je pole, potom tuto hodnotu nastaví všem vlastnostem v poli
 <span class='line'>3796</span>  * @returns {JAX.NodeArray}
 <span class='line'>3797</span>  */</span><span class="WHIT">
@@ -3830,7 +3830,7 @@
 <span class='line'>3823</span> </span><span class="COMM">/**
 <span class='line'>3824</span>  * nastaví vlastnost(i) všem elementům v poli
 <span class='line'>3825</span>  *
-<span class='line'>3826</span>  * @param {string || array || object} property název vlastnosti || pole názvů vlastností || asociativní pole, např. {id:"mojeId", checked:true}
+<span class='line'>3826</span>  * @param {string | array | object} property název vlastnosti || pole názvů vlastností || asociativní pole, např. {id:"mojeId", checked:true}
 <span class='line'>3827</span>  * @param {string} value nastavení příslušné vlastnosti na určitou hodnotu
 <span class='line'>3828</span>  * @returns {JAX.NodeArray}
 <span class='line'>3829</span>  */</span><span class="WHIT">
@@ -3937,8 +3937,8 @@
 <span class='line'>3930</span>  * navěsí posluchač události na elementy a vrátí instanci JAX.ListenerArray, které obsahuje pole navěšených listenerů
 <span class='line'>3931</span>  *
 <span class='line'>3932</span>  * @param {string} type typ události ("click", "mousedown", ...)
-<span class='line'>3933</span>  * @param {object || function} obj objekt, ve kterém se metoda nachází nebo připravená funkce
-<span class='line'>3934</span>  * @param {string || function} func název metody nebo instance funkce, která se má zavolat po té ,co je událost vyvolána
+<span class='line'>3933</span>  * @param {object | function} obj objekt, ve kterém se metoda nachází nebo připravená funkce
+<span class='line'>3934</span>  * @param {string | function} func název metody nebo instance funkce, která se má zavolat po té ,co je událost vyvolána
 <span class='line'>3935</span>  * @param {boolean} useCapture hodnata použitá jako argument capture pro DOM zachytávání
 <span class='line'>3936</span>  * @returns {object} JAX.ListenerArray
 <span class='line'>3937</span>  */</span><span class="WHIT">
@@ -4013,9 +4013,9 @@
 <span class='line'>4006</span>  * animuje konkrétní css vlastnost. Aplikuje se na všechny animovatelné prvky v poli.
 <span class='line'>4007</span>  *
 <span class='line'>4008</span>  * @param {string} property css vlastnost, která se má animovat
-<span class='line'>4009</span>  * @param {string || number} duration délka animace - lze zadat i jednotky s nebo ms (výchozí jsou ms)
-<span class='line'>4010</span>  * @param {string || number} start počáteční hodnota - je dobré k ní uvést vždy i jednotky (pokud jde o číselnou hodnotu) a jako výchozí se používají px
-<span class='line'>4011</span>  * @param {string || number} end koncová hodnota - je dobré k ní uvést vždy i jednotky (pokud jde o číselnou hodnotu) a jako výchozí se používají px
+<span class='line'>4009</span>  * @param {string | number} duration délka animace - lze zadat i jednotky s nebo ms (výchozí jsou ms)
+<span class='line'>4010</span>  * @param {string | number} start počáteční hodnota - je dobré k ní uvést vždy i jednotky (pokud jde o číselnou hodnotu) a jako výchozí se používají px
+<span class='line'>4011</span>  * @param {string | number} end koncová hodnota - je dobré k ní uvést vždy i jednotky (pokud jde o číselnou hodnotu) a jako výchozí se používají px
 <span class='line'>4012</span>  * @param {string} method css transformační metoda (ease, linear, ease-in, ease-out, ... ) více na &lt;a href="http://www.w3.org/TR/2009/WD-css3-transitions-20090320/#transition-timing-function_tag">webu W3C&lt;/a>, pozn.: pokud prohlížeč neumí transitions, je použito js řešení a metoda je vždy LINEAR
 <span class='line'>4013</span>  * @returns {JAX.FXArray}
 <span class='line'>4014</span>  */</span><span class="WHIT">
@@ -4034,7 +4034,7 @@
 <span class='line'>4027</span> </span><span class="COMM">/**
 <span class='line'>4028</span>  * animuje průhlednost. Aplikuje se na všechny animovatelné prvky v poli.
 <span class='line'>4029</span>  * @param {string} type "in" (od 0 do 1) nebo "out" (od 1 do 0)
-<span class='line'>4030</span>  * @param {string || number} duration délka animace - lze zadat i jednotky s nebo ms (výchozí jsou ms)
+<span class='line'>4030</span>  * @param {string | number} duration délka animace - lze zadat i jednotky s nebo ms (výchozí jsou ms)
 <span class='line'>4031</span>  * @param {string} method css transformační metoda (ease, linear, ease-in, ease-out, ... ) více na &lt;a href="http://www.w3.org/TR/2009/WD-css3-transitions-20090320/#transition-timing-function_tag">webu W3C&lt;/a>, pozn.: pokud prohlížeč neumí transitions, je použito js řešení a metoda je vždy LINEAR
 <span class='line'>4032</span>  * @returns {JAX.FXArray}
 <span class='line'>4033</span>  */</span><span class="WHIT">
@@ -4052,8 +4052,8 @@
 <span class='line'>4045</span> 
 <span class='line'>4046</span> </span><span class="COMM">/**
 <span class='line'>4047</span>  * animuje průhlednost do určité hodnoty. Aplikuje se na všechny animovatelné prvky v poli.
-<span class='line'>4048</span>  * @param {string || number} opacityValue hodnota průhlednosti, do které se má animovat. Jako výchozí se bere aktuální hodnota
-<span class='line'>4049</span>  * @param {string || number} duration délka animace - lze zadat i jednotky s nebo ms (výchozí jsou ms)
+<span class='line'>4048</span>  * @param {string | number} opacityValue hodnota průhlednosti, do které se má animovat. Jako výchozí se bere aktuální hodnota
+<span class='line'>4049</span>  * @param {string | number} duration délka animace - lze zadat i jednotky s nebo ms (výchozí jsou ms)
 <span class='line'>4050</span>  * @param {string} method css transformační metoda (ease, linear, ease-in, ease-out, ... ) více na &lt;a href="http://www.w3.org/TR/2009/WD-css3-transitions-20090320/#transition-timing-function_tag">webu W3C&lt;/a>, pozn.: pokud prohlížeč neumí transitions, je použito js řešení a metoda je vždy LINEAR
 <span class='line'>4051</span>  * @returns {JAX.FXArray}
 <span class='line'>4052</span>  */</span><span class="WHIT">
@@ -4072,7 +4072,7 @@
 <span class='line'>4065</span> </span><span class="COMM">/**
 <span class='line'>4066</span>  * zobrazí element pomocí animace výšky nebo šířky. Aplikuje se na všechny animovatelné prvky v poli.
 <span class='line'>4067</span>  * @param {string} type "down" nebo "up" pro animaci výšky nebo "left", "right" pro animaci šířky
-<span class='line'>4068</span>  * @param {string || number} duration délka animace - lze zadat i jednotky s nebo ms (výchozí jsou ms)
+<span class='line'>4068</span>  * @param {string | number} duration délka animace - lze zadat i jednotky s nebo ms (výchozí jsou ms)
 <span class='line'>4069</span>  * @param {string} method css transformační metoda (ease, linear, ease-in, ease-out, ... ) více na &lt;a href="http://www.w3.org/TR/2009/WD-css3-transitions-20090320/#transition-timing-function_tag">webu W3C&lt;/a>, pozn.: pokud prohlížeč neumí transitions, je použito js řešení a metoda je vždy LINEAR
 <span class='line'>4070</span>  * @returns {JAX.FXArray}
 <span class='line'>4071</span>  */</span><span class="WHIT">
@@ -4092,7 +4092,7 @@
 <span class='line'>4085</span>  * nascrolluje obsah na zadanou hodnotu. Lze zadat type "left" nebo "top", podle toho, kterým posuvníkem chceme hýbat. Pokud se zadá i duration, scrollování bude animované. Aplikuje se na všechny scrollovatelné prvky v poli.
 <span class='line'>4086</span>  * @param {string} type "top" nebo "left", podle toho, jestli chceme hýbat s vertikálním nebo horizontálním posuvníkem
 <span class='line'>4087</span>  * @param {number} value hodnota v px, kam se má scrollbar posunout
-<span class='line'>4088</span>  * @param {string || number} duration délka animace; pokud není zadáno, neanimuje se
+<span class='line'>4088</span>  * @param {string | number} duration délka animace; pokud není zadáno, neanimuje se
 <span class='line'>4089</span>  * @returns {JAX.FXArray}
 <span class='line'>4090</span>  */</span><span class="WHIT">
 <span class='line'>4091</span> </span><span class="NAME">JAX.NodeArray.prototype.scroll</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">type</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">value</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">duration</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
@@ -4215,9 +4215,9 @@
 <span class='line'>4208</span> </span><span class="COMM">/**
 <span class='line'>4209</span>  * Přidá css vlastnost, která se bude animovat. Pro každou vlastnost lze zadat různou délku animace a také hodnoty, od kterých se má začít a po které skončit.
 <span class='line'>4210</span>  * @param {string} property css vlastnost, která se má animovat
-<span class='line'>4211</span>  * @param {string || number} duration délka animace - lze zadat i jednotky s nebo ms (výchozí jsou ms)
-<span class='line'>4212</span>  * @param {string || number} start počáteční hodnota - je dobré k ní uvést vždy i jednotky (pokud jde o číselnou hodnotu) a jako výchozí se používají px
-<span class='line'>4213</span>  * @param {string || number} end koncová hodnota - je dobré k ní uvést vždy i jednotky (pokud jde o číselnou hodnotu) a jako výchozí se používají px
+<span class='line'>4211</span>  * @param {string | number} duration délka animace - lze zadat i jednotky s nebo ms (výchozí jsou ms)
+<span class='line'>4212</span>  * @param {string | number} start počáteční hodnota - je dobré k ní uvést vždy i jednotky (pokud jde o číselnou hodnotu) a jako výchozí se používají px
+<span class='line'>4213</span>  * @param {string | number} end koncová hodnota - je dobré k ní uvést vždy i jednotky (pokud jde o číselnou hodnotu) a jako výchozí se používají px
 <span class='line'>4214</span>  * @param {string} method css transformační metoda (ease, linear, ease-in, ease-out, ... ) více na &lt;a href="http://www.w3.org/TR/2009/WD-css3-transitions-20090320/#transition-timing-function_tag">webu W3C&lt;/a>, pozn.: pokud prohlížeč neumí transitions, je použito js řešení a metoda je vždy LINEAR
 <span class='line'>4215</span>  * @returns {JAX.FX}
 <span class='line'>4216</span>  */</span><span class="WHIT">
@@ -4296,15 +4296,15 @@
 <span class='line'>4289</span> 
 <span class='line'>4290</span> </span><span class="COMM">/**
 <span class='line'>4291</span>  * Přidá transformační vlastnost (translateX, translateY, translateZ). Používá fallback pro prohlížeče, které transformace neumí a to přes elm.style.top a elm.style.left.
-<span class='line'>4292</span>  * @param {string || number} duration délka animace - lze zadat i jednotky s nebo ms (výchozí jsou ms)
+<span class='line'>4292</span>  * @param {string | number} duration délka animace - lze zadat i jednotky s nebo ms (výchozí jsou ms)
 <span class='line'>4293</span>  * @param {object} start počáteční hodnoty
-<span class='line'>4294</span>  * @param {number || string} start.x hodnota translateX - lze zadat i jednotky (px, %, ...), def. px
-<span class='line'>4295</span>  * @param {number || string} start.y hodnota translateY - lze zadat i jednotky (px, %, ...), def. px
-<span class='line'>4296</span>  * @param {number || string} start.z hodnota translateZ - lze zadat i jednotky (px, %, ...), def. px
+<span class='line'>4294</span>  * @param {number | string} start.x hodnota translateX - lze zadat i jednotky (px, %, ...), def. px
+<span class='line'>4295</span>  * @param {number | string} start.y hodnota translateY - lze zadat i jednotky (px, %, ...), def. px
+<span class='line'>4296</span>  * @param {number | string} start.z hodnota translateZ - lze zadat i jednotky (px, %, ...), def. px
 <span class='line'>4297</span>  * @param {object} end koncové hodnoty
-<span class='line'>4298</span>  * @param {number || string} end.x hodnota translateX - lze zadat i jednotky (px, %, ...), def. px
-<span class='line'>4299</span>  * @param {number || string} end.y hodnota translateY - lze zadat i jednotky (px, %, ...), def. px
-<span class='line'>4300</span>  * @param {number || string} end.z hodnota translateZ - lze zadat i jednotky (px, %, ...), def. px
+<span class='line'>4298</span>  * @param {number | string} end.x hodnota translateX - lze zadat i jednotky (px, %, ...), def. px
+<span class='line'>4299</span>  * @param {number | string} end.y hodnota translateY - lze zadat i jednotky (px, %, ...), def. px
+<span class='line'>4300</span>  * @param {number | string} end.z hodnota translateZ - lze zadat i jednotky (px, %, ...), def. px
 <span class='line'>4301</span>  * @param {string} method css transformační metoda (ease, linear, ease-in, ease-out, ... ) více na &lt;a href="http://www.w3.org/TR/2009/WD-css3-transitions-20090320/#transition-timing-function_tag">webu W3C&lt;/a>, pozn.: pokud prohlížeč neumí transitions, je použito js řešení a metoda je vždy LINEAR
 <span class='line'>4302</span>  * @returns {JAX.FX}
 <span class='line'>4303</span>  */</span><span class="WHIT">
@@ -4714,7 +4714,7 @@
 <span class='line'>4707</span>  *
 <span class='line'>4708</span>  * @param {array} settings
 <span class='line'>4709</span>  * @param {string} settings.property
-<span class='line'>4710</span>  * @param {number || string} settings.startValue
+<span class='line'>4710</span>  * @param {number | string} settings.startValue
 <span class='line'>4711</span>  * @param {string} settings.startUnit
 <span class='line'>4712</span>  * @param {number} settings.endValue
 <span class='line'>4713</span>  * @param {string} settings.endUnit
@@ -4838,7 +4838,7 @@
 <span class='line'>4831</span>  *
 <span class='line'>4832</span>  * @param {array} settings
 <span class='line'>4833</span>  * @param {string} settings.property
-<span class='line'>4834</span>  * @param {number || string} settings.startValue
+<span class='line'>4834</span>  * @param {number | string} settings.startValue
 <span class='line'>4835</span>  * @param {string} settings.startUnit
 <span class='line'>4836</span>  * @param {number} settings.endValue
 <span class='line'>4837</span>  * @param {string} settings.endUnit
